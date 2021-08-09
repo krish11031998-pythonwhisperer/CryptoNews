@@ -17,11 +17,11 @@ struct RecentNewsCarousel: View {
     }
     
     func scaleEff(midX:CGFloat) -> CGFloat{
-        let thresMinX:CGFloat = totalWidth * 0.25
-        let tarMinX = totalWidth * 0.15
-        var perc = (midX - tarMinX)/(thresMinX - tarMinX)
-        perc = 1 - (perc > 1 ? 1 : perc < 0 ? 0 : perc)
-        let scale = midX < thresMinX || midX > (1 - thresMinX) ? 1 - 0.2 * CGFloat(perc) : 1
+        let thres:CGFloat = totalWidth * 0.25
+        let tar = totalWidth * 0.15
+        var perc = (midX - tar)/(thres - tar)
+        perc = midX > totalWidth ? (perc > 1 ? 1 : perc < 0 ? 0 : perc) : 1 - (perc > 1 ? 1 : perc < 0 ? 0 : perc)
+        let scale = midX < thres || midX > (1 - thres) ? 1 - 0.2 * CGFloat(perc) : 1
         return scale
     }
     
