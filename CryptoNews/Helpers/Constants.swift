@@ -4,8 +4,27 @@ var totalWidth = UIScreen.main.bounds.width
 var AppWidth = totalWidth * 0.9
 var totalHeight = UIScreen.main.bounds.height
 extension Color{
-    static var mainBGColor:Color = .init(red: 255, green: 255, blue: 255)
+    static var mainBGColor = LinearGradient(gradient: .init(colors: [.red,.blue]), startPoint: .topTrailing, endPoint: .bottomLeading)
+    static var cardColor = BlurView(style: .dark)
     static var primaryColor:Color = .init(UIColor(hex: "#191A1DFF") ?? .white)
+    
+    static func colorConvert(red:Double,green:Double,blue:Double) -> Color{
+        let r:Double = red/255.0
+        let g:Double = green/255.0
+        let b:Double = blue/255.0
+        return .init(red: r, green: g, blue: b)
+    }
+    static var mainBG:Color = Color.colorConvert(red: 250, green: 251, blue: 245)
+    static func cardBGColor(size:CGSize) -> AnyView{
+        return AnyView(ZStack(alignment: .bottom) {
+            Color.mainBGColor.frame(width: size.width, height: size.height * 0.1, alignment: .center)
+            BlurView(style: .light)
+        })
+    }
+    
+    static func linearGradient(colorOne:UIColor,colorTwo:UIColor) -> LinearGradient{
+        return LinearGradient(gradient: .init(colors: [Color(colorOne),Color(colorTwo)]), startPoint: .top, endPoint: .bottom)
+    }
 }
 var baseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
 var bottomShadow = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)

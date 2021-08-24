@@ -7,6 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */; };
+		BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835326C181C0009D5822 /* LatestTweets.swift */; };
+		BCB7835626C1DB17009D5822 /* SystemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835526C1DB17009D5822 /* SystemButton.swift */; };
+		BCB7835C26C31865009D5822 /* LatestRedditView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835B26C31865009D5822 /* LatestRedditView.swift */; };
+		BCB7835E26C318B9009D5822 /* RedditCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835D26C318B9009D5822 /* RedditCardView.swift */; };
+		BCB7836026C58E03009D5822 /* Container.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835F26C58E03009D5822 /* Container.swift */; };
+		BCB7836226C5AE58009D5822 /* FancyHScroll.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7836126C5AE58009D5822 /* FancyHScroll.swift */; };
+		BCB7836426C66CE9009D5822 /* PostCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7836326C66CE9009D5822 /* PostCard.swift */; };
+		BCB7836626C67874009D5822 /* TimerBlobs.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7836526C67874009D5822 /* TimerBlobs.swift */; };
 		BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1D7526BE7D7400B87E5C /* CryptoNewsApp.swift */; };
 		BCBC1D7826BE7D7400B87E5C /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1D7726BE7D7400B87E5C /* ContentView.swift */; };
 		BCBC1D7A26BE7D7500B87E5C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BCBC1D7926BE7D7500B87E5C /* Assets.xcassets */; };
@@ -59,6 +68,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTimeCardsView.swift; sourceTree = "<group>"; };
+		BCB7835326C181C0009D5822 /* LatestTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestTweets.swift; sourceTree = "<group>"; };
+		BCB7835526C1DB17009D5822 /* SystemButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemButton.swift; sourceTree = "<group>"; };
+		BCB7835B26C31865009D5822 /* LatestRedditView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestRedditView.swift; sourceTree = "<group>"; };
+		BCB7835D26C318B9009D5822 /* RedditCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditCardView.swift; sourceTree = "<group>"; };
+		BCB7835F26C58E03009D5822 /* Container.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Container.swift; sourceTree = "<group>"; };
+		BCB7836126C5AE58009D5822 /* FancyHScroll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FancyHScroll.swift; sourceTree = "<group>"; };
+		BCB7836326C66CE9009D5822 /* PostCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCard.swift; sourceTree = "<group>"; };
+		BCB7836526C67874009D5822 /* TimerBlobs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerBlobs.swift; sourceTree = "<group>"; };
 		BCBC1D7226BE7D7400B87E5C /* CryptoNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BCBC1D7526BE7D7400B87E5C /* CryptoNewsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoNewsApp.swift; sourceTree = "<group>"; };
 		BCBC1D7726BE7D7400B87E5C /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -124,6 +142,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BCB7834F26C180E5009D5822 /* Tweets */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7835326C181C0009D5822 /* LatestTweets.swift */,
+			);
+			path = Tweets;
+			sourceTree = "<group>";
+		};
+		BCB7835026C180F7009D5822 /* Components */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7835526C1DB17009D5822 /* SystemButton.swift */,
+				BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */,
+				BCB7835F26C58E03009D5822 /* Container.swift */,
+				BCB7836126C5AE58009D5822 /* FancyHScroll.swift */,
+				BCB7836326C66CE9009D5822 /* PostCard.swift */,
+				BCB7836526C67874009D5822 /* TimerBlobs.swift */,
+			);
+			path = Components;
+			sourceTree = "<group>";
+		};
+		BCB7835A26C31855009D5822 /* Reddit */ = {
+			isa = PBXGroup;
+			children = (
+				BCB7835B26C31865009D5822 /* LatestRedditView.swift */,
+				BCB7835D26C318B9009D5822 /* RedditCardView.swift */,
+			);
+			path = Reddit;
+			sourceTree = "<group>";
+		};
 		BCBC1D6926BE7D7400B87E5C = {
 			isa = PBXGroup;
 			children = (
@@ -189,6 +237,9 @@
 		BCBC1DA026BE7DFD00B87E5C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BCB7835A26C31855009D5822 /* Reddit */,
+				BCB7835026C180F7009D5822 /* Components */,
+				BCB7834F26C180E5009D5822 /* Tweets */,
 				BCBC1DD026BF3C1B00B87E5C /* News */,
 				BCBC1DBC26BE825200B87E5C /* HomePage */,
 				BCBC1DA826BE824300B87E5C /* Charts */,
@@ -419,14 +470,22 @@
 				BCBC1DB926BE824300B87E5C /* CurveChart.swift in Sources */,
 				BCBC1DD526BF420A00B87E5C /* RecentNewsCard.swift in Sources */,
 				BCBC1DB426BE824300B87E5C /* SummaryView.swift in Sources */,
+				BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */,
+				BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */,
 				BCBC1DCB26BE9CA900B87E5C /* Data.swift in Sources */,
+				BCB7836426C66CE9009D5822 /* PostCard.swift in Sources */,
 				BCBC1DD326BF3C3F00B87E5C /* RecentNews.swift in Sources */,
 				BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */,
 				BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */,
 				BCBC1DC626BE876900B87E5C /* ImageHelper.swift in Sources */,
+				BCB7835E26C318B9009D5822 /* RedditCardView.swift in Sources */,
+				BCB7835626C1DB17009D5822 /* SystemButton.swift in Sources */,
+				BCB7836226C5AE58009D5822 /* FancyHScroll.swift in Sources */,
 				BCBC1DA426BE7F2400B87E5C /* StringHelper.swift in Sources */,
 				BCBC1DC026BE835100B87E5C /* Constants.swift in Sources */,
 				BCBC1DB726BE824300B87E5C /* ChartsMainView.swift in Sources */,
+				BCB7836626C67874009D5822 /* TimerBlobs.swift in Sources */,
+				BCB7835C26C31865009D5822 /* LatestRedditView.swift in Sources */,
 				BCBC1DB326BE824300B87E5C /* WeekBarChart.swift in Sources */,
 				BCBC1DB526BE824300B87E5C /* LineChart.swift in Sources */,
 				BCBC1DCF26BEA85800B87E5C /* CurrencyCard.swift in Sources */,
@@ -437,6 +496,7 @@
 				BCBC1DB826BE824300B87E5C /* CurvedChartHelpers.swift in Sources */,
 				BCBC1D7826BE7D7400B87E5C /* ContentView.swift in Sources */,
 				BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */,
+				BCB7836026C58E03009D5822 /* Container.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

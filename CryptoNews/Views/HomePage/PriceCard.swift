@@ -15,7 +15,7 @@ struct PriceCard: View {
     var currency:String
     var size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.4)
     var color:Color
-    
+    let font_color:Color = .black
     
     init(currency:String,color:Color = .orange,size:CGSize? = nil){
         self.color = color
@@ -28,9 +28,6 @@ struct PriceCard: View {
     
     func parsePrices(data:AssetData?){
         guard let timeData = data?.timeSeries else {return}
-//        print(String(describing: timeData.first?.price))
-//        let prices = timeData.map { $0.close ?? 0}
-        
         DispatchQueue.main.async {
             self.prices = timeData
         }
@@ -56,8 +53,8 @@ struct PriceCard: View {
             VStack(alignment: .leading, spacing: 2){
                 MainText(content: "Open", fontSize: 8.5,color: color)
                 MainText(content: String(format: "%.1f", open), fontSize: 20,color: color,fontWeight: .bold)
-                MainText(content: "Close", fontSize: 8.5,color: .white)
-                MainText(content: String(format: "%.1f", close), fontSize: 15,color: .white)
+                MainText(content: "Close", fontSize: 8.5,color: font_color)
+                MainText(content: String(format: "%.1f", close), fontSize: 15,color: font_color)
             }.frame(height: size.height, alignment: .leading)
             Spacer()
         }.frame(width: size.width, height: size.height, alignment: .bottom)
@@ -69,17 +66,17 @@ struct PriceCard: View {
             let h = g.frame(in: .local).height
             
             VStack(alignment: .leading, spacing: 10){
-                MainText(content: self.currency, fontSize: 20,color: .white)
+                MainText(content: self.currency, fontSize: 20,color: font_color)
                 PriceView(size: .init(width: w, height: h * 0.25))
-                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: true, size: .init(width: self.size.width, height: h * 0.6), bg: .clear, lineColor: color, chartShade: true)
+                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: self.size.width, height: h * 0.6), bg: .clear, lineColor: color, chartShade: true)
                     .offset(x: -20)
             }.frame(width: w, height: h, alignment: .leading)
             
         }.padding()
         .frame(width: self.size.width, height: self.size.height, alignment: .center)
-        .background(Color.black)
+        .background(Color.white)
         .cornerRadius(20)
-        .shadow(color: .white.opacity(0.2), radius: 5, x: 0, y: 0)
+        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
     }
     
     var body: some View {

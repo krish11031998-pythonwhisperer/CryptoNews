@@ -89,19 +89,26 @@ class AssetAPI:DAPI,ObservableObject{
     
 }
 
-class NewsAPI:DAPI,ObservableObject{
-    var currency:String
-    @Published var newsData:[AssetNewsData] = []
-    var source:String
+enum FeedType:String{
+    case Influential = "influential"
+    case Chronological = "chronological"
+}
+
+class FeedAPI:DAPI,ObservableObject{
+    var currency:[String]
+    var sources:[String]
+    var type:FeedType
+    var limit:Int
+    @Published var FeedData:[AssetNewsData] = []
     
-    init(currency:String,source:String = "news"){
+    init(currency:[String],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15){
         self.currency = currency
-        self.source = source
-        super.init()
+        self.sources = sources
+        self.type = type
+        self.limit = limit
     }
     
-    
-    var newsURL:URL?{
+    var tweetURL:URL?{
         var uC = URLComponents()
         uC.scheme = "https"
         uC.host = "api.lunarcrush.com"
@@ -109,10 +116,10 @@ class NewsAPI:DAPI,ObservableObject{
         uC.queryItems = [
             URLQueryItem(name: "data", value: "feeds"),
             URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
-            URLQueryItem(name: "type", value: "influential"),
-            URLQueryItem(name: "symbol", value: self.currency),
-            URLQueryItem(name: "sources", value: self.source),
-            URLQueryItem(name: "limit", value: "15")
+            URLQueryItem(name: "type", value: self.type.rawValue),
+            URLQueryItem(name: "symbol", value: self.currency.joined(separator: ",")),
+            URLQueryItem(name: "sources", value: self.sources.joined(separator: ",")),
+            URLQueryItem(name: "limit", value: "\(self.limit)")
         ]
         return uC.url
     }
@@ -123,7 +130,7 @@ class NewsAPI:DAPI,ObservableObject{
             let res = try decoder.decode(News.self, from: data)
             if let news = res.data {
                 DispatchQueue.main.async {
-                    self.newsData = news
+                    self.FeedData = news
                 }
             }
         }catch{
@@ -132,8 +139,7 @@ class NewsAPI:DAPI,ObservableObject{
     }
     
     func getAssetInfo(){
-        self.getInfo(_url: self.newsURL, completion: self.parseData(data:))
+        self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
     }
     
 }
-

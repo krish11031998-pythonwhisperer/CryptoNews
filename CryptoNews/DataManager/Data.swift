@@ -76,7 +76,15 @@ class AssetNewsData:Identifiable,Codable{
     var symbol:String?
     var social_score:Float?
     var type:String?
+    var body:String?
+    var commented:Int?
+    var likes:Int?
+    var retweets:Int?
+    var link:String?
     var title:String?
+    var twitter_screen_name:String?
+    var subreddit:String?
+    var profile_image:String?
     var description:String?
     var image:String?
     var thumbnail:String?
@@ -86,5 +94,3 @@ class AssetNewsData:Identifiable,Codable{
     var shares:Float?
     var url:String?
 }
-
-

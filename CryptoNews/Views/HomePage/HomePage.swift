@@ -14,21 +14,40 @@ struct HomePage: View {
 //
     var body: some View {
         ScrollView(.vertical,showsIndicators:false){
-            ScrollView(.horizontal, showsIndicators: false){
-                HStack(alignment: .center, spacing: 10){
-                    ForEach(self.currencies,id:\.self) { currency in
-                        PriceCard(currency: currency,color: self.color[currency] ?? .white)
-                    }
-                }.padding()
-            }.padding(.top,50)
-//            ForEach(self.currencies,id:\.self) { currency in
-//                RecentNews(currency: currency)
-//            }
-            RecentNewsCarousel()
+            VStack(alignment: .center, spacing: 15) {
+                Spacer().frame(height: 50)
+                self.PriceCards
+                self.NewsSection
+//                LatestTweets(currency: "all")
+                LatestRedditView(currency: "all")
+                LatestTweets(currency: "all")
+                Spacer(minLength: 200)
+            }
         }
         .frame(width: totalWidth, alignment: .center)
-        .background(Color.black)
+        .background(Color.white.overlay(BlurView(style: .light)))
         .edgesIgnoringSafeArea(.all)
+    }
+}
+
+extension HomePage{
+    var PriceCards:some View{
+        ScrollView(.horizontal, showsIndicators: false){
+            HStack(alignment: .center, spacing: 10){
+                ForEach(self.currencies,id:\.self) { currency in
+                    PriceCard(currency: currency,color: self.color[currency] ?? .white)
+                }
+            }.padding()
+        }
+    }
+    
+    
+    var NewsSection:some View{
+        return RecentNewsCarousel(heading: "News") { currency in
+            guard let curr = currency as? String  else {return AnyView(Color.clear)}
+            return AnyView(RecentNews(currency: curr,ext_h: true))
+        }
+        
     }
 }
 
