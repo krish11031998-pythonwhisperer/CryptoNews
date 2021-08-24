@@ -11,7 +11,7 @@ struct RecentNewsCarousel: View {
     var heading:String
     var view: (Any) -> AnyView
     var data:[Any]
-    init(heading:String,data:[String] = ["BTC","LTC","DOGE","XRP"],view:@escaping (Any) -> AnyView){
+    init(heading:String,data:[String] = ["BTC","LTC","ETH","XRP"],view:@escaping (Any) -> AnyView){
         self.heading = heading
         self.data = data
         self.view = view

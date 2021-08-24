@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct HomePage: View {
-    var currencies:[String] = ["BTC","LTC"]
-    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow]
+    var currencies:[String] = ["BTC","LTC","ETH"]
+    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue]
 //    var currencies:[String] = ["BTC"]
 //
     var body: some View {

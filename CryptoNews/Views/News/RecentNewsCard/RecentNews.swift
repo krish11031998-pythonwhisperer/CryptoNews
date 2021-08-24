@@ -15,7 +15,7 @@ struct RecentNews: View {
     var ext_h:Bool
     @State var idx:Int = 0
     init(currency:String,size:CGSize = .init(width: totalWidth - 20, height: totalHeight * 1.1),ext_h:Bool = false){
-        self._news = .init(wrappedValue: .init(currency: [currency],sources:["news"],type:.Influential))
+        self._news = .init(wrappedValue: .init(currency: [currency],sources:["news"],type:.Chronological))
         self.currency = currency
         self.containerSize = size
         self.ext_h = ext_h
@@ -54,9 +54,9 @@ struct RecentNews: View {
             
         }
         .padding()
-        .background(Color.white)
+//        .background(Color.white)
         .cornerRadius(20)
-        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+//        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         .animation(.easeInOut)
         .onAppear(perform: self.onAppear)
     }
