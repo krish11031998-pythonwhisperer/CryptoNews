@@ -21,11 +21,12 @@ struct HomePage: View {
 //                LatestTweets(currency: "all")
                 LatestRedditView(currency: "all")
                 LatestTweets(currency: "all")
+                InfluentialTweets()
                 Spacer(minLength: 200)
             }
         }
         .frame(width: totalWidth, alignment: .center)
-        .background(Color.white.overlay(BlurView(style: .light)))
+        .background(Color.black.opacity(0.1).overlay(BlurView(style: .light)))
         .edgesIgnoringSafeArea(.all)
     }
 }
@@ -33,9 +34,9 @@ struct HomePage: View {
 extension HomePage{
     var PriceCards:some View{
         ScrollView(.horizontal, showsIndicators: false){
-            HStack(alignment: .center, spacing: 10){
+            LazyHStack(alignment: .center, spacing: 10){
                 ForEach(self.currencies,id:\.self) { currency in
-                    PriceCard(currency: currency,color: self.color[currency] ?? .white)
+                    PriceCard(currency: currency,color: self.color[currency] ?? .white,font_color: .white)
                 }
             }.padding()
         }

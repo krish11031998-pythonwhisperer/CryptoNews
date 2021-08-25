@@ -41,7 +41,7 @@ struct FancyHScroll: View {
             
             
         }.frame(width: size.width, height: size.height, alignment: .center)
-        .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
+//        .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
     }
     
     var offset:CGFloat{
@@ -72,7 +72,11 @@ struct FancyHScroll: View {
                         let cur = _cur.element
                         let idx = _cur.offset
                         
-                        TimerBlobs(text: cur, h: timeBlob_h, time: self.$time, targetTime: 10, active: self.SP.swiped == idx)
+                        Button {
+                            self.SP.swiped = idx
+                        } label: {
+                            TimerBlobs(text: cur, h: timeBlob_h, time: self.$time, targetTime: 10, active: self.SP.swiped == idx)
+                        }  
                     }
                 }.frame(width:size.width,height:timeBlob_h)
             }

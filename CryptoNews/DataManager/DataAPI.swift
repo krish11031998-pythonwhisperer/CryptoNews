@@ -36,6 +36,7 @@ class DAPI{
     
     func getInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
+        print("(DEBUG) Calling this URL : ",url)
         URLSession.shared.dataTaskPublisher(for: url)
             .receive(on: DispatchQueue.main)
             .tryMap(self.checkOutput(output:))
@@ -99,13 +100,15 @@ class FeedAPI:DAPI,ObservableObject{
     var sources:[String]
     var type:FeedType
     var limit:Int
+    let page:Int
     @Published var FeedData:[AssetNewsData] = []
     
-    init(currency:[String],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15){
+    init(currency:[String],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15,page:Int = 0){
         self.currency = currency
         self.sources = sources
         self.type = type
         self.limit = limit
+        self.page = page
     }
     
     var tweetURL:URL?{
@@ -119,7 +122,8 @@ class FeedAPI:DAPI,ObservableObject{
             URLQueryItem(name: "type", value: self.type.rawValue),
             URLQueryItem(name: "symbol", value: self.currency.joined(separator: ",")),
             URLQueryItem(name: "sources", value: self.sources.joined(separator: ",")),
-            URLQueryItem(name: "limit", value: "\(self.limit)")
+            URLQueryItem(name: "limit", value: "\(self.limit)"),
+            URLQueryItem(name: "page", value: "\(self.page)")
         ]
         return uC.url
     }

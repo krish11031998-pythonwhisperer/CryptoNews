@@ -18,7 +18,7 @@ struct Container: View {
     var body: some View {
         let w = totalWidth - 30
         VStack(alignment: .leading, spacing: 10) {
-            MainText(content: self.heading, fontSize: 30, color: .black, fontWeight: .semibold)
+            MainText(content: self.heading, fontSize: 30, color: .white, fontWeight: .semibold)
             Divider().frame(width:w * 0.5,alignment: .leading)
                 .padding(.bottom,10)
             self.innerView(w)

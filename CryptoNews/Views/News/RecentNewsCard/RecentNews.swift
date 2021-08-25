@@ -54,9 +54,9 @@ struct RecentNews: View {
             
         }
         .padding()
-//        .background(Color.white)
+        .background(BlurView(style: .dark))
         .cornerRadius(20)
-//        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         .animation(.easeInOut)
         .onAppear(perform: self.onAppear)
     }

@@ -11,7 +11,7 @@ struct LatestRedditView: View {
     @StateObject var RedditAPI:FeedAPI
     let font_color:Color = .black
     init(currency:String = "all"){
-        self._RedditAPI = .init(wrappedValue: .init(currency: currency == "all" ? ["BTC","LTC","DOGE"] : [currency], type: .Chronological,limit: 50))
+        self._RedditAPI = .init(wrappedValue: .init(currency: currency == "all" ? ["BTC","LTC","DOGE"] : [currency],sources:["reddit"], type: .Chronological,limit: 50))
     }
     
     func onAppear(){

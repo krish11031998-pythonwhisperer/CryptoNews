@@ -19,7 +19,7 @@ struct PostCard: View {
     var font_color:Color
     var const_size:Bool
     
-    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,font_color:Color = .black,const_size:Bool = false){
+    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,font_color:Color = .white,const_size:Bool = false){
         self.cardType = cardType
         self.data = data
         self.size = size
@@ -34,7 +34,7 @@ struct PostCard: View {
         let view =
             ZStack(alignment: .bottom) {
                 Color.mainBGColor.frame(width: size.width, height: size.height * 0.15, alignment: .center)
-                BlurView(style: .light)
+                BlurView(style: .dark)
                 VStack(alignment: .leading, spacing: 15) {
                     self.Header(data: data, size: .init(width: w, height: h * 0.1))
                     MainText(content: data.body ?? "No Body", fontSize: 14, color: font_color, fontWeight: .regular)

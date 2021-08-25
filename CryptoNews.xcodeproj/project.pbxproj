@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */; };
 		BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */; };
 		BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */; };
 		BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835326C181C0009D5822 /* LatestTweets.swift */; };
@@ -69,6 +70,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluentialTweets.swift; sourceTree = "<group>"; };
 		BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyInfoView.swift; sourceTree = "<group>"; };
 		BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTimeCardsView.swift; sourceTree = "<group>"; };
 		BCB7835326C181C0009D5822 /* LatestTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestTweets.swift; sourceTree = "<group>"; };
@@ -156,6 +158,7 @@
 			isa = PBXGroup;
 			children = (
 				BCB7835326C181C0009D5822 /* LatestTweets.swift */,
+				BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */,
 			);
 			path = Tweets;
 			sourceTree = "<group>";
@@ -489,6 +492,7 @@
 				BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */,
 				BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */,
 				BCBC1DC626BE876900B87E5C /* ImageHelper.swift in Sources */,
+				BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */,
 				BCB7835E26C318B9009D5822 /* RedditCardView.swift in Sources */,
 				BCB7835626C1DB17009D5822 /* SystemButton.swift in Sources */,
 				BCB7836226C5AE58009D5822 /* FancyHScroll.swift in Sources */,

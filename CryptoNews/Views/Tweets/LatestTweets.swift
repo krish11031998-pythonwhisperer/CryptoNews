@@ -34,7 +34,7 @@ struct LatestTweets: View {
     
     
     var body: some View {
-        Container(heading: "Latest Tweets") { w in
+        Container(heading: "Trending Tweets") { w in
             return self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
         }.onAppear(perform: self.onAppear)
     }
@@ -45,15 +45,10 @@ extension LatestTweets{
     func TweetsFeed(size:CGSize) -> AnyView{
         var view = AnyView(Color.clear.frame(width: size.width, height: size.height, alignment: .center).overlay(ProgressView()))
         if !self.tweets.FeedData.isEmpty{
-            view = AnyView(
-                LazyVStack(alignment: .center, spacing: 10){
-//                Group{
-                    ForEach(Array(self.tweets.FeedData.enumerated()),id:\.offset) { _data in
-                        let data = _data.element
-                        PostCard(cardType: .Tweet, data: data, size: size)
-                    }
-                }
-            )
+            view = AnyView(AutoTimeCardsView(data: self.tweets.FeedData,size: size, view: { data, size in
+                guard let data = data as? AssetNewsData else {return AnyView(Color.clear.frame(width: size.width, height: size.height, alignment: .center))}
+                return AnyView(PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height), const_size: true))
+            }))
         }
         return view
     }

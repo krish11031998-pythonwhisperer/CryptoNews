@@ -18,11 +18,11 @@ struct CurveChart: View {
     var interactions:Bool
     var header:String? = nil
     var bgColor:Color
-    var lineColor:Color
+    var lineColor:Color?
     var chartShade:Bool
     var useSelected:Bool = true
     
-    init(data:[Float],choosen:Binding<Int>? = nil,interactions:Bool = true,size:CGSize? = nil,header:String? = nil,bg:Color = .white,lineColor:Color = .blue,chartShade:Bool = true){
+    init(data:[Float],choosen:Binding<Int>? = nil,interactions:Bool = true,size:CGSize? = nil,header:String? = nil,bg:Color = .white,lineColor:Color? = nil,chartShade:Bool = true){
         self.interactions = interactions
         self.data = data
         if let s = size{
@@ -65,13 +65,13 @@ struct CurveChart: View {
                 .rotationEffect(.degrees(180), anchor: .center)
                 .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
 //                .shadow(color: color, radius: 5, x: 0, y: 5)
-                .shadow(color: color, radius: 30, x: 0, y: 30)
+//                .shadow(color: self.gradientColor, radius: 30, x: 0, y: 30)
 //                .shadow(color: color.opacity(0.5), radius: 15, x: 0, y: 15)
 //                .shadow(color: color.opacity(0.25), radius: 20, x: 0, y: 20)
 //                .shadow(color: color.opacity(0.0), radius: 25, x: 0, y: 25)
             if self.selected != -1 || self.choosen != -1{
                 Circle()
-                    .fill(color)
+                    .fill(Color.black)
                     .frame(width: 10, height: 10, alignment: .bottom)
                     .offset(x: self.location.x - 2.5, y: self.location.y + 7.5)
                     .rotationEffect(.degrees(180), anchor: .center)
@@ -144,6 +144,7 @@ extension CurveChart{
     }
     
     var gradientColor:LinearGradient{
+        guard let lineColor = self.lineColor else {return Color.mainBGColor}
         return LinearGradient(gradient: .init(colors: [lineColor,lineColor.opacity(0.875),lineColor.opacity(0.75)]), startPoint: .trailing, endPoint: .leading)
     }
     

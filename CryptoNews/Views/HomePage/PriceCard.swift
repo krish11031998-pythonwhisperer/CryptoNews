@@ -15,15 +15,16 @@ struct PriceCard: View {
     var currency:String
     var size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.4)
     var color:Color
-    let font_color:Color = .black
+    let font_color:Color
     
-    init(currency:String,color:Color = .orange,size:CGSize? = nil){
+    init(currency:String,color:Color = .orange,size:CGSize? = nil,font_color:Color = .white){
         self.color = color
         self.currency = currency
         self._asset_api = StateObject(wrappedValue: .init(currency: currency))
         if let safeSize = size{
             self.size = safeSize
         }
+        self.font_color = font_color
     }
     
     func parsePrices(data:AssetData?){
@@ -65,16 +66,16 @@ struct PriceCard: View {
             let w = g.frame(in: .local).width
             let h = g.frame(in: .local).height
             
-            VStack(alignment: .leading, spacing: 10){
+            LazyVStack(alignment: .leading, spacing: 10){
                 MainText(content: self.currency, fontSize: 20,color: font_color)
                 PriceView(size: .init(width: w, height: h * 0.25))
-                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: self.size.width, height: h * 0.6), bg: .clear, lineColor: color, chartShade: true)
+                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: self.size.width, height: h * 0.6), bg: .clear, chartShade: true)
                     .offset(x: -20)
             }.frame(width: w, height: h, alignment: .leading)
             
         }.padding()
         .frame(width: self.size.width, height: self.size.height, alignment: .center)
-        .background(Color.white)
+        .background(BlurView(style: .systemThinMaterialDark))
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
     }
