@@ -41,10 +41,9 @@ struct ImageView:View{
             
     func img_h(img:UIImage? = nil) -> CGFloat{
         var h = self.height
-        let ar = UIImage.aspectRatio(img: img)
         if self.autoHeight && img != nil{
-            h = self.width/ar
-            h = self.autoHeight && h < 250 ? h * 1.5  : h
+            let ar = UIImage.aspectRatio(img: img)
+            h = self.width/ar < 150 ? 150 : self.width/ar > 500 ? 500 : self.width/ar
         }
         return h
     }

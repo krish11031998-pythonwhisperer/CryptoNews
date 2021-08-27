@@ -19,9 +19,11 @@ struct HomePage: View {
                 self.PriceCards
                 self.NewsSection
 //                LatestTweets(currency: "all")
-                LatestRedditView(currency: "all")
                 LatestTweets(currency: "all")
-                InfluentialTweets()
+//                LatestRedditView(currency: "all")
+                CryptoMarket()
+//
+//                InfluentialTweets()
                 Spacer(minLength: 200)
             }
         }

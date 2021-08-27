@@ -37,8 +37,18 @@ struct PostCard: View {
                 BlurView(style: .dark)
                 VStack(alignment: .leading, spacing: 15) {
                     self.Header(data: data, size: .init(width: w, height: h * 0.1))
-                    MainText(content: data.body ?? "No Body", fontSize: 14, color: font_color, fontWeight: .regular)
-                        .fixedSize(horizontal: false, vertical: true)
+                    if let body = self.data.body{
+                        MainText(content: body, fontSize: 14, color: font_color, fontWeight: .regular)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }else if let title = self.data.title{
+                        MainText(content: title, fontSize: 14, color: font_color, fontWeight: .regular)
+                            .fixedSize(horizontal: false, vertical: true)
+                    }
+                    
+                    if self.data.link?.isImgURLStr() ?? false{
+                        ImageView(url: self.data.link, width: w, height: h * 0.45, contentMode: .fill, alignment: .center)
+                            .clipShape(RoundedRectangle(cornerRadius: 15))
+                    }
                     Spacer(minLength: 0)
                     Divider().frame(width: w, alignment: .center)
                     self.Footer(data: data, size: .init(width: w, height: h * 0.1))
@@ -56,11 +66,11 @@ struct PostCard: View {
     
     var body: some View {
         
-        if self.data.link?.isImgURLStr() ?? false{
-            ImageCardView(data: self.data, size: self.size)
-        }else{
+//        if self.data.link?.isImgURLStr() ?? false{
+//            ImageCardView(data: self.data, size: self.size)
+//        }else{
             self.card
-        }
+//        }
     }
 }
 

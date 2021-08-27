@@ -1,12 +1,11 @@
 //
-//  Data.swift
+//  AssetAPI.swift
 //  CryptoNews
 //
-//  Created by Krishna Venkatramani on 07/08/2021.
+//  Created by Krishna Venkatramani on 26/08/2021.
 //
 
 import Foundation
-
 
 class Asset:Codable{
     var data:[AssetData]
@@ -65,32 +64,43 @@ class AssetData:Identifiable,Codable{
 //    var market_dominance:Float?
 }
 
-class News:Codable{
-    var data:[AssetNewsData]?
-}
 
-class AssetNewsData:Identifiable,Codable{
-    var lunar_id:Float?
-    var time:Float?
-    var name:String?
-    var symbol:String?
-    var social_score:Float?
-    var type:String?
-    var body:String?
-    var commented:Int?
-    var likes:Int?
-    var retweets:Int?
-    var link:String?
-    var title:String?
-    var twitter_screen_name:String?
-    var subreddit:String?
-    var profile_image:String?
-    var description:String?
-    var image:String?
-    var thumbnail:String?
-    var sentiment:Float?
-    var average_sentiment:Float?
-    var publisher:String?
-    var shares:Float?
-    var url:String?
+class AssetAPI:DAPI,ObservableObject{
+    var currency:String
+    @Published var data:AssetData? = nil
+    
+    init(currency:String){
+        self.currency = currency
+        super.init()
+    }
+    
+    
+    var assetURL:URL?{
+        var uC = self.baseComponent
+        uC.queryItems = [
+            URLQueryItem(name: "data", value: "assets"),
+            URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
+            URLQueryItem(name: "symbol", value: self.currency)
+        ]
+        return uC.url
+    }
+    
+    func parseData(data:Data){
+        let decoder = JSONDecoder()
+        do{
+            let res = try decoder.decode(Asset.self, from: data)
+            if let first = res.data.first {
+                DispatchQueue.main.async {
+                    self.data = first
+                }
+            }
+        }catch{
+            print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
+        }
+    }
+    
+    func getAssetInfo(){
+        self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
+    }
+    
 }
