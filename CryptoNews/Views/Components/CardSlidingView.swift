@@ -36,6 +36,9 @@ struct CardSlidingView: View {
                     view
                         .scaleEffect(scale)
                         .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
+                        .onTapGesture{
+                            self.SP.swiped = idx
+                        }
                 }
             }
             Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)

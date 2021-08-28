@@ -30,8 +30,8 @@ struct CryptoMarket: View {
         ZStack{
             if let views = self.view{
                 VStack(alignment: .leading, spacing: 10){
-                    MainText(content: "Crypto Market", fontSize: 30, color: .white, fontWeight: .semibold).padding(.horizontal,15)
-                    Divider().frame(width:cardSize.width * 0.5,alignment: .leading).padding(.horizontal,15)
+                    MainText(content: "Crypto Market", fontSize: 30, color: .white, fontWeight: .semibold).padding(.horizontal,25)
+                    Divider().frame(width:cardSize.width * 0.5,alignment: .leading).padding(.horizontal,25)
                     CardSlidingView(cardSize: cardSize,views: views)
                 }
             }else{
