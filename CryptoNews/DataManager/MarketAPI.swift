@@ -55,13 +55,12 @@ class MarketAPI:DAPI,ObservableObject{
     
     var marketURL:URL?{
         var uC = self.baseComponent
-        uC.queryItems = [
+        uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "market"),
-            URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
             URLQueryItem(name: "sort", value: self.sort),
             URLQueryItem(name: "desc", value: "true"),
             URLQueryItem(name: "limit", value: "\(self.limit)")
-        ]
+        ])
         return uC.url
     }
     

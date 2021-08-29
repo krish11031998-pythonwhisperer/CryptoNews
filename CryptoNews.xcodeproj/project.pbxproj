@@ -11,6 +11,7 @@
 		99C9BA08EF79222CB1F58B4D /* Pods_CryptoNews_CryptoNewsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE6BC9FF86AE733BA0674A4 /* Pods_CryptoNews_CryptoNewsUITests.framework */; };
 		B604296EF35B5328FC78F538 /* Pods_CryptoNews.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E420CC55E1502BDA8A86DBFC /* Pods_CryptoNews.framework */; };
 		BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */; };
+		BC2267A626DA5C830058315E /* VideoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2267A526DA5C830058315E /* VideoCard.swift */; };
 		BC305F0726D8202D00826AB4 /* CryptoMarket.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0626D8202D00826AB4 /* CryptoMarket.swift */; };
 		BC305F0926D8209000826AB4 /* DAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0826D8209000826AB4 /* DAPI.swift */; };
 		BC305F0B26D820CD00826AB4 /* AssetAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0A26D820CD00826AB4 /* AssetAPI.swift */; };
@@ -83,6 +84,7 @@
 		6AE6BC9FF86AE733BA0674A4 /* Pods_CryptoNews_CryptoNewsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CryptoNews_CryptoNewsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF8A61F81D5A4EA47865B57 /* Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNews-CryptoNewsUITests/Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluentialTweets.swift; sourceTree = "<group>"; };
+		BC2267A526DA5C830058315E /* VideoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCard.swift; sourceTree = "<group>"; };
 		BC305F0626D8202D00826AB4 /* CryptoMarket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoMarket.swift; sourceTree = "<group>"; };
 		BC305F0826D8209000826AB4 /* DAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DAPI.swift; sourceTree = "<group>"; };
 		BC305F0A26D820CD00826AB4 /* AssetAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetAPI.swift; sourceTree = "<group>"; };
@@ -407,6 +409,7 @@
 			isa = PBXGroup;
 			children = (
 				BCF98BA426D9811300C45562 /* CryptoYoutube.swift */,
+				BC2267A526DA5C830058315E /* VideoCard.swift */,
 			);
 			path = Youtube;
 			sourceTree = "<group>";
@@ -689,6 +692,7 @@
 				BCBC1DB826BE824300B87E5C /* CurvedChartHelpers.swift in Sources */,
 				BCBC1D7826BE7D7400B87E5C /* ContentView.swift in Sources */,
 				BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */,
+				BC2267A626DA5C830058315E /* VideoCard.swift in Sources */,
 				BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */,
 				BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */,
 				BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */,

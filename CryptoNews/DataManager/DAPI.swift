@@ -27,10 +27,10 @@ class DAPI{
         uC.scheme = "https"
         uC.host = "api.lunarcrush.com"
         uC.path = "/v2"
-//        uC.queryItems = [
+        uC.queryItems = [
 ////            URLQueryItem(name: "data", value: "assets"),
-////            URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
-//        ]
+            URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
+        ]
         return uC
     }
     

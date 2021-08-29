@@ -17,5 +17,6 @@ target 'CryptoNews' do
   end
 
 pod 'XCDYouTubeKit'
+pod "youtube-ios-player-helper"
 
 end

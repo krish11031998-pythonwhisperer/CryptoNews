@@ -77,11 +77,10 @@ class AssetAPI:DAPI,ObservableObject{
     
     var assetURL:URL?{
         var uC = self.baseComponent
-        uC.queryItems = [
+        uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "assets"),
-            URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
             URLQueryItem(name: "symbol", value: self.currency)
-        ]
+        ])
         return uC.url
     }
     

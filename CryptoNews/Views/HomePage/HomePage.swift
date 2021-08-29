@@ -18,12 +18,9 @@ struct HomePage: View {
                 Spacer().frame(height: 50)
                 self.PriceCards
                 self.NewsSection
-//                LatestTweets(currency: "all")
                 LatestTweets(currency: "all")
-//                LatestRedditView(currency: "all")
                 CryptoMarket()
-//
-//                InfluentialTweets()
+                CryptoYoutube()
                 Spacer(minLength: 200)
             }
         }

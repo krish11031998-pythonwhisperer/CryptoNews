@@ -52,7 +52,7 @@ class FeedAPI:DAPI,ObservableObject{
     let page:Int
     @Published var FeedData:[AssetNewsData] = []
     
-    init(currency:[String],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15,page:Int = 0){
+    init(currency:[String] = ["BTC","LTC","XRP"],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15,page:Int = 0){
         self.currency = currency
         self.sources = sources
         self.type = type
@@ -61,19 +61,15 @@ class FeedAPI:DAPI,ObservableObject{
     }
     
     var tweetURL:URL?{
-        var uC = URLComponents()
-        uC.scheme = "https"
-        uC.host = "api.lunarcrush.com"
-        uC.path = "/v2"
-        uC.queryItems = [
+        var uC = self.baseComponent
+        uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "feeds"),
-            URLQueryItem(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg"),
             URLQueryItem(name: "type", value: self.type.rawValue),
             URLQueryItem(name: "symbol", value: self.currency.joined(separator: ",")),
             URLQueryItem(name: "sources", value: self.sources.joined(separator: ",")),
             URLQueryItem(name: "limit", value: "\(self.limit)"),
             URLQueryItem(name: "page", value: "\(self.page)")
-        ]
+        ])
         return uC.url
     }
     

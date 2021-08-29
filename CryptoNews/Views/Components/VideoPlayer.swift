@@ -11,6 +11,7 @@ import AVFoundation
 import AVKit
 import SwiftUI
 import XCDYouTubeKit
+import youtube_ios_player_helper
 
 enum VideoStates{
     case play
@@ -107,7 +108,7 @@ class AVPlayerObj:ObservableObject{
     }
     
     func getVideo(){
-        guard let id = self.video_id else {return}
+        guard let id = self.video_id, self.player == nil else {return}
         if let asset = VideoCache.shared[id]{
             print("Got the URL from videoCache !")
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)){
@@ -180,3 +181,65 @@ struct SimpleVideoPlayer: UIViewControllerRepresentable{
     
 }
 
+struct YoutubePlayer:UIViewRepresentable{
+    
+    var size:CGSize = .zero
+    var videoID:String
+    @Binding var playerState:YTPlayerState
+    var player:YTPlayerView
+    init(size:CGSize,videoID:String,playerState:Binding<YTPlayerState>){
+        self.size = size
+        self.videoID = videoID
+        self._playerState = playerState
+        self.player = YTPlayerView(frame: .init(origin: .zero, size: size))
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        return Coordinator(parent: self)
+    }
+    
+    
+    func makeUIView(context: Context) -> YTPlayerView {
+        self.player.load(withVideoId: self.videoID)
+        player.delegate = context.coordinator
+        return self.player
+    }
+    
+    
+    func updateUIView(_ uiView: YTPlayerView, context: Context) {
+        self.player.playerState { (state, err) in
+            print("state : ",state)
+            if state != self.playerState{
+                switch(self.playerState){
+                    case .paused:
+                        uiView.pauseVideo()
+                    case .playing:
+                        uiView.playVideo()
+                    default:
+                        break;
+                }
+            }
+        }
+    }
+    
+    
+    class Coordinator:NSObject,YTPlayerViewDelegate{
+        var parent:YoutubePlayer
+        
+        init(parent:YoutubePlayer){
+            self.parent = parent
+        }
+        
+        func playerView(_ playerView: YoutubePlayer, didPlayTime playTime: Float) {
+            print("playTime : ",playTime)
+        }
+        
+        
+        func playerView(_ playerView: YoutubePlayer, didChangeTo state: YTPlayerState) {
+            if state == .paused{
+                self.parent.playerState = .paused
+            }
+        }
+    }
+    
+}
