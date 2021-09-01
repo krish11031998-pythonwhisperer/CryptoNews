@@ -18,6 +18,7 @@
 		BC305F0D26D8213400826AB4 /* FeedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0C26D8213400826AB4 /* FeedAPI.swift */; };
 		BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */; };
 		BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */; };
+		BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */; };
 		BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */; };
 		BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */; };
 		BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835326C181C0009D5822 /* LatestTweets.swift */; };
@@ -91,6 +92,7 @@
 		BC305F0C26D8213400826AB4 /* FeedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAPI.swift; sourceTree = "<group>"; };
 		BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoCoinCard.swift; sourceTree = "<group>"; };
 		BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSlidingView.swift; sourceTree = "<group>"; };
+		BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDetailView.swift; sourceTree = "<group>"; };
 		BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyInfoView.swift; sourceTree = "<group>"; };
 		BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTimeCardsView.swift; sourceTree = "<group>"; };
 		BCB7835326C181C0009D5822 /* LatestTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestTweets.swift; sourceTree = "<group>"; };
@@ -198,9 +200,18 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */ = {
+			isa = PBXGroup;
+			children = (
+				BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */,
+			);
+			path = CurrencyDetailView;
+			sourceTree = "<group>";
+		};
 		BCB2978A26D57371005E2289 /* CurrencyView */ = {
 			isa = PBXGroup;
 			children = (
+				BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */,
 				BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */,
 				BC305F0626D8202D00826AB4 /* CryptoMarket.swift */,
 				BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */,
@@ -656,6 +667,7 @@
 				BCBC1DB626BE824300B87E5C /* ChartCard.swift in Sources */,
 				BCBC1DCD26BEA1FD00B87E5C /* MarketAPI.swift in Sources */,
 				BCBC1DA726BE7FE200B87E5C /* HomePage.swift in Sources */,
+				BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */,
 				BCBC1DD826BF424D00B87E5C /* ImageView.swift in Sources */,
 				BCBC1DC226BE862400B87E5C /* Array.swift in Sources */,
 				BCBC1DBE26BE826300B87E5C /* PriceCard.swift in Sources */,

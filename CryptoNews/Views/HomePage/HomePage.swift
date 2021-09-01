@@ -25,7 +25,7 @@ struct HomePage: View {
             }
         }
         .frame(width: totalWidth, alignment: .center)
-        .background(Color.black.opacity(0.1).overlay(BlurView(style: .light)))
+        .background(mainBGView)
         .edgesIgnoringSafeArea(.all)
     }
 }

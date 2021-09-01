@@ -205,21 +205,32 @@ struct YoutubePlayer:UIViewRepresentable{
         return self.player
     }
     
-    
-    func updateUIView(_ uiView: YTPlayerView, context: Context) {
-        self.player.playerState { (state, err) in
-            print("state : ",state)
-            if state != self.playerState{
-                switch(self.playerState){
-                    case .paused:
-                        uiView.pauseVideo()
-                    case .playing:
-                        uiView.playVideo()
-                    default:
-                        break;
+    func avplayerView(view parentView:UIView? = nil){
+        if let view = parentView{
+            if view.subviews.isEmpty{
+                return
+            }else{
+                view.subviews.forEach { view in
+                    print("DEBUG : ",view)
+                    self.avplayerView(view: view)
                 }
             }
         }
+        return
+    }
+    
+    
+    func updateUIView(_ uiView: YTPlayerView, context: Context) {
+    
+    
+        
+        uiView.playerState { state, err in
+            if self.playerState == .playing && state != .playing{
+                uiView.playVideo()
+            }
+        }
+        
+        
     }
     
     
@@ -229,15 +240,10 @@ struct YoutubePlayer:UIViewRepresentable{
         init(parent:YoutubePlayer){
             self.parent = parent
         }
-        
-        func playerView(_ playerView: YoutubePlayer, didPlayTime playTime: Float) {
-            print("playTime : ",playTime)
-        }
-        
-        
-        func playerView(_ playerView: YoutubePlayer, didChangeTo state: YTPlayerState) {
-            if state == .paused{
-                self.parent.playerState = .paused
+
+        func playerView(_ playerView: YTPlayerView, didChangeTo state: YTPlayerState) {
+            if self.parent.playerState != state{
+                self.parent.playerState = state
             }
         }
     }

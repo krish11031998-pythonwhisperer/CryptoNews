@@ -16,7 +16,7 @@ struct VideoCard: View {
     init(data:AssetNewsData,size:CGSize){
         self.data = data
         self.size = size
-        self._playerState = .init(initialValue: .buffering)
+        self._playerState = .init(initialValue: .unstarted)
     }
     
     
@@ -34,17 +34,18 @@ struct VideoCard: View {
             VStack(alignment: .leading, spacing: 10){
                 ZStack(alignment: .center){
                     YoutubePlayer(size: .init(width: w, height: vw_h), videoID: self.video_id!, playerState: self.$playerState)
-//                    if self.playerState != .playing{
-//                        ImageView(url: self.data.thumbnail, width: w, height: vw_h, contentMode: .fill, alignment: .center)
-//                        SystemButton(b_name: "play.fill",size: .init(width: 20, height: 20)) {
-//                            self.playerState = .playing
-//                        }
-//                    }
+                    if self.playerState == .unstarted{
+                        ImageView(url: self.data.thumbnail, width: w, height: vw_h, contentMode: .fill, alignment: .center)
+                        SystemButton(b_name: "play.fill") {
+                            self.playerState = .playing
+                        }
+                    }
                 }.frame(width: w, height: vw_h , alignment: .center)
-                .clipShape(RoundedRectangle(cornerRadius: 5))
-                MainText(content: self.data.title ?? "No Title", fontSize: 15,color: .white,fontWeight: .semibold)
-                MainText(content: self.data.description ?? "", fontSize: 12, color: .white, fontWeight: .regular)
-            }.frame(width: w, height: h, alignment: .leading)
+                .clipShape(RoundedRectangle(cornerRadius: 10))
+                MainText(content: self.data.title ?? "No Title", fontSize: 15,color: .white,fontWeight: .medium)
+                Spacer()
+//                MainText(content: self.data.description ?? "", fontSize: 12, color: .white, fontWeight: .thin)
+            }.frame(width: w, height: h, alignment: .topLeading)
             
             
         }.frame(width: self.size.width, height: self.size.height, alignment: .center)

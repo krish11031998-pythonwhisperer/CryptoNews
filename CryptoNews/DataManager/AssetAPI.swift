@@ -101,5 +101,4 @@ class AssetAPI:DAPI,ObservableObject{
     func getAssetInfo(){
         self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
     }
-    
 }

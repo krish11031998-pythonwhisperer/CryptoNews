@@ -26,6 +26,14 @@ extension Color{
         return LinearGradient(gradient: .init(colors: [Color(colorOne),Color(colorTwo)]), startPoint: .top, endPoint: .bottom)
     }
 }
+var mainBGView: some View {
+    ZStack(alignment: .top){
+        Color.black
+        Color.mainBGColor.frame(width: totalWidth, height: totalHeight * 0.25)
+        BlurView(style: .dark)
+        
+    }
+}
 var baseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
 var bottomShadow = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)
 var lightbottomShadow = LinearGradient(gradient: .init(colors: [.clear,Color.black.opacity(0.5)]), startPoint: .top, endPoint: .bottom)
