@@ -57,28 +57,22 @@ struct CurveChart: View {
     func path(size:CGSize,step:CGSize) -> some View{
         let stepWidth = step.width
         let stepHeight = step.height
-        let color = self.chartShade ? self.lineColor : Color.clear
+//        let color = self.chartShade ? self.lineColor : Color.clear
         return ZStack(alignment: .leading){
             Path.drawCurvedChart(dataPoints: self.dataPoints, step: .init(x: stepWidth, y: stepHeight))
                 .trim(from: 0, to: self.load ? 1 : 0)
                 .stroke(self.gradientColor, style: StrokeStyle(lineWidth: 5, lineCap: .round))
-                .rotationEffect(.degrees(180), anchor: .center)
-                .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-//                .shadow(color: color, radius: 5, x: 0, y: 5)
-//                .shadow(color: self.gradientColor, radius: 30, x: 0, y: 30)
-//                .shadow(color: color.opacity(0.5), radius: 15, x: 0, y: 15)
-//                .shadow(color: color.opacity(0.25), radius: 20, x: 0, y: 20)
-//                .shadow(color: color.opacity(0.0), radius: 25, x: 0, y: 25)
+
             if self.selected != -1 || self.choosen != -1{
                 Circle()
-                    .fill(Color.black)
+                    .fill(Color.white)
                     .frame(width: 10, height: 10, alignment: .bottom)
                     .offset(x: self.location.x - 2.5, y: self.location.y + 7.5)
-                    .rotationEffect(.degrees(180), anchor: .center)
-                    .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-                    
+                
             }
         }
+        .rotationEffect(.degrees(180), anchor: .center)
+        .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
         .padding(.bottom,15)
         .frame(width: size.width, height: size.height, alignment: .center)
         .gesture(DragGesture()
@@ -98,20 +92,22 @@ struct CurveChart: View {
             let chart_w = w * 0.95
             let stepWidth = chart_w / CGFloat(self.data.count - 1)
             let stepHeight = self.calcStepHeight(h: h * 0.5)
-            VStack(alignment: .leading, spacing: 0){
-                if let header = self.header{
-                    BasicText(content: header, fontDesign: .serif, size: 20, weight: .bold)
-                        .padding(.horizontal)
-                        .frame(width: w,height: h * 0.3 - 35,alignment: .leading)
+
+            ZStack(alignment: .bottom){
+                self.path(size:.init(width: chart_w, height: h),step: .init(width: stepWidth, height: stepHeight))
+                    .frame(width: w, height: h, alignment: .center)
+                    .background(self.bgColor)
+                    .clipShape(RoundedRectangle(cornerRadius: 20))
+                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+                    .onAppear(perform: self.onAppear)
+                if self.selected != -1 || self.choosen != -1{
+                    Rectangle()
+                        .fill(Color.white)
+                        .frame(width: 2, height: self.size.height - 30, alignment: .leading)
+                        .offset(x: self.location.x - (w * 0.5 - 12.5))
                 }
-                self.path(size:.init(width: chart_w, height: h * 0.5 + 15),step: .init(width: stepWidth, height: stepHeight))
-                    
-            }
-            .frame(width: w, height: h, alignment: .center)
-            .background(self.bgColor)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
-            .onAppear(perform: self.onAppear)
+            }.frame(width: w, height: h, alignment: .leading)
+            
         }
         .padding(.horizontal)
         .frame(width: width, height: height, alignment: .center))

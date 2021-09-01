@@ -28,9 +28,11 @@ struct PriceCard: View {
     }
     
     func parsePrices(data:AssetData?){
-        guard let timeData = data?.timeSeries else {return}
+        
+        guard let data = data, let timeSeries = data.timeSeries else {return}
+        print("DEBUG ASSET DATA : ",String(describing: data));
         DispatchQueue.main.async {
-            self.prices = timeData
+            self.prices = timeSeries
         }
     }
     
@@ -41,6 +43,9 @@ struct PriceCard: View {
         
     }
     
+    func onReceiveData(data:[AssetData]){
+        
+    }
     
     func PriceView(size:CGSize) -> some View{
         let pointData = self.selected >= 0 && self.selected <= self.prices.count - 1 ? self.prices[self.selected] : self.prices.last
