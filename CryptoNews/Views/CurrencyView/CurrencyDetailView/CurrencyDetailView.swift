@@ -35,7 +35,6 @@ extension CurrencyDetailView{
             self.text(heading: "Open", info: String(format: "%.1f",asset.open ?? 0.0))
             self.text(heading: "Low", info: String(format: "%.1f",asset.low ?? 0.0))
             self.text(heading: "High", info: String(format: "%.1f",asset.high ?? 0.0))
-            self.text(heading: "Avg. Sentiment", info: String(format:"%.1f",asset.average_sentiment_calc_24h_previous ?? 0.0))
         }.padding(.vertical).frame(width: self.size.width, alignment: .topLeading)
     }
     
@@ -76,26 +75,32 @@ extension CurrencyDetailView{
         return (avg_sent/5.0) * 100
     }
     
+    
+    var sentitment_Ts:[Float]{
+        return self.currency.timeSeries?.compactMap({$0.average_sentiment}) ?? []
+    }
+    
     var Avg_Sentiment:some View{
-        ChartCard(header: "Avg. Sentiment", size: .init(width: self.size.width * 0.5, height: self.size.height), insideView: { w, h in
+        ChartCard(header: "Avg. Sentiment", size: .init(width: self.size.width, height: self.size.height), insideView: { w, h in
             let sentiment = self.currency.average_sentiment ?? 3.0
+            let sent_max = self.sentitment_Ts.max() ?? 0.0
+            let sent_min = self.sentitment_Ts.min() ?? 0.0
+            let normalize_factor = (sent_max - sent_min) / (sent_max + sent_min)
             return
                 AnyView(
-                    
+
                     VStack(alignment: .center, spacing: 10){
-                        MainText(content: sentiment > 3 ? "😁" : sentiment < 3 ? "😓" : "😐", fontSize: 100, color: .white)
-                        MainText(content: String(format:"%.1f", sentiment), fontSize: 30, color: .white, fontWeight: .regular)
-                        Spacer()
+                        CurveChart(data: self.sentitment_Ts.compactMap({$0 * normalize_factor}), interactions: true, size: .init(width: w, height: h * 0.5), bg: .clear, chartShade: true)
                     }.frame(width: w, height: h, alignment: .center)
                 )
-                
+
         }).padding(.vertical)
     }
     
 }
 
 private struct testView:View{
-    @StateObject var asset:AssetAPI = .init(currency: "LTC")
+    @StateObject var asset:AssetAPI = .init(currency: "BTC")
     
     func onAppear(){
         self.asset.getAssetInfo()
@@ -107,7 +112,7 @@ private struct testView:View{
             return AnyView(
                 ZStack(alignment: .center){
                     if let data = self.asset.data{
-                        CurrencyDetailView(info: data,size: .init(width: w + 40, height: totalHeight * 0.3))
+                        CurrencyDetailView(info: data,size: .init(width: w, height: totalHeight * 0.3))
                     }else{
                         ProgressView()
                     }
