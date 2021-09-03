@@ -11,6 +11,7 @@ struct CurrencyDetailView: View {
     var currency:AssetData
     var size:CGSize = .init()
     @State var choosen:Int = -1
+    @State var choosen_sent:Int = -1
     init(info:AssetData,size:CGSize){
         self.currency = info
         self.size = size
@@ -19,7 +20,7 @@ struct CurrencyDetailView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15){
-            self.text(heading: "Close", info:"\(String(format:"%.1f",self.price)) USD")
+            self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
             self.priceInfo
             self.curveChart
                 .clipShape(RoundedRectangle(cornerRadius: 15))
@@ -32,9 +33,10 @@ extension CurrencyDetailView{
     var priceInfo:some View{
         let asset = self.choosen == -1 ? self.currency : self.currency.timeSeries?[self.choosen] ?? self.currency
         return HStack(alignment: .top, spacing: 20){
-            self.text(heading: "Open", info: String(format: "%.1f",asset.open ?? 0.0))
-            self.text(heading: "Low", info: String(format: "%.1f",asset.low ?? 0.0))
-            self.text(heading: "High", info: String(format: "%.1f",asset.high ?? 0.0))
+            self.text(heading: "Open", info: convertToMoneyNumber(value: asset.open))
+            self.text(heading: "Low", info: convertToMoneyNumber(value: asset.low))
+            self.text(heading: "High", info: convertToMoneyNumber(value: asset.high))
+            self.text(heading: "Close", info: convertToMoneyNumber(value: asset.close))
         }.padding(.vertical).frame(width: self.size.width, alignment: .topLeading)
     }
     
@@ -50,7 +52,6 @@ extension CurrencyDetailView{
                 MainText(content: "NO Time Series Data", fontSize: 20, color: .white, fontWeight: .bold)
             }
         }
-        .offset(x: -20)
     }
     
     
@@ -80,27 +81,43 @@ extension CurrencyDetailView{
         return self.currency.timeSeries?.compactMap({$0.average_sentiment}) ?? []
     }
     
+    
+    var sentiment_set:[Float]{
+        var set_senti:Array<Float> = []
+        self.sentitment_Ts.forEach { senti in
+            if let last = set_senti.last{
+                if last != senti{
+                    set_senti.append(senti)
+                }
+            }else{
+                set_senti.append(senti)
+            }
+        }
+        return set_senti
+    }
+    
     var Avg_Sentiment:some View{
-        ChartCard(header: "Avg. Sentiment", size: .init(width: self.size.width, height: self.size.height), insideView: { w, h in
-            let sentiment = self.currency.average_sentiment ?? 3.0
-            let sent_max = self.sentitment_Ts.max() ?? 0.0
-            let sent_min = self.sentitment_Ts.min() ?? 0.0
-            let normalize_factor = (sent_max - sent_min) / (sent_max + sent_min)
-            return
-                AnyView(
-
-                    VStack(alignment: .center, spacing: 10){
-                        CurveChart(data: self.sentitment_Ts.compactMap({$0 * normalize_factor}), interactions: true, size: .init(width: w, height: h * 0.5), bg: .clear, chartShade: true)
-                    }.frame(width: w, height: h, alignment: .center)
+        ChartCard(header: "Sentiment", size: .init(width: self.size.width, height: self.size.height)) { w, h in
+            let sentiment = self.choosen_sent >= 0 && self.choosen_sent < self.sentiment_set.count - 1 ? self.sentiment_set[self.choosen_sent] : self.currency.average_sentiment ?? 3.0
+            let curve_sentiment = self.sentiment_set
+            return AnyView(
+                    VStack(alignment: .leading, spacing: 10){
+//
+//                        HStack(alignment: .center, spacing: 10){
+////                            self.text(heading: "Avg.Sentiment", info: "\(self.currency.average_sentiment ?? 3.0)")
+//                            self.text(heading: "Sentiment", info: "\(sentiment)")
+//                        }.padding(.horizontal,5).frame(height: h * 0.1)
+                        
+                        CurveChart(data: curve_sentiment,choosen: $choosen_sent, interactions: true, size: .init(width: w, height: h * 0.75), bg: .clear, chartShade: true)
+                    }.frame(width: w, height: h, alignment: .leading)
                 )
-
-        }).padding(.vertical)
+        }
     }
     
 }
 
 private struct testView:View{
-    @StateObject var asset:AssetAPI = .init(currency: "BTC")
+    @StateObject var asset:AssetAPI = .init(currency: "ETH")
     
     func onAppear(){
         self.asset.getAssetInfo()
@@ -108,7 +125,6 @@ private struct testView:View{
     
     var body: some View{
         Container(heading: "\(self.asset.currency)") { w in
-            
             return AnyView(
                 ZStack(alignment: .center){
                     if let data = self.asset.data{

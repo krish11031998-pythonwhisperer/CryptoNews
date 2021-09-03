@@ -67,16 +67,16 @@ func wideText(width w: CGFloat,text: String, fontSize: CGFloat, color: Color = .
 }
 
 func convertToMoneyNumber(value:Float?) -> String{
-    guard let value = value else {return "No Value"}
+    guard let value = value else {return "$0"}
     let decimal = value.truncatingRemainder(dividingBy: 1) != 0 ? "%.1f" : "%.0f"
     if value > 1000 && value < 1000000{
-        return "\(String(format: decimal, value/1000))k"
+        return "$\(String(format: decimal, value/1000))k"
     }else if value > 1000000 && value < 1000000000{
-        return "\(String(format: decimal,value/1000000))M"
+        return "$\(String(format: decimal,value/1000000))M"
     }else if value > 1000000000{
-        return "\(String(format: decimal,value/1000000000))B"
+        return "$\(String(format: decimal,value/1000000000))B"
     }else{
-        return "\(String(format: decimal,value))"
+        return "$\(String(format: decimal,value))"
     }
 }
 

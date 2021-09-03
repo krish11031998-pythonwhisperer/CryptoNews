@@ -35,7 +35,7 @@ struct ChartCard: View {
             let w = local.width
             let h = local.height
             VStack(alignment: .center, spacing: 10){
-                MainText(content: self.header, fontSize: 20, color: .white, fontWeight: .regular)
+                MainText(content: self.header, fontSize: 20, color: .white, fontWeight: .semibold)
                     .padding(5)
                     .frame(width: w,alignment: .leading)
                 if let safeIS = self.insideView{
@@ -45,7 +45,7 @@ struct ChartCard: View {
         }
         .padding(self.aR == .fill ? 10 : 0)
         .frame(width: self.size.width, height: self.size.height, alignment: .center)
-        .background(Color.black)
+        .background(Color.black.opacity(0.5))
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: .white.opacity(0.15), radius: 10, x: 0, y: 2)
     }

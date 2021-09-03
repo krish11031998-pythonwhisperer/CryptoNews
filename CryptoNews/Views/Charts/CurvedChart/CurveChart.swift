@@ -67,14 +67,15 @@ struct CurveChart: View {
                 Circle()
                     .fill(Color.white)
                     .frame(width: 10, height: 10, alignment: .bottom)
-                    .offset(x: self.location.x - 2.5, y: self.location.y + 7.5)
+                    .offset(x: self.location.x - 5, y: self.location.y + 10)
                 
             }
         }
         .rotationEffect(.degrees(180), anchor: .center)
         .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
-        .padding(.bottom,15)
+        .padding(.bottom,25)
         .frame(width: size.width, height: size.height, alignment: .center)
+//        .background(Color.red)
         .gesture(DragGesture()
                     .onChanged({ value in
                         self.onChanged(size: size, step: .init(x: stepWidth, y: stepHeight), value: value)
@@ -91,7 +92,7 @@ struct CurveChart: View {
             let h = g.size.height
             let chart_w = w * 0.95
             let stepWidth = chart_w / CGFloat(self.data.count - 1)
-            let stepHeight = self.calcStepHeight(h: h * 0.5)
+            let stepHeight = self.calcStepHeight(h: h - 40)
 
             ZStack(alignment: .bottom){
                 self.path(size:.init(width: chart_w, height: h),step: .init(width: stepWidth, height: stepHeight))
@@ -103,13 +104,13 @@ struct CurveChart: View {
                 if self.selected != -1 || self.choosen != -1{
                     Rectangle()
                         .fill(Color.white)
-                        .frame(width: 2, height: self.size.height - 30, alignment: .leading)
-                        .offset(x: self.location.x - (w * 0.5 - 12.5))
+                        .frame(width: 2, height: self.size.height, alignment: .leading)
+                        .offset(x: self.location.x - (w * 0.5))
                 }
             }.frame(width: w, height: h, alignment: .leading)
             
         }
-        .padding(.horizontal)
+//        .padding(.horizontal,5)
         .frame(width: width, height: height, alignment: .center))
     }
     
@@ -238,6 +239,7 @@ extension CurveChart{
 
 struct CurveChart_Previews: PreviewProvider {
     static var previews: some View {
-        CurveChart(data: [45,25,10,60,30,79].shuffled())
+        CurveChart(data: [45,25,10,60,30,79].shuffled(),bg: .black)
+            .background(Color.black)
     }
 }

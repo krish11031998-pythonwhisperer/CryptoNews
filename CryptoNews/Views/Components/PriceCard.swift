@@ -74,8 +74,7 @@ struct PriceCard: View {
             LazyVStack(alignment: .leading, spacing: 10){
                 MainText(content: self.currency, fontSize: 20,color: font_color)
                 PriceView(size: .init(width: w, height: h * 0.25))
-                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: self.size.width, height: h * 0.6), bg: .clear, chartShade: true)
-                    .offset(x: -20)
+                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: w, height: h * 0.6), bg: .clear, chartShade: true)
             }.frame(width: w, height: h, alignment: .leading)
             
         }.padding()
