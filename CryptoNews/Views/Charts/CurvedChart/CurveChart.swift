@@ -104,8 +104,8 @@ struct CurveChart: View {
                 if self.selected != -1 || self.choosen != -1{
                     Rectangle()
                         .fill(Color.white)
-                        .frame(width: 2, height: self.size.height, alignment: .leading)
-                        .offset(x: self.location.x - (w * 0.5))
+                        .frame(width: 2, height: self.size.height - 40, alignment: .leading)
+                        .offset(x: self.location.x - (w * 0.5  - 10))
                 }
             }.frame(width: w, height: h, alignment: .leading)
             

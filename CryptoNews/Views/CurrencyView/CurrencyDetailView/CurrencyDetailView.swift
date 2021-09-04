@@ -25,6 +25,7 @@ struct CurrencyDetailView: View {
             self.curveChart
                 .clipShape(RoundedRectangle(cornerRadius: 15))
             self.Avg_Sentiment
+            self.SocialMedia_Metrics
         }
     }
 }
@@ -102,16 +103,32 @@ extension CurrencyDetailView{
             let curve_sentiment = self.sentiment_set
             return AnyView(
                     VStack(alignment: .leading, spacing: 10){
-//
-//                        HStack(alignment: .center, spacing: 10){
-////                            self.text(heading: "Avg.Sentiment", info: "\(self.currency.average_sentiment ?? 3.0)")
-//                            self.text(heading: "Sentiment", info: "\(sentiment)")
-//                        }.padding(.horizontal,5).frame(height: h * 0.1)
+
+                        HStack(alignment: .center, spacing: 10){
+//                            self.text(heading: "Avg.Sentiment", info: "\(self.currency.average_sentiment ?? 3.0)")
+                            self.text(heading: "Now", info: "\(sentiment) out of 5")
+                        }.padding(.horizontal,5).frame(height: h * 0.1)
                         
                         CurveChart(data: curve_sentiment,choosen: $choosen_sent, interactions: true, size: .init(width: w, height: h * 0.75), bg: .clear, chartShade: true)
                     }.frame(width: w, height: h, alignment: .leading)
                 )
         }
+    }
+    
+    var SocialMedia_Metrics:some View{
+        ChartCard(header: "Social Media", size: .init(width: self.size.width, height: self.size.height)) { w, h in
+            
+            let view = LazyVGrid(columns: [GridItem(.flexible(minimum: w * 0.4 - 10, maximum: w * 0.4 - 10),alignment: .center)], alignment: .center, spacing: 10){
+                self.text(heading: "Social Score", info: convertToDecimals(value: self.currency.social_score))
+                self.text(heading: "Correlation Rank", info: String(self.currency.correlation_rank ?? 0.0))
+                self.text(heading: "Social Impact Score",info: String(self.currency.social_impact_score ?? 0.0))
+                self.text(heading: "Price Score", info: String(self.currency.price_score ?? 0.0))
+            }
+            
+            return AnyView(view)
+        }
+        
+        
     }
     
 }

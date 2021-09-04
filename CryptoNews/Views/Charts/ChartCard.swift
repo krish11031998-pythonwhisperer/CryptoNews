@@ -13,7 +13,7 @@ struct ChartCard: View {
     var insideView:((CGFloat,CGFloat) -> AnyView)? = nil
     var aR:ContentMode
     
-    init(header:String = "Header",size:CGSize  = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),insideView:((CGFloat,CGFloat) -> AnyView)? = nil,aR:ContentMode = .fill){
+    init(header:String = "Header",size:CGSize  = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),aR:ContentMode = .fill,insideView:((CGFloat,CGFloat) -> AnyView)? = nil){
         self.header = header
         self.size = size
         if let safeView = insideView{

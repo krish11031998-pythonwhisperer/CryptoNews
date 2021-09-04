@@ -56,8 +56,10 @@ class AssetData:Identifiable,Codable{
     var tweet_sentiment_impact4:Float?
     var tweet_sentiment_impact5:Float?
     var average_sentiment:Float?
-//    var price_score:Int?
-//    var social_score:Float?
+    var correlation_rank:Float?
+    var price_score:Float?
+    var social_impact_score:Float?
+    var social_score:Float?
 //    var sentiment_relative:Float?
 //    var news:Int?
 //    var social_dominance:Float?
