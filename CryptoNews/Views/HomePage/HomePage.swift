@@ -12,30 +12,52 @@ struct HomePage: View {
     var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue]
 //    var currencies:[String] = ["BTC"]
 //
+    @State var selectedCurrency:AssetData? = nil
     var body: some View {
-        ScrollView(.vertical,showsIndicators:false){
-            VStack(alignment: .center, spacing: 15) {
-                Spacer().frame(height: 50)
-                self.PriceCards
-                self.NewsSection
-                LatestTweets(currency: "all")
-                CryptoMarket()
-                CryptoYoutube()
-                Spacer(minLength: 200)
+        ZStack(alignment: .center){
+            mainBGView
+            ScrollView(.vertical,showsIndicators:false){
+                VStack(alignment: .center, spacing: 15) {
+                    Spacer().frame(height: 50)
+                    self.PriceCards
+                    self.NewsSection
+                    LatestTweets(currency: "all")
+                    CryptoMarket()
+                    CryptoYoutube()
+                    Spacer(minLength: 200)
+                }
             }
-        }
-        .frame(width: totalWidth, alignment: .center)
-        .background(mainBGView)
+            if let asset = self.selectedCurrency{
+                ScrollView(.vertical, showsIndicators: false) {
+                    Container(heading: "\(asset.symbol ?? "CRYPTO")",onClose: self.closeAsset) { w in
+                        AnyView(CurrencyDetailView(info: asset,size: .init(width: w, height:   totalHeight * 0.3)))
+                    }
+                }
+                .padding(.top,50)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .transition(.move(edge: .bottom))
+            }
+        }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
+        .animation(.easeInOut)
     }
 }
 
 extension HomePage{
+    
+    func closeAsset(){
+        if self.selectedCurrency != nil{
+            self.selectedCurrency = nil
+        }
+    }
+    
     var PriceCards:some View{
         ScrollView(.horizontal, showsIndicators: false){
             LazyHStack(alignment: .center, spacing: 10){
                 ForEach(self.currencies,id:\.self) { currency in
-                    PriceCard(currency: currency,color: self.color[currency] ?? .white,font_color: .white)
+                    PriceCard(currency: currency,asset: $selectedCurrency,color: self.color[currency] ?? .white,font_color: .white)
+                        
                 }
             }.padding()
         }

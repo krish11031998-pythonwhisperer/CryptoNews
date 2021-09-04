@@ -12,13 +12,14 @@ struct CurrencyDetailView: View {
     var size:CGSize = .init()
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
-    init(info:AssetData,size:CGSize){
+    @StateObject var asset_feed:FeedAPI
+    init(info:AssetData,size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3)){
         self.currency = info
         self.size = size
+        self._asset_feed = .init(wrappedValue: .init(currency: [info.symbol ?? "BTC"], sources: ["twitter"], type: .Chronological, limit: 20))
     }
         
-    
-    var body: some View {
+    var body:some View{
         VStack(alignment: .leading, spacing: 15){
             self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
             self.priceInfo
@@ -26,11 +27,38 @@ struct CurrencyDetailView: View {
                 .clipShape(RoundedRectangle(cornerRadius: 15))
             self.Avg_Sentiment
             self.SocialMedia_Metrics
-        }
+            self.FeedContainer
+        }.onAppear(perform: self.onAppear)
     }
 }
 
 extension CurrencyDetailView{
+    
+    func onAppear(){
+        if self.asset_feed.FeedData.isEmpty{
+            self.asset_feed.getAssetInfo()
+        }
+    }
+    
+    var FeedContainer:AnyView{
+//        VStack(alignment: .center, spacing: 10){
+//            ZStack(alignment: .center){
+                if self.asset_feed.FeedData.isEmpty{
+                    return AnyView(ProgressView())
+                }else{
+                    return AnyView(
+                    VStack(alignment: .leading, spacing: 10){
+                        MainText(content: "Twitter Feed", fontSize: 25, color: .white,fontWeight: .bold)
+                        ForEach(Array(self.asset_feed.FeedData.enumerated()),id:\.offset){ _data in
+                            let data = _data.element
+                            PostCard(cardType: .Tweet, data: data, size: self.size, font_color: .white, const_size: true)
+                        }
+                    }.frame(width: self.size.width, alignment: .leading)
+                    )
+                }
+//            }
+//        }
+    }
     var priceInfo:some View{
         let asset = self.choosen == -1 ? self.currency : self.currency.timeSeries?[self.choosen] ?? self.currency
         return HStack(alignment: .top, spacing: 20){
@@ -105,7 +133,6 @@ extension CurrencyDetailView{
                     VStack(alignment: .leading, spacing: 10){
 
                         HStack(alignment: .center, spacing: 10){
-//                            self.text(heading: "Avg.Sentiment", info: "\(self.currency.average_sentiment ?? 3.0)")
                             self.text(heading: "Now", info: "\(sentiment) out of 5")
                         }.padding(.horizontal,5).frame(height: h * 0.1)
                         
@@ -116,14 +143,10 @@ extension CurrencyDetailView{
     }
     
     var SocialMedia_Metrics:some View{
-        ChartCard(header: "Social Media", size: .init(width: self.size.width, height: self.size.height)) { w, h in
-            
-            let view = LazyVGrid(columns: [GridItem(.flexible(minimum: w * 0.4 - 10, maximum: w * 0.4 - 10),alignment: .center)], alignment: .center, spacing: 10){
-                self.text(heading: "Social Score", info: convertToDecimals(value: self.currency.social_score))
-                self.text(heading: "Correlation Rank", info: String(self.currency.correlation_rank ?? 0.0))
-                self.text(heading: "Social Impact Score",info: String(self.currency.social_impact_score ?? 0.0))
-                self.text(heading: "Price Score", info: String(self.currency.price_score ?? 0.0))
-            }
+        ChartCard(header: "Social Media Metrics", size: .init(width: self.size.width, height: self.size.height)) { w, h in
+            let min = min(w,h)
+            let values = [self.currency.social_score,self.currency.correlation_rank,self.currency.social_impact_score,self.currency.price_score].compactMap({($0 ?? 0)/5})
+            let view = DiamondChart(size: CGSize(width: min - 25, height: min - 25), percent: values)
             
             return AnyView(view)
         }
@@ -145,7 +168,7 @@ private struct testView:View{
             return AnyView(
                 ZStack(alignment: .center){
                     if let data = self.asset.data{
-                        CurrencyDetailView(info: data,size: .init(width: w, height: totalHeight * 0.3))
+                        CurrencyDetailView(info: data)
                     }else{
                         ProgressView()
                     }

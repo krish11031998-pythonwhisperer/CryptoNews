@@ -53,28 +53,41 @@ struct VariableDiamond:View{
     }
     
     
+    func computeCornerPoints(offset idx:Int , element point:CGPoint,length:CGFloat) -> CGPoint{
+        let value = CGFloat(self.corner_points[idx > 3 ? idx%4 : idx])
+        var corner = point
+        let middle = length * 0.5
+        let negative_val = (1 - value) * middle
+        
+        if idx%2 == 0{
+            if corner.x == length{
+                corner.x -= negative_val
+            }else if corner.x == 0{
+                corner.x = negative_val
+            }
+            
+        }else if idx%2 == 1{
+            if corner.y == length{
+                corner.y -= negative_val
+            }else if corner.y == 0{
+                corner.y = negative_val
+            }
+        }
+        print("Corner Pt. : ",corner)
+    
+        return corner
+    }
+    
     var body: some View{
         GeometryReader{g in
             let w = g.size.width
             let h = g.size.height
             let length = min(w,h)
             let middle = length * 0.5
-            let corners:[CGPoint] = [CGPoint(x: middle, y: length),CGPoint(x: 0, y: middle),CGPoint(x: middle, y: 0),CGPoint(x: length, y: middle)]
+            let corners:[CGPoint] = Array([.init(x: 0, y: middle),.init(x: middle, y: 0),.init(x: length, y: middle),.init(x: middle, y: length),.init(x: 0, y: middle)].enumerated()).compactMap({self.computeCornerPoints(offset: $0.offset, element: $0.element,length: length)})
             
             Path{path in
-                path.move(to: .init(x: middle, y: middle))
-//                ForEach(Array(self.corner_points.enumerated()),id:\.offset){ _cp in
-//                    let point = _cp.element
-//                    let idx = _cp.offset
-//                    var corner = corners[idx]
-////                    corner.x = corner.x * CGFloat(idx%2 == 0 ? point : 1)
-////                    corner.y = corner.y * CGFloat(idx%2 != 0 ? point : 1)
-//                    path.addLine(to: corner)
-//                }
-//                path.addLine(to: .init(x: middle, y: 0))
-//                path.addLine(to: .init(x: length, y: middle))
-//                path.addLine(to: .init(x: middle, y: length))
-//                path.addLine(to: .init(x: 0, y: middle))
+                path.addLines(corners)
             }
             .stroke(self.color, style: .init(lineWidth: 2.5, lineCap: .round))
             .frame(width: size.width, height: size.height, alignment: .center)
@@ -134,6 +147,7 @@ struct DiamondChart: View {
             BaseDiamond(size: size)
             BaseDiamond(size: .init(width: size.width * 0.5, height: size.height * 0.5))
             DiamondAxis(size: size)
+            VariableDiamond(size: size, points: [0.6,0.3,0.9,0.8].reversed(),color: .blue)
         }
     }
 }

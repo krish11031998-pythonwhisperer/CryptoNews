@@ -10,6 +10,7 @@ import SwiftUI
 struct ContentView: View {
     var body: some View {
         HomePage()
+//        DiamondChart(percent: [0.65,0.85,0.5,0.3])
     }
 }
 

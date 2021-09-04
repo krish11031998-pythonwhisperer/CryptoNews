@@ -75,7 +75,6 @@ struct CurveChart: View {
         .rotation3DEffect(.degrees(180), axis: (x: 0, y: 1, z: 0))
         .padding(.bottom,25)
         .frame(width: size.width, height: size.height, alignment: .center)
-//        .background(Color.red)
         .gesture(DragGesture()
                     .onChanged({ value in
                         self.onChanged(size: size, step: .init(x: stepWidth, y: stepHeight), value: value)
@@ -104,7 +103,7 @@ struct CurveChart: View {
                 if self.selected != -1 || self.choosen != -1{
                     Rectangle()
                         .fill(Color.white)
-                        .frame(width: 2, height: self.size.height - 40, alignment: .leading)
+                        .frame(width: 2, height: self.size.height, alignment: .leading)
                         .offset(x: self.location.x - (w * 0.5  - 10))
                 }
             }.frame(width: w, height: h, alignment: .leading)

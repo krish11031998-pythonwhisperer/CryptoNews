@@ -12,12 +12,13 @@ struct PriceCard: View {
     @StateObject var asset_api:AssetAPI
     @State var prices:[AssetData] = []
     @State var selected:Int = -1
+    @Binding var selected_asset:AssetData?
     var currency:String
     var size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.4)
     var color:Color
     let font_color:Color
     
-    init(currency:String,color:Color = .orange,size:CGSize? = nil,font_color:Color = .white){
+    init(currency:String,asset:Binding<AssetData?>? = nil,color:Color = .orange,size:CGSize? = nil,font_color:Color = .white){
         self.color = color
         self.currency = currency
         self._asset_api = StateObject(wrappedValue: .init(currency: currency))
@@ -25,6 +26,7 @@ struct PriceCard: View {
             self.size = safeSize
         }
         self.font_color = font_color
+        self._selected_asset = asset ?? .constant(nil)
     }
     
     func parsePrices(data:AssetData?){
@@ -82,6 +84,9 @@ struct PriceCard: View {
         .background(BlurView(style: .systemThinMaterialDark))
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        .onTapGesture {
+            self.selected_asset = self.asset_api.data
+        }
     }
     
     var body: some View {
