@@ -1,20 +1,4 @@
 import SwiftUI
-extension Color{
-    static func colorConvert(red:Double,green:Double,blue:Double) -> Color{
-        let r:Double = red/255.0
-        let g:Double = green/255.0
-        let b:Double = blue/255.0
-        return .init(red: r, green: g, blue: b)
-    }
-    static var mainBG:Color = Color.colorConvert(red: 250, green: 251, blue: 245)
-
-    static func linearGradient(colorOne:UIColor,colorTwo:UIColor) -> LinearGradient{
-        return LinearGradient(gradient: .init(colors: [Color(colorOne),Color(colorTwo)]), startPoint: .top, endPoint: .bottom)
-    }
-    
-//    static var fourthColor:Color = Color.colorConvert(red: 237, green: 242, blue: 243)
-}
-
 
 extension UIColor{
     public convenience init?(hex: String) {

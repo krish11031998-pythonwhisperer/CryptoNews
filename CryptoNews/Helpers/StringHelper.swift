@@ -38,4 +38,8 @@ extension String{
         let finalText = text.components(separatedBy: " ").reduce("") { $0 == "" ? $1.lowercased() : $0 + "_" + $1.lowercased()}
         return finalText
     }
+    
+    func isImgURLStr() -> Bool{
+        return self.contains(".jpg") || self.contains(".png")
+    }
 }

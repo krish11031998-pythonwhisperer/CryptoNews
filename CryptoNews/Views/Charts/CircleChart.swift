@@ -12,12 +12,14 @@ struct CircleChart: View {
     var header:String
     var size:CGSize
     var increase:Bool
+    var infoView:AnyView
     
-    init(percent:Float,header:String,size:CGSize = .init(width: totalWidth * 0.45, height: 300)){
+    init(percent:Float,header:String,size:CGSize = .init(width: totalWidth * 0.45, height: 300),infoView:AnyView = AnyView(Color.clear)){
         self.percent = percent
         self.header = header
         self.size = size
         self.increase = true
+        self.infoView = infoView
     }
     
     
@@ -34,10 +36,11 @@ struct CircleChart: View {
                     .stroke(Color.green.opacity(0.75), lineWidth: w * 0.045)
                     .frame(width: chartW , height: chartW , alignment: .center)
                     .rotationEffect(.init(degrees: -90), anchor: .center)
-                VStack(spacing: 2.5){
-                    MainText(content: "\(String(format: "%.0f" ,self.percent))%", fontSize: 25, color: .white, fontWeight: .semibold)
-                    MainText(content: "of the Viewers", fontSize: 12.5, color: .white, fontWeight: .semibold)
-                }
+//                VStack(spacing: 2.5){
+//                    MainText(content: "\(String(format: "%.0f" ,self.percent))%", fontSize: 25, color: .white, fontWeight: .semibold)
+//                    MainText(content: "of the Viewers", fontSize: 12.5, color: .white, fontWeight: .semibold)
+//                }
+                self.infoView
             }.frame(width: w, height: h, alignment: .center)
             
         
@@ -46,25 +49,25 @@ struct CircleChart: View {
     
     
     func mainBody(w:CGFloat,h:CGFloat) -> AnyView{
-        return AnyView(
-            Group{
-                self.CircleChart(w: w , h: w )
-                HStack{
-                    VStack(alignment: .leading, spacing: 10){
-                        MainText(content: "45k", fontSize: 20, color: .white, fontWeight: .semibold)
-                        MainText(content: "Likes", fontSize: 15, color: .white, fontWeight: .regular)
-                    }
-                    Spacer()
-                    VStack(alignment: .center, spacing: 10){
-                        MainText(content: "\(self.increase ? "↑" : "↓") 30%", fontSize: 20, color: .white, fontWeight: .semibold)
-                        MainText(content: "Last Week", fontSize: 15, color: .white, fontWeight: .regular)
-                    }
-                }
-            }
-        
-        )
+////        return AnyView(
+////            Group{
+                return self.CircleChart(w: w , h: w )
+////                HStack{
+////                    VStack(alignment: .leading, spacing: 10){
+////                        MainText(content: "45k", fontSize: 20, color: .white, fontWeight: .semibold)
+////                        MainText(content: "Likes", fontSize: 15, color: .white, fontWeight: .regular)
+////                    }
+////                    Spacer()
+////                    VStack(alignment: .center, spacing: 10){
+////                        MainText(content: "\(self.increase ? "↑" : "↓") 30%", fontSize: 20, color: .white, fontWeight: .semibold)
+////                        MainText(content: "Last Week", fontSize: 15, color: .white, fontWeight: .regular)
+////                    }
+////                }
+////            }
+//
+//        )
     }
-    
+//
     var body: some View {
         ChartCard(header: self.header, size: self.size, insideView: self.mainBody)
     }

@@ -54,18 +54,35 @@ struct MainText: View {
         
     }
     
+    struct CustomFontModifier:ViewModifier{
+        var addBG:Bool
+        var oppColor:Color
+        
+        func body(content: Content) -> some View {
+            content
+                .padding(.all,addBG ? 10 : 0)
+                .background(addBG ? self.oppColor : .clear)
+                .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
+                
+        }
+        
+    }
+    
+    
     var oppColor:Color{
         return self.color == .black ? .white : .black
     }
      
     var body: some View {
         Text(self.content)
-            .font(self.style == .normal ? self.font : Font.system(.body, design: .serif))
+            .font(self.style != .normal ? self.font : Font.system(size: self.fontSize, weight: .regular, design: .monospaced))
+            
             .fontWeight(self.fontWeight)
             .foregroundColor(self.color)
-            .padding(.all,addBG ? 10 : 0)
-            .background(addBG ? self.oppColor : .clear)
-            .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
+//            .padding(.all,addBG ? 10 : 0)
+//            .background(addBG ? self.oppColor : .clear)
+//            .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
+            .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor))
             
     }
 }

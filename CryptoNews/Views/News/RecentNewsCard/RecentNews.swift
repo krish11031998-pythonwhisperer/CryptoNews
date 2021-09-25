@@ -8,64 +8,69 @@
 import SwiftUI
 
 struct RecentNews: View {
-    @StateObject var news:NewsAPI
+    @StateObject var news:FeedAPI
     var currency:String
     var containerSize:CGSize
+    let font_color:Color = .black
+    var ext_h:Bool
     @State var idx:Int = 0
-    init(currency:String,size:CGSize = .init(width: totalWidth - 20, height: totalHeight * 1.1)){
-        self._news = .init(wrappedValue: .init(currency: currency))
+    init(currency:String,size:CGSize = .init(width: totalWidth - 20, height: totalHeight * 1.1),ext_h:Bool = false){
+        self._news = .init(wrappedValue: .init(currency: [currency],sources:["news"],type:.Chronological))
         self.currency = currency
         self.containerSize = size
+        self.ext_h = ext_h
     }
     
     func onAppear(){
-        if self.news.newsData.isEmpty{
+        if self.news.FeedData.isEmpty{
             self.news.getAssetInfo()
         }
     }
     
     var newsData:[AssetNewsData]{
-        return self.news.newsData.count > 5 ? Array(self.news.newsData[0..<5]) : self.news.newsData
+        return self.news.FeedData.count > 5 ? Array(self.news.FeedData[0..<3]) : self.news.FeedData
     }
     
-    var body: some View {
+    
+    var mainBody:some View{
         GeometryReader{g in
             
             let w = g.frame(in: .local).width
             let h = g.frame(in: .local).height
             
             VStack(alignment: .leading, spacing: 10) {
-                MainText(content: "\(currency) News", fontSize: 25, color: .white, fontWeight: .semibold)
-                    .frame(width:w,height: h * 0.05, alignment: .leading)
                 ForEach(Array(self.newsData.enumerated()),id:\.offset) { _data in
                     let data = _data.element
                     let idx = _data.offset
                     let isSelected = self.idx == idx
-                    let cardSize = CGSize(width: w, height: h * (isSelected ? 0.35 : 0.15) - 10)
+                    let cardSize = CGSize(width: w, height: h * (isSelected ? 0.5 : 0.25) - 5)
                     
                     RecentNewsCard(data: data, size: cardSize, selected: isSelected)
                         .onTapGesture{
-                            withAnimation(.easeInOut) {
-                                self.idx = idx
-                            }
+                            self.idx = idx
                         }
                 }
             }
             
-        }.padding()
-        .frame(width: containerSize.width, height: containerSize.height, alignment: .center)
-        .background(Color.black)
+        }
+        .padding()
+        .background(BlurView(style: .dark))
         .cornerRadius(20)
-        .shadow(color: .white.opacity(0.2), radius: 5, x: 0, y: 0)
+        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         .animation(.easeInOut)
         .onAppear(perform: self.onAppear)
+    }
+    var body: some View {
+        if self.ext_h{
+            self.mainBody
+        }else{
+            self.mainBody
+                .frame(width: containerSize.width, height: containerSize.height, alignment: .center)
+        }
+        
+        
     
     
     }
 }
 
-//struct RecentNews_Previews: PreviewProvider {
-//    static var previews: some View {
-//        RecentNews()
-//    }
-//}

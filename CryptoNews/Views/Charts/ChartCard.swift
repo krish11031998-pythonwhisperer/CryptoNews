@@ -13,7 +13,7 @@ struct ChartCard: View {
     var insideView:((CGFloat,CGFloat) -> AnyView)? = nil
     var aR:ContentMode
     
-    init(header:String = "Header",size:CGSize  = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),insideView:((CGFloat,CGFloat) -> AnyView)? = nil,aR:ContentMode = .fill){
+    init(header:String = "Header",size:CGSize  = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),aR:ContentMode = .fill,insideView:((CGFloat,CGFloat) -> AnyView)? = nil){
         self.header = header
         self.size = size
         if let safeView = insideView{
@@ -35,17 +35,16 @@ struct ChartCard: View {
             let w = local.width
             let h = local.height
             VStack(alignment: .center, spacing: 10){
-                MainText(content: self.header, fontSize: 20, color: .white, fontWeight: .regular)
-                    .padding(5)
+                MainText(content: self.header, fontSize: 20, color: .white, fontWeight: .semibold)
                     .frame(width: w,alignment: .leading)
                 if let safeIS = self.insideView{
                     safeIS(w,h * 0.95)
                 }
             }
         }
-        .padding(self.aR == .fill ? 10 : 0)
+        .padding(self.aR == .fill ? 15 : 0)
         .frame(width: self.size.width, height: self.size.height, alignment: .center)
-        .background(Color.black)
+        .background(Color.black.opacity(0.5))
         .clipShape(RoundedRectangle(cornerRadius: 20))
         .shadow(color: .white.opacity(0.15), radius: 10, x: 0, y: 2)
     }

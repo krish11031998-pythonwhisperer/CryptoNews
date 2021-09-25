@@ -1,0 +1,6 @@
+framework module Pods_CryptoNews_CryptoNewsUITests {
+  umbrella header "Pods-CryptoNews-CryptoNewsUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}

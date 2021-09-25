@@ -12,12 +12,12 @@ import SwiftUI
 
 struct WeekBarChart: View {
     var header:String
-    var weekData:[Int]
+    var weekData:[Float]
     var size:CGSize
     var week_h:[CGFloat] = []
 //    let days:[String] = ["Sun","Mon","Tue","Wed","Thu","Fri","Sat"]
     let days:[String] = ["S","M","T","W","T","F","S"]
-    init(header:String,values:[Int],size:CGSize = .init(width: totalWidth * 0.45, height: 300)){
+    init(header:String,values:[Float],size:CGSize = .init(width: totalWidth * 0.45, height: 300)){
         self.header = header
         self.weekData = values
         self.size = size
@@ -29,11 +29,11 @@ struct WeekBarChart: View {
         self.week_h = self.weekData.map({normalize(min: min, max: max, val: $0)})
     }
     
-    var total:Int{
+    var total:Float{
         return self.weekData.reduce(0, {$0 + $1})
     }
     
-    func normalize(min:Int,max:Int,val:Int) -> CGFloat{
+    func normalize(min:Float,max:Float,val:Float) -> CGFloat{
         let num = Float(val - min)
         let denom = Float(max - min)
         return CGFloat(num/denom)
@@ -69,7 +69,6 @@ struct WeekBarChart: View {
                 let bar_w = (w/7) - 5
                 
                 self.barForBarChart(w:bar_w, h: bar_h,color: color,val: self.days[i])
-//                self.barForBarChart(w:bar_w, h: bar_h,color: color,val: "\(opacity)")
             }
         }.frame(width: w, height: h, alignment: .center)
         
@@ -80,10 +79,10 @@ struct WeekBarChart: View {
     func mainBody(w:CGFloat,h:CGFloat) -> AnyView{
         return AnyView(VStack(spacing: 10){
 //                Group{
-                    MainText(content: "Total Views", fontSize: 10, color: .white, fontWeight: .thin)
-                    MainText(content: "\(self.total)k", fontSize: 35, color: .white, fontWeight: .bold)
+//                    MainText(content: "Total Views", fontSize: 10, color: .white, fontWeight: .thin)
+//                    MainText(content: "\(self.total)k", fontSize: 35, color: .white, fontWeight: .bold)
 //                        .padding(.vertical,10)
-                self.barChart(w: w, h: h * 0.45)
+            self.barChart(w: w, h: h * 0.9)
             })
     }
     

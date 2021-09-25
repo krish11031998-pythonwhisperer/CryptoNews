@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ImageView:View{
     @State var image:UIImage?
-    @StateObject var IMD:ImageDownloader
+    @StateObject var IMD:ImageDownloader = .init()
     var url:String?
     var width:CGFloat
     var height:CGFloat
@@ -41,12 +41,17 @@ struct ImageView:View{
             
     func img_h(img:UIImage? = nil) -> CGFloat{
         var h = self.height
-        let ar = UIImage.aspectRatio(img: img)
         if self.autoHeight && img != nil{
-            h = self.width/ar
-            h = self.autoHeight && h < 250 ? h * 1.5  : h
+            let ar = UIImage.aspectRatio(img: img)
+            h = self.width/ar < 150 ? 150 : self.width/ar > 500 ? 500 : self.width/ar
         }
         return h
+    }
+    
+    func onAppear(){
+        if let url = self.url , self.IMD.image == nil{
+            self.IMD.getImage(url: url)
+        }
     }
     
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
@@ -90,7 +95,7 @@ struct ImageView:View{
     var body: some View{
         self.imgView()
             .contentShape(RoundedRectangle(cornerRadius: 10))
-//            .onAppear(perform: self.onAppear)
+            .onAppear(perform: self.onAppear)
     }
     
 }
