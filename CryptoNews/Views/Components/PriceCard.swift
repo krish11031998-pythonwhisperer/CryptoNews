@@ -32,22 +32,22 @@ struct PriceCard: View {
     func parsePrices(data:AssetData?){
         
         guard let data = data, let timeSeries = data.timeSeries else {return}
-        print("DEBUG ASSET DATA : ",String(describing: data));
+//        print("DEBUG ASSET DATA : ",String(describing: data));
         DispatchQueue.main.async {
             self.prices = timeSeries
         }
+    }
+    
+    func updatePrices(){
+        self.asset_api.getAssetInfo()
     }
     
     func onAppear(){
         if self.prices.isEmpty && asset_api.data == nil{
             self.asset_api.getAssetInfo()
         }
-        
     }
     
-    func onReceiveData(data:[AssetData]){
-        
-    }
     
     func PriceView(size:CGSize) -> some View{
         let pointData = self.selected >= 0 && self.selected <= self.prices.count - 1 ? self.prices[self.selected] : self.prices.last
@@ -84,15 +84,20 @@ struct PriceCard: View {
         .background(BlurView(style: .systemThinMaterialDark))
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
-        .onTapGesture {
-            self.selected_asset = self.asset_api.data
-        }
     }
     
     var body: some View {
-        chartView
+        Button(action: {
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self.selected_asset = self.asset_api.data
+            }
+        }, label: {
+            self.chartView
             .onAppear(perform: self.onAppear)
             .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
+        }).springButton()
+        
+            
     }
 }
 

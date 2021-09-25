@@ -1,5 +1,43 @@
 import SwiftUI
 
+struct SlideInOut:ViewModifier{
+    var scale:CGFloat
+    func body(content: Content) -> some View {
+        content
+            .transition(.move(edge: .bottom))
+//            .scaleEffect(scale)
+            .animation(.easeInOut)
+    }
+}
+
+struct ButtonModifier:ButtonStyle{
+    func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .opacity(configuration.isPressed ? 0.9 : 1)
+    }
+}
+
+
+extension AnyTransition{
+    
+    static var slideIn:AnyTransition{
+        return AnyTransition.modifier(active: SlideInOut(scale: 0.9), identity: SlideInOut(scale: 1))
+    }
+    
+    static var slideInOut:AnyTransition{
+        return AnyTransition.asymmetric(insertion:.move(edge: .bottom), removal: .move(edge: .bottom))
+    }
+    
+}
+
+
+extension View{
+    func springButton() -> some View{
+        self.buttonStyle(ButtonModifier())
+    }
+}
+
 struct Corners:Shape{
     
     var rectCorners:UIRectCorner
@@ -133,10 +171,10 @@ struct ArcCorners:Shape{
     
     func path(in rect: CGRect) -> Path {
         return Path{path in
-            var topRight = self.CornerPoint(rect, .topRight)
-            var topLeft = self.CornerPoint(rect, .topLeft)
-            var bottomLeft = self.CornerPoint(rect, .bottomLeft)
-            var bottomRight = self.CornerPoint(rect, .bottomRight)
+            let topRight = self.CornerPoint(rect, .topRight)
+            let topLeft = self.CornerPoint(rect, .topLeft)
+            let bottomLeft = self.CornerPoint(rect, .bottomLeft)
+            let bottomRight = self.CornerPoint(rect, .bottomRight)
             
             switch (corner){
             case .topLeft, .bottomLeft:

@@ -49,7 +49,7 @@ class FeedAPI:DAPI,ObservableObject{
     var sources:[String]
     var type:FeedType
     var limit:Int
-    let page:Int
+    var page:Int
     @Published var FeedData:[AssetNewsData] = []
     
     init(currency:[String] = ["BTC","LTC","XRP"],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15,page:Int = 0){
@@ -79,7 +79,12 @@ class FeedAPI:DAPI,ObservableObject{
             let res = try decoder.decode(News.self, from: data)
             if let news = res.data {
                 DispatchQueue.main.async {
-                    self.FeedData = news
+                    if self.FeedData.isEmpty{
+                        self.FeedData = news
+                    }else{
+                        self.FeedData.append(contentsOf: news)
+                    }
+                    
                 }
             }
         }catch{
@@ -91,4 +96,9 @@ class FeedAPI:DAPI,ObservableObject{
         self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
     }
     
+    
+    func getNextPage(){
+        self.page += 1;
+        self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+    }
 }

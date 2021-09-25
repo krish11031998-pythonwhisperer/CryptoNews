@@ -88,10 +88,11 @@ struct SystemButton: View {
     
     var body: some View {
         Button(action: {
+            
             self.actionHandler()
         }, label: {
             self.labelView
-        })
+        }).springButton()
     }
 }
 

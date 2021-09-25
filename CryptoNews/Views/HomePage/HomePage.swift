@@ -8,14 +8,17 @@
 import SwiftUI
 
 struct HomePage: View {
-    var currencies:[String] = ["BTC","LTC","ETH"]
-    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue]
-//    var currencies:[String] = ["BTC"]
-//
+    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
+    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
     @State var selectedCurrency:AssetData? = nil
+    @State var showAsset:Bool = false
+    var activeCurrency:Bool{
+        return self.selectedCurrency != nil
+    }
+    
     var body: some View {
         ZStack(alignment: .center){
-            mainBGView
+            mainBGView.zIndex(0)
             ScrollView(.vertical,showsIndicators:false){
                 VStack(alignment: .center, spacing: 15) {
                     Spacer().frame(height: 50)
@@ -23,24 +26,21 @@ struct HomePage: View {
                     self.NewsSection
                     LatestTweets(currency: "all")
                     CryptoMarket()
-                    CryptoYoutube()
+//                    CryptoYoutube()
                     Spacer(minLength: 200)
                 }
-            }
-            if let asset = self.selectedCurrency{
-                ScrollView(.vertical, showsIndicators: false) {
-                    Container(heading: "\(asset.symbol ?? "CRYPTO")",onClose: self.closeAsset) { w in
-                        AnyView(CurrencyDetailView(info: asset,size: .init(width: w, height:   totalHeight * 0.3)))
-                    }
-                }
-                .padding(.top,50)
-                .background(mainBGView)
-                .edgesIgnoringSafeArea(.all)
-                .transition(.move(edge: .bottom))
+            }.zIndex(1)
+            if let asset = self.selectedCurrency,showAsset{
+                self.CurrencyView(asset: asset, height: totalHeight * 0.3)
+                    .animation(.easeInOut)
             }
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
-        .animation(.easeInOut)
+        .onChange(of: self.selectedCurrency?.id, perform: { value in
+            if (value == nil && showAsset) || (value != nil && !showAsset){
+                self.showAsset.toggle()
+            }
+        })
     }
 }
 
@@ -48,8 +48,23 @@ extension HomePage{
     
     func closeAsset(){
         if self.selectedCurrency != nil{
-            self.selectedCurrency = nil
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self.selectedCurrency = nil
+            }
         }
+    }
+    
+    func CurrencyView(asset:AssetData,height h :CGFloat) -> some View{
+        ScrollView(.vertical, showsIndicators: false) {
+            Container(heading: "\(asset.symbol ?? "CRYPTO")",onClose: self.closeAsset) { w in
+                AnyView(CurrencyDetailView(info: asset,size: .init(width: w, height: h)))
+            }
+        }
+        .padding(.top,50)
+        .background(mainBGView)
+        .edgesIgnoringSafeArea(.all)
+        .transition(.slideInOut)
+        .zIndex(2)
     }
     
     var PriceCards:some View{

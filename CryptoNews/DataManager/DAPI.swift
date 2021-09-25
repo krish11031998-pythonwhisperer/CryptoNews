@@ -36,7 +36,7 @@ class DAPI{
     
     func getInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
-        print("(DEBUG) Calling this URL : ",url)
+//        print("(DEBUG) Calling this URL : ",url)
         URLSession.shared.dataTaskPublisher(for: url)
             .receive(on: DispatchQueue.main)
             .tryMap(self.checkOutput(output:))

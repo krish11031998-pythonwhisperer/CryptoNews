@@ -35,21 +35,23 @@ struct PostCard: View {
             ZStack(alignment: .bottom) {
                 Color.mainBGColor.frame(width: size.width, height: size.height * 0.15, alignment: .center)
                 BlurView(style: .dark)
-                VStack(alignment: .leading, spacing: 15) {
-                    self.Header(data: data, size: .init(width: w, height: h * 0.1))
-                    if let body = self.data.body{
-                        MainText(content: body, fontSize: 14, color: font_color, fontWeight: .regular)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }else if let title = self.data.title{
-                        MainText(content: title, fontSize: 14, color: font_color, fontWeight: .regular)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-                    
+                VStack(alignment: .leading, spacing: 10) {
+                    self.Header(size: .init(width: w, height: h * 0.1))
                     if self.data.link?.isImgURLStr() ?? false{
-                        ImageView(url: self.data.link, width: w, height: h * 0.45, contentMode: .fill, alignment: .center)
+                        ImageView(url: self.data.link, width: w, height: h * 0.8 - 40, contentMode: .fill, alignment: .center)
                             .clipShape(RoundedRectangle(cornerRadius: 15))
+                            .overlay(
+                                VStack(alignment: .leading, spacing: 10){
+                                    Spacer()
+                                    self.Body(size: .init(width: w - 20, height: (h * 0.6) - 20))
+                                }.padding(10)
+                            )
+                    }else{
+                        self.Body(size: .init(width: w, height: (h * 0.8) - 40))
                     }
-                    Spacer(minLength: 0)
+                    if self.const_size{
+                        Spacer()
+                    }
                     Divider().frame(width: w, alignment: .center)
                     self.Footer(data: data, size: .init(width: w, height: h * 0.1))
                 }.padding()
@@ -64,18 +66,35 @@ struct PostCard: View {
         
     }
     
-    var body: some View {
+    var imageViewCard:some View{
+        let w = size.width - 20
+        let h = size.height - 20
+        let view = ZStack(alignment: .topLeading){
+            ImageView(url: self.data.link, width: size.width, contentMode: .fill, alignment: .center,autoHeight: true)
+            VStack(alignment: .leading, spacing: 10){
+                self.Header(size: .init(width: w, height: h * 0.2))
+                Spacer()
+                self.Body(size: .init(width: w, height:h * 0.7))
+            }.padding(10)
+        }.clipShape(RoundedRectangle(cornerRadius: 15))
         
-//        if self.data.link?.isImgURLStr() ?? false{
-//            ImageCardView(data: self.data, size: self.size)
-//        }else{
+        return view
+    }
+    
+    var body: some View {
+        if self.cardType == .Reddit && self.data.link?.isImgURLStr() ?? false{
+            self.imageViewCard
+        }else if self.data.body != nil || self.data.title != nil{
             self.card
-//        }
+        }else{
+            Color.clear.frame(width: 0, height: 0, alignment: .center)
+        }
+        
     }
 }
 
 extension PostCard{
-    func Header(data:AssetNewsData,size:CGSize) -> AnyView{
+    func Header(size:CGSize) -> AnyView{
         let w = size.width
         let h = size.height
         return AnyView(
@@ -101,6 +120,18 @@ extension PostCard{
         )
     }
     
+    
+    func Body(size:CGSize) -> AnyView{
+        let w = size.width
+        let h = size.height
+        
+        return AnyView(
+            MainText(content: self.data.body ?? self.data.title ?? "No Text", fontSize: 14, color: .white, fontWeight: .regular)
+                .frame(width: w, alignment: .leading)
+                .frame(maxHeight: h)
+            
+        )
+    }
     
     func Footer(data:AssetNewsData,size:CGSize) -> AnyView{
         let w = size.width

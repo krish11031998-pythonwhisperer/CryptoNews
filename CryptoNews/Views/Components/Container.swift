@@ -24,7 +24,7 @@ struct Container: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack {
                 if let onClose = self.onClose{
-                    SystemButton(b_name: "xmark", action: onClose)
+                    SystemButton(b_name: "xmark",action: onClose)
                 }
                 MainText(content: self.heading, fontSize: 30, color: .white, fontWeight: .semibold)
             }
