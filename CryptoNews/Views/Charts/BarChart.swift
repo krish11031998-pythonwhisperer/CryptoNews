@@ -54,7 +54,9 @@ struct BarChart: View {
         let key = (idx + 1) > axis_keys.count ? "😞" : axis_keys[idx]
         let bar_h = bar_h_factor * size.height * 0.9
         return Button(action: {
-            self.selected = self.selected == idx ? -1 : idx
+            withAnimation(.easeInOut) {
+                self.selected = self.selected == idx ? -1 : idx
+            }
         }, label: {
             VStack(alignment: .center, spacing: 10){
                 RoundedRectangle(cornerRadius: bar_w * 0.5)
@@ -108,7 +110,8 @@ struct BarChart: View {
     var body: some View {
         ChartCard(header: self.heading, size: self.size,aR: .fill) { w, h in
             return AnyView(self.ChartView(size: .init(width: w, height: h)))
-        }.animation(.easeInOut)
+        }
+//        .animation(.easeInOut)
     }
 }
 

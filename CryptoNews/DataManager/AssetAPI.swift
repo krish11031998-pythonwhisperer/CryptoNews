@@ -70,12 +70,16 @@ class AssetData:Identifiable,Codable{
 class AssetAPI:DAPI,ObservableObject{
     var currency:String
     @Published var data:AssetData? = nil
+//    static var shared:AssetAPI = .init()
     
-    init(currency:String){
+    init(currency:String = ""){
         self.currency = currency
         super.init()
     }
     
+    static func shared(currency:String) -> AssetAPI{
+        return AssetAPI(currency: currency)
+    }
     
     var assetURL:URL?{
         var uC = self.baseComponent
@@ -84,6 +88,20 @@ class AssetAPI:DAPI,ObservableObject{
             URLQueryItem(name: "symbol", value: self.currency)
         ])
         return uC.url
+    }
+    
+    func _parseData(data:Data) -> AssetData?{
+        let decoder = JSONDecoder()
+        var result:AssetData? = nil
+        do{
+            let res = try decoder.decode(Asset.self, from: data)
+            if let first = res.data.first {
+                result = first
+            }
+        }catch{
+            print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
+        }
+        return result
     }
     
     func parseData(data:Data){
@@ -102,5 +120,16 @@ class AssetAPI:DAPI,ObservableObject{
     
     func getAssetInfo(){
         self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
+    }
+    
+    func getAssetInfo(completion: @escaping (AssetData?) -> Void){
+        if let url = self.assetURL{
+            self.getInfo(_url: url) { data in
+                completion(self._parseData(data: data))
+            }
+        } else {
+            completion(nil)
+        }
+        
     }
 }

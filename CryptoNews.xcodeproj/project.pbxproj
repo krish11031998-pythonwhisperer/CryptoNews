@@ -63,6 +63,7 @@
 		BCBC1DD826BF424D00B87E5C /* ImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1DD726BF424D00B87E5C /* ImageView.swift */; };
 		BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */; };
 		BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1DDB26C0652500B87E5C /* SwipedParams.swift */; };
+		BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACC826FFE1C800E76436 /* NewsCard.swift */; };
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
 /* End PBXBuildFile section */
@@ -147,6 +148,7 @@
 		BCBC1DD726BF424D00B87E5C /* ImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageView.swift; sourceTree = "<group>"; };
 		BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentNewsCarousel.swift; sourceTree = "<group>"; };
 		BCBC1DDB26C0652500B87E5C /* SwipedParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipedParams.swift; sourceTree = "<group>"; };
+		BCBCACC826FFE1C800E76436 /* NewsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCard.swift; sourceTree = "<group>"; };
 		BCF98BA126D97E7000C45562 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		BCF98BA426D9811300C45562 /* CryptoYoutube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoYoutube.swift; sourceTree = "<group>"; };
 		C1CBEBE1BBE6CDB5B6100756 /* Pods-CryptoNewsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNewsTests.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNewsTests/Pods-CryptoNewsTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -407,6 +409,7 @@
 			children = (
 				BCBC1DD126BF3C2600B87E5C /* RecentNewsCard */,
 				BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */,
+				BCBCACC826FFE1C800E76436 /* NewsCard.swift */,
 			);
 			path = News;
 			sourceTree = "<group>";
@@ -694,6 +697,7 @@
 				BCBC1DD326BF3C3F00B87E5C /* RecentNews.swift in Sources */,
 				BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */,
 				BC305F0D26D8213400826AB4 /* FeedAPI.swift in Sources */,
+				BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */,
 				BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */,
 				BCBC1DC626BE876900B87E5C /* ImageHelper.swift in Sources */,
 				BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */,

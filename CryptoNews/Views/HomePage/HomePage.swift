@@ -11,7 +11,7 @@ struct HomePage: View {
     var currencies:[String] = ["BTC","LTC","ETH","XRP"]
     var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
     @State var selectedCurrency:AssetData? = nil
-    @State var showAsset:Bool = false
+//    @State var showAsset:Bool = false
     var activeCurrency:Bool{
         return self.selectedCurrency != nil
     }
@@ -30,17 +30,11 @@ struct HomePage: View {
                     Spacer(minLength: 200)
                 }
             }.zIndex(1)
-            if let asset = self.selectedCurrency,showAsset{
-                self.CurrencyView(asset: asset, height: totalHeight * 0.3)
-                    .animation(.easeInOut)
+            if let asset = self.selectedCurrency{
+                self.CurrencyView(asset: self.selectedCurrency!, height: totalHeight * 0.3)
             }
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
-        .onChange(of: self.selectedCurrency?.id, perform: { value in
-            if (value == nil && showAsset) || (value != nil && !showAsset){
-                self.showAsset.toggle()
-            }
-        })
     }
 }
 
@@ -54,16 +48,18 @@ extension HomePage{
         }
     }
     
+
+    
     func CurrencyView(asset:AssetData,height h :CGFloat) -> some View{
         ScrollView(.vertical, showsIndicators: false) {
             Container(heading: "\(asset.symbol ?? "CRYPTO")",onClose: self.closeAsset) { w in
-                AnyView(CurrencyDetailView(info: asset,size: .init(width: w, height: h)))
+                CurrencyDetailView(info: asset,size: .init(width: w, height: h))
             }
         }
+        .transition(.slideInOut)
         .padding(.top,50)
         .background(mainBGView)
         .edgesIgnoringSafeArea(.all)
-        .transition(.slideInOut)
         .zIndex(2)
     }
     
@@ -82,7 +78,8 @@ extension HomePage{
     var NewsSection:some View{
         return RecentNewsCarousel(heading: "News") { currency in
             guard let curr = currency as? String  else {return AnyView(Color.clear)}
-            return AnyView(RecentNews(currency: curr,ext_h: true))
+//            return AnyView(RecentNews(currency: curr,ext_h: true))
+            return AnyView(NewsCardCarousel(currency: [curr],size: .init(width: totalWidth, height: totalHeight * 0.65)))
         }
         
     }

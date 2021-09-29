@@ -1,4 +1,75 @@
 import SwiftUI
+enum Clipping:CGFloat{
+    case roundClipping = 20
+    case squareClipping = 10
+    case clipped = 0
+}
+
+
+struct ContentClipping:ViewModifier{
+    var clipping:Clipping
+    func body(content: Content) -> some View {
+        return content
+            .contentShape(RoundedRectangle(cornerRadius: self.clipping.rawValue))
+            .clipShape(RoundedRectangle(cornerRadius: self.clipping.rawValue))
+    }
+}
+
+struct ImageTransition:ViewModifier{
+    @State var load:Bool = false
+    
+    func onAppear(){
+        withAnimation(.easeInOut(duration: 0.5)) {
+            self.load = true
+        }
+    }
+    
+    var scale:CGFloat{
+        return self.load ? 1 : 1.075
+    }
+    
+    func body(content: Content) -> some View {
+        return content
+            .scaleEffect(self.scale)
+            .onAppear(perform: self.onAppear)
+    }
+}
+
+struct ShadowModifier:ViewModifier{
+    func body(content: Content) -> some View {
+        content
+            .shadow(color: .white.opacity(0.15), radius: 15, x: 0, y: 0)
+    }
+}
+
+struct ZoomInOut:ViewModifier{
+    
+    @State var scale:CGFloat = 1.2
+    @State var opacity:CGFloat = 0.8
+    
+    func onAppear(){
+        withAnimation(.easeInOut) {
+            self.scale = 1
+            self.opacity = 1
+        }
+    }
+    
+    func onDisappear(){
+        withAnimation(.easeInOut) {
+            self.scale = 0.75
+            self.opacity = 0.75
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .scaleEffect(scale)
+            .opacity(opacity)
+            .onAppear(perform: self.onAppear)
+            .onDisappear(perform: self.onDisappear)
+            .animation(.easeInOut(duration: 0.5))
+    }
+}
 
 struct SlideInOut:ViewModifier{
     var scale:CGFloat
@@ -21,20 +92,36 @@ struct ButtonModifier:ButtonStyle{
 
 extension AnyTransition{
     
-    static var slideIn:AnyTransition{
-        return AnyTransition.modifier(active: SlideInOut(scale: 0.9), identity: SlideInOut(scale: 1))
-    }
-    
     static var slideInOut:AnyTransition{
         return AnyTransition.asymmetric(insertion:.move(edge: .bottom), removal: .move(edge: .bottom))
     }
     
+    static var zoomInOut:AnyTransition{
+        return AnyTransition.asymmetric(insertion: .scale(scale: 1.5).combined(with: .opacity), removal: .scale(scale: 0.9).combined(with: .opacity)).animation(.easeInOut)
+    }
+
 }
 
 
 extension View{
     func springButton() -> some View{
         self.buttonStyle(ButtonModifier())
+    }
+    
+    func clipContent(clipping:Clipping = .clipped) -> some View{
+        self.modifier(ContentClipping(clipping: clipping))
+    }
+    
+    func defaultShadow() -> some View{
+        self.modifier(ShadowModifier())
+    }
+    
+    func imageSpring() -> some View{
+        self.modifier(ImageTransition())
+    }
+    
+    func zoomInOut() -> some View{
+        self.modifier(ZoomInOut())
     }
 }
 

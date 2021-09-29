@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FancyHScroll: View {
     var views:[AnyView]
+    var timeLimit:Int
     //    var view: (CGSize) -> AnyView
     var size:CGSize
     var headers:[String]?
@@ -16,8 +17,9 @@ struct FancyHScroll: View {
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State var time:Int = 0
     
-    init(views:[AnyView],headers:[String]? = nil,size:CGSize){
+    init(views:[AnyView],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize){
         self.views = views
+        self.timeLimit = timeLimit
         self._SP = StateObject(wrappedValue: .init(0, views.count - 1, 100, type: .Carousel))
         self.size = size
         self.headers = headers
@@ -49,7 +51,7 @@ struct FancyHScroll: View {
     }
     
     func onReceiveTimer(){
-        if self.time == 10{
+        if self.time == self.timeLimit{
             self.SP.swiped = self.SP.swiped + 1 <= self.views.count - 1 ? self.SP.swiped + 1 : 0
         }else{
             self.time += 1
@@ -75,7 +77,7 @@ struct FancyHScroll: View {
                         Button {
                             self.SP.swiped = idx
                         } label: {
-                            TimerBlobs(text: cur, h: timeBlob_h, time: self.$time, targetTime: 10, active: self.SP.swiped == idx)
+                            TimerBlobs(text: cur, h: timeBlob_h, time: self.$time, targetTime: timeLimit, active: self.SP.swiped == idx)
                         }  
                     }
                 }.frame(width:size.width,height:timeBlob_h)

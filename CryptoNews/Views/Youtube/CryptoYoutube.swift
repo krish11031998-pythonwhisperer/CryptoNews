@@ -67,7 +67,7 @@ struct CryptoYoutube: View {
     
     var body: some View {
         Container(heading: "Top Videos", innerView: { w in
-            return AnyView(GeometryReader{g in
+            return GeometryReader{g in
                 let size = g.frame(in: .local).size
                 VStack(alignment: .center, spacing: 10){
                     if self.videos.isEmpty{
@@ -78,7 +78,7 @@ struct CryptoYoutube: View {
                     }
                 }.frame(width: size.width, height: size.height, alignment: .center)
             }
-            .frame(width: w, height: size.height , alignment: .center))
+            .frame(width: w, height: size.height , alignment: .center)
         })
         .onAppear(perform: self.onAppear)
     }

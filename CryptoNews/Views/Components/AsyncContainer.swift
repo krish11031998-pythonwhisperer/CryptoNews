@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-struct AsyncContainer: View {
-    var view:AnyView
+struct AsyncContainer<T:View>: View {
+    var view:T
     var size:CGSize
-    var triggerAction:() -> Void
-    init(view:AnyView,size:CGSize,triggerAction:@escaping (() -> Void)){
-        self.view = view
+    var triggerAction:(() -> Void)
+    init(size:CGSize,triggerAction:@escaping (() -> Void),@ViewBuilder view: () -> T){
+        self.view = view()
         self.size = size
         self.triggerAction = triggerAction
     }
@@ -20,15 +20,21 @@ struct AsyncContainer: View {
     var body: some View {
         GeometryReader { g -> AnyView in
             let maxY = g.frame(in: .global).maxY
+            let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-                if maxY <= totalHeight{
+//                if maxY <= totalHeight{
+//                    self.triggerAction()
+//                }
+                if minY <= totalHeight{
                     self.triggerAction()
                 }
+                print("DEBUG : maxY = ",maxY)
             }
             
             return AnyView(self.view)
-        }.frame(width: self.size.width, height: self.size.height, alignment: .center)
+        }.frame(width: self.size.width, alignment: .center)
+            .frame(maxHeight: .infinity)
     }
 }
 

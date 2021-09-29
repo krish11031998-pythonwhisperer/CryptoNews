@@ -14,32 +14,36 @@ struct CurrencyDetailView: View {
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
     @StateObject var asset_feed:FeedAPI
-    @StateObject var asset_info:AssetAPI
+    var asset_info:AssetAPI
     @State var time:Int = 0
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(info:AssetData,size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3)){
         self._currency = .init(wrappedValue: info)
         self.size = size
         self._asset_feed = .init(wrappedValue: .init(currency: [info.symbol ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
-        self._asset_info = .init(wrappedValue: .init(currency: info.symbol ?? "BTC"))
+        self.asset_info = AssetAPI.shared(currency: info.symbol ?? "BTC")
     }
     
     var body:some View{
         VStack(alignment: .leading, spacing: 25){
-            self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
+            HStack(alignment: .center, spacing: 4) {
+                self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
+                Spacer()
+                SystemButton(b_name: "arrow.clockwise", b_content: "Refresh", color: .white, haveBG: true, bgcolor: .black, alignment: .vertical, action: self.getAssetInfo)
+            }
             self.priceInfo
-            self.curveChart
-                .clipShape(RoundedRectangle(cornerRadius: 15))
+            self.curveChart.clipContent(clipping: .roundClipping)
             self.transactionHistoryView
             self.Avg_Sentiment
             self.SocialMedia_Metrics
             self.barTweetChart
             self.feedContainer
         }.onAppear(perform: self.onAppear)
-        .onReceive(self.timer, perform: { _ in self.checkTimer()})
-        .onReceive(self.asset_info.$data, perform: { _ in
-            self.onReceiveNewAssetInfo(asset: self.asset_info.data)
-        })
+    }
+    
+    func getAssetInfo(){
+        print("(DEBUG) Fetching Data for asset")
+        self.asset_info.getAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
     }
     
     
@@ -76,7 +80,6 @@ extension CurrencyDetailView{
     var barTweetChart:AnyView{
         return AnyView(
             BarChart(heading:"Tweet Analytics",bar_elements: self.barChartValues, size: .init(width: size.width, height: size.height * 1.5))
-        
         )
     }
     
@@ -84,25 +87,44 @@ extension CurrencyDetailView{
         MarkerMainView(data: .init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1,txns: [.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1),.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1),.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1)]),size: .init(width: size.width, height: size.height * 1.5))
     }
     
-    
-    var feedComponent:some View{
-        VStack(alignment: .leading, spacing: 10){
-            MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold)
-            ForEach(Array(self.asset_feed.FeedData.enumerated()),id:\.offset){ _data in
-                let data = _data.element
-                let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
-            }
-        }.transition(.opacity)
+    func reload(idx:Int){
+        if idx == self.asset_feed.FeedData.count - 5{
+            print("(DEBUG) Fetching more feedData")
+            self.asset_feed.getNextPage()
+        }
     }
     
-    var feedContainer:AnyView{
+    func reload(){
+//        if idx == self.asset_feed.FeedData.count - 1{
+            print("(DEBUG) Fetching more feedData")
+            self.asset_feed.getNextPage()
+//        }
+    }
+    
+    var feed:some View{
+//        AsyncContainer(size: .init(width: self.size.width, height: .infinity),triggerAction: self.reload) {
+            LazyVStack(alignment: .leading, spacing: 10){
+                MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold)
+                ForEach(Array(self.asset_feed.FeedData.enumerated()),id:\.offset){ _data in
+                    let data = _data.element
+                    let idx = _data.offset
+                    let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
+                    PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
+                        .onAppear {
+                            self.reload(idx: idx)
+                        }
+                }
+//            }
+
+        }
+        //        .transition(.opacity)
+    }
+    
+    @ViewBuilder var feedContainer:some View{
         if self.asset_feed.FeedData.isEmpty{
-            return AnyView(ProgressView())
+            ProgressView()
         }else{
-            return AnyView(
-                self.feedComponent
-            )
+            self.feed
         }
         
     }
@@ -126,6 +148,7 @@ extension CurrencyDetailView{
         ZStack(alignment: .center){
             if let tS = self.timeSeries{
                 CurveChart(data: tS,choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
+                    
             }else{
                 MainText(content: "NO Time Series Data", fontSize: 20, color: .white, fontWeight: .bold)
             }
@@ -142,7 +165,7 @@ extension CurrencyDetailView{
         }
     }
     
-    func text(heading:String,info:String,heading_size:CGFloat = 12.5,info_size:CGFloat = 20) -> some View{
+    func text(heading:String,info:String,heading_size:CGFloat = 12.5,info_size:CGFloat = 17.5) -> some View{
         return VStack(alignment: .leading, spacing: 10){
             MainText(content: heading, fontSize: heading_size, color: .white, fontWeight: .semibold)
             MainText(content: info, fontSize: info_size, color: .white, fontWeight: .regular)
@@ -227,7 +250,7 @@ private struct testView:View{
     
     var body: some View{
         Container(heading: "\(self.asset.currency)") { w in
-            return AnyView(
+//            return AnyView(
                 ZStack(alignment: .center){
                     if let data = self.asset.data{
                         CurrencyDetailView(info: data)
@@ -235,7 +258,7 @@ private struct testView:View{
                         ProgressView()
                     }
                 }
-            )
+//            )
         }.onAppear(perform : self.onAppear)
     }
 }

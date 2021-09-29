@@ -24,6 +24,7 @@ struct CardSlidingView: View {
         return off
     }
     
+    
     var body: some View {
         HStack(alignment: .center, spacing: 0){
             Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
@@ -33,12 +34,15 @@ struct CardSlidingView: View {
                 let selected = idx == self.SP.swiped
                 let scale:CGFloat = selected ? 1.05 : 0.9
                 if idx >= self.SP.swiped - 2 && idx <= self.SP.swiped + 2{
-                    view
-                        .scaleEffect(scale)
-                        .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
-                        .onTapGesture{
+                    Button {
+                        withAnimation(.easeInOut) {
                             self.SP.swiped = idx
                         }
+                    } label: {
+                        view
+                            .scaleEffect(scale)
+                            .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
+                    }.springButton()
                 }
             }
             Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
@@ -48,7 +52,7 @@ struct CardSlidingView: View {
         .padding(.leading,10)
         .offset(x: self.scrolledOffset)
         .offset(x: self.SP.extraOffset)
-        .animation(.easeInOut(duration: 0.65))
+//        .animation(.easeInOut(duration: 0.65))
     }
 }
 

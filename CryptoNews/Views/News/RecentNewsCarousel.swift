@@ -21,7 +21,8 @@ struct RecentNewsCarousel: View {
         let h = totalHeight * 0.7
         Container(heading: "News") { w  in
             let size = CGSize(width: w, height: h)
-            return AnyView(FancyHScroll(views: self.data.map({AnyView(self.view($0))}),headers: self.data as? [String], size: size))
+//            return AnyView(FancyHScroll(views: self.data.map({AnyView(self.view($0))}),headers: self.data as? [String], size: size))
+            FancyHScroll(views: self.data.map({AnyView(self.view($0))}),timeLimit: 60,headers: self.data as? [String], size: size)
         }
         
     }

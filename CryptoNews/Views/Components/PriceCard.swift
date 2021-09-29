@@ -32,7 +32,6 @@ struct PriceCard: View {
     func parsePrices(data:AssetData?){
         
         guard let data = data, let timeSeries = data.timeSeries else {return}
-//        print("DEBUG ASSET DATA : ",String(describing: data));
         DispatchQueue.main.async {
             self.prices = timeSeries
         }
@@ -60,9 +59,9 @@ struct PriceCard: View {
                 .frame(width: 10, height: size.height, alignment: .center)
             VStack(alignment: .leading, spacing: 2){
                 MainText(content: "Open", fontSize: 8.5,color: color)
-                MainText(content: String(format: "%.1f", open), fontSize: 20,color: color,fontWeight: .bold)
+                MainText(content: String(format: "%.2f", open), fontSize: 20,color: color,fontWeight: .bold)
                 MainText(content: "Close", fontSize: 8.5,color: font_color)
-                MainText(content: String(format: "%.1f", close), fontSize: 15,color: font_color)
+                MainText(content: String(format: "%.2f", close), fontSize: 15,color: font_color)
             }.frame(height: size.height, alignment: .leading)
             Spacer()
         }.frame(width: size.width, height: size.height, alignment: .bottom)
@@ -84,17 +83,20 @@ struct PriceCard: View {
         .background(BlurView(style: .systemThinMaterialDark))
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        .onAppear(perform: self.onAppear)
+        .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
     }
     
     var body: some View {
         Button(action: {
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.selected_asset = self.asset_api.data
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self.selected_asset = self.asset_api.data
+                }
             }
+            
         }, label: {
             self.chartView
-            .onAppear(perform: self.onAppear)
-            .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
         }).springButton()
         
             

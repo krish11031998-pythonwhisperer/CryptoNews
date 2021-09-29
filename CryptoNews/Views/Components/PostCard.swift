@@ -127,7 +127,7 @@ extension PostCard{
         
         return AnyView(
             MainText(content: self.data.body ?? self.data.title ?? "No Text", fontSize: 14, color: .white, fontWeight: .regular)
-                .frame(width: w, alignment: .leading)
+                .frame(width: w, alignment: .topLeading)
                 .frame(maxHeight: h)
             
         )
