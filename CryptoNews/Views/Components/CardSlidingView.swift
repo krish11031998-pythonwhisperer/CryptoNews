@@ -49,10 +49,8 @@ struct CardSlidingView: View {
         }
         .edgesIgnoringSafeArea(.horizontal)
         .frame(width:totalWidth,height: cardSize.height * 1.01,alignment: .leading)
-        .padding(.leading,10)
         .offset(x: self.scrolledOffset)
         .offset(x: self.SP.extraOffset)
-//        .animation(.easeInOut(duration: 0.65))
     }
 }
 

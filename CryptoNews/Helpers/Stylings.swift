@@ -38,7 +38,7 @@ struct ImageTransition:ViewModifier{
 struct ShadowModifier:ViewModifier{
     func body(content: Content) -> some View {
         content
-            .shadow(color: .white.opacity(0.15), radius: 15, x: 0, y: 0)
+            .shadow(color: .white.opacity(0.05), radius: 10, x: 0, y: 0)
     }
 }
 
@@ -81,6 +81,60 @@ struct SlideInOut:ViewModifier{
     }
 }
 
+struct MainSubHeading:View{
+    var heading:String
+    var subHeading:String
+    var headingSize:CGFloat
+    var subHeadingSize:CGFloat
+    var headingFont:TextStyle
+    var subHeadingFont:TextStyle
+    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .normal, subHeadingFont:TextStyle = .normal){
+        self.heading = heading
+        self.subHeading = subHeading
+        self.headingSize = headingSize
+        self.subHeadingSize = subHeadingSize
+        self.headingFont = headingFont
+        self.subHeadingFont = subHeadingFont
+    }
+    
+    var body: some View{
+        VStack(alignment: .leading, spacing: 5) {
+            MainText(content: self.heading, fontSize: self.headingSize, color: .gray, fontWeight: .semibold,style: headingFont)
+            MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: .white, fontWeight: .semibold,style: subHeadingFont)
+        }
+    }
+    
+}
+
+
+struct TabButton:View{
+    var size:CGSize
+    var title:String
+    var color:Color
+    var action:() -> Void
+    
+    init(width:CGFloat = totalWidth - 40, height:CGFloat = 50,title:String = "Button",textColor:Color = .white,action:@escaping () -> Void){
+        self.size = .init(width: width, height: height)
+        self.title = title
+        self.color = textColor
+        self.action = action
+    }
+    
+    
+    var body: some View{
+        ZStack(alignment: .center) {
+            BlurView(style: .regular)
+            MainText(content: self.title, fontSize: 15, color: self.color, fontWeight: .semibold)
+        }
+        .frame(width: size.width, height: size.height, alignment: .center)
+        .clipContent(clipping: .roundClipping)
+        .defaultShadow()
+        .onTapGesture(perform: self.action)
+    }
+    
+}
+
+
 struct ButtonModifier:ButtonStyle{
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -100,6 +154,10 @@ extension AnyTransition{
         return AnyTransition.asymmetric(insertion: .scale(scale: 1.5).combined(with: .opacity), removal: .scale(scale: 0.9).combined(with: .opacity)).animation(.easeInOut)
     }
 
+    static var slideRightLeft:AnyTransition{
+        return AnyTransition.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading))
+    }
+    
 }
 
 
@@ -122,6 +180,10 @@ extension View{
     
     func zoomInOut() -> some View{
         self.modifier(ZoomInOut())
+    }
+    
+    func slideRightLeft() -> some View{
+        self.transition(.slideRightLeft)
     }
 }
 

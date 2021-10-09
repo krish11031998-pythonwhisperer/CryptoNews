@@ -2,13 +2,17 @@ import SwiftUI
 
 enum TextStyle:String{
     case main = "Avenir Next Medium"
-//    case main = "NeueMachina-Regular"
+//    case heading = "RalewayDots-Regular"
+    case heading = "Megrim-Regular"
+    case normal = "NixieOne-Regular"
+    case monospaced = ""
+//    case heading = "MajorMonoDisplay-Regular"
 //    case heading = "BungeeShade-Regular"
 //    case title = "SortsMillGoudy-Regular"
 //    case normal = "Avenir Next Medium"
 //    case normal = "Cochin"
 //    case normal = "SpaceGrotesk"
-    case normal = "Verdana"
+//    case normal = "Verdana"
 //    case normal = "SortsMillGoudy-Regular"
 }
 struct BasicText: View {
@@ -28,6 +32,7 @@ struct BasicText: View {
     }
     
     var body:some View{
+        
         Text(self.content)
             .font(.system(size: self.size, weight: self.weight, design: self.fontDesign))
 //            .foregroundColor(.black)
@@ -51,7 +56,6 @@ struct MainText: View {
         self.font = .custom(self.style.rawValue, size: self.fontSize)
         self.fontWeight = fontWeight
         self.addBG = addBG
-        
     }
     
     struct CustomFontModifier:ViewModifier{
@@ -72,11 +76,17 @@ struct MainText: View {
     var oppColor:Color{
         return self.color == .black ? .white : .black
     }
-     
+    
+    var _font_:Font{
+        return self.style != .monospaced ? .custom(self.style.rawValue, size: self.fontSize) : Font.system(size: self.fontSize, weight: .regular, design: .monospaced)
+//        return .custom(self.style.rawValue, size: self.fontSize)
+    }
+    
     var body: some View {
         Text(self.content)
-            .font(self.style != .normal ? self.font : Font.system(size: self.fontSize, weight: .regular, design: .monospaced))
-            
+//            .font(self.style != .normal ? .custom(self.style.rawValue, size: self.fontSize) : Font.system(size: self.fontSize, weight: .regular, design: .monospaced))
+//
+            .font(_font_)
             .fontWeight(self.fontWeight)
             .foregroundColor(self.color)
 //            .padding(.all,addBG ? 10 : 0)

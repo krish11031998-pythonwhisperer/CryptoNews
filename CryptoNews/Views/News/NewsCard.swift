@@ -19,8 +19,10 @@ struct NewsCard: View {
         let w = size.width
         let h = size.height
         return VStack(alignment: .leading, spacing: 10) {
-            MainText(content: self.news.publisher ?? "News Published", fontSize: 13, color: .white, fontWeight: .semibold)
+            MainText(content: self.news.publisher ?? "News Publisher", fontSize: 13, color: .gray, fontWeight: .semibold)
+                .lineLimit(1)
             MainText(content: self.news.title ?? "News Title", fontSize: 16, color: .white, fontWeight: .regular)
+                .multilineTextAlignment(.leading)
         }.padding(10).frame(width: w, height: h, alignment: .topLeading)
     }
     
@@ -33,7 +35,7 @@ struct NewsCard: View {
                 self.newsView(size: .init(width: size.width, height: size.height * 0.25 - 5))
             }
             
-        }.frame(width: size.width, height: size.height, alignment: .center)
+        }.frame(width: size.width, height: size.height, alignment: .topLeading)
             .background(BlurView(style: .systemThinMaterialDark))
         .clipContent(clipping: .roundClipping)
         .defaultShadow()
@@ -44,6 +46,7 @@ struct NewsCardCarousel:View{
     @StateObject var newsFeed:FeedAPI
     @State var idx:Int = 0
     @State var time:Int = 0
+    @EnvironmentObject var context:ContextData
     let timeLimit:Int = 30
     var size:CGSize
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -102,9 +105,15 @@ struct NewsCardCarousel:View{
                     let idx = _newsFeed.offset
 
                     if idx == self.idx{
-                        NewsCard(news: news,size: _size)
-                            .overlay(self.actionCenter)
-                            .zoomInOut()
+                        Button {
+                            DispatchQueue.main.async {
+                                self.context.selectedNews = news
+                            }
+                        } label: {
+                            NewsCard(news: news,size: _size)
+                                .overlay(self.actionCenter)
+                                .zoomInOut()
+                        }
                     }
                 }
             }.frame(width: _size.width, height: _size.height,alignment: .center)

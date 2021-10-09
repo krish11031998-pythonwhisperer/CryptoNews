@@ -39,7 +39,6 @@ struct CryptoMarketCard:View{
         GeometryReader{g in
             let s = g.frame(in: .local).size
             self.card(size: s)
-            
         }.padding(15)
         .frame(width: self.size.width, height: self.size.height , alignment: .leading)
         

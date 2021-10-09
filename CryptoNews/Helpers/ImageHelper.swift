@@ -13,11 +13,11 @@ enum JPEGQuality: CGFloat {
     case highest = 1
 }
 
-protocol DictCache{
+protocol ImageDictCache{
     subscript(_ url:URL) -> UIImage? { get set }
 }
 
-struct ImageCache:DictCache{
+struct ImageCache:ImageDictCache{
     private let cache:NSCache<NSURL, UIImage> = {
         let cache = NSCache<NSURL,UIImage>()
         cache.countLimit = 500;

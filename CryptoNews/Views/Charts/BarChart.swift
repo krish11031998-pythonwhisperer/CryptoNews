@@ -71,7 +71,7 @@ struct BarChart: View {
     func barChart(size:CGSize) -> some View {
         let spacing:CGFloat = 10
         let bar_w = size.width/CGFloat(self.dataPoints.count) - spacing
-        return HStack(alignment: .bottom, spacing: spacing){
+        return LazyHStack(alignment: .bottom, spacing: spacing){
             ForEach(Array(self.dataPoints.enumerated()), id: \.offset) { _data in
                 self.barElement(bar_val: _data, size: .init(width: bar_w, height: size.height))
             }

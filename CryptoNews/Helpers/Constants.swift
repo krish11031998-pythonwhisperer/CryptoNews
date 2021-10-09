@@ -88,8 +88,10 @@ func convertToMoneyNumber(value:Float?) -> String{
         return "$\(String(format: decimal, value/1000))k"
     }else if value > 1000000 && value < 1000000000{
         return "$\(String(format: decimal,value/1000000))M"
-    }else if value > 1000000000{
+    }else if value > 1000000000 && value < 1000000000000{
         return "$\(String(format: decimal,value/1000000000))B"
+    }else if value >= 1000000000000{
+        return "$\(String(format: decimal,value/1000000000000))T"
     }else{
         return "$\(String(format: decimal,value))"
     }

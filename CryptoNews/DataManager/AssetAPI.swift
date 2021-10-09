@@ -25,8 +25,10 @@ class AssetData:Identifiable,Codable{
     var price:Float?
     var price_btc:Float?
     var market_cap:Float?
+    var market_cap_rank:Int?
     var percent_change_24h:Float?
     var percent_change_7d:Float?
+    var max_supply:String?
     var percent_change_30d:Float?
     var volume_24h:Float?
     var average_sentiment_calc_24h_previous:Float?
@@ -60,6 +62,7 @@ class AssetData:Identifiable,Codable{
     var price_score:Float?
     var social_impact_score:Float?
     var social_score:Float?
+    var market_dominance:Float?
 //    var sentiment_relative:Float?
 //    var news:Int?
 //    var social_dominance:Float?
@@ -120,6 +123,12 @@ class AssetAPI:DAPI,ObservableObject{
     
     func getAssetInfo(){
         self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
+    }
+    
+    func getUpdateAssetInfo(completion: @escaping (AssetData?) -> Void){
+        self.updateInfo(_url: self.assetURL) { data in
+            completion(self._parseData(data: data))
+        }
     }
     
     func getAssetInfo(completion: @escaping (AssetData?) -> Void){

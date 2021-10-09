@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>472341354999-9o10gdlf4a58pbii322h5nrguq98acg0.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.472341354999-9o10gdlf4a58pbii322h5nrguq98acg0</string>
+	<key>API_KEY</key>
+	<string>AIzaSyCr_ICfWIXXwMZFKa3Tso7CZJufjHhWwNA</string>
+	<key>GCM_SENDER_ID</key>
+	<string>472341354999</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.Krish.TimeExplorer.CryptoNews</string>
+	<key>PROJECT_ID</key>
+	<string>cryptonews-dc58f</string>
+	<key>STORAGE_BUCKET</key>
+	<string>cryptonews-dc58f.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:472341354999:ios:440378f09e8d3252c936f2</string>
+	<key>DATABASE_URL</key>
+	<string>https://cryptonews-dc58f-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

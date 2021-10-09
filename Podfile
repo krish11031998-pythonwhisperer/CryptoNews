@@ -17,6 +17,10 @@ target 'CryptoNews' do
   end
 
 pod 'XCDYouTubeKit'
-pod "youtube-ios-player-helper"
-
+pod 'youtube-ios-player-helper'
+pod 'Firebase/Analytics'
+pod 'Firebase/Auth'
+pod 'Firebase/Firestore'
+pod 'Firebase/Storage'
+pod 'FirebaseFirestoreSwift', '> 7.0-beta'
 end

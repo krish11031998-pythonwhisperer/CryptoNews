@@ -18,7 +18,7 @@ struct AsyncContainer<T:View>: View {
     }
     
     var body: some View {
-        GeometryReader { g -> AnyView in
+        GeometryReader { g -> T in
             let maxY = g.frame(in: .global).maxY
             let minY = g.frame(in: .global).minY
             
@@ -32,7 +32,7 @@ struct AsyncContainer<T:View>: View {
                 print("DEBUG : maxY = ",maxY)
             }
             
-            return AnyView(self.view)
+            return self.view
         }.frame(width: self.size.width, alignment: .center)
             .frame(maxHeight: .infinity)
     }

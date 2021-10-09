@@ -49,9 +49,7 @@ struct PostCard: View {
                     }else{
                         self.Body(size: .init(width: w, height: (h * 0.8) - 40))
                     }
-                    if self.const_size{
-                        Spacer()
-                    }
+                    Spacer(minLength: 0)
                     Divider().frame(width: w, alignment: .center)
                     self.Footer(data: data, size: .init(width: w, height: h * 0.1))
                 }.padding()
@@ -127,9 +125,9 @@ extension PostCard{
         
         return AnyView(
             MainText(content: self.data.body ?? self.data.title ?? "No Text", fontSize: 14, color: .white, fontWeight: .regular)
+                .multilineTextAlignment(.leading)
                 .frame(width: w, alignment: .topLeading)
                 .frame(maxHeight: h)
-            
         )
     }
     

@@ -21,6 +21,16 @@
 		BC305F0D26D8213400826AB4 /* FeedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0C26D8213400826AB4 /* FeedAPI.swift */; };
 		BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */; };
 		BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */; };
+		BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC64591E2708937300BAECBC /* FirebaseAPI.swift */; };
+		BC645921270E31C800BAECBC /* HoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC645920270E31C800BAECBC /* HoverView.swift */; };
+		BC645923270EFB6A00BAECBC /* CurrencyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC645922270EFB6A00BAECBC /* CurrencyView.swift */; };
+		BC64592527119E2C00BAECBC /* CurrencySummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC64592427119E2C00BAECBC /* CurrencySummaryView.swift */; };
+		BC6459282711C7A500BAECBC /* MajorMonoDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC6459272711C7A400BAECBC /* MajorMonoDisplay-Regular.ttf */; };
+		BC64592A2711CDC400BAECBC /* RalewayDots-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */; };
+		BC64592C2711CDCF00BAECBC /* NixieOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */; };
+		BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */; };
+		BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */; };
+		BC6459352712455A00BAECBC /* SingleTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459342712455A00BAECBC /* SingleTransactionView.swift */; };
 		BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */; };
 		BC854F4E26FB222700C823EB /* AsyncContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC854F4D26FB222700C823EB /* AsyncContainer.swift */; };
 		BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */; };
@@ -64,6 +74,9 @@
 		BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */; };
 		BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1DDB26C0652500B87E5C /* SwipedParams.swift */; };
 		BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACC826FFE1C800E76436 /* NewsCard.swift */; };
+		BCBCACCB2705132100E76436 /* WebModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACCA2705132100E76436 /* WebModelView.swift */; };
+		BCBCACCE2705172A00E76436 /* ContextData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACCD2705172A00E76436 /* ContextData.swift */; };
+		BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */; };
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
 /* End PBXBuildFile section */
@@ -100,6 +113,16 @@
 		BC305F0C26D8213400826AB4 /* FeedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAPI.swift; sourceTree = "<group>"; };
 		BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoCoinCard.swift; sourceTree = "<group>"; };
 		BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSlidingView.swift; sourceTree = "<group>"; };
+		BC64591E2708937300BAECBC /* FirebaseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAPI.swift; sourceTree = "<group>"; };
+		BC645920270E31C800BAECBC /* HoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverView.swift; sourceTree = "<group>"; };
+		BC645922270EFB6A00BAECBC /* CurrencyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyView.swift; sourceTree = "<group>"; };
+		BC64592427119E2C00BAECBC /* CurrencySummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySummaryView.swift; sourceTree = "<group>"; };
+		BC6459272711C7A400BAECBC /* MajorMonoDisplay-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MajorMonoDisplay-Regular.ttf"; sourceTree = "<group>"; };
+		BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RalewayDots-Regular.ttf"; sourceTree = "<group>"; };
+		BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NixieOne-Regular.ttf"; sourceTree = "<group>"; };
+		BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Megrim-Regular.ttf"; sourceTree = "<group>"; };
+		BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyAssetDetailView.swift; sourceTree = "<group>"; };
+		BC6459342712455A00BAECBC /* SingleTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTransactionView.swift; sourceTree = "<group>"; };
 		BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDetailView.swift; sourceTree = "<group>"; };
 		BC854F4D26FB222700C823EB /* AsyncContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncContainer.swift; sourceTree = "<group>"; };
 		BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyInfoView.swift; sourceTree = "<group>"; };
@@ -149,6 +172,9 @@
 		BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecentNewsCarousel.swift; sourceTree = "<group>"; };
 		BCBC1DDB26C0652500B87E5C /* SwipedParams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SwipedParams.swift; sourceTree = "<group>"; };
 		BCBCACC826FFE1C800E76436 /* NewsCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsCard.swift; sourceTree = "<group>"; };
+		BCBCACCA2705132100E76436 /* WebModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebModelView.swift; sourceTree = "<group>"; };
+		BCBCACCD2705172A00E76436 /* ContextData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextData.swift; sourceTree = "<group>"; };
+		BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BCF98BA126D97E7000C45562 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		BCF98BA426D9811300C45562 /* CryptoYoutube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoYoutube.swift; sourceTree = "<group>"; };
 		C1CBEBE1BBE6CDB5B6100756 /* Pods-CryptoNewsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNewsTests.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNewsTests/Pods-CryptoNewsTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -210,10 +236,33 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BC6459262711C79100BAECBC /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				BC6459272711C7A400BAECBC /* MajorMonoDisplay-Regular.ttf */,
+				BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */,
+				BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */,
+				BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */,
+			);
+			path = Fonts;
+			sourceTree = "<group>";
+		};
+		BC6459332712451400BAECBC /* TransactionDetailView */ = {
+			isa = PBXGroup;
+			children = (
+				BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */,
+				BC6459342712455A00BAECBC /* SingleTransactionView.swift */,
+			);
+			path = TransactionDetailView;
+			sourceTree = "<group>";
+		};
 		BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */ = {
 			isa = PBXGroup;
 			children = (
+				BC6459332712451400BAECBC /* TransactionDetailView */,
 				BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */,
+				BC645922270EFB6A00BAECBC /* CurrencyView.swift */,
+				BC64592427119E2C00BAECBC /* CurrencySummaryView.swift */,
 			);
 			path = CurrencyDetailView;
 			sourceTree = "<group>";
@@ -252,6 +301,8 @@
 				BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */,
 				BCF98BA126D97E7000C45562 /* VideoPlayer.swift */,
 				BC854F4D26FB222700C823EB /* AsyncContainer.swift */,
+				BCBCACCA2705132100E76436 /* WebModelView.swift */,
+				BC645920270E31C800BAECBC /* HoverView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -290,6 +341,7 @@
 		BCBC1D7426BE7D7400B87E5C /* CryptoNews */ = {
 			isa = PBXGroup;
 			children = (
+				BC6459262711C79100BAECBC /* Fonts */,
 				BCBC1DD626BF424000B87E5C /* ImageHelpers */,
 				BCBC1DC926BE9C9700B87E5C /* DataManager */,
 				BCBC1DA526BE7FBE00B87E5C /* Helpers */,
@@ -298,6 +350,7 @@
 				BCBC1D7726BE7D7400B87E5C /* ContentView.swift */,
 				BCBC1D7926BE7D7500B87E5C /* Assets.xcassets */,
 				BCBC1D7E26BE7D7500B87E5C /* Info.plist */,
+				BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */,
 				BCBC1D7B26BE7D7500B87E5C /* Preview Content */,
 			);
 			path = CryptoNews;
@@ -332,6 +385,7 @@
 		BCBC1DA026BE7DFD00B87E5C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BCBCACCC2705171100E76436 /* UIManager */,
 				BCF98BA326D980FB00C45562 /* Youtube */,
 				BCB2978A26D57371005E2289 /* CurrencyView */,
 				BCB7835A26C31855009D5822 /* Reddit */,
@@ -400,6 +454,7 @@
 				BC305F0826D8209000826AB4 /* DAPI.swift */,
 				BC305F0A26D820CD00826AB4 /* AssetAPI.swift */,
 				BC305F0C26D8213400826AB4 /* FeedAPI.swift */,
+				BC64591E2708937300BAECBC /* FirebaseAPI.swift */,
 			);
 			path = DataManager;
 			sourceTree = "<group>";
@@ -429,6 +484,14 @@
 				BCBC1DD726BF424D00B87E5C /* ImageView.swift */,
 			);
 			path = ImageHelpers;
+			sourceTree = "<group>";
+		};
+		BCBCACCC2705171100E76436 /* UIManager */ = {
+			isa = PBXGroup;
+			children = (
+				BCBCACCD2705172A00E76436 /* ContextData.swift */,
+			);
+			path = UIManager;
 			sourceTree = "<group>";
 		};
 		BCF98BA326D980FB00C45562 /* Youtube */ = {
@@ -549,7 +612,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				BCBC1D7D26BE7D7500B87E5C /* Preview Assets.xcassets in Resources */,
+				BC64592A2711CDC400BAECBC /* RalewayDots-Regular.ttf in Resources */,
+				BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */,
+				BC64592C2711CDCF00BAECBC /* NixieOne-Regular.ttf in Resources */,
 				BCBC1D7A26BE7D7500B87E5C /* Assets.xcassets in Resources */,
+				BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */,
+				BC6459282711C7A500BAECBC /* MajorMonoDisplay-Regular.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -686,6 +754,7 @@
 				BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */,
 				BCBC1DD826BF424D00B87E5C /* ImageView.swift in Sources */,
 				BCBC1DC226BE862400B87E5C /* Array.swift in Sources */,
+				BC6459352712455A00BAECBC /* SingleTransactionView.swift in Sources */,
 				BCBC1DBE26BE826300B87E5C /* PriceCard.swift in Sources */,
 				BCBC1DB926BE824300B87E5C /* CurveChart.swift in Sources */,
 				BCBC1DD526BF420A00B87E5C /* RecentNewsCard.swift in Sources */,
@@ -694,8 +763,10 @@
 				BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */,
 				BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */,
 				BCB7836426C66CE9009D5822 /* PostCard.swift in Sources */,
+				BC645921270E31C800BAECBC /* HoverView.swift in Sources */,
 				BCBC1DD326BF3C3F00B87E5C /* RecentNews.swift in Sources */,
 				BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */,
+				BCBCACCE2705172A00E76436 /* ContextData.swift in Sources */,
 				BC305F0D26D8213400826AB4 /* FeedAPI.swift in Sources */,
 				BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */,
 				BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */,
@@ -715,9 +786,13 @@
 				BC305F0926D8209000826AB4 /* DAPI.swift in Sources */,
 				BC10D9D526F5CAE7007ADE34 /* BarChart.swift in Sources */,
 				BCB7835C26C31865009D5822 /* LatestRedditView.swift in Sources */,
+				BCBCACCB2705132100E76436 /* WebModelView.swift in Sources */,
 				BCBC1DB326BE824300B87E5C /* WeekBarChart.swift in Sources */,
 				BCBC1DB526BE824300B87E5C /* LineChart.swift in Sources */,
+				BC645923270EFB6A00BAECBC /* CurrencyView.swift in Sources */,
 				BCBC1DA226BE7EF700B87E5C /* Basics.swift in Sources */,
+				BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */,
+				BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */,
 				BCBC1DC826BE87A100B87E5C /* Stylings.swift in Sources */,
 				BCBC1DC426BE871900B87E5C /* ColorHelper.swift in Sources */,
 				BCBC1DBA26BE824300B87E5C /* PriceTimeChart.swift in Sources */,
@@ -728,6 +803,7 @@
 				BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */,
 				BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */,
 				BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */,
+				BC64592527119E2C00BAECBC /* CurrencySummaryView.swift in Sources */,
 				BCB7836026C58E03009D5822 /* Container.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

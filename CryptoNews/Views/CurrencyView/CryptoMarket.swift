@@ -27,17 +27,15 @@ struct CryptoMarket: View {
     }
     
     var body: some View {
-        ZStack{
-            if let views = self.view{
-                VStack(alignment: .leading, spacing: 10){
-                    MainText(content: "Crypto Market", fontSize: 30, color: .white, fontWeight: .semibold).padding(.horizontal,25)
-                    Divider().frame(width:cardSize.width * 0.5,alignment: .leading).padding(.horizontal,25)
-                    CardSlidingView(cardSize: cardSize,views: views)
+        Container(heading: "Crypto Market", width: totalWidth) { w in
+            ZStack{
+                if let views = self.view{
+                    CardSlidingView(cardSize: .init(width: cardSize.width, height: cardSize.height),views: views)
+                }else{
+                    ProgressView()
                 }
-            }else{
-                ProgressView()
-            }
-        }.onAppear(perform: self.onAppear)
+            }.onAppear(perform: self.onAppear)
+        }
     }
 }
 
