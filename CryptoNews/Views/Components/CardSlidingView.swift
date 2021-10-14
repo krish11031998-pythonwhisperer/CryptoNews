@@ -25,32 +25,39 @@ struct CardSlidingView: View {
     }
     
     
+    func zoomInOut(view:AnyView) -> some View{
+        GeometryReader{g in
+            let midX = g.frame(in: .global).midX
+            let diff = abs(midX - (totalWidth * 0.5))/totalWidth
+            let diff_percent = (diff > 0.25 ? 1 : diff/0.25)
+            let scale = 1 - 0.05 * diff_percent
+            
+            view.scaleEffect(scale)
+            
+        }.frame(width: cardSize.width, height: cardSize.height, alignment: .center)
+    }
+    
+    
     var body: some View {
-        HStack(alignment: .center, spacing: 0){
-            Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
-            ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
-                let view = _view.element
-                let idx = _view.offset
-                let selected = idx == self.SP.swiped
-                let scale:CGFloat = selected ? 1.05 : 0.9
-                if idx >= self.SP.swiped - 2 && idx <= self.SP.swiped + 2{
-                    Button {
-                        withAnimation(.easeInOut) {
-                            self.SP.swiped = idx
-                        }
-                    } label: {
-                        view
-                            .scaleEffect(scale)
-                            .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
-                    }.springButton()
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(alignment: .center, spacing: 0){
+                Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
+                ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
+                    let view = _view.element
+                        Button {
+//                            withAnimation(.easeInOut) {
+//                                self.SP.swiped = idx
+//                            }
+                        } label: {
+                            zoomInOut(view: view)
+                        }.springButton()
+                    
                 }
+                Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
             }
-            Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
+            
         }
-        .edgesIgnoringSafeArea(.horizontal)
-        .frame(width:totalWidth,height: cardSize.height * 1.01,alignment: .leading)
-        .offset(x: self.scrolledOffset)
-        .offset(x: self.SP.extraOffset)
+        .frame(height: cardSize.height * 1,alignment: .leading)
     }
 }
 

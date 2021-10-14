@@ -20,14 +20,14 @@ struct HoverView<T:View>:View{
     }
     
     var body: some View{
-        Container(heading: heading, width: totalWidth,onClose: onClose){ w in
-            ScrollView(.vertical, showsIndicators: false) {
-                self.inner_view(w)
-            }.frame(width: w, height: totalHeight, alignment: .topLeading)
-            
+        ScrollView(.vertical, showsIndicators: false) {
+            Container(heading: heading, width: totalWidth,onClose: onClose){ w in
+                    self.inner_view(w)
+            }
+            .padding(.top,50)
         }
+        
         .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
-        .padding(.top,50)
         .background(mainBGView)
         .slideRightLeft()
     }

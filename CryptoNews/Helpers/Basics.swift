@@ -3,7 +3,7 @@ import SwiftUI
 enum TextStyle:String{
     case main = "Avenir Next Medium"
 //    case heading = "RalewayDots-Regular"
-    case heading = "Megrim-Regular"
+    case heading = "Codystar-Regular"
     case normal = "NixieOne-Regular"
     case monospaced = ""
 //    case heading = "MajorMonoDisplay-Regular"

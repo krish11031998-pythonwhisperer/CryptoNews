@@ -18,6 +18,21 @@ struct SingleTransactionView: View {
     }
     
     var body: some View {
+        Button(action:{
+            withAnimation(.easeInOut) {
+                self.showMore.toggle()
+            }
+        },label: {
+            self.mainInnerBody
+        }).springButton()
+    }
+}
+
+
+extension SingleTransactionView{
+    
+    
+    var mainInnerBody:some View{
         VStack(alignment: .leading, spacing: 7.5){
             self.txnHeader
             self.txnSummary
@@ -25,20 +40,11 @@ struct SingleTransactionView: View {
                 self.txnMiscDetails
             }
         }.padding()
-        .background(Color.mainBGColor.overlay(BlurView(style: .systemThinMaterial)))
+            .background(Color.mainBGColor.overlay(BlurView(style: .systemChromeMaterialDark)))
         .frame(width:width,alignment: .topLeading)
         .clipContent(clipping: .roundClipping)
-        .springButton()
-        .onTapGesture {
-            withAnimation(.easeInOut) {
-                self.showMore.toggle()
-            }
-        }
     }
-}
-
-
-extension SingleTransactionView{
+    
     
     var txnPercent:(Float,Color,String){
         let value:Float = -5
@@ -49,9 +55,9 @@ extension SingleTransactionView{
     
     var txnHeader:some View{
         HStack {
-            MainText(content: self.txn.type?.capitalized ?? "No Type", fontSize: 20, color: .white, fontWeight: .semibold, style: .monospaced)
+            MainText(content: self.txn.type?.capitalized ?? "No Type", fontSize: 20, color: .white, fontWeight: .regular, style: .normal)
             Spacer()
-            MainText(content: self.txn.timeStamp.stringDate(), fontSize: 10, color: .white, fontWeight: .semibold, style: .heading)
+            MainText(content: self.txn.timeStamp.stringDate(), fontSize: 10, color: .white, fontWeight: .semibold, style: .monospaced)
         }
     }
     
@@ -69,7 +75,7 @@ extension SingleTransactionView{
     
     var txnSummary:some View{
         HStack {
-            MainText(content: convertToDecimals(value: self.txn._asset_quantity), fontSize: 25, color: .black, fontWeight: .semibold)
+            MainText(content: convertToDecimals(value: self.txn._asset_quantity), fontSize: 25, color: .white, fontWeight: .regular,style: .monospaced)
             Spacer()
             self.percentChangeView
         }
@@ -78,10 +84,18 @@ extension SingleTransactionView{
     
     var txnMiscDetails:some View{
         VStack(alignment: .leading, spacing: 3.5) {
-            MainSubHeading(heading: "Spot Price", subHeading: self.txn.asset_spot_price ?? "0.0", headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
-            MainSubHeading(heading: "Sub-Total", subHeading: self.txn.subtotal ?? "0.0", headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
-            MainSubHeading(heading: "Fee", subHeading: self.txn.fee ?? "0.0", headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
-            MainSubHeading(heading: "Total", subHeading: self.txn.total_inclusive_price ?? "0.0", headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+            if let spotPrice = self.txn.asset_spot_price,spotPrice != ""{
+                MainSubHeading(heading: "Spot Price", subHeading: spotPrice, headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+            }
+            if let subTotal = self.txn.subtotal, subTotal != ""{
+                MainSubHeading(heading: "Sub-Total", subHeading: subTotal, headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+            }
+            if let fee = self.txn.fee, fee != ""{
+                MainSubHeading(heading: "Fee", subHeading: fee, headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+            }
+            if let total = self.txn.total_inclusive_price, total != ""{
+                MainSubHeading(heading: "Total", subHeading: total, headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+            }
         }
     }
 }

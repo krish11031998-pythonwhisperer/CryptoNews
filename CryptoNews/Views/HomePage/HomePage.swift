@@ -17,7 +17,7 @@ struct HomePage: View {
     
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
-            VStack(alignment: .center, spacing: 15) {
+            LazyVStack(alignment: .center, spacing: 15) {
                 Spacer().frame(height: 50)
                 self.PriceCards
                 self.NewsSection
@@ -75,15 +75,8 @@ extension HomePage{
     }
     
     func CurrencyViewGetter(asset:AssetData,height h :CGFloat) -> some View{
-//        ScrollView(.vertical, showsIndicators: false) {
-////            Container(heading: "\(asset.symbol ?? "CRYPTO")",onClose: self.closeAsset) { w in
-////                CurrencyDetailView(info: asset,size: .init(width: w, height: h))
-////            }
-//        }
         CurrencyView(info: asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-//        CurrencyView(asset: asset, height: )
         .transition(.slideInOut)
-//        .padding(.top,50)
         .background(mainBGView)
         .edgesIgnoringSafeArea(.all)
         .zIndex(2)
@@ -103,9 +96,7 @@ extension HomePage{
     var NewsSection:some View{
         return RecentNewsCarousel(heading: "News") { currency in
             guard let curr = currency as? String  else {return AnyView(Color.clear)}
-//            return AnyView(RecentNews(currency: curr,ext_h: true))
             return AnyView(NewsCardCarousel(currency: [curr],size: .init(width: totalWidth, height: totalHeight * 0.65))
-//                            .environmentObject(self.context)
             )
         }
         

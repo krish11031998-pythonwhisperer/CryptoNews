@@ -9,10 +9,12 @@ import SwiftUI
 
 struct NewsCard: View {
     var news:AssetNewsData
+    var tapHandler:((Int) -> Void)?
     var size:CGSize
-    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.5)){
+    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),tapHandler: ((Int) -> Void)? = nil){
         self.news = news
         self.size = size
+        self.tapHandler = tapHandler
     }
     
     func newsView(size:CGSize) -> some View{
@@ -24,6 +26,17 @@ struct NewsCard: View {
             MainText(content: self.news.title ?? "News Title", fontSize: 16, color: .white, fontWeight: .regular)
                 .multilineTextAlignment(.leading)
         }.padding(10).frame(width: w, height: h, alignment: .topLeading)
+    }
+    
+    func onEnded(value:DragGesture.Value){
+        let location = value.location
+        var value = 0
+        if location.x >= self.size.width * 0.75{
+            value = 1
+        }else if location.x <= self.size.width * 0.25{
+            value = -1
+        }
+        self.tapHandler?(value)
     }
     
     var body: some View {
@@ -39,6 +52,8 @@ struct NewsCard: View {
             .background(BlurView(style: .systemThinMaterialDark))
         .clipContent(clipping: .roundClipping)
         .defaultShadow()
+        .gesture(DragGesture(minimumDistance: 0).onEnded(self.onEnded(value:)))
+        
     }
 }
 
@@ -83,16 +98,29 @@ struct NewsCardCarousel:View{
     
     var nextCircle:some View{
         HStack(alignment: .center, spacing: 10) {
-            SystemButton(b_name: "chevron.left") {self.updateIdx(val: -1)}
+            SystemButton(b_name: "chevron.left") {}
+            .opacity(0.2)
             Spacer()
-            SystemButton(b_name: "chevron.right") {self.updateIdx(val: 1)}
+            SystemButton(b_name: "chevron.right") {}
+            .opacity(0.2)
         }.padding()
+        .frame(width: self.size.width, height: self.size.height, alignment: .center)
     }
     
     var actionCenter:some View{
         VStack(alignment: .center, spacing: 0) {
             self.nextCircle
             Spacer()
+        }
+    }
+    
+    func tapFunction(value:Int){
+        DispatchQueue.main.async {
+            if value == 0{
+                self.context.selectedNews = self.newsFeed.FeedData[self.idx]
+            }else{
+                self.updateIdx(val: value)
+            }
         }
     }
     
@@ -103,17 +131,10 @@ struct NewsCardCarousel:View{
                 ForEach(Array(self.newsFeed.FeedData.enumerated()), id: \.offset) { _newsFeed in
                     let news = _newsFeed.element
                     let idx = _newsFeed.offset
-
                     if idx == self.idx{
-                        Button {
-                            DispatchQueue.main.async {
-                                self.context.selectedNews = news
-                            }
-                        } label: {
-                            NewsCard(news: news,size: _size)
-                                .overlay(self.actionCenter)
-                                .zoomInOut()
-                        }
+                        NewsCard(news: news,size: _size,tapHandler: tapFunction(value:))
+                            .overlay(self.actionCenter)
+                            .zoomInOut()
                     }
                 }
             }.frame(width: _size.width, height: _size.height,alignment: .center)

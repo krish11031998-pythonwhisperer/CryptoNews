@@ -31,6 +31,8 @@
 		BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */; };
 		BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */; };
 		BC6459352712455A00BAECBC /* SingleTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459342712455A00BAECBC /* SingleTransactionView.swift */; };
+		BC6459372713894100BAECBC /* Codystar-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC6459362713894100BAECBC /* Codystar-Regular.ttf */; };
+		BC64593A2717871600BAECBC /* NewsStandCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459392717871600BAECBC /* NewsStandCard.swift */; };
 		BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */; };
 		BC854F4E26FB222700C823EB /* AsyncContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC854F4D26FB222700C823EB /* AsyncContainer.swift */; };
 		BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */; };
@@ -123,6 +125,8 @@
 		BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Megrim-Regular.ttf"; sourceTree = "<group>"; };
 		BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyAssetDetailView.swift; sourceTree = "<group>"; };
 		BC6459342712455A00BAECBC /* SingleTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTransactionView.swift; sourceTree = "<group>"; };
+		BC6459362713894100BAECBC /* Codystar-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Codystar-Regular.ttf"; sourceTree = "<group>"; };
+		BC6459392717871600BAECBC /* NewsStandCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsStandCard.swift; sourceTree = "<group>"; };
 		BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDetailView.swift; sourceTree = "<group>"; };
 		BC854F4D26FB222700C823EB /* AsyncContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncContainer.swift; sourceTree = "<group>"; };
 		BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyInfoView.swift; sourceTree = "<group>"; };
@@ -243,6 +247,7 @@
 				BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */,
 				BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */,
 				BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */,
+				BC6459362713894100BAECBC /* Codystar-Regular.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -254,6 +259,14 @@
 				BC6459342712455A00BAECBC /* SingleTransactionView.swift */,
 			);
 			path = TransactionDetailView;
+			sourceTree = "<group>";
+		};
+		BC645938271786FF00BAECBC /* NewsStand */ = {
+			isa = PBXGroup;
+			children = (
+				BC6459392717871600BAECBC /* NewsStandCard.swift */,
+			);
+			path = NewsStand;
 			sourceTree = "<group>";
 		};
 		BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */ = {
@@ -462,6 +475,7 @@
 		BCBC1DD026BF3C1B00B87E5C /* News */ = {
 			isa = PBXGroup;
 			children = (
+				BC645938271786FF00BAECBC /* NewsStand */,
 				BCBC1DD126BF3C2600B87E5C /* RecentNewsCard */,
 				BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */,
 				BCBCACC826FFE1C800E76436 /* NewsCard.swift */,
@@ -611,6 +625,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BC6459372713894100BAECBC /* Codystar-Regular.ttf in Resources */,
 				BCBC1D7D26BE7D7500B87E5C /* Preview Assets.xcassets in Resources */,
 				BC64592A2711CDC400BAECBC /* RalewayDots-Regular.ttf in Resources */,
 				BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */,
@@ -771,6 +786,7 @@
 				BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */,
 				BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */,
 				BCBC1DC626BE876900B87E5C /* ImageHelper.swift in Sources */,
+				BC64593A2717871600BAECBC /* NewsStandCard.swift in Sources */,
 				BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */,
 				BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */,
 				BCB7835E26C318B9009D5822 /* RedditCardView.swift in Sources */,

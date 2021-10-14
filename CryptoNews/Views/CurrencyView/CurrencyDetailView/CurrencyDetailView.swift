@@ -14,28 +14,31 @@ struct CurrencyDetailView: View {
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
     @Binding var asset_feed:[AssetNewsData]
+    @Binding var news:[AssetNewsData]
+    @Binding var txns:[Transaction]
     var reloadFeed:(() -> Void)?
     var reloadAsset:(() -> Void)?
-    @Binding var showMoreView:Bool
-    @Binding var txns:[Transaction]
+    @Binding var showMoreSection:CurrencyViewSection
+    
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
 //        heading:String,
          info:Binding<AssetData>,
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
          asset_feed:Binding<[AssetNewsData]>,
-         showMoreView:Binding<Bool>,
+         news:Binding<[AssetNewsData]>,
          txns:Binding<[Transaction]>,
+         showSection:Binding<CurrencyViewSection>,
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
          onClose:(() -> Void)? = nil){
         self._currency = info
-//        self.heading = heading
         self.onClose = onClose
         self.size = size
         self._asset_feed = asset_feed
-        self._showMoreView = showMoreView
+        self._showMoreSection = showSection
         self._txns = txns
+        self._news = news
     }
     
     var body:some View{
@@ -46,17 +49,8 @@ struct CurrencyDetailView: View {
 
 extension CurrencyDetailView{
 
-
-    
-    func onCloseFeed(){
-        withAnimation(.easeInOut) {
-            self.showMoreView = false
-        }
-    }
-    
-
     var mainView:some View{
-            LazyVStack(alignment: .leading, spacing: 25){
+            LazyVStack(alignment: .leading, spacing: 15){
                 HStack(alignment: .center, spacing: 4) {
                     self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
                     Spacer()
@@ -71,7 +65,8 @@ extension CurrencyDetailView{
                 self.CurrencySummary
                 self.SocialMediaMetric
                 self.feedContainer
-            }
+                self.newsContainer
+            }.padding(.bottom,50)
     }
     
     var txnsForAsset:[Transaction]{
@@ -116,38 +111,70 @@ extension CurrencyDetailView{
     
     @ViewBuilder var transactionHistoryView:some View{
         if self.txnsForAsset.isEmpty{
-//            ProgressView()
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }else{
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData),size: .init(width: size.width, height: size.height * 1.5))
+            Button (action:{
+                withAnimation(.easeInOut) {
+//                    self.showMoreTxns.toggle()
+                    self.showMoreSection = .txns
+                }
+            },label: {
+                MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData),size: .init(width: size.width, height: size.height * 1.5))
+            }).springButton()
         }
         
     }
     
     
-    var feed:some View{
+    var feedView:some View{
         Group{
             MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold)
-            ForEach(Array(self.asset_feed.enumerated()),id:\.offset){ _data in
+            ForEach(Array(self.asset_feed[0...4].enumerated()),id:\.offset){ _data in
                 let data = _data.element
-                let idx = _data.offset
                 let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                 PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
             }
             TabButton(width: size.width, title: "Load More", action: {
                 withAnimation(.easeInOut) {
-                    self.showMoreView = true
+//                    self.showMoreView = true
+                    self.showMoreSection = .feed
                 }
             })
-                .padding(.bottom,50)
         }
+//        .background(Color.red)
+    }
+    
+    var newsView:some View{
+        Group{
+            MainText(content: "News", fontSize: 25, color: .white,fontWeight: .bold)
+            ForEach(Array(self.news[0...4].enumerated()),id:\.offset) { _news in
+                let news = _news.element
+                NewsStandCard(news: news,size:.init(width: size.width, height: 150))
+            }
+            TabButton(width: size.width, title: "Load More", action: {
+                withAnimation(.easeInOut) {
+//                    self.showMoreNews = true
+                    self.showMoreSection = .news
+                }
+            })
+        }
+//        .background(Color.red)
     }
     
     @ViewBuilder var feedContainer:some View{
         if self.asset_feed.isEmpty{
             ProgressView()
         }else{
-            self.feed
+            self.feedView
+        }
+        
+    }
+    
+    @ViewBuilder var newsContainer:some View{
+        if self.asset_feed.isEmpty{
+            ProgressView()
+        }else{
+            self.newsView
         }
         
     }
@@ -262,16 +289,7 @@ extension CurrencyDetailView{
     
     var SocialMedia_Metrics:some View{
         ChartCard(header: "Social Media Metrics", size: .init(width: self.size.width, height: self.size.height)) { w, h  in
-//            var min = min(w,h)
-//            min -= min == 0 ? 0 : 35
-//            let size = CGSize(width: min , height: min)
-//
-//            let values = ["Average Sentiment":(self.currency.average_sentiment ?? 0)/5,"Correlation Rank":(self.currency.correlation_rank ?? 0)/5,"Social Impact Score":(self.currency.social_impact_score ?? 0)/5,"Price Score":(self.currency.price_score ?? 0)/5]
-//            let view =
-            
             DiamondChart(size: self.social_media_size(w, h), percent: self.social_media_metrics_values).zIndex(1)
-                
-//            view
         }
     }
 }

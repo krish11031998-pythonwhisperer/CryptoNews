@@ -75,7 +75,9 @@ struct FancyHScroll: View {
                         let idx = _cur.offset
                         
                         Button {
-                            self.SP.swiped = idx
+                            withAnimation(.easeInOut) {
+                                self.SP.swiped = idx
+                            }
                         } label: {
                             TimerBlobs(text: cur, h: timeBlob_h, time: self.$time, targetTime: timeLimit, active: self.SP.swiped == idx)
                         }  
@@ -98,6 +100,6 @@ struct FancyHScroll: View {
             self.onReceiveTimer()
         })
         .onChange(of: self.SP.swiped, perform: self.resetTimer)
-        .animation(.easeInOut)
+//        .animation(.easeInOut)
     }
 }
