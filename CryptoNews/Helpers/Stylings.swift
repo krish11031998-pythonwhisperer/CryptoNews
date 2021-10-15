@@ -6,6 +6,42 @@ enum Clipping:CGFloat{
 }
 
 
+struct SpringButton:ViewModifier{
+    var handleTap:(() -> Void)
+    
+    init(handleTap: @escaping (() -> Void)){
+        self.handleTap = handleTap
+    }
+    
+    func body(content: Content) -> some View {
+        Button {
+            self.handleTap()
+        } label: {
+            content
+        }.springButton()
+    }
+}
+
+struct Blob:ViewModifier{
+    var color:Color
+    
+    @ViewBuilder var bg:some View{
+        if self.color == .clear{
+            BlurView(style: .systemThinMaterialDark)
+        }else{
+            self.color
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(.horizontal,10)
+            .padding(.vertical,10)
+            .background(bg)
+            .clipContent(clipping: .squareClipping)
+    }
+}
+
 struct ContentClipping:ViewModifier{
     var clipping:Clipping
     func body(content: Content) -> some View {
@@ -184,6 +220,14 @@ extension View{
     
     func slideRightLeft() -> some View{
         self.transition(.slideRightLeft)
+    }
+    
+    func blobify(color:Color = .clear) -> some View{
+        self.modifier(Blob(color: color))
+    }
+    
+    func buttonify(handler:@escaping (() -> Void)) -> some View{
+        self.modifier(SpringButton(handleTap: handler))
     }
 }
 

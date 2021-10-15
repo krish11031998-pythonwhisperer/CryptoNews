@@ -13,6 +13,14 @@ import FirebaseFirestore
 import FirebaseFirestoreSwift
 
 
+enum TransactionType:String{
+    case buy = "buy"
+    case sell = "sell"
+    case send = "send"
+    case receive = "receive"
+    case none = "none"
+}
+
 struct Transaction:Codable{
     var time:String?
     var type:String?

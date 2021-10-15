@@ -38,7 +38,7 @@ struct MarkerMainView:View{
     func Header(size:CGSize) -> some View{
         return HStack(alignment: .top, spacing: 10){
             headLineText(heading: "Coin(s)", subText: convertToDecimals(value: Float(self.data.crypto_coins)),large: true)
-            headLineText(heading: "Value", subText: String(format:"$%.1f",self.data.value_usd),large: true)
+            headLineText(heading: "Value", subText: convertToDecimals(value: self.data.value_usd),large: true)
         }.aspectRatio(contentMode: .fit)
         .frame(width: size.width,alignment: .leading)
         .frame(maxHeight:size.height)
@@ -53,7 +53,7 @@ struct MarkerMainView:View{
     }
     
     func transactionHistoryCard(txn:PortfolioData,size:CGSize) -> some View{
-        let percent:Float = (txn.value_usd - data.totalfee)/data.totalfee
+        let percent:Float = -(txn.value_usd - data.totalfee)/data.totalfee
         return VStack(alignment: .leading, spacing: 5){
             HStack(alignment: .bottom, spacing: 10){
                 headLineText(heading: txn.type?.capitalized  ?? "Coins", subText: convertToDecimals(value: Float(txn.crypto_coins)))

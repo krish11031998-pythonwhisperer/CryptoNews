@@ -49,9 +49,6 @@ struct Container<T:View>: View {
     @ViewBuilder var mainBody:some View{
         let w = totalWidth - 30
         return VStack(alignment: .leading, spacing: 10) {
-//            if self.refreshToggle{
-//                self.refreshView.offset(y: -100)
-//            }
             HStack {
                 if let onClose = self.onClose{
                     SystemButton(b_name: "xmark",action: onClose)
@@ -67,7 +64,6 @@ struct Container<T:View>: View {
             self.innerView(w)
         }
         .padding(.horizontal,15)
-//        .padding(.vertical,10)
         .frame(width: self.width, alignment: .leading)
     }
     
