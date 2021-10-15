@@ -269,10 +269,18 @@
 			path = NewsStand;
 			sourceTree = "<group>";
 		};
+		BC64593B271970E800BAECBC /* CryptoMarket */ = {
+			isa = PBXGroup;
+			children = (
+				BC305F0626D8202D00826AB4 /* CryptoMarket.swift */,
+				BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */,
+			);
+			path = CryptoMarket;
+			sourceTree = "<group>";
+		};
 		BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */ = {
 			isa = PBXGroup;
 			children = (
-				BC6459332712451400BAECBC /* TransactionDetailView */,
 				BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */,
 				BC645922270EFB6A00BAECBC /* CurrencyView.swift */,
 				BC64592427119E2C00BAECBC /* CurrencySummaryView.swift */,
@@ -285,8 +293,8 @@
 			children = (
 				BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */,
 				BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */,
-				BC305F0626D8202D00826AB4 /* CryptoMarket.swift */,
-				BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */,
+				BC64593B271970E800BAECBC /* CryptoMarket */,
+				BC6459332712451400BAECBC /* TransactionDetailView */,
 				BC01BA0526F60AF900557EB7 /* MarkersView.swift */,
 			);
 			path = CurrencyView;

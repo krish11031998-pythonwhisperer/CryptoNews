@@ -8,14 +8,15 @@
 import SwiftUI
 
 struct NewsStandCard: View {
+    @EnvironmentObject var context:ContextData
     var news:AssetNewsData
     var size:CGSize
     init(news:AssetNewsData,size:CGSize = .init(width: totalWidth - 20, height: 125)){
         self.news = news
         self.size = size
     }
-
-    var body: some View {
+    
+    var mainBody:some View{
         GeometryReader{g in
             let w = g.frame(in: .local).width
             let h = g.frame(in: .local).height
@@ -30,6 +31,17 @@ struct NewsStandCard: View {
         .frame(width: self.size.width, height: self.size.height, alignment: .center)
         .background(BlurView(style: .systemThickMaterialDark))
         .clipContent(clipping: .roundClipping)
+    }
+
+    var body: some View {
+        Button {
+            withAnimation(.easeInOut) {
+                self.context.selectedNews = news
+            }
+        } label: {
+            self.mainBody
+        }.springButton()
+
         
     }
 }

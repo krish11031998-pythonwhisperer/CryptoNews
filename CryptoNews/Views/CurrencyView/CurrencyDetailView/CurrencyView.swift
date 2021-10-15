@@ -16,9 +16,9 @@ enum CurrencyViewSection{
 }
 
 struct CurrencyView:View{
-
+    @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
-    @State var currency:AssetData
+    @State var currency:AssetData? = nil
     var size:CGSize = .init()
     @StateObject var asset_feed:FeedAPI
     var asset_info:AssetAPI
@@ -26,20 +26,26 @@ struct CurrencyView:View{
     @StateObject var TAPI:TransactionAPI = .init()
     @StateObject var NAPI:FeedAPI
     
-    
     init(
-        info:AssetData,size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
+        name:String? = nil,
+        info:AssetData? = nil,
+        size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
         self._currency = .init(wrappedValue: info)
         self.onClose = onClose
         self.size = size
-        self._NAPI = .init(wrappedValue: .init(currency: [info.symbol ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
-        self._asset_feed = .init(wrappedValue: .init(currency: [info.symbol ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
-        self.asset_info = AssetAPI.shared(currency: info.symbol ?? "BTC")
+        self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
+        self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
+        self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
     }
     
+    
     func onAppear(){
+        if self.currency == nil{
+            self.getAssetInfo()
+        }
+        
         if self.asset_feed.FeedData.isEmpty{
             self.asset_feed.getAssetInfo()
         }
@@ -103,9 +109,7 @@ struct CurrencyView:View{
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
                     .onAppear {
                         self.reloadAssetFeed(idx: idx)
-                    }
-                    .padding(.bottom,idx == self.asset_feed.FeedData.count - 1 ? 100 : 0)
-            }
+                    }            }
         }
     }
     
@@ -122,15 +126,22 @@ struct CurrencyView:View{
         }
     }
     
+    var txnsForAsset:[Transaction]{
+        let symbol = (self.currency?.symbol ?? "BTC").lowercased()
+        return self.TAPI.transactions.filter({$0.symbol == symbol && ($0.type == "buy" || $0.type == "sell")})
+    }
+    
     var body:some View{
         ZStack(alignment: .topLeading) {
-            if self.showSection == .none{
+            if let currency = self.currency, self.showSection == .none{
                 ScrollView(.vertical, showsIndicators: false) {
                     Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth,refresh: true, onClose: self.onClose) { w in
                         let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-                        CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, reloadAsset: self.reloadAssetFeed, reloadFeed: self.getAssetInfo, onClose: self.onClose)
+                        CurrencyDetailView(info: currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, reloadAsset: self.reloadAssetFeed, reloadFeed: self.getAssetInfo, onClose: self.onClose)
                     }.padding(.top,50)
                 }
+            }else{
+                ProgressView()
             }
             if self.showSection == .feed{
                 HoverView(heading: "Feed", onClose: self.onCloseSection) {w in
@@ -139,7 +150,7 @@ struct CurrencyView:View{
             }
             if self.showSection == .txns{
                 HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                    TransactionDetailsView(txns: self.TAPI.transactions.filter({$0.symbol == self.currency.symbol?.lowercased() && ($0.type == "buy" || $0.type == "sell")}),width: w)
+                    TransactionDetailsView(txns: self.txnsForAsset, currencyCurrentPrice: self.currency?.open ?? 0.0,width: w)
                 }
             }
             if self.showSection == .news{
@@ -147,7 +158,9 @@ struct CurrencyView:View{
                     self.newsView(w: w)
                 }
             }
-        }.onAppear(perform: self.onAppear)
+        }
+        .frame(width: totalWidth, height: totalHeight, alignment: .center)
+        .onAppear(perform: self.onAppear)
         
         
     }

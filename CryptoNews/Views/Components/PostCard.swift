@@ -13,6 +13,7 @@ enum PostCardType{
 }
 
 struct PostCard: View {
+    @EnvironmentObject var context:ContextData
     var cardType:PostCardType
     var data:AssetNewsData
     var size:CGSize
@@ -32,6 +33,11 @@ struct PostCard: View {
         let h = size.height - 20
         
         let view =
+        Button {
+            withAnimation(.easeInOut) {
+                self.context.selectedNews = self.data
+            }
+        } label: {
             ZStack(alignment: .bottom) {
                 Color.mainBGColor.frame(width: size.width, height: size.height * 0.15, alignment: .center)
                 BlurView(style: .dark)
@@ -59,6 +65,7 @@ struct PostCard: View {
             .frame(minHeight: self.const_size ? size.height : 0,maxHeight: size.height)
             .clipShape(RoundedRectangle(cornerRadius: 20))
             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 0)
+        }.springButton()
         
         return view
         
@@ -80,13 +87,20 @@ struct PostCard: View {
     }
     
     var body: some View {
-        if self.cardType == .Reddit && self.data.link?.isImgURLStr() ?? false{
-            self.imageViewCard
-        }else if self.data.body != nil || self.data.title != nil{
-            self.card
-        }else{
-            Color.clear.frame(width: 0, height: 0, alignment: .center)
-        }
+//        Button {
+//            withAnimation(.easeInOut) {
+//                self.context.selectedNews = self.data
+//            }
+//        } label: {
+            if self.cardType == .Reddit && self.data.link?.isImgURLStr() ?? false{
+                self.imageViewCard
+            }else if self.data.body != nil || self.data.title != nil{
+                self.card
+            }else{
+                Color.clear.frame(width: 0, height: 0, alignment: .center)
+            }
+//        }.springButton()
+
         
     }
 }

@@ -12,7 +12,7 @@ import SwiftUI
 class ContextData:ObservableObject{
     @Published private var _selectedCurrency:AssetData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
-    
+    @Published private var _selectedSymbol:String? = nil
     
     var selectedCurrency:AssetData?{
         get{
@@ -22,6 +22,18 @@ class ContextData:ObservableObject{
         set{
             withAnimation(.easeInOut(duration: 0.5)) {
                 self._selectedCurrency = newValue
+            }
+        }
+    }
+    
+    var selectedSymbol:String?{
+        get{
+            return self._selectedSymbol
+        }
+        
+        set{
+            withAnimation(.easeInOut) {
+                self._selectedSymbol = newValue
             }
         }
     }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CurrencyDetailView: View {
     var onClose:(() -> Void)?
-    @Binding var currency:AssetData
+    var currency:AssetData
     var size:CGSize = .init()
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
@@ -23,7 +23,7 @@ struct CurrencyDetailView: View {
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
 //        heading:String,
-         info:Binding<AssetData>,
+         info:AssetData,
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
          asset_feed:Binding<[AssetNewsData]>,
          news:Binding<[AssetNewsData]>,
@@ -32,7 +32,7 @@ struct CurrencyDetailView: View {
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
          onClose:(() -> Void)? = nil){
-        self._currency = info
+        self.currency = info
         self.onClose = onClose
         self.size = size
         self._asset_feed = asset_feed
@@ -66,6 +66,7 @@ extension CurrencyDetailView{
                 self.SocialMediaMetric
                 self.feedContainer
                 self.newsContainer
+                
             }.padding(.bottom,50)
     }
     
@@ -115,7 +116,6 @@ extension CurrencyDetailView{
         }else{
             Button (action:{
                 withAnimation(.easeInOut) {
-//                    self.showMoreTxns.toggle()
                     self.showMoreSection = .txns
                 }
             },label: {
@@ -136,7 +136,6 @@ extension CurrencyDetailView{
             }
             TabButton(width: size.width, title: "Load More", action: {
                 withAnimation(.easeInOut) {
-//                    self.showMoreView = true
                     self.showMoreSection = .feed
                 }
             })
@@ -153,7 +152,6 @@ extension CurrencyDetailView{
             }
             TabButton(width: size.width, title: "Load More", action: {
                 withAnimation(.easeInOut) {
-//                    self.showMoreNews = true
                     self.showMoreSection = .news
                 }
             })
@@ -164,16 +162,16 @@ extension CurrencyDetailView{
     @ViewBuilder var feedContainer:some View{
         if self.asset_feed.isEmpty{
             ProgressView()
-        }else{
+        }else if self.news.count >= 5{
             self.feedView
         }
         
     }
     
     @ViewBuilder var newsContainer:some View{
-        if self.asset_feed.isEmpty{
+        if self.news.isEmpty{
             ProgressView()
-        }else{
+        }else if self.news.count >= 5{
             self.newsView
         }
         

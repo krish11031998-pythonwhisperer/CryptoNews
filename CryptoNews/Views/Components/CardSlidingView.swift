@@ -40,18 +40,11 @@ struct CardSlidingView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(alignment: .center, spacing: 0){
+            HStack(alignment: .center, spacing: 0){
                 Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
                 ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
                     let view = _view.element
-                        Button {
-//                            withAnimation(.easeInOut) {
-//                                self.SP.swiped = idx
-//                            }
-                        } label: {
-                            zoomInOut(view: view)
-                        }.springButton()
-                    
+                    zoomInOut(view: view)
                 }
                 Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
             }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CryptoMarket: View {
     @StateObject var MAPI:MarketAPI = .init()
-    
+    @EnvironmentObject var context:ContextData
     func onAppear(){
         if self.MAPI.data.isEmpty{
             self.MAPI.getMarketData()
@@ -20,10 +20,26 @@ struct CryptoMarket: View {
     
     var view:[AnyView]?{
         if !self.MAPI.data.isEmpty{
-            return self.MAPI.data.enumerated().compactMap({AnyView(CryptoMarketCard(data: $0.element,size: cardSize, rank: $0.offset + 1))})
+            return self.MAPI.data.enumerated().compactMap({self.ViewElement(data: $0.element,idx:$0.offset)})
         }
         
         return nil
+    }
+    
+    func ViewElement(data:CoinMarketData,idx:Int) -> AnyView{
+        AnyView(
+            Button(action: {
+                print("Hello")
+                let asset_api = AssetAPI.shared(currency: data.s ?? "BTC")
+                asset_api.getAssetInfo { data in
+                    guard let safeData = data else {return}
+                    self.context.selectedCurrency = safeData
+                }
+            }, label: {
+                CryptoMarketCard(data: data,size: cardSize, rank: idx + 1)
+            }).springButton()
+        )
+
     }
     
     var body: some View {
@@ -44,8 +60,6 @@ struct CryptoMarket: View {
 
 struct CryptoMarket_Previews: PreviewProvider {
     static var previews: some View {
-//        ScrollView(.vertical, showsIndicators: false){
-            CryptoMarket()
-//        }
+        CryptoMarket()
     }
 }
