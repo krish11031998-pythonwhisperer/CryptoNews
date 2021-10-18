@@ -44,34 +44,77 @@ struct Transaction:Codable{
         return ["litecoin":"ltc","bitcoin":"btc","eth":"ethereum","xrp":"xrp"]
     }
     
+    static var symToCurrencyConverter:[String:String]{
+//        Transaction.currencyToSymConverter.map
+        return ["ltc" : "litecoin","btc":"bitcoin","ethereum":"eth","xrp":"xrp"]
+    }
+    
     var symbol:String?{
-        guard let asset = asset?.lowercased(), let sym = Transaction.currencyToSymConverter[asset] else {return nil}
-        return sym
+        get{
+            guard let asset = asset?.lowercased(), let sym = Transaction.currencyToSymConverter[asset] else {return nil}
+            return sym
+        }
+        set{
+            guard let sym = newValue?.lowercased(), let currency = Transaction.symToCurrencyConverter[sym] else {return}
+            self.asset = currency
+        }
+        
     }
     
     var _asset_quantity:Float{
-        guard let val = self.asset_quantity, let val_fl = Float(val) else {return 0.0}
-        return val_fl
+        get{
+            guard let val = self.asset_quantity, let val_fl = Float(val) else {return 0.0}
+            return val_fl
+        }
+        
+        set{
+            self.asset_quantity = String(newValue)
+        }
     }
     
     var _asset_spot_price:Float{
-        guard let val = self.asset_spot_price,let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-        return val_fl * 0.27
+        get{
+            guard let val = self.asset_spot_price,let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl * 0.27
+        }
+        set{
+            self.asset_spot_price = String(newValue)
+        }
+        
     }
     
     var _subtotal:Float{
-        guard let val = self.subtotal, let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-        return val_fl * 0.27
+        get{
+            guard let val = self.subtotal, let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl * 0.27
+        }
+        
+        set{
+            self.subtotal = String(newValue)
+        }
+        
     }
     
     var _total_inclusive_price:Float{
-        guard let val = self.total_inclusive_price, let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-        return val_fl * 0.27
+        get{
+            guard let val = self.total_inclusive_price, let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl * 0.27
+        }
+        set{
+            self.total_inclusive_price = String(newValue)
+        }
+        
     }
     
     var _fee:Float{
-        guard let val = self.fee,let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-        return val_fl * 0.27
+        get{
+            guard let val = self.fee,let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl * 0.27
+        }
+        
+        set{
+            self.fee = String(newValue)
+        }
     }
     
     
@@ -99,6 +142,8 @@ class TransactionAPI:ObservableObject{
     
     @Published var transactions:[Transaction] = []
     
+    static var shared:TransactionAPI = .init()
+    
     var db:Firestore{
         return Firestore.firestore()
     }
@@ -117,11 +162,22 @@ class TransactionAPI:ObservableObject{
         db.collection("transactions").getDocuments(completion: self.FIRQueryListener(_:_:))
     }
     
-    func uploadTransaction(txn:Transaction){
+//    func uploadTransaction(txn:Transaction){
+//        db.collection("transactions").addDocument(data: txn.decoded) { err in
+//            if let err = err {
+//                print("There was an error while trying to add the txn to the database : ",err.localizedDescription)
+//            }
+//        }
+//    }
+//    
+//    
+    func uploadTransaction(txn:Transaction,completion:((Error?) -> Void)? = nil){
         db.collection("transactions").addDocument(data: txn.decoded) { err in
             if let err = err {
                 print("There was an error while trying to add the txn to the database : ",err.localizedDescription)
+                
             }
+            completion?(err)
         }
     }
     

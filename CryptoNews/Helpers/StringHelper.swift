@@ -2,6 +2,11 @@ import Foundation
 
 extension String{
     
+    
+    func toFloat() -> Float{
+        return Float(self) ?? 0.0
+    }
+    
     func removeEndLine() -> String{
         let text = self
         return text.replacingOccurrences(of: "\n", with: "")

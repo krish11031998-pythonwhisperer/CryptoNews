@@ -9,12 +9,15 @@ import SwiftUI
 
 struct TransactionDetailsView: View {
     var transactions:[Transaction]
+    var currency:String
     var currencyCurrentPrice:Float
+    @EnvironmentObject var context:ContextData
     @Binding var close:Bool
     var width:CGFloat
     
-    init(txns:[Transaction],currencyCurrentPrice:Float,width:CGFloat = totalWidth,close:Binding<Bool>? = nil){
+    init(txns:[Transaction],currency:String,currencyCurrentPrice:Float,width:CGFloat = totalWidth,close:Binding<Bool>? = nil){
         self.transactions = txns
+        self.currency = currency
         self.width = width
         self._close = close ?? .constant(false)
         self.currencyCurrentPrice = currencyCurrentPrice
@@ -32,6 +35,14 @@ struct TransactionDetailsView: View {
                 let txn = _txn.element
                 SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
             }
+            TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
+                withAnimation(.easeInOut) {
+                    if !self.context.addTxn{
+                        self.context.addTxn.toggle()
+                        self.context.selectedSymbol = self.currency
+                    }
+                }
+            }
         }.padding(.bottom,20).frame(width: width, alignment: .topLeading)
     }
 }
@@ -41,7 +52,7 @@ struct CurrencyDetailTester:View{
     
     var body: some View{
         Container(heading: "Transactions", width: totalWidth) { w in
-            TransactionDetailsView(txns: self.TAPI.transactions.filter({$0.type == "buy" || $0.type == "sell"}),currencyCurrentPrice: 500,width: w)
+            TransactionDetailsView(txns: self.TAPI.transactions.filter({$0.type == "buy" || $0.type == "sell"}),currency: "LTC",currencyCurrentPrice: 500,width: w)
         }.onAppear(perform: self.TAPI.loadTransaction)
     }
 }

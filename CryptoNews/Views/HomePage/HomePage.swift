@@ -45,6 +45,12 @@ struct HomePage: View {
                     .transition(.slideInOut)
                     .zIndex(3)
             }
+            if self.context.addTxn{
+                AddTxnMainView(currency: self.context.selectedSymbol)
+                    .transition(.slideInOut)
+                    .zIndex(3)  
+            }
+            
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
         .onChange(of: self.context.selectedCurrency?.name) { newValue in

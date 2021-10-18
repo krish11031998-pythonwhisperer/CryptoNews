@@ -46,7 +46,7 @@ struct Container<T:View>: View {
         }
     }
     
-    @ViewBuilder var mainBody:some View{
+    var mainBody:some View{
         let w = totalWidth - 30
         return VStack(alignment: .leading, spacing: 10) {
             HStack {

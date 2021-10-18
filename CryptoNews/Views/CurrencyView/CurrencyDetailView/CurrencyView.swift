@@ -150,7 +150,7 @@ struct CurrencyView:View{
             }
             if self.showSection == .txns{
                 HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                    TransactionDetailsView(txns: self.txnsForAsset, currencyCurrentPrice: self.currency?.open ?? 0.0,width: w)
+                    TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency?.symbol ?? "LTC", currencyCurrentPrice: self.currency?.open ?? 0.0,width: w)
                 }
             }
             if self.showSection == .news{

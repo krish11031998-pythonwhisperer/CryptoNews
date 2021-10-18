@@ -27,16 +27,46 @@ struct NewsCard: View {
                 .multilineTextAlignment(.leading)
         }.padding(10).frame(width: w, height: h, alignment: .topLeading)
     }
-    
-    func onEnded(value:DragGesture.Value){
-        let location = value.location
-        var value = 0
-        if location.x >= self.size.width * 0.75{
-            value = 1
-        }else if location.x <= self.size.width * 0.25{
-            value = -1
+        
+    func buttonArea(w:CGFloat,h:CGFloat,alignment:Alignment = .center,innerView: () -> AnyView,handler: (() -> Void)? = nil) -> some View{
+        VStack(alignment: .leading) {
+            Spacer()
+            innerView()
+            Spacer()
         }
-        self.tapHandler?(value)
+        .padding(.horizontal,2.5)
+        .frame(width: w,height: h, alignment: alignment)
+        .clipContent(clipping: .clipped)
+        .onTapGesture {
+            handler?()
+        }
+    }
+    
+    func nextCircle(w:CGFloat,h:CGFloat) -> some View{
+        HStack(alignment: .center, spacing: 0) {
+            self.buttonArea(w: w * 0.25,h: h,alignment: .leading,innerView: {
+                AnyView(SystemButton(b_name: "chevron.left") {})
+            }) {
+                withAnimation(.easeInOut) {
+                    self.tapHandler?(-1)
+                }
+            }
+            self.buttonArea(w: w * 0.5,h: h,innerView: {
+                AnyView(Color.clear.opacity(0.5))
+            }){
+                withAnimation(.easeInOut) {
+                    self.tapHandler?(0)
+                }
+            }
+            self.buttonArea(w: w * 0.25,h: h,alignment: .trailing,innerView: {
+                AnyView(SystemButton(b_name: "chevron.right") {})
+            }){
+                withAnimation(.easeInOut) {
+                    self.tapHandler?(1)
+                }
+            }
+        }
+        .frame(width: w, height: h, alignment: .center)
     }
     
     var body: some View {
@@ -44,15 +74,18 @@ struct NewsCard: View {
             let size = g.frame(in: .local).size
             
             VStack(alignment: .leading, spacing: 5) {
-                ImageView(url: self.news.thumbnail,width: size.width, height: size.height * 0.75, contentMode: .fill, alignment: .center)
+                ZStack(alignment: .center) {
+                    ImageView(url: self.news.thumbnail,width: size.width, height: size.height * 0.75, contentMode: .fill, alignment: .center)
+                    self.nextCircle(w: size.width, h: size.height * 0.75)
+                }.frame(width: size.width, height: size.height * 0.75, alignment: .center)
                 self.newsView(size: .init(width: size.width, height: size.height * 0.25 - 5))
             }
             
         }.frame(width: size.width, height: size.height, alignment: .topLeading)
-            .background(BlurView(style: .systemThinMaterialDark))
+        .background(BlurView(style: .systemThinMaterialDark))
         .clipContent(clipping: .roundClipping)
         .defaultShadow()
-        .gesture(DragGesture(minimumDistance: 0).onEnded(self.onEnded(value:)))
+//        .gesture(DragGesture(minimumDistance: 0).onEnded(self.onEnded(value:)))
         
     }
 }
@@ -95,25 +128,7 @@ struct NewsCardCarousel:View{
         }
         self.time = 0
     }
-    
-    var nextCircle:some View{
-        HStack(alignment: .center, spacing: 10) {
-            SystemButton(b_name: "chevron.left") {}
-            .opacity(0.2)
-            Spacer()
-            SystemButton(b_name: "chevron.right") {}
-            .opacity(0.2)
-        }.padding()
-        .frame(width: self.size.width, height: self.size.height, alignment: .center)
-    }
-    
-    var actionCenter:some View{
-        VStack(alignment: .center, spacing: 0) {
-            self.nextCircle
-            Spacer()
-        }
-    }
-    
+        
     func tapFunction(value:Int){
         DispatchQueue.main.async {
             if value == 0{
@@ -133,7 +148,7 @@ struct NewsCardCarousel:View{
                     let idx = _newsFeed.offset
                     if idx == self.idx{
                         NewsCard(news: news,size: _size,tapHandler: tapFunction(value:))
-                            .overlay(self.actionCenter)
+//                            .overlay(self.nextCircle(w: _size.width, h: _size.height))
                             .zoomInOut()
                     }
                 }

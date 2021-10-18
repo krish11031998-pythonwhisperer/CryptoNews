@@ -1,9 +1,69 @@
 import SwiftUI
+import Combine
 enum Clipping:CGFloat{
     case roundClipping = 20
     case squareClipping = 10
     case clipped = 0
 }
+
+
+struct ColoredTextField:TextFieldStyle{
+    var color:Color
+    var fontSize:CGFloat = 25
+    func _body(configuration: TextField<Self._Label>) -> some View {
+            configuration
+                .font(Font.system(size: self.fontSize, weight: .semibold, design: .monospaced))
+                .foregroundColor(color)
+                .background(Color.clear)
+                .clipContent(clipping: .clipped)
+                .labelsHidden()
+        }
+}
+
+
+extension Publishers {
+    // 1.
+    static var keyboardHeight: AnyPublisher<CGFloat, Never> {
+        // 2.
+        let willShow = NotificationCenter.default.publisher(for: UIApplication.keyboardWillShowNotification)
+            .map { $0.keyboardHeight }
+        
+        let willHide = NotificationCenter.default.publisher(for: UIApplication.keyboardWillHideNotification)
+            .map { _ in CGFloat(0) }
+        
+        // 3.
+        return MergeMany(willShow, willHide)
+            .eraseToAnyPublisher()
+    }
+}
+
+extension Notification {
+    var keyboardHeight: CGFloat {
+        return (userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? CGRect)?.height ?? 0
+    }
+}
+
+struct KeyboardAdaptive:ViewModifier{
+    @State var keyboardHeight:CGFloat = 0
+    @Binding var isKeyBoardOn:Bool
+    
+    init(isKeyBoardOn:Binding<Bool>? = nil){
+        self._isKeyBoardOn = isKeyBoardOn ?? .constant(false)
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(.bottom, keyboardHeight)
+            .onReceive(Publishers.keyboardHeight) { height in
+                self.keyboardHeight = height
+                if (height > 0 && !self.isKeyBoardOn) || (height == 0 && self.isKeyBoardOn){
+                    self.isKeyBoardOn.toggle()
+                }
+            }
+    }
+}
+
+
 
 
 struct SpringButton:ViewModifier{
@@ -229,6 +289,35 @@ extension View{
     func buttonify(handler:@escaping (() -> Void)) -> some View{
         self.modifier(SpringButton(handleTap: handler))
     }
+    
+    func coloredTextField(color:Color,size:CGFloat = 50,maxWidth:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{
+        if let rightViewTxt = rightViewTxt {
+            return AnyView(HStack(alignment: .firstTextBaseline, spacing: 5) {
+                self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
+                    .multilineTextAlignment(.trailing)
+                    .aspectRatio(contentMode:.fit)
+                    .frame(idealWidth:20,maxWidth: 100,alignment: .center)
+                    .keyboardType(.decimalPad)
+
+                MainText(content: rightViewTxt, fontSize: 13, color: .white, fontWeight: .bold, style: .monospaced)
+            }.frame(alignment: .top))
+        }
+        return AnyView(self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
+                        .multilineTextAlignment(.trailing)
+                        .aspectRatio(contentMode:.fit)
+                        .frame(idealWidth:20,maxWidth: 100,alignment: .center)
+                        .keyboardType(.numberPad)
+        )
+    }
+    
+    func keyboardAdaptive(isKeyBoardOn:Binding<Bool>? = nil) -> some View{
+        self.modifier(KeyboardAdaptive(isKeyBoardOn: isKeyBoardOn))
+    }
+    
+    func hideKeyboard() {
+           let resign = #selector(UIResponder.resignFirstResponder)
+           UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
+       }
 }
 
 struct Corners:Shape{

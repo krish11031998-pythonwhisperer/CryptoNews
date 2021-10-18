@@ -15,6 +15,7 @@ enum TextStyle:String{
 //    case normal = "Verdana"
 //    case normal = "SortsMillGoudy-Regular"
 }
+
 struct BasicText: View {
     
     var content:String
