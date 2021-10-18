@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CurrencyDetailView: View {
     var onClose:(() -> Void)?
-    var currency:AssetData
+    @Binding var currency:AssetData
     var size:CGSize = .init()
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
@@ -23,7 +23,7 @@ struct CurrencyDetailView: View {
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
 //        heading:String,
-         info:AssetData,
+         info:Binding<AssetData>,
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
          asset_feed:Binding<[AssetNewsData]>,
          news:Binding<[AssetNewsData]>,
@@ -32,7 +32,7 @@ struct CurrencyDetailView: View {
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
          onClose:(() -> Void)? = nil){
-        self.currency = info
+        self._currency = info
         self.onClose = onClose
         self.size = size
         self._asset_feed = asset_feed

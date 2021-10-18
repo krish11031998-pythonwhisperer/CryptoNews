@@ -67,6 +67,11 @@ class AssetData:Identifiable,Codable{
 //    var news:Int?
 //    var social_dominance:Float?
 //    var market_dominance:Float?
+    var lastUpdate:Date?
+    
+    var timeSinceLastUpdate:Double{
+        return self.lastUpdate?.timeIntervalSinceNow.magnitude ?? 0.0
+    }
 }
 
 
@@ -100,6 +105,7 @@ class AssetAPI:DAPI,ObservableObject{
             let res = try decoder.decode(Asset.self, from: data)
             if let first = res.data.first {
                 result = first
+                result?.lastUpdate = Date()
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
@@ -114,6 +120,7 @@ class AssetAPI:DAPI,ObservableObject{
             if let first = res.data.first {
                 DispatchQueue.main.async {
                     self.data = first
+                    self.data?.lastUpdate = Date()
                 }
             }
         }catch{

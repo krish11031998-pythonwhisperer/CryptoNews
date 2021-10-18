@@ -18,13 +18,14 @@ enum CurrencyViewSection{
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
-    @State var currency:AssetData? = nil
+    @State var currency:AssetData = .init()
     var size:CGSize = .init()
     @StateObject var asset_feed:FeedAPI
     var asset_info:AssetAPI
     @State var showSection:CurrencyViewSection = .none
     @StateObject var TAPI:TransactionAPI = .init()
     @StateObject var NAPI:FeedAPI
+    let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     init(
         name:String? = nil,
@@ -32,7 +33,9 @@ struct CurrencyView:View{
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
-        self._currency = .init(wrappedValue: info)
+        if let info = info{
+            self._currency = .init(wrappedValue: info)
+        }
         self.onClose = onClose
         self.size = size
         self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
@@ -74,10 +77,10 @@ struct CurrencyView:View{
     
     func onReceiveNewAssetInfo(asset:AssetData?){
         guard let data = asset else {return}
-        DispatchQueue.main.async {
+//        DispatchQueue.main.async {
             self.currency = data
             print("(DEBUG): Updated the Asset Data!")
-        }
+//        }
     }
     
     func reloadNewsFeed(idx:Int){
@@ -127,40 +130,57 @@ struct CurrencyView:View{
     }
     
     var txnsForAsset:[Transaction]{
-        let symbol = (self.currency?.symbol ?? "BTC").lowercased()
+        let symbol = (self.currency.symbol ?? "BTC").lowercased()
         return self.TAPI.transactions.filter({$0.symbol == symbol && ($0.type == "buy" || $0.type == "sell")})
+    }
+    
+    @ViewBuilder var mainView:some View{
+        if self.showSection == .none{
+            ScrollView(.vertical, showsIndicators: false) {
+                Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth,refresh: true, onClose: self.onClose) { w in
+                    let size:CGSize = .init(width: w, height: totalHeight * 0.3)
+                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, reloadAsset: self.reloadAssetFeed, reloadFeed: self.getAssetInfo, onClose: self.onClose)
+                }.padding(.top,50)
+            }
+        }else{
+            ProgressView()
+        }
+    }
+    
+    @ViewBuilder var diff_Views:some View{
+        if self.showSection == .feed{
+            HoverView(heading: "Feed", onClose: self.onCloseSection) {w in
+                self.feedView(w: w)
+            }
+        }
+        if self.showSection == .txns{
+            HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
+                TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency.symbol ?? "LTC", currencyCurrentPrice: self.currency.open ?? 0.0,width: w)
+            }
+        }
+        if self.showSection == .news{
+            HoverView(heading: "News", onClose: self.onCloseSection) { w in
+                self.newsView(w: w)
+            }
+        }
     }
     
     var body:some View{
         ZStack(alignment: .topLeading) {
-            if let currency = self.currency, self.showSection == .none{
-                ScrollView(.vertical, showsIndicators: false) {
-                    Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth,refresh: true, onClose: self.onClose) { w in
-                        let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-                        CurrencyDetailView(info: currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, reloadAsset: self.reloadAssetFeed, reloadFeed: self.getAssetInfo, onClose: self.onClose)
-                    }.padding(.top,50)
-                }
-            }else{
-                ProgressView()
-            }
-            if self.showSection == .feed{
-                HoverView(heading: "Feed", onClose: self.onCloseSection) {w in
-                    self.feedView(w: w)
-                }
-            }
-            if self.showSection == .txns{
-                HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                    TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency?.symbol ?? "LTC", currencyCurrentPrice: self.currency?.open ?? 0.0,width: w)
-                }
-            }
-            if self.showSection == .news{
-                HoverView(heading: "News", onClose: self.onCloseSection) { w in
-                    self.newsView(w: w)
-                }
-            }
+            self.mainView
+            self.diff_Views
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
+        .onReceive(self.timer) { _ in
+            let time = floor(self.currency.timeSinceLastUpdate)
+            if(time > 30){
+                self.currency = .init()
+                print("Getting the new Updated Asset ")
+                self.getAssetInfo()
+            }
+            
+        }
         
         
     }
