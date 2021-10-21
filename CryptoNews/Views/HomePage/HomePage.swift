@@ -20,9 +20,11 @@ struct HomePage: View {
             LazyVStack(alignment: .center, spacing: 15) {
                 Spacer().frame(height: 50)
                 self.PriceCards
-                self.NewsSection
                 LatestTweets(currency: "all")
-                CryptoMarket()
+                self.NewsSection
+                CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc)
+                CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
+                CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
                 Spacer(minLength: 200)
             }
         }.zIndex(1)
@@ -103,13 +105,21 @@ extension HomePage{
     }
     
     var PriceCards:some View{
-        ScrollView(.horizontal, showsIndicators: false){
-            LazyHStack(alignment: .center, spacing: 10){
-                ForEach(self.currencies,id:\.self) { currency in
-                    PriceCard(currency: currency,color: self.color[currency] ?? .white,font_color: .white)
+//        ScrollView(.horizontal, showsIndicators: false){
+        Container(heading: "Tracked Assets", width: totalWidth, ignoreSides: true) { w in
+            ScrollView(.horizontal, showsIndicators: false){
+                LazyHStack(alignment: .center, spacing: 10){
+                    ForEach(Array(self.currencies.enumerated()),id:\.offset) { _currency in
+                        let currency = _currency.element
+                        let idx = _currency.offset
+                        let pad_al:Edge.Set = idx == 0  ? .leading : .trailing
+                        let pad_val:CGFloat = idx == 0 || idx == self.currencies.count - 1 ? 10 : 0
+                        PriceCard(currency: currency,color: self.color[currency] ?? .white,font_color: .white).padding(pad_al,pad_val)
+                    }
                 }
-            }.padding()
+            }
         }
+//        }
     }
     
     

@@ -25,8 +25,8 @@ struct HoverView<T:View>:View{
                     self.inner_view(w)
             }
             .padding(.top,50)
+            
         }
-        
         .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
         .background(mainBGView)
         .slideRightLeft()

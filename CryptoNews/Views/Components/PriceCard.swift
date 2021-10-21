@@ -48,6 +48,13 @@ struct PriceCard: View {
     }
     
     
+    func headingSize(w:CGFloat,h:CGFloat) -> some View{
+        HStack(alignment: .center, spacing: 10) {
+            CurrencySymbolView(currency: self.currency, size: .medium, width: w * 0.2)
+            MainText(content: self.currency, fontSize: 20,color: font_color)
+        }.frame(width: w, height: h, alignment: .leading)
+    }
+    
     func PriceView(size:CGSize) -> some View{
         let pointData = self.selected >= 0 && self.selected <= self.prices.count - 1 ? self.prices[self.selected] : self.prices.last
         let open = pointData?.open ?? 0
@@ -73,16 +80,19 @@ struct PriceCard: View {
             let h = g.frame(in: .local).height
             
             LazyVStack(alignment: .leading, spacing: 10){
-                MainText(content: self.currency, fontSize: 20,color: font_color)
+//                MainText(content: self.currency, fontSize: 20,color: font_color)
+                self.headingSize(w: w, h: h * 0.15)
                 PriceView(size: .init(width: w, height: h * 0.25))
                 CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: w, height: h * 0.6), bg: .clear, chartShade: true)
             }.frame(width: w, height: h, alignment: .leading)
             
-        }.padding()
-        .frame(width: self.size.width, height: self.size.height, alignment: .center)
-        .background(BlurView(style: .systemThinMaterialDark))
-        .cornerRadius(20)
-        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        }
+//        .padding()
+//        .frame(width: self.size.width, height: self.size.height, alignment: .center)
+//        .background(BlurView(style: .systemThinMaterialDark))
+//        .cornerRadius(20)
+//        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        .basicCard(size: size)
         .onAppear(perform: self.onAppear)
         .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
     }

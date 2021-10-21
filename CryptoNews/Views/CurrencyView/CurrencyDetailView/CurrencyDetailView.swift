@@ -41,6 +41,7 @@ struct CurrencyDetailView: View {
         self._news = news
     }
     
+    
     var body:some View{
         self.mainView
         
@@ -51,14 +52,10 @@ extension CurrencyDetailView{
 
     var mainView:some View{
             LazyVStack(alignment: .leading, spacing: 15){
-                HStack(alignment: .center, spacing: 4) {
-                    self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
-                    Spacer()
-                    if let reloadFeed = self.reloadFeed{
-                        SystemButton(b_name: "arrow.clockwise", b_content: "Refresh", color: .white, haveBG: true, bgcolor: .black, alignment: .vertical, action: reloadFeed)
-                    }
-                    
-                }
+//                HStack(alignment: .center, spacing: 4) {
+                MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+//                    Spacer()
+//                }
                 self.priceInfo
                 self.curveChart.clipContent(clipping: .roundClipping)
                 self.transactionHistoryView
@@ -98,7 +95,7 @@ extension CurrencyDetailView{
     
     var SocialMediaMetric:some View{
         Group{
-            MainText(content: "Social Media Metrics", fontSize: 25, color: .white, fontWeight: .bold)
+            MainText(content: "Social Media Metrics", fontSize: 25, color: .white,fontWeight: .bold, style: .heading)
             self.Avg_Sentiment
             self.SocialMedia_Metrics
         }
@@ -128,7 +125,7 @@ extension CurrencyDetailView{
     
     var feedView:some View{
         Group{
-            MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold)
+            MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold, style: .heading)
             ForEach(Array(self.asset_feed[0...4].enumerated()),id:\.offset){ _data in
                 let data = _data.element
                 let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
@@ -180,10 +177,10 @@ extension CurrencyDetailView{
     var priceInfo:some View{
         let asset = self.choosen == -1 ? self.currency : self.currency.timeSeries?[self.choosen] ?? self.currency
         return HStack(alignment: .top, spacing: 20){
-            self.text(heading: "Open", info: convertToMoneyNumber(value: asset.open))
-            self.text(heading: "Low", info: convertToMoneyNumber(value: asset.low))
-            self.text(heading: "High", info: convertToMoneyNumber(value: asset.high))
-            self.text(heading: "Close", info: convertToMoneyNumber(value: asset.close))
+            MainSubHeading(heading: "Open", subHeading: convertToMoneyNumber(value: asset.open),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "Low", subHeading: convertToMoneyNumber(value: asset.low),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "High", subHeading: convertToMoneyNumber(value: asset.high),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "Close", subHeading: convertToMoneyNumber(value: asset.close),headingSize: 12.5,subHeadingSize: 17.5)
         }.padding(.vertical)
         .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
     }

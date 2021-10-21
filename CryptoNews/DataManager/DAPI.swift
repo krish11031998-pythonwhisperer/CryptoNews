@@ -51,7 +51,7 @@ class DAPI{
     
     
     func CallCompletionHandler(url:URL,data:Data,completion:((Data) -> Void)){
-        print("Setting Cached Data")
+//        print("Setting Cached Data")
         DataCache.shared[url] = data
         completion(data)
     }
@@ -70,12 +70,12 @@ class DAPI{
     
     func updateInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
-        print("Getting Updated Data")
+//        print("Getting Updated Data")
         URLSession.shared.dataTaskPublisher(for: url)
             .receive(on: DispatchQueue.main)
             .tryMap(self.checkOutput(output:))
             .sink(receiveCompletion: { _ in }, receiveValue: { data in
-                print("Got Updated Data")
+//                print("Got Updated Data")
                 self.CallCompletionHandler(url: url, data: data, completion: completion)
             })
             .store(in: &cancellable)
@@ -84,15 +84,15 @@ class DAPI{
     func getInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
         if let data = DataCache.shared[url]{
-            print("Got Cached Data")
+//            print("Got Cached Data")
             completion(data)
         }else{
-            print("Getting New Data")
+//            print("Getting New Data")
             URLSession.shared.dataTaskPublisher(for: url)
                 .receive(on: DispatchQueue.main)
                 .tryMap(self.checkOutput(output:))
                 .sink(receiveCompletion: { _ in }, receiveValue: { data in
-                    print("Got New Data")
+//                    print("Got New Data")
                     self.CallCompletionHandler(url: url, data: data, completion: completion)
                 })
                 .store(in: &cancellable)

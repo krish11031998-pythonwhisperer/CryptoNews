@@ -12,6 +12,11 @@ struct AllMarketData:Codable{
     var data:Array<CoinMarketData>?
 }
 
+enum Order:String{
+    case desc = "desc"
+    case incr = "incr"
+}
+
 struct CoinMarketData:Codable{
     var id:Int?
     var s:String?
@@ -48,9 +53,11 @@ class MarketAPI:DAPI,ObservableObject{
     @Published var data:Array<CoinMarketData> = .init()
     var sort:String
     var limit:Int
-    init(sort:String = "d",limit:Int = 10){
+    var order:Order
+    init(sort:String = "d",limit:Int = 10,order:Order = .desc){
         self.sort = sort
         self.limit = limit
+        self.order = order
     }
     
     var marketURL:URL?{
@@ -58,11 +65,17 @@ class MarketAPI:DAPI,ObservableObject{
         uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "market"),
             URLQueryItem(name: "sort", value: self.sort),
-            URLQueryItem(name: "desc", value: "true"),
             URLQueryItem(name: "limit", value: "\(self.limit)")
         ])
+        
+        if self.order == .desc{
+            uC.queryItems?.append(URLQueryItem(name: "desc", value: "true"))
+        }
+        
         return uC.url
     }
+    
+    
     
     func parseData(data:Data){
         let decoder = JSONDecoder()

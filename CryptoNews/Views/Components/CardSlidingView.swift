@@ -12,7 +12,7 @@ struct CardSlidingView: View {
     var views:Array<AnyView>
     @StateObject var SP:swipeParams
     var leading:Bool
-    init(cardSize:CGSize = .init(width: totalWidth * 0.6, height: totalHeight * 0.5),views:Array<AnyView>,leading:Bool = true){
+    init(cardSize:CGSize = CardSize.slender,views:Array<AnyView>,leading:Bool = true){
         self.cardSize = cardSize
         self.views = views
         self.leading = leading
@@ -30,7 +30,7 @@ struct CardSlidingView: View {
             let midX = g.frame(in: .global).midX
             let diff = abs(midX - (totalWidth * 0.5))/totalWidth
             let diff_percent = (diff > 0.25 ? 1 : diff/0.25)
-            let scale = 1 - 0.05 * diff_percent
+            let scale = 1 - 0.075 * diff_percent
             
             view.scaleEffect(scale)
             
@@ -40,7 +40,7 @@ struct CardSlidingView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .center, spacing: 0){
+            LazyHStack(alignment: .center, spacing: 0){
                 Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
                 ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
                     let view = _view.element

@@ -3,6 +3,7 @@ import Combine
 enum Clipping:CGFloat{
     case roundClipping = 20
     case squareClipping = 10
+    case circleClipping = 50
     case clipped = 0
 }
 
@@ -18,6 +19,83 @@ struct ColoredTextField:TextFieldStyle{
                 .clipContent(clipping: .clipped)
                 .labelsHidden()
         }
+}
+
+
+struct RefreshableView:ViewModifier{
+    
+    @State var refreshing:Bool = false
+    @State var refresh_off:CGFloat = 0.0
+    @State var pageRendered:Bool = false
+    var width:CGFloat
+    var refreshFn:((@escaping () -> Void) -> Void)
+    
+    
+    init(width:CGFloat,refreshFn: @escaping (( @escaping () -> Void) -> Void)){
+        self.width = width
+        self.refreshFn = refreshFn
+    }
+    
+    func resetOff(){
+        withAnimation(.easeInOut) {
+            self.refresh_off = 0
+        }
+    }
+    
+    func refresh(minY:CGFloat){
+        print("Refreshing.....")
+        withAnimation(.easeInOut) {
+            self.refreshing = true
+            self.refresh_off = 100
+            print("DEBUG Refresh was toggled!")
+        }
+        self.refreshFn(self.resetOff)
+    }
+    
+    var refreshState:Bool{
+        return !self.refreshing && self.refresh_off == 0
+    }
+    
+    var refreshableView:some View{
+        GeometryReader{g -> AnyView in
+            let minY = g.frame(in: .global).minY
+            DispatchQueue.main.async {
+                if !self.pageRendered && minY < 0{
+                    self.pageRendered = true
+                }else if minY >= 100 && self.pageRendered && self.refreshState{
+                    self.refresh(minY: minY)
+                }else if minY < 0 && self.refreshing{
+                    self.refreshing = false
+                }
+            }
+            
+           return AnyView(ZStack(alignment: .center) {
+                if refreshing{
+                    ProgressView()
+                }else{
+                    SystemButton(b_name: "arrow.down", b_content: "", color: .white, haveBG: false,bgcolor: .clear) {}
+                }
+           }.frame(width: width, alignment: .center))
+            
+        }.frame(width: width, alignment: .center)
+    }
+    
+    
+    func body(content: Content) -> some View {
+        return VStack(alignment: .leading, spacing: 10) {
+            self.refreshableView.padding(.bottom,50)
+            content
+        }
+        .frame(width: width, alignment: .top)
+        .offset(y: -25 + self.refresh_off)
+        .onChange(of: self.refreshing) { refreshing in
+            if !refreshing && self.refresh_off != 0{
+                withAnimation(.easeInOut) {
+                    self.refresh_off = 0
+                }
+            }
+        }
+    }
 }
 
 
@@ -104,10 +182,30 @@ struct Blob:ViewModifier{
 
 struct ContentClipping:ViewModifier{
     var clipping:Clipping
+
     func body(content: Content) -> some View {
-        return content
-            .contentShape(RoundedRectangle(cornerRadius: self.clipping.rawValue))
-            .clipShape(RoundedRectangle(cornerRadius: self.clipping.rawValue))
+        if self.clipping == .circleClipping{
+            content
+                .contentShape(Circle())
+                .clipShape(Circle())
+        }else{
+            content
+                .contentShape(RoundedRectangle(cornerRadius: self.clipping.rawValue))
+                .clipShape(RoundedRectangle(cornerRadius: self.clipping.rawValue))
+        }
+    }
+}
+
+
+struct BasicCard:ViewModifier{
+    var size:CGSize
+    func body(content: Content) -> some View {
+        content
+            .padding()
+            .frame(width: self.size.width, height: self.size.height, alignment: .center)
+            .background(BlurView(style: .systemThinMaterialDark))
+            .cornerRadius(20)
+            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
     }
 }
 
@@ -172,7 +270,6 @@ struct SlideInOut:ViewModifier{
     func body(content: Content) -> some View {
         content
             .transition(.move(edge: .bottom))
-//            .scaleEffect(scale)
             .animation(.easeInOut)
     }
 }
@@ -184,7 +281,7 @@ struct MainSubHeading:View{
     var subHeadingSize:CGFloat
     var headingFont:TextStyle
     var subHeadingFont:TextStyle
-    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .normal, subHeadingFont:TextStyle = .normal){
+    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal){
         self.heading = heading
         self.subHeading = subHeading
         self.headingSize = headingSize
@@ -315,9 +412,19 @@ extension View{
     }
     
     func hideKeyboard() {
-           let resign = #selector(UIResponder.resignFirstResponder)
-           UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
-       }
+        let resign = #selector(UIResponder.resignFirstResponder)
+        UIApplication.shared.sendAction(resign, to: nil, from: nil, for: nil)
+    }
+    
+    
+    func basicCard(size:CGSize) -> some View{
+        self.modifier(BasicCard(size: size))
+    }
+    
+    
+    func refreshableView(width:CGFloat,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
+        self.modifier(RefreshableView(width: width, refreshFn: refreshFn))
+    }
 }
 
 struct Corners:Shape{
@@ -352,7 +459,7 @@ struct Wave:Shape{
     }
     
     func curveHeight(value:CGFloat,factor:CGFloat) -> CGFloat{
-        var finalValue = value * factor
+        let finalValue = value * factor
 //        return finalValue > value ? value : finalValue
         return finalValue
     }
@@ -360,8 +467,8 @@ struct Wave:Shape{
     func path(in rect:CGRect) -> Path{
         var path = Path()
         let maxH:CGFloat = rect.maxY * 0.9
-        var c1H = self.curveHeight(value:maxH,factor:(1 - offset))
-        var c2H = self.curveHeight(value:maxH,factor:(1 + offset))
+        let c1H = self.curveHeight(value:maxH,factor:(1 - offset))
+        let c2H = self.curveHeight(value:maxH,factor:(1 + offset))
         path.move(to: .zero)
         path.addLine(to: .init(x: rect.maxX, y: rect.minY))
         path.addLine(to: .init(x: rect.maxX, y: rect.maxY))
@@ -496,26 +603,26 @@ struct BarCurve:Shape{
         
         return Path{path in
             
-            var width = rect.width
-            var height = rect.height
+            let width = rect.width
+            let height = rect.height
             
             path.move(to: .init(x: width, y: height))
             path.addLine(to: .init(x: width, y: 0))
             path.addLine(to: .init(x: 0, y: 0))
             path.addLine(to: .init(x: 0, y: height))
             
-            var mid = (width * 0.5 + self.tabPoint) - 15
+            let mid = (width * 0.5 + self.tabPoint) - 15
             
             path.move(to: .init(x: mid - 40, y: height))
             
-            var to1 = CGPoint(x: mid, y: height - 20)
-            var control1 = CGPoint(x : mid - 15,y:height)
-            var control2 = CGPoint(x : mid - 15,y:height - 20)
+            let to1 = CGPoint(x: mid, y: height - 20)
+            let control1 = CGPoint(x : mid - 15,y:height)
+            let control2 = CGPoint(x : mid - 15,y:height - 20)
             
             
-            var to2 = CGPoint(x: mid + 40, y: height)
-            var control3 = CGPoint(x : mid + 15,y:height - 20)
-            var control4 = CGPoint(x : mid + 15,y:height)
+            let to2 = CGPoint(x: mid + 40, y: height)
+            let control3 = CGPoint(x : mid + 15,y:height - 20)
+            let control4 = CGPoint(x : mid + 15,y:height)
             
             path.addCurve(to: to1, control1: control1, control2: control2)
             

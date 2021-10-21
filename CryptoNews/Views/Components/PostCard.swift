@@ -62,8 +62,9 @@ struct PostCard: View {
             }
             .frame(width: size.width, alignment: .center)
             .aspectRatio(contentMode: .fill)
-            .frame(minHeight: self.const_size ? size.height : 0,maxHeight: size.height)
-            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .frame(minHeight: self.const_size ? size.height : 0)
+//            .clipShape(RoundedRectangle(cornerRadius: 20))
+            .clipContent(clipping: .roundClipping)
             .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 0)
         }.springButton()
         
@@ -138,7 +139,7 @@ extension PostCard{
         let h = size.height
         
         return AnyView(
-            MainText(content: self.data.body ?? self.data.title ?? "No Text", fontSize: 14, color: .white, fontWeight: .regular)
+            MainText(content: self.data.body ?? self.data.title ?? "No Text", fontSize: 14, color: .white,fontWeight: .regular,style: .heading)
                 .multilineTextAlignment(.leading)
                 .frame(width: w, alignment: .topLeading)
                 .frame(maxHeight: h)

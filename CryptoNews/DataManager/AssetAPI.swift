@@ -11,7 +11,11 @@ class Asset:Codable{
     var data:[AssetData]
 }
 
-class AssetData:Identifiable,Codable{
+class AssetData:Identifiable,Codable,Equatable{
+    static func == (lhs: AssetData, rhs: AssetData) -> Bool {
+        return lhs.lastUpdate == rhs.lastUpdate
+    }
+    
     var id:Int?
     var timeSeries:[AssetData]?
     var time:Float?

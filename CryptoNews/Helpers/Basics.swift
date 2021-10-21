@@ -1,19 +1,16 @@
 import SwiftUI
 
 enum TextStyle:String{
-    case main = "Avenir Next Medium"
-//    case heading = "RalewayDots-Regular"
-    case heading = "Codystar-Regular"
-    case normal = "NixieOne-Regular"
-    case monospaced = ""
-//    case heading = "MajorMonoDisplay-Regular"
-//    case heading = "BungeeShade-Regular"
-//    case title = "SortsMillGoudy-Regular"
-//    case normal = "Avenir Next Medium"
+    case heading = "Avenir Next Medium"
+//    case normal = "NixieOne-Regular"
 //    case normal = "Cochin"
-//    case normal = "SpaceGrotesk"
-//    case normal = "Verdana"
-//    case normal = "SortsMillGoudy-Regular"
+    case normal = "Avenir Next"
+    case monospaced = ""
+}
+
+struct CardSize{
+    static var slender = CGSize(width: totalWidth * 0.6, height: totalHeight * 0.5)
+    static var small = CGSize(width: totalWidth * 0.45, height: totalHeight * 0.2)
 }
 
 struct BasicText: View {

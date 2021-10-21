@@ -36,6 +36,7 @@
 		BC64593A2717871600BAECBC /* NewsStandCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459392717871600BAECBC /* NewsStandCard.swift */; };
 		BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */; };
 		BC854F4E26FB222700C823EB /* AsyncContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC854F4D26FB222700C823EB /* AsyncContainer.swift */; };
+		BCAD1609271F5BCF0020F6A8 /* CurrencySymbolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */; };
 		BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */; };
 		BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */; };
 		BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835326C181C0009D5822 /* LatestTweets.swift */; };
@@ -131,6 +132,7 @@
 		BC6459392717871600BAECBC /* NewsStandCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsStandCard.swift; sourceTree = "<group>"; };
 		BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDetailView.swift; sourceTree = "<group>"; };
 		BC854F4D26FB222700C823EB /* AsyncContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncContainer.swift; sourceTree = "<group>"; };
+		BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySymbolView.swift; sourceTree = "<group>"; };
 		BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyInfoView.swift; sourceTree = "<group>"; };
 		BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTimeCardsView.swift; sourceTree = "<group>"; };
 		BCB7835326C181C0009D5822 /* LatestTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestTweets.swift; sourceTree = "<group>"; };
@@ -291,9 +293,18 @@
 			path = CurrencyDetailView;
 			sourceTree = "<group>";
 		};
+		BCAD1607271F5BB80020F6A8 /* CurrencySymbolView */ = {
+			isa = PBXGroup;
+			children = (
+				BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */,
+			);
+			path = CurrencySymbolView;
+			sourceTree = "<group>";
+		};
 		BCB2978A26D57371005E2289 /* CurrencyView */ = {
 			isa = PBXGroup;
 			children = (
+				BCAD1607271F5BB80020F6A8 /* CurrencySymbolView */,
 				BC67BA8F26DECE6300D8BD35 /* CurrencyDetailView */,
 				BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */,
 				BC64593B271970E800BAECBC /* CryptoMarket */,
@@ -825,6 +836,7 @@
 				BCBC1DC426BE871900B87E5C /* ColorHelper.swift in Sources */,
 				BCBC1DBA26BE824300B87E5C /* PriceTimeChart.swift in Sources */,
 				BCBC1DB826BE824300B87E5C /* CurvedChartHelpers.swift in Sources */,
+				BCAD1609271F5BCF0020F6A8 /* CurrencySymbolView.swift in Sources */,
 				BCBC1D7826BE7D7400B87E5C /* ContentView.swift in Sources */,
 				BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */,
 				BC2267A626DA5C830058315E /* VideoCard.swift in Sources */,

@@ -25,6 +25,8 @@ struct CurrencyView:View{
     @State var showSection:CurrencyViewSection = .none
     @StateObject var TAPI:TransactionAPI = .init()
     @StateObject var NAPI:FeedAPI
+    @State var refresh:Bool = false
+    @State var refreshData:Bool = false
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     init(
@@ -45,7 +47,7 @@ struct CurrencyView:View{
     
     
     func onAppear(){
-        if self.currency == nil{
+        if self.currency.symbol == nil{
             self.getAssetInfo()
         }
         
@@ -71,17 +73,37 @@ struct CurrencyView:View{
     }
     
     func getAssetInfo(){
+        self.refreshData = true
         print("(DEBUG) Fetching Data for asset")
-        self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
+         self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
     }
     
     func onReceiveNewAssetInfo(asset:AssetData?){
         guard let data = asset else {return}
 //        DispatchQueue.main.async {
             self.currency = data
+            self.refreshData = false
             print("(DEBUG): Updated the Asset Data!")
-//        }
     }
+    
+    func onReceiveNewAssetInfo(asset:AssetData?,fn:() -> Void){
+        guard let data = asset else {return}
+//        DispatchQueue.main.async {
+            self.currency = data
+            self.refreshData = false
+            fn()
+            print("(DEBUG): Updated the Asset Data!")
+    }
+    
+    
+    func getAssetInfo(fn: @escaping () -> Void){
+        self.refreshData = true
+        print("(DEBUG) Fetching Data for asset")
+        self.asset_info.getUpdateAssetInfo { data in
+            self.onReceiveNewAssetInfo(asset: data,fn: fn)
+        }
+    }
+    
     
     func reloadNewsFeed(idx:Int){
         if idx == self.NAPI.FeedData.count - 5{
@@ -98,10 +120,6 @@ struct CurrencyView:View{
         }
     }
     
-    func reloadAssetFeed(){
-        print("(DEBUG) Fetching more feedData")
-        self.asset_feed.getNextPage()
-    }
     
     func feedView(w:CGFloat) -> some View{
         LazyVStack(alignment: .leading, spacing: 10) {
@@ -112,7 +130,8 @@ struct CurrencyView:View{
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
                     .onAppear {
                         self.reloadAssetFeed(idx: idx)
-                    }            }
+                    }
+            }
         }
     }
     
@@ -134,13 +153,25 @@ struct CurrencyView:View{
         return self.TAPI.transactions.filter({$0.symbol == symbol && ($0.type == "buy" || $0.type == "sell")})
     }
     
+    func refreshAsset(){
+        let time = floor(self.currency.timeSinceLastUpdate)
+        if(time > 60 && !self.refresh){
+            print("Getting the new Updated Asset ")
+            self.getAssetInfo()
+        }
+    }
+    
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
             ScrollView(.vertical, showsIndicators: false) {
-                Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth,refresh: true, onClose: self.onClose) { w in
+                Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth, onClose: self.onClose) { w in
                     let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, reloadAsset: self.reloadAssetFeed, reloadFeed: self.getAssetInfo, onClose: self.onClose)
-                }.padding(.top,50)
+                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection,reloadFeed: self.getAssetInfo, onClose: self.onClose)
+                }.refreshableView(width: size.width) { fun in
+                    if self.refresh && !self.refreshData{
+                        self.getAssetInfo(fn: fun)
+                    }
+                }
             }
         }else{
             ProgressView()
@@ -172,17 +203,13 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-        .onReceive(self.timer) { _ in
-            let time = floor(self.currency.timeSinceLastUpdate)
-            if(time > 30){
-                self.currency = .init()
-                print("Getting the new Updated Asset ")
-                self.getAssetInfo()
-            }
-            
-        }
-        
-        
+//        .onReceive(self.timer) { _ in self.refreshAsset()}
+//        .onChange(of: refresh) { newValue in
+//            print("onChange in CurrencyView")
+//            if newValue && !refreshData{
+//                self.getAssetInfo()
+//            }
+//        }
     }
     
     

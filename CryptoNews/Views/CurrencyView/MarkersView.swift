@@ -28,11 +28,12 @@ struct MarkerMainView:View{
     }
     
     func headLineText(heading:String,subText:String,large:Bool = false) -> some View{
-        return VStack(alignment: .leading, spacing: 10){
-            MainText(content: heading, fontSize: 12)
-            MainText(content: subText, fontSize: large ? 20 : 15,fontWeight: .semibold)
-        }.frame(alignment: .leading)
-        .fixedSize(horizontal: false, vertical: true)
+        return MainSubHeading(heading: heading, subHeading: subText, headingSize: 12, subHeadingSize: large ? 20 : 15, headingFont: .heading, subHeadingFont: .normal)
+//        return VStack(alignment: .leading, spacing: 10){
+//            MainText(content: heading, fontSize: 12)
+//            MainText(content: subText, fontSize: large ? 20 : 15,fontWeight: .semibold)
+//        }.frame(alignment: .leading)
+//        .fixedSize(horizontal: false, vertical: true)
     }
     
     func Header(size:CGSize) -> some View{
