@@ -8,12 +8,29 @@
 import Foundation
 import SwiftUI
 
+enum Tabs:String{
+    case home = "homekit"
+    case feed = "message"
+}
 
 class ContextData:ObservableObject{
+    @Published private var _tab:Tabs = .home
     @Published private var _selectedCurrency:AssetData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedSymbol:String? = nil
     @Published private var _addTxn:Bool = false
+    
+    
+    
+    var tab:Tabs{
+        get{
+            return self._tab
+        }
+        
+        set{
+            self._tab = newValue
+        }
+    }
     
     var selectedCurrency:AssetData?{
         get{

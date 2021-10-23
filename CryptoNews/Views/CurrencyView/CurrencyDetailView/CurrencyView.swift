@@ -122,30 +122,35 @@ struct CurrencyView:View{
     
     
     func feedView(w:CGFloat) -> some View{
-        LazyVStack(alignment: .leading, spacing: 10) {
-            ForEach(Array(self.asset_feed.FeedData.enumerated()),id:\.offset){ _data in
-                let data = _data.element
-                let idx = _data.offset
+        
+        LazyScrollView(data: self.asset_feed.FeedData.compactMap({$0 as Any})) { data in
+            if let data = data as? AssetNewsData{
                 let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
-                    .onAppear {
-                        self.reloadAssetFeed(idx: idx)
-                    }
             }
+        } reload: {
+            self.asset_feed.getNextPage()
         }
     }
     
     func newsView(w:CGFloat) -> some View{
-        return LazyVStack(alignment: .leading, spacing: 10) {
-            ForEach(Array(self.NAPI.FeedData.enumerated()),id: \.offset) { _news in
-                let news = _news.element
-                let idx = _news.offset
+        LazyScrollView(data: self.NAPI.FeedData.compactMap({$0 as Any})) { data in
+            if let news = data as? AssetNewsData{
                 NewsStandCard(news: news,size: .init(width: w, height: 150))
-                    .onAppear{
-                        self.reloadNewsFeed(idx: idx)
-                    }
             }
+        } reload: {
+            self.NAPI.getNextPage()
         }
+//        return LazyVStack(alignment: .leading, spacing: 10) {
+//            ForEach(Array(self.NAPI.FeedData.enumerated()),id: \.offset) { _news in
+//                let news = _news.element
+//                let idx = _news.offset
+//                NewsStandCard(news: news,size: .init(width: w, height: 150))
+//                    .onAppear{
+//                        self.reloadNewsFeed(idx: idx)
+//                    }
+//            }
+//        }
     }
     
     var txnsForAsset:[Transaction]{

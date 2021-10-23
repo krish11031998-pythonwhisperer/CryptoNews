@@ -22,6 +22,9 @@
 		BC305F0D26D8213400826AB4 /* FeedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0C26D8213400826AB4 /* FeedAPI.swift */; };
 		BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */; };
 		BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */; };
+		BC4FD7D227243BD5007538AA /* FeedMainPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4FD7D127243BD5007538AA /* FeedMainPage.swift */; };
+		BC4FD7D427243C29007538AA /* FeedPage.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4FD7D327243C29007538AA /* FeedPage.swift */; };
+		BC4FD7D627243DAC007538AA /* LazyScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC4FD7D527243DAC007538AA /* LazyScrollView.swift */; };
 		BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC64591E2708937300BAECBC /* FirebaseAPI.swift */; };
 		BC645921270E31C800BAECBC /* HoverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC645920270E31C800BAECBC /* HoverView.swift */; };
 		BC645923270EFB6A00BAECBC /* CurrencyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC645922270EFB6A00BAECBC /* CurrencyView.swift */; };
@@ -118,6 +121,9 @@
 		BC305F0C26D8213400826AB4 /* FeedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedAPI.swift; sourceTree = "<group>"; };
 		BC305F0E26D829A700826AB4 /* CryptoCoinCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoCoinCard.swift; sourceTree = "<group>"; };
 		BC305F1026D8D2D300826AB4 /* CardSlidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardSlidingView.swift; sourceTree = "<group>"; };
+		BC4FD7D127243BD5007538AA /* FeedMainPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedMainPage.swift; sourceTree = "<group>"; };
+		BC4FD7D327243C29007538AA /* FeedPage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPage.swift; sourceTree = "<group>"; };
+		BC4FD7D527243DAC007538AA /* LazyScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyScrollView.swift; sourceTree = "<group>"; };
 		BC64591E2708937300BAECBC /* FirebaseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAPI.swift; sourceTree = "<group>"; };
 		BC645920270E31C800BAECBC /* HoverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HoverView.swift; sourceTree = "<group>"; };
 		BC645922270EFB6A00BAECBC /* CurrencyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyView.swift; sourceTree = "<group>"; };
@@ -244,6 +250,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		BC4FD7D027243BB3007538AA /* FeedPage */ = {
+			isa = PBXGroup;
+			children = (
+				BC4FD7D127243BD5007538AA /* FeedMainPage.swift */,
+				BC4FD7D327243C29007538AA /* FeedPage.swift */,
+			);
+			path = FeedPage;
+			sourceTree = "<group>";
+		};
 		BC6459262711C79100BAECBC /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
@@ -338,6 +353,7 @@
 				BC854F4D26FB222700C823EB /* AsyncContainer.swift */,
 				BCBCACCA2705132100E76436 /* WebModelView.swift */,
 				BC645920270E31C800BAECBC /* HoverView.swift */,
+				BC4FD7D527243DAC007538AA /* LazyScrollView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -420,6 +436,7 @@
 		BCBC1DA026BE7DFD00B87E5C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BC4FD7D027243BB3007538AA /* FeedPage */,
 				BCBCACCC2705171100E76436 /* UIManager */,
 				BCF98BA326D980FB00C45562 /* Youtube */,
 				BCB2978A26D57371005E2289 /* CurrencyView */,
@@ -809,7 +826,9 @@
 				BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */,
 				BCBC1DDC26C0652500B87E5C /* SwipedParams.swift in Sources */,
 				BCBC1DC626BE876900B87E5C /* ImageHelper.swift in Sources */,
+				BC4FD7D427243C29007538AA /* FeedPage.swift in Sources */,
 				BC64593A2717871600BAECBC /* NewsStandCard.swift in Sources */,
+				BC4FD7D627243DAC007538AA /* LazyScrollView.swift in Sources */,
 				BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */,
 				BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */,
 				BCB7835E26C318B9009D5822 /* RedditCardView.swift in Sources */,
@@ -817,6 +836,7 @@
 				BCB7836226C5AE58009D5822 /* FancyHScroll.swift in Sources */,
 				BCBC1DA426BE7F2400B87E5C /* StringHelper.swift in Sources */,
 				BC1EE46726E33B260033AF10 /* DiamondChart.swift in Sources */,
+				BC4FD7D227243BD5007538AA /* FeedMainPage.swift in Sources */,
 				BC854F4E26FB222700C823EB /* AsyncContainer.swift in Sources */,
 				BCBC1DC026BE835100B87E5C /* Constants.swift in Sources */,
 				BCBC1DB726BE824300B87E5C /* ChartsMainView.swift in Sources */,

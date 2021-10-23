@@ -51,8 +51,11 @@ class FeedAPI:DAPI,ObservableObject{
     var limit:Int
     var page:Int
     @Published var FeedData:[AssetNewsData] = []
+    private var loading:Bool = false
+    static var shared:FeedAPI = .init()
     
-    init(currency:[String] = ["BTC","LTC","XRP"],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15,page:Int = 0){
+    
+    init(currency:[String] = ["BTC","LTC","XRP"],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType = .Chronological,limit:Int = 15,page:Int = 0){
         self.currency = currency
         self.sources = sources
         self.type = type
@@ -90,15 +93,26 @@ class FeedAPI:DAPI,ObservableObject{
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        if self.loading{
+            self.loading = false
+        }
     }
     
     func getAssetInfo(){
-        self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+        if !self.loading{
+            self.loading = true
+            self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+        }
+        
     }
     
     
     func getNextPage(){
-        self.page += 1;
-        self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+        if !self.loading{
+            self.loading = true
+            self.page += 1;
+            self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+        }
+        
     }
 }
