@@ -141,16 +141,6 @@ struct CurrencyView:View{
         } reload: {
             self.NAPI.getNextPage()
         }
-//        return LazyVStack(alignment: .leading, spacing: 10) {
-//            ForEach(Array(self.NAPI.FeedData.enumerated()),id: \.offset) { _news in
-//                let news = _news.element
-//                let idx = _news.offset
-//                NewsStandCard(news: news,size: .init(width: w, height: 150))
-//                    .onAppear{
-//                        self.reloadNewsFeed(idx: idx)
-//                    }
-//            }
-//        }
     }
     
     var txnsForAsset:[Transaction]{

@@ -10,7 +10,8 @@ import SwiftUI
 
 enum Tabs:String{
     case home = "homekit"
-    case feed = "message"
+    case feed = "TwitterIcon"
+    case news = "newspaper.fill"
 }
 
 class ContextData:ObservableObject{

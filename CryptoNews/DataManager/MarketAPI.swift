@@ -51,10 +51,10 @@ struct CoinMarketData:Codable{
 
 class MarketAPI:DAPI,ObservableObject{
     @Published var data:Array<CoinMarketData> = .init()
-    var sort:String
+    var sort:String?
     var limit:Int
     var order:Order
-    init(sort:String = "d",limit:Int = 10,order:Order = .desc){
+    init(sort:String? = nil,limit:Int = 10,order:Order = .desc){
         self.sort = sort
         self.limit = limit
         self.order = order
@@ -64,9 +64,12 @@ class MarketAPI:DAPI,ObservableObject{
         var uC = self.baseComponent
         uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "market"),
-            URLQueryItem(name: "sort", value: self.sort),
             URLQueryItem(name: "limit", value: "\(self.limit)")
         ])
+        
+        if let sort = self.sort{
+            uC.queryItems?.append(URLQueryItem(name: "sort", value: sort))
+        }
         
         if self.order == .desc{
             uC.queryItems?.append(URLQueryItem(name: "desc", value: "true"))

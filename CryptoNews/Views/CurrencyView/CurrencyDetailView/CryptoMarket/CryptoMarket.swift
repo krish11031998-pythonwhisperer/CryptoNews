@@ -14,7 +14,7 @@ struct CryptoMarket: View {
     @EnvironmentObject var context:ContextData
     
     
-    init(heading:String,srt:String = "d",order:Order = .desc,cardSize:CGSize = CardSize.slender){
+    init(heading:String,srt:String = "",order:Order = .desc,cardSize:CGSize = CardSize.slender){
         self.size = cardSize
         self.heading = heading
         self._MAPI = .init(wrappedValue: .init(sort: srt, limit: 10,order: order))

@@ -76,6 +76,14 @@ class FeedAPI:DAPI,ObservableObject{
         return uC.url
     }
     
+    func fetchNewCurrency(currency:String){
+//        DispatchQueue.main.async {
+            self.currency = [currency]
+            self.FeedData = []
+//        }
+        self.getAssetInfo()
+    }
+    
     func parseData(data:Data){
         let decoder = JSONDecoder()
         do{
@@ -87,15 +95,15 @@ class FeedAPI:DAPI,ObservableObject{
                     }else{
                         self.FeedData.append(contentsOf: news)
                     }
-                    
+                    if self.loading{
+                        self.loading = false
+                    }
                 }
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
-        if self.loading{
-            self.loading = false
-        }
+        
     }
     
     func getAssetInfo(){

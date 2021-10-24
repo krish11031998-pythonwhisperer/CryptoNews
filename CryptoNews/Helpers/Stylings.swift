@@ -142,7 +142,25 @@ struct KeyboardAdaptive:ViewModifier{
 }
 
 
-
+struct SystemButtonModifier:ViewModifier{
+    var bg:AnyView
+    var size:CGSize
+    var color:Color
+    init(size:CGSize,color:Color,@ViewBuilder bg:() -> AnyView){
+        self.size = size
+        self.color = color
+        self.bg = bg()
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .frame(width: self.size.width, height: self.size.height, alignment: .center)
+            .foregroundColor(color)
+            .padding(10)
+            .background(bg)
+            .clipShape(Circle())
+    }
+}
 
 struct SpringButton:ViewModifier{
     var handleTap:(() -> Void)
@@ -424,6 +442,10 @@ extension View{
     
     func refreshableView(width:CGFloat,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
         self.modifier(RefreshableView(width: width, refreshFn: refreshFn))
+    }
+    
+    func systemButtonModifier(size:CGSize,color:Color,@ViewBuilder bg: () -> AnyView) -> some View{
+        self.modifier(SystemButtonModifier(size: size, color: color, bg: bg))
     }
 }
 

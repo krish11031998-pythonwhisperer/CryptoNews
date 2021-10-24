@@ -8,19 +8,23 @@
 import SwiftUI
 
 struct SystemButton: View {
-    var buttonName:String
+    var buttonName:String?
     var buttonContent:String?
     var actionHandler: () -> Void
     var color:Color
     var haveBG:Bool
-    var alignment:Axis.Set
+    var customIcon:String?
+    var alignment:Axis.Set?
     var size:CGSize = .init(width: 10, height: 10)
     fileprivate var bgcolor:Color? = nil
-    init(b_name:String,b_content:String? = nil,color:Color = .white,
+    init(b_name:String? = nil,
+         b_content:String? = nil,
+         color:Color = .white,
          haveBG:Bool = true,
          size:CGSize? = nil,
+         customIcon:String? = nil,
          bgcolor:Color? = nil,
-         alignment:Axis.Set = .horizontal,
+         alignment:Axis.Set? = nil,
          action:@escaping () -> Void){
         self.buttonName = b_name
         self.buttonContent = b_content
@@ -28,6 +32,7 @@ struct SystemButton: View {
         self.color = color
         self.haveBG = haveBG
         self.bgcolor = bgcolor
+        self.customIcon = customIcon
         self.alignment = alignment
         if let safeSize = size{
             self.size = safeSize
@@ -40,59 +45,57 @@ struct SystemButton: View {
         }
     }
     
-    
-    
-    var ButtonImg:AnyView{
-        if self.haveBG{
-            return AnyView(
-                Image(systemName: self.buttonName)
-                    .resizable()
-                    .frame(width: self.size.width, height: self.size.height, alignment: .center)
-                    .foregroundColor(color)
-//                    .padding(size.width * 0.5)
-                    .padding(10)
-                    .background(haveBG ? bgColor : Color.clear)
-                    .clipShape(Circle())
-            )
-        }else{
-            return AnyView(Image(systemName: self.buttonName)
-                            .resizable()
-                            .frame(width: self.size.width, height: self.size.height, alignment: .center)
-                            .foregroundColor(color)
-                            .padding(.vertical,size.width * 0.5)
-            )
+    @ViewBuilder var Img:some View {
+        if let buttonName = self.buttonName{
+            Image(systemName: buttonName)
+                .resizable()
+        }else if let customIcon = customIcon{
+            Image(customIcon)
+                .resizable()
         }
     }
     
-    var labelView:AnyView{
-        var view = AnyView(Color.clear)
+    @ViewBuilder var ButtonImg:some View{
+            if self.haveBG{
+                self.Img
+                    .systemButtonModifier(size: size, color: color, bg: {
+                        AnyView(haveBG ? bgColor : Color.clear)
+                    })
+                
+            }else{
+                self.Img
+                    .systemButtonModifier(size: size, color: color, bg: {
+                        AnyView(Color.mainBGColor)
+                    })
+            }
+    }
+    
+    @ViewBuilder var labelView:some View{
+
         if self.alignment == .vertical{
-            view =  AnyView(VStack(alignment:.center,spacing:5){
+            VStack(alignment:.center,spacing:5){
                 self.ButtonImg
                 if let content = self.buttonContent{
                     MainText(content: content, fontSize: size.width,color: bgColor)
                 }
                 
-            })
+            }
         }else if self.alignment == .horizontal{
-            view = AnyView(HStack(alignment:.center,spacing:5){
+            HStack(alignment:.center,spacing:5){
                 self.ButtonImg
                 if let content = self.buttonContent{
                     MainText(content: content, fontSize: size.width,color: bgColor)
                 }
                 
-            })
+            }
+        }else{
+            self.ButtonImg
         }
-        return view
     }
     
     var body: some View {
-        Button(action: {
-            
-            self.actionHandler()
-        }, label: {
-            self.labelView
-        }).springButton()
+        self.labelView
+            .buttonify(handler: self.actionHandler)
     }
 }
 

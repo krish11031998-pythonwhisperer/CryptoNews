@@ -27,7 +27,7 @@ struct LazyScrollView<T:View>: View {
     }
     
     var body: some View {
-        LazyVStack(alignment: .leading, spacing: 10) {
+        LazyVStack(alignment: .center, spacing: 10) {
             ForEach(Array(self.data.enumerated()), id:\.offset) {_data in
                 let data = _data.element
                 let idx = _data.offset
@@ -38,7 +38,7 @@ struct LazyScrollView<T:View>: View {
                     }
                 
             }
-            ProgressView().padding(.bottom,10)
+            ProgressView().padding(.bottom,25).frame(alignment:.center)
         }
     }
 }

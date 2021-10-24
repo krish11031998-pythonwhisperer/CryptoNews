@@ -32,7 +32,7 @@ struct CurrencySymbolView: View {
     }
     
     var body: some View {
-        ImageView(url: self.img_url, width: self.width, contentMode: .fit, alignment: .center, clipping: .circleClipping)
+        ImageView(url: self.img_url, width: self.width,height: self.width, contentMode: .fit, alignment: .center, clipping: .circleClipping)
     }
 }
 

@@ -32,27 +32,7 @@ struct HomePage: View {
     
     var body: some View {
         ZStack(alignment: .center){
-            mainBGView.zIndex(0)
-            if self.showMainView{
-                self.mainView
-            }            
-            if let asset = self.context.selectedCurrency{
-                self.CurrencyViewGetter(asset: asset, height: totalHeight * 0.3)
-            }else if let symb = self.context.selectedSymbol{
-                self.CurrencyViewGetter(name: symb, height: totalHeight * 0.3)
-            }
-            
-            if let news = self.context.selectedNews, let urlStr = news.url,let url  = URL(string: urlStr){
-                WebModelView(url: url, close: self.closeNews)
-                    .transition(.slideInOut)
-                    .zIndex(3)
-            }
-            if self.context.addTxn{
-                AddTxnMainView(currency: self.context.selectedSymbol)
-                    .transition(.slideInOut)
-                    .zIndex(3)  
-            }
-            
+            self.mainView
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
         .onChange(of: self.context.selectedCurrency?.name) { newValue in
@@ -62,50 +42,12 @@ struct HomePage: View {
 }
 
 extension HomePage{
-    
-    func closeNews(){
-        if self.context.selectedNews != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.context.selectedNews = nil
-            }
-        }
-    }
-    
+
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }
     
-    func closeAsset(){
-        if self.context.selectedCurrency != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.context.selectedCurrency = nil
-            }
-        }else if self.context.selectedSymbol != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.context.selectedSymbol = nil
-            }
-        }
-    }
-    
-    
-    func CurrencyViewGetter(asset:AssetData,height h :CGFloat) -> some View{
-        CurrencyView(info: asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-        .transition(.slideInOut)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        .zIndex(2)
-    }
-    
-    func CurrencyViewGetter(name:String,height h :CGFloat) -> some View{
-        CurrencyView(name: name, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-        .transition(.slideInOut)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        .zIndex(2)
-    }
-    
     var PriceCards:some View{
-//        ScrollView(.horizontal, showsIndicators: false){
         Container(heading: "Tracked Assets", width: totalWidth, ignoreSides: true) { w in
             ScrollView(.horizontal, showsIndicators: false){
                 LazyHStack(alignment: .center, spacing: 10){
@@ -119,7 +61,6 @@ extension HomePage{
                 }
             }
         }
-//        }
     }
     
     
