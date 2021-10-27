@@ -28,10 +28,18 @@ struct ContentView: View {
                                 .environmentObject(self.context)
                 case .news : CurrencyFeedMainPage(type: .news)
                         .environmentObject(self.context)
+                case .txn:
+                    AddTxnMainView()
+                    .environmentObject(self.context)
+//                case .reddit : CurrencyFeedMainPage(type: .reddit)
+//                        .environmentObject(self.context)
+                
                 default: Color.clear
             }
             self.hoverView
-            TabBarMain()
+            if self.context.showTab{
+                TabBarMain()
+            }
         }.edgesIgnoringSafeArea(.all)
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
     }

@@ -85,6 +85,7 @@
 		BCBCACCB2705132100E76436 /* WebModelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACCA2705132100E76436 /* WebModelView.swift */; };
 		BCBCACCE2705172A00E76436 /* ContextData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACCD2705172A00E76436 /* ContextData.swift */; };
 		BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */; };
+		BCC22D5B2728B485005E9BDB /* CurrencyCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC22D5A2728B485005E9BDB /* CurrencyCardView.swift */; };
 		BCD8CA0127245E06004BD59E /* TabBarMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD8CA0027245E06004BD59E /* TabBarMain.swift */; };
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
@@ -192,6 +193,7 @@
 		BCBCACCA2705132100E76436 /* WebModelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebModelView.swift; sourceTree = "<group>"; };
 		BCBCACCD2705172A00E76436 /* ContextData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextData.swift; sourceTree = "<group>"; };
 		BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		BCC22D5A2728B485005E9BDB /* CurrencyCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCardView.swift; sourceTree = "<group>"; };
 		BCD8CA0027245E06004BD59E /* TabBarMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarMain.swift; sourceTree = "<group>"; };
 		BCF98BA126D97E7000C45562 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		BCF98BA426D9811300C45562 /* CryptoYoutube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoYoutube.swift; sourceTree = "<group>"; };
@@ -260,6 +262,7 @@
 				BC4FD7D127243BD5007538AA /* CurrencyFeedMainPage.swift */,
 				BC4FD7D327243C29007538AA /* CurrencyFeedPage.swift */,
 				BC27E4E92725FCA800E47CA2 /* CurrencyFeedView.swift */,
+				BCC22D5A2728B485005E9BDB /* CurrencyCardView.swift */,
 			);
 			path = CurrencyFeedView;
 			sourceTree = "<group>";
@@ -857,6 +860,7 @@
 				BCBC1DC026BE835100B87E5C /* Constants.swift in Sources */,
 				BCBC1DB726BE824300B87E5C /* ChartsMainView.swift in Sources */,
 				BCB7836626C67874009D5822 /* TimerBlobs.swift in Sources */,
+				BCC22D5B2728B485005E9BDB /* CurrencyCardView.swift in Sources */,
 				BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */,
 				BC305F0926D8209000826AB4 /* DAPI.swift in Sources */,
 				BC10D9D526F5CAE7007ADE34 /* BarChart.swift in Sources */,

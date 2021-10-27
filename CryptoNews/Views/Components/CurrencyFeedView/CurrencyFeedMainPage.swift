@@ -15,12 +15,21 @@ struct CurrencyFeedMainPage: View {
     
     init(type:FeedPageType){
         self.type = type
-        self._assetAPI = .init(wrappedValue: .init(currency: ["BTC"], sources: type == .feed ? ["twitter"] : ["news"]))
+        self._assetAPI = .init(wrappedValue: .init(currency: ["BTC"], sources: type == .feed ? ["twitter"] : type == .reddit ? ["reddit"] : ["news"]))
         self._MAPI = .init(wrappedValue: .init(sort: "d",limit: 100,order: .desc))
     }
     
     var heading:String{
-        return self.type == .feed ? "Feed" : self.type == .news ? "News" : ""
+        switch self.type{
+            case .feed:
+                return "Feed"
+            case .reddit:
+                return "Reddit"
+            case .news:
+                return "News"
+            default:
+                return ""
+        }
     }
     
     

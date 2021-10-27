@@ -16,6 +16,7 @@ enum ModalType{
 }
 
 struct AddTransactionView:View {
+    @EnvironmentObject var context:ContextData
     @State var txn:Transaction = .init()
     @State var amount_str:String = ""
     @State var type:TransactionType = .none
@@ -25,16 +26,24 @@ struct AddTransactionView:View {
     @State var spot_price:String = ""
     @State var showModal:ModalType = .none
     @State var isKeyboardOn:Bool = false
-    @EnvironmentObject var context:ContextData
+    @State var coin:CoinMarketData = .init()
 //    @ObservedObject var kGuardian =
-    var currency:String
-    var currentAsset: AssetData
+    @State var _currency:String? = nil
+    @State var currentAsset: AssetData? = nil
     
     var types:[TransactionType] = [.buy,.sell,.receive,.send]
     
-    init(currentAsset:AssetData,curr_str:String){
-        self.currentAsset = currentAsset
-        self.currency = curr_str
+    init(currentAsset:AssetData? = nil,
+         curr_str:String? = nil
+    ){
+        if let asset = currentAsset{
+            self.currentAsset = asset
+        }
+        
+        if let curr = curr_str{
+            self.__currency = .init(wrappedValue: curr)
+        }
+        
     }
     
     
@@ -43,6 +52,11 @@ struct AddTransactionView:View {
             withAnimation(.easeInOut) {
                 self.context.addTxn.toggle()
             }
+        }
+        
+        if self.context.prev_tab != .none{
+            self.context.tab = self.context.prev_tab
+            self.context.prev_tab = .none
         }
     }
     
@@ -90,10 +104,39 @@ struct AddTransactionView:View {
         }
     }
     
+    func fetchAssetData(sym:String?){
+        guard let sym = sym else {return}
+        let aapi = AssetAPI.shared(currency: sym)
+        aapi.getAssetInfo { data in
+            guard let data = data else {return}
+            withAnimation(.easeInOut) {
+                self.currentAsset = data
+            }
+        }
+    }
+    
+    func onAppear(){
+        if let curr = self._currency , self.currentAsset == nil{
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+                self.fetchAssetData(sym: curr)
+            }
+        }
+        
+        withAnimation(.easeInOut) {
+            if self.context.showTab{
+                self.context.showTab.toggle()
+            }
+        }
+    }
+
+    
     var body: some View {
         ZStack(alignment:.bottom){
-            Container(heading: self.currency, width: totalWidth,onClose: self.onClose) { w in
+            Container(heading: self.currency ?? "Choose the currency", width: totalWidth,onClose: self.onClose) { w in
                 VStack(alignment: .leading, spacing: 10) {
+                    if self.currentAsset == nil{
+                        CurrencyCardView(currency: $coin,width: w)
+                    }
                     self.transactionType.frame(width: w, alignment: .leading)
                     Spacer().frame(height: totalHeight * 0.2, alignment: .center)
                     self.txnValueField.frame(width: w, alignment: .center)
@@ -115,23 +158,38 @@ struct AddTransactionView:View {
                 self.spotPriceView(w: totalWidth)
             }
         }
+        .edgesIgnoringSafeArea(.all)
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
-            .edgesIgnoringSafeArea(.all)
-            .onDisappear {
-                if self.context.selectedSymbol != nil{
-                    self.context.selectedSymbol = nil
-                }
-                
-                if self.isKeyboardOn{
-                    self.isKeyboardOn.toggle()
-                    hideKeyboard()
+        .onAppear(perform: self.onAppear)
+        .onDisappear {
+            if self.context.selectedSymbol != nil{
+                self.context.selectedSymbol = nil
+            }
+            
+            if self.isKeyboardOn{
+                self.isKeyboardOn.toggle()
+                hideKeyboard()
+            }
+            
+            withAnimation(.easeInOut) {
+                if  !self.context.showTab{
+                    self.context.showTab.toggle()
                 }
             }
-            .keyboardAdaptive(isKeyBoardOn: $isKeyboardOn)
+            
+        }
+        .keyboardAdaptive(isKeyBoardOn: $isKeyboardOn)
+        .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
     }
 }
 
 extension AddTransactionView{
+    
+    var currency:String{
+        return self._currency ?? self.coin.s ?? "Choose Currency"
+    }
+    
+    
     func swipeCard(w:CGFloat,h:CGFloat = totalHeight * 0.3,heading:String = "NO Heading",buttonText:String = "Update",innerView: @escaping () -> AnyView,action: @escaping () -> Void) -> some View{
         VStack(alignment: .leading, spacing: 10) {
             MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold, style: .normal).padding(.bottom,20)
@@ -201,7 +259,7 @@ extension AddTransactionView{
             let size:CGFloat = self.entryType == "coin" ? self.value_size : 30
             TextField("0",text: $amount_str)
                 .coloredTextField(color: color,size: size,rightViewTxt: self.currency)
-            MainText(content: "\(convertToMoneyNumber(value: self.currentAsset.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
+            MainText(content: "\(convertToMoneyNumber(value: self.currentAsset?.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
         }
     }
     
@@ -272,19 +330,19 @@ extension AddTransactionView{
     
 }
 
-
 struct AddTxnMainView:View{
     @State var asset:AssetData? = nil
-    var currency:String
+    @State var coin:CoinMarketData = .init()
+    var currency:String?
     init(asset:AssetData? = nil,currency:String? = nil){
         self.asset = asset
-        self.currency = currency ?? "BTC"
+        self.currency = currency
     }
     
     func onAppear(){
         DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-            if self.asset == nil{
-                let aapi = AssetAPI.shared(currency: self.currency)
+            if let curr = self.currency,self.asset == nil{
+                let aapi = AssetAPI.shared(currency: curr)
                 aapi.getAssetInfo { data in
                     guard let safeData = data else {return}
                     DispatchQueue.main.async {
@@ -295,16 +353,22 @@ struct AddTxnMainView:View{
         }
     }
     
+    
     var body: some View{
         ZStack(alignment: .center) {
             Color.mainBGColor
-            if let asset = self.asset{
-                AddTransactionView(currentAsset: asset, curr_str: asset.symbol ?? "BTC")
-            }else{
-                ProgressView()
-            }
+//            if let asset = self.asset{
+            AddTransactionView(currentAsset: asset, curr_str: self.currency)
+//            }else if self.currency == nil{
+//                ScrollView(.vertical, showsIndicators: false) {
+//                    CurrencyCardView(currency: $coin,large: true)
+//                }
+//            }else{
+//                ProgressView()
+//            }
         }.frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
+//        .onChange(of: self.coin.s, perform: self.onChangeCoin(sym:))
             
             
     }

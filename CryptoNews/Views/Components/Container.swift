@@ -10,13 +10,13 @@ import SwiftUI
 struct Container<T:View>: View {
     var innerView:(CGFloat) -> T
     var rightButton:T? = nil
-    var heading:String
+    var heading:String?
     var onClose:(() -> Void)? = nil
     var width:CGFloat
     var ignoreSides:Bool
     var refreshFn:(() -> Void)? = nil
     init(
-        heading:String,
+        heading:String? = nil,
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
         onClose:(() -> Void)? = nil,
@@ -31,13 +31,13 @@ struct Container<T:View>: View {
         self.ignoreSides = ignoreSides
     }
     
-    func headingView(w:CGFloat) -> some View{
+    func headingView(heading:String,w:CGFloat) -> some View{
         return Group{
             HStack {
                 if let onClose = self.onClose{
                     SystemButton(b_name: "xmark",action: onClose)
                 }
-                MainText(content: self.heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
+                MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
                 Spacer()
                 if rightButton != nil{
                     self.rightButton
@@ -52,7 +52,9 @@ struct Container<T:View>: View {
     @ViewBuilder var mainBody:some View{
         let w = totalWidth - 30
         VStack(alignment: .leading, spacing: 10) {
-            self.headingView(w: w)
+            if let heading = self.heading{
+                self.headingView(heading:heading,w: w)
+            }
             self.innerView(w)
         }
         .padding(.horizontal, self.ignoreSides ? 0 : 15)

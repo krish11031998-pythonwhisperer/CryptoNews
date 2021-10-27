@@ -140,9 +140,19 @@ struct NewsCardCarousel:View{
     }
     
     var body: some View{
-        GeometryReader{g in
+        GeometryReader{g -> AnyView in
             let _size = g.frame(in: .local).size
-            ZStack(alignment: .center) {
+            let midX = g.frame(in: .global).midX
+            
+            DispatchQueue.main.async {
+                if midX > 0 && midX < totalWidth && self.newsFeed.FeedData.isEmpty{
+                    self.onAppear()
+                }
+            }
+            
+            
+            
+            return AnyView(ZStack(alignment: .center) {
                 ForEach(Array(self.newsFeed.FeedData.enumerated()), id: \.offset) { _newsFeed in
                     let news = _newsFeed.element
                     let idx = _newsFeed.offset
@@ -152,10 +162,10 @@ struct NewsCardCarousel:View{
                             .zoomInOut()
                     }
                 }
-            }.frame(width: _size.width, height: _size.height,alignment: .center)
+            }.frame(width: _size.width, height: _size.height,alignment: .center))
         }.padding(.all,10)
         .frame(width: size.width, height: size.height, alignment: .center)
-        .onAppear(perform: self.onAppear)
+//        .onAppear(perform: self.onAppear)
     }
     
 }

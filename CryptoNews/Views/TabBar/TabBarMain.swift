@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TabBarMain: View {
     @EnvironmentObject var context:ContextData
-    var tabs:[Tabs] = [.home,.feed,.news]
+    var tabs:[Tabs] = [.home,.feed,.txn,.news]
     
     
     
@@ -36,10 +36,11 @@ struct TabBarMain: View {
 
 extension TabBarMain{
     @ViewBuilder func systemButtonView(tab:Tabs,action: @escaping () -> Void) -> some View{
-        if tab == .feed{
-            SystemButton(haveBG: self.context.tab != tab,size: .init(width: 30, height: 30), customIcon: tab.rawValue, bgcolor: .clear,action: action)
-        }else{
-            SystemButton(b_name: tab.rawValue,haveBG: self.context.tab != tab,size: .init(width: 30, height: 30), bgcolor: .clear,action: action)
+        switch tab{
+            case .feed,.reddit:
+                SystemButton(haveBG: self.context.tab != tab,size: .init(width: 30, height: 30), customIcon: tab.rawValue, bgcolor: .clear,action: action)
+            default:
+                SystemButton(b_name: tab.rawValue,haveBG: self.context.tab != tab,size: .init(width: 30, height: 30), bgcolor: .clear,action: action)
         }
     }
 }

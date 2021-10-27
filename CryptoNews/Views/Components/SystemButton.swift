@@ -54,7 +54,7 @@ struct SystemButton: View {
                 .resizable()
         }
     }
-    
+     
     @ViewBuilder var ButtonImg:some View{
             if self.haveBG{
                 self.Img
