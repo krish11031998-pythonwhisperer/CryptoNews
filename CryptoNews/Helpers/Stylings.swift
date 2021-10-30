@@ -3,6 +3,7 @@ import Combine
 enum Clipping:CGFloat{
     case roundClipping = 20
     case squareClipping = 10
+    case roundCornerMedium = 15
     case circleClipping = 50
     case clipped = 0
 }
@@ -27,18 +28,21 @@ struct RefreshableView:ViewModifier{
     @State var refreshing:Bool = false
     @State var refresh_off:CGFloat = 0.0
     @State var pageRendered:Bool = false
+    var hasToRender:Bool
     var width:CGFloat
     var refreshFn:((@escaping () -> Void) -> Void)
     
     
-    init(width:CGFloat,refreshFn: @escaping (( @escaping () -> Void) -> Void)){
+    init(width:CGFloat,hasToRender:Bool,refreshFn: @escaping (( @escaping () -> Void) -> Void)){
         self.width = width
         self.refreshFn = refreshFn
+        self.hasToRender = hasToRender
     }
     
     func resetOff(){
         withAnimation(.easeInOut) {
             self.refresh_off = 0
+            self.refreshing = false
         }
     }
     
@@ -47,25 +51,26 @@ struct RefreshableView:ViewModifier{
         withAnimation(.easeInOut) {
             self.refreshing = true
             self.refresh_off = 100
+            self.pageRendered = false
             print("DEBUG Refresh was toggled!")
         }
         self.refreshFn(self.resetOff)
     }
     
     var refreshState:Bool{
-        return !self.refreshing && self.refresh_off == 0
+        return !self.refreshing && self.refresh_off == 0 && self.pageRendered
     }
     
     var refreshableView:some View{
         GeometryReader{g -> AnyView in
             let minY = g.frame(in: .global).minY
             DispatchQueue.main.async {
-                if !self.pageRendered && minY < 0{
-                    self.pageRendered = true
-                }else if minY >= 100 && self.pageRendered && self.refreshState{
-                    self.refresh(minY: minY)
-                }else if minY < 0 && self.refreshing{
-                    self.refreshing = false
+                if self.hasToRender{
+                    if !self.pageRendered && minY < 0{
+                        self.pageRendered = true
+                    }else if minY >= 100  && self.refreshState{
+                        self.refresh(minY: minY)
+                    }
                 }
             }
             
@@ -88,13 +93,6 @@ struct RefreshableView:ViewModifier{
         }
         .frame(width: width, alignment: .top)
         .offset(y: -25 + self.refresh_off)
-        .onChange(of: self.refreshing) { refreshing in
-            if !refreshing && self.refresh_off != 0{
-                withAnimation(.easeInOut) {
-                    self.refresh_off = 0
-                }
-            }
-        }
     }
 }
 
@@ -311,7 +309,11 @@ struct MainSubHeading:View{
     var body: some View{
         VStack(alignment: .leading, spacing: 5) {
             MainText(content: self.heading, fontSize: self.headingSize, color: .gray, fontWeight: .semibold,style: headingFont)
+                .lineLimit(1)
             MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: .white, fontWeight: .semibold,style: subHeadingFont)
+                .fixedSize(horizontal: false, vertical: true)
+
+                
         }
     }
     
@@ -440,8 +442,8 @@ extension View{
     }
     
     
-    func refreshableView(width:CGFloat,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
-        self.modifier(RefreshableView(width: width, refreshFn: refreshFn))
+    func refreshableView(width:CGFloat,hasToRender:Bool,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
+        self.modifier(RefreshableView(width: width,hasToRender: hasToRender, refreshFn: refreshFn))
     }
     
     func systemButtonModifier(size:CGSize,color:Color,@ViewBuilder bg: () -> AnyView) -> some View{

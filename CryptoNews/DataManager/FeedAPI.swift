@@ -35,6 +35,14 @@ class AssetNewsData:Identifiable,Codable{
     var publisher:String?
     var shares:Float?
     var url:String?
+    
+    
+    var date:Date{
+        guard let time = self.time else {return Date()}
+        let epochTime = TimeInterval(time)
+        let date = Date(timeIntervalSince1970: epochTime)
+        return date
+    }
 }
 
 

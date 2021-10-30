@@ -86,6 +86,8 @@
 		BCBCACCE2705172A00E76436 /* ContextData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBCACCD2705172A00E76436 /* ContextData.swift */; };
 		BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */; };
 		BCC22D5B2728B485005E9BDB /* CurrencyCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC22D5A2728B485005E9BDB /* CurrencyCardView.swift */; };
+		BCC22D5F2729A3EE005E9BDB /* CoinGeckoData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC22D5E2729A3EE005E9BDB /* CoinGeckoData.swift */; };
+		BCC22D612729A765005E9BDB /* CoinGeckoAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCC22D602729A764005E9BDB /* CoinGeckoAPI.swift */; };
 		BCD8CA0127245E06004BD59E /* TabBarMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCD8CA0027245E06004BD59E /* TabBarMain.swift */; };
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
@@ -194,6 +196,8 @@
 		BCBCACCD2705172A00E76436 /* ContextData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContextData.swift; sourceTree = "<group>"; };
 		BCC2209E270892CC00993FF5 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		BCC22D5A2728B485005E9BDB /* CurrencyCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCardView.swift; sourceTree = "<group>"; };
+		BCC22D5E2729A3EE005E9BDB /* CoinGeckoData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinGeckoData.swift; sourceTree = "<group>"; };
+		BCC22D602729A764005E9BDB /* CoinGeckoAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoinGeckoAPI.swift; sourceTree = "<group>"; };
 		BCD8CA0027245E06004BD59E /* TabBarMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabBarMain.swift; sourceTree = "<group>"; };
 		BCF98BA126D97E7000C45562 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		BCF98BA426D9811300C45562 /* CryptoYoutube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoYoutube.swift; sourceTree = "<group>"; };
@@ -511,6 +515,7 @@
 		BCBC1DC926BE9C9700B87E5C /* DataManager */ = {
 			isa = PBXGroup;
 			children = (
+				BCC22D5D2729A3CE005E9BDB /* CoinGecko */,
 				BCBC1DCC26BEA1FD00B87E5C /* MarketAPI.swift */,
 				BC305F0826D8209000826AB4 /* DAPI.swift */,
 				BC305F0A26D820CD00826AB4 /* AssetAPI.swift */,
@@ -554,6 +559,15 @@
 				BCBCACCD2705172A00E76436 /* ContextData.swift */,
 			);
 			path = UIManager;
+			sourceTree = "<group>";
+		};
+		BCC22D5D2729A3CE005E9BDB /* CoinGecko */ = {
+			isa = PBXGroup;
+			children = (
+				BCC22D5E2729A3EE005E9BDB /* CoinGeckoData.swift */,
+				BCC22D602729A764005E9BDB /* CoinGeckoAPI.swift */,
+			);
+			path = CoinGecko;
 			sourceTree = "<group>";
 		};
 		BCD8C9FF27245DF2004BD59E /* TabBar */ = {
@@ -824,6 +838,7 @@
 				BCBC1DB626BE824300B87E5C /* ChartCard.swift in Sources */,
 				BCBC1DCD26BEA1FD00B87E5C /* MarketAPI.swift in Sources */,
 				BCBC1DA726BE7FE200B87E5C /* HomePage.swift in Sources */,
+				BCC22D612729A765005E9BDB /* CoinGeckoAPI.swift in Sources */,
 				BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */,
 				BCBC1DD826BF424D00B87E5C /* ImageView.swift in Sources */,
 				BCBC1DC226BE862400B87E5C /* Array.swift in Sources */,
@@ -862,6 +877,7 @@
 				BCB7836626C67874009D5822 /* TimerBlobs.swift in Sources */,
 				BCC22D5B2728B485005E9BDB /* CurrencyCardView.swift in Sources */,
 				BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */,
+				BCC22D5F2729A3EE005E9BDB /* CoinGeckoData.swift in Sources */,
 				BC305F0926D8209000826AB4 /* DAPI.swift in Sources */,
 				BC10D9D526F5CAE7007ADE34 /* BarChart.swift in Sources */,
 				BCB7835C26C31865009D5822 /* LatestRedditView.swift in Sources */,

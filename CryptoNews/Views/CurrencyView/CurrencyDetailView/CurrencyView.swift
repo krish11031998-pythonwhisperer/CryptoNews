@@ -26,7 +26,7 @@ struct CurrencyView:View{
     @StateObject var TAPI:TransactionAPI = .init()
     @StateObject var NAPI:FeedAPI
     @State var refresh:Bool = false
-    @State var refreshData:Bool = false
+//    @State var refreshData:Bool = false
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     init(
@@ -73,31 +73,30 @@ struct CurrencyView:View{
     }
     
     func getAssetInfo(){
-        self.refreshData = true
+        self.refresh = true
         print("(DEBUG) Fetching Data for asset")
          self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
     }
-    
+
     func onReceiveNewAssetInfo(asset:AssetData?){
         guard let data = asset else {return}
-//        DispatchQueue.main.async {
+        DispatchQueue.main.async {
             self.currency = data
-            self.refreshData = false
+            self.refresh = false
             print("(DEBUG): Updated the Asset Data!")
+        }
     }
     
     func onReceiveNewAssetInfo(asset:AssetData?,fn:() -> Void){
         guard let data = asset else {return}
-//        DispatchQueue.main.async {
             self.currency = data
-            self.refreshData = false
             fn()
+//            self.refresh = false
             print("(DEBUG): Updated the Asset Data!")
     }
     
     
     func getAssetInfo(fn: @escaping () -> Void){
-        self.refreshData = true
         print("(DEBUG) Fetching Data for asset")
         self.asset_info.getUpdateAssetInfo { data in
             self.onReceiveNewAssetInfo(asset: data,fn: fn)
@@ -147,25 +146,15 @@ struct CurrencyView:View{
         let symbol = (self.currency.symbol ?? "BTC").lowercased()
         return self.TAPI.transactions.filter({$0.symbol == symbol && ($0.type == "buy" || $0.type == "sell")})
     }
-    
-    func refreshAsset(){
-        let time = floor(self.currency.timeSinceLastUpdate)
-        if(time > 60 && !self.refresh){
-            print("Getting the new Updated Asset ")
-            self.getAssetInfo()
-        }
-    }
-    
+
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
             ScrollView(.vertical, showsIndicators: false) {
                 Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth, onClose: self.onClose) { w in
                     let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection,reloadFeed: self.getAssetInfo, onClose: self.onClose)
-                }.refreshableView(width: size.width) { fun in
-                    if self.refresh && !self.refreshData{
-                        self.getAssetInfo(fn: fun)
-                    }
+                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, onClose: self.onClose)
+                }.refreshableView(width: size.width,hasToRender:self.context.selectedCurrency != nil) { fun in
+                    self.getAssetInfo(fn: fun)
                 }
             }
         }else{

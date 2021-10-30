@@ -21,21 +21,23 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             mainBGView.zIndex(0)
-            switch(self.context.tab){
-                case .home: HomePage()
+            if !self.hoverViewIsOn{
+                switch(self.context.tab){
+                    case .home: HomePage()
+                            .environmentObject(self.context)
+                    case .feed : CurrencyFeedMainPage(type: .feed)
+                                    .environmentObject(self.context)
+                    case .news : CurrencyFeedMainPage(type: .news)
+                            .environmentObject(self.context)
+                    case .txn:
+                        AddTxnMainView()
                         .environmentObject(self.context)
-                case .feed : CurrencyFeedMainPage(type: .feed)
-                                .environmentObject(self.context)
-                case .news : CurrencyFeedMainPage(type: .news)
-                        .environmentObject(self.context)
-                case .txn:
-                    AddTxnMainView()
-                    .environmentObject(self.context)
-//                case .reddit : CurrencyFeedMainPage(type: .reddit)
-//                        .environmentObject(self.context)
-                
-                default: Color.clear
+                    default: Color.clear
+                }
             }
+//            if self.hoverViewIsOn{
+//                
+//            }
             self.hoverView
             if self.context.showTab{
                 TabBarMain()
@@ -48,6 +50,11 @@ struct ContentView: View {
 
 
 extension ContentView{
+    
+    
+    var hoverViewIsOn:Bool{
+        return self.context.addTxn || self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil
+    }
     
     
     @ViewBuilder var hoverView:some View{

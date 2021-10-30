@@ -45,13 +45,13 @@ struct WebModelView: View {
         HStack(alignment: .center, spacing: 0) {
             SystemButton(b_name: "xmark", action: self.close)
             Spacer()
-        }.padding(.horizontal)
-            .frame(width: totalWidth, height: totalHeight * 0.125, alignment: .leading)
+        }.padding()
+            .frame(width: totalWidth, height: totalHeight * 0.1, alignment: .leading)
     }
     
     @ViewBuilder var mainView:some View{
         CustomWebView(url: self.url)
-            .frame(width: totalWidth, height: totalHeight * 0.875, alignment: .center)
+            .frame(width: totalWidth, height: totalHeight * 0.9, alignment: .center)
     }
     
     

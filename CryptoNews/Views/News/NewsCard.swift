@@ -17,15 +17,42 @@ struct NewsCard: View {
         self.tapHandler = tapHandler
     }
     
+    func footer(w:CGFloat,h:CGFloat) -> some View{
+        return VStack(spacing:10){
+            RoundedRectangle(cornerRadius: 15)
+                .frame(width: w, height: 1, alignment: .center)
+                .foregroundColor(.gray)
+                .padding(.top,5)
+            HStack(alignment: .center, spacing: 5) {
+                MainText(content: self.news.date.stringDate(), fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+                Spacer()
+                SystemButton(b_name: "circle.grid.2x2", color: .white) {
+                    print("Hi")
+                }
+            }.frame(width: w, alignment: .top)
+        }.frame(width: w, height: h, alignment: .center)
+    }
+    
     func newsView(size:CGSize) -> some View{
-        let w = size.width
-        let h = size.height
-        return VStack(alignment: .leading, spacing: 10) {
-            MainText(content: self.news.publisher ?? "News Publisher", fontSize: 13, color: .gray, fontWeight: .semibold)
-                .lineLimit(1)
-            MainText(content: self.news.title ?? "News Title", fontSize: 16, color: .white, fontWeight: .regular)
-                .multilineTextAlignment(.leading)
-        }.padding(10).frame(width: w, height: h, alignment: .topLeading)
+        GeometryReader{g in
+            let w = g.frame(in: .local).width
+            let h = g.frame(in: .local).height
+            let publisher = self.news.publisher ?? "News Publisher"
+//            let title = Array(repeating: self.news.title ?? "News Publisher", count: 10).reduce("", {$0 + " " + $1})
+            let title =  self.news.title ?? "News Publisher"
+            let text_h = h - 60
+            
+            
+            VStack(alignment: .leading, spacing: 10) {
+                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 16, headingFont: .normal, subHeadingFont: .normal)
+                    .frame(width: w,height: text_h,alignment: .topLeading)
+                    .lineLimit(4)
+                self.footer(w: w, h: 50)
+                    .padding(.bottom,5)
+            }
+        }.padding(.horizontal,10)
+        .padding(.vertical,5)
+        .frame(width: size.width, height: size.height, alignment: .topLeading)
     }
         
     func buttonArea(w:CGFloat,h:CGFloat,alignment:Alignment = .center,innerView: () -> AnyView,handler: (() -> Void)? = nil) -> some View{
@@ -72,13 +99,14 @@ struct NewsCard: View {
     var body: some View {
         GeometryReader{g in
             let size = g.frame(in: .local).size
-            
+            let img_h = size.height * 0.7
+            let news_h = size.height * 0.3 - 5
             VStack(alignment: .leading, spacing: 5) {
                 ZStack(alignment: .center) {
-                    ImageView(url: self.news.thumbnail,width: size.width, height: size.height * 0.75, contentMode: .fill, alignment: .center)
-                    self.nextCircle(w: size.width, h: size.height * 0.75)
-                }.frame(width: size.width, height: size.height * 0.75, alignment: .center)
-                self.newsView(size: .init(width: size.width, height: size.height * 0.25 - 5))
+                    ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
+                    self.nextCircle(w: size.width, h: img_h)
+                }.frame(width: size.width, height: img_h, alignment: .center)
+                self.newsView(size: .init(width: size.width, height: news_h))
             }
             
         }.frame(width: size.width, height: size.height, alignment: .topLeading)

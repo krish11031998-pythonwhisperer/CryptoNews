@@ -11,9 +11,29 @@ struct NewsStandCard: View {
     @EnvironmentObject var context:ContextData
     var news:AssetNewsData
     var size:CGSize
-    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth - 20, height: 125)){
+    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth - 20, height: 250)){
         self.news = news
         self.size = size
+    }
+    
+    func mainBody(w:CGFloat,h:CGFloat) -> some View{
+        return HStack(alignment: .top, spacing: 10) {
+            MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+//                .fixedSize(horizontal: false, vertical: true)
+                .frame(maxHeight: h, alignment: .center)
+            Spacer()
+            ImageView(url: self.news.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+        }
+    }
+    
+    func footer(w:CGFloat,h:CGFloat) -> some View{
+        return HStack(alignment: .center, spacing: 5) {
+            MainText(content: self.news.date.stringDate(), fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+            Spacer()
+            SystemButton(b_name: "circle.grid.2x2", color: .white) {
+                print("Hi")
+            }
+        }
     }
     
     var mainBody:some View{
@@ -21,16 +41,20 @@ struct NewsStandCard: View {
             let w = g.frame(in: .local).width
             let h = g.frame(in: .local).height
             
-            HStack(alignment: .top, spacing: 10) {
-                ImageView(url: self.news.image, width: w * 0.25, height: h, contentMode: .fill, alignment: .center,clipping: .roundClipping)
-                MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
-                
-                Spacer()
-            }
-        }.padding(10)
+            let main_h = h - 50
+            
+            VStack(alignment: .leading, spacing: 10){
+                self.mainBody(w: w, h: main_h)
+                RoundedRectangle(cornerRadius: 15)
+                    .frame(width: w, height: 1, alignment: .center)
+                    .foregroundColor(.gray)
+                    .padding(.top,5)
+                self.footer(w: w, h: 50)
+            }.frame(width: w, height: h, alignment: .topLeading)
+        }.padding(15)
         .frame(width: self.size.width, height: self.size.height, alignment: .center)
         .background(BlurView(style: .systemThickMaterialDark))
-        .clipContent(clipping: .roundClipping)
+        .clipContent(clipping: .roundCornerMedium)
     }
 
     var body: some View {
@@ -70,7 +94,7 @@ struct NewsStand:View{
                     }else{
                         VStack(alignment: .center, spacing: 10) {
                             ForEach(self.MAPI.FeedData) { data in
-                                NewsStandCard(news: data,size: .init(width: width, height: 150))
+                                NewsStandCard(news: data,size: .init(width: width, height: 225))
                             }
                             TabButton(width: width, title: "Load More", action: {
                                 withAnimation(.easeInOut) {
@@ -88,10 +112,13 @@ struct NewsStand:View{
 struct NewsStandCard_Previews: PreviewProvider {
     static var previews: some View {
         ScrollView(.vertical, showsIndicators: false){
-            NewsStand()
+            Container(heading: "News", width: totalWidth, ignoreSides: false) { w in
+                NewsStand(width:w)
+            }.padding(.top,20)
+            
         }
-        .padding(.vertical,50)
-        .padding(.top,50)
+//        .padding(.vertical,50)
+//        .padding(.top,50)
         .frame(width: totalWidth,height: totalHeight, alignment: .center)
         .background(Color.mainBGColor.edgesIgnoringSafeArea(.all))
             
