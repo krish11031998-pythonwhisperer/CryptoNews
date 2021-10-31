@@ -21,26 +21,11 @@ struct ContentView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             mainBGView.zIndex(0)
-            if !self.hoverViewIsOn{
-                switch(self.context.tab){
-                    case .home: HomePage()
-                            .environmentObject(self.context)
-                    case .feed : CurrencyFeedMainPage(type: .feed)
-                                    .environmentObject(self.context)
-                    case .news : CurrencyFeedMainPage(type: .news)
-                            .environmentObject(self.context)
-                    case .txn:
-                        AddTxnMainView()
-                        .environmentObject(self.context)
-                    default: Color.clear
-                }
-            }
-//            if self.hoverViewIsOn{
-//                
-//            }
+            self.mainBody
             self.hoverView
             if self.context.showTab{
                 TabBarMain()
+                    .zIndex(2)
             }
         }.edgesIgnoringSafeArea(.all)
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
@@ -51,6 +36,29 @@ struct ContentView: View {
 
 extension ContentView{
     
+    @ViewBuilder var mainBody:some View{
+        switch(self.context.tab){
+            case .home: self.homeView
+            case .info :
+                SlideTabView {
+                    return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+                }
+            case .txn:
+                AddTxnMainView()
+                    .environmentObject(self.context)
+            default: Color.clear
+        }
+    }
+    
+    
+    @ViewBuilder var homeView:some View{
+        if self.hoverViewIsOn{
+            Color.clear
+        }else{
+            HomePage()
+                    .environmentObject(self.context)
+        }
+    }
     
     var hoverViewIsOn:Bool{
         return self.context.addTxn || self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil

@@ -49,9 +49,11 @@ struct SystemButton: View {
         if let buttonName = self.buttonName{
             Image(systemName: buttonName)
                 .resizable()
+                .aspectRatio(contentMode: .fit)
         }else if let customIcon = customIcon{
             Image(customIcon)
                 .resizable()
+                .aspectRatio(contentMode: .fit)
         }
     }
      

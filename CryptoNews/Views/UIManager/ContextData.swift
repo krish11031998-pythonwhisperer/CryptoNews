@@ -10,6 +10,7 @@ import SwiftUI
 
 enum Tabs:String{
     case home = "homekit"
+    case info = "eyeglasses"
     case feed = "TwitterIcon"
     case news = "newspaper.fill"
     case txn = "plus.circle"

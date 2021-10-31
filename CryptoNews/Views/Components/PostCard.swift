@@ -134,29 +134,20 @@ extension PostCard{
     }
     
     
-    func Body(size:CGSize) -> AnyView{
+    func Body(size:CGSize) -> some View{
         let w = size.width
         let h = size.height
         
         var (content,_url) = (self.data.body ?? self.data.title ?? "No Text").containsURL()
         let url = _url.first
         
-        print("(DEBUG) twitter url : ",url)
+//        print("(DEBUG) twitter url : ",url)
         
-        return AnyView(
-            Group{
-                MainText(content: content, fontSize: 14, color: .white,fontWeight: .regular,style: .heading)
-                    .multilineTextAlignment(.leading)
-                    .frame(width: w,alignment:.leading)
-                    .frame(maxHeight: url != nil ? h * 0.5 : h, alignment: .top)
-                Spacer(minLength: 0)
-//                if let url = url{
-//                    CustomWebView(url: .init(string: url))
-//                        .frame(width: w, height: h * 0.45, alignment: .center)
-//                        .clipContent(clipping: .roundClipping)
-//                }
-            }.padding(.vertical,5)
-        )
+        return MainText(content: content, fontSize: 14, color: .white,fontWeight: .regular,style: .heading)
+            .multilineTextAlignment(.leading)
+            .padding(.vertical,5)
+            .frame(width: w, alignment: .leading)
+            .frame(maxHeight: h, alignment: .top)
     }
     
     func Footer(data:AssetNewsData,size:CGSize) -> AnyView{

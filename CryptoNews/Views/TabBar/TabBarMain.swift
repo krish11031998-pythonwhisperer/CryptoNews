@@ -9,7 +9,7 @@ import SwiftUI
 
 struct TabBarMain: View {
     @EnvironmentObject var context:ContextData
-    var tabs:[Tabs] = [.home,.feed,.txn,.news]
+    var tabs:[Tabs] = [.home,.info,.txn]
     
     
     

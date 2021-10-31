@@ -46,7 +46,9 @@ struct WebModelView: View {
             SystemButton(b_name: "xmark", action: self.close)
             Spacer()
         }.padding()
+            .padding(.top,5)
             .frame(width: totalWidth, height: totalHeight * 0.1, alignment: .leading)
+            .background(Color.mainBGColor.opacity(0.5))
     }
     
     @ViewBuilder var mainView:some View{
@@ -57,7 +59,7 @@ struct WebModelView: View {
     
     var body: some View {
         VStack(alignment: .leading,spacing: 0) {
-            self.headerView.background(Color.mainBGColor)
+            self.headerView
             self.mainView
         }.edgesIgnoringSafeArea(.all).frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
     }

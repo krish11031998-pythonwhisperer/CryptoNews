@@ -32,7 +32,7 @@ struct CurrencySymbolView: View {
     var img_url:String{
 //        let str = "https://api.coinicons.net/icon/\(currency.lowercased())/\(size.rawValue)"
         let str = "https://cryptoicons.org/api/color/\(currency.lowercased())/\(size.rawValue)"
-        print("DEBUG CryptoCoin : ",str);
+//        print("DEBUG CryptoCoin : ",str);
         return str
     }
     
