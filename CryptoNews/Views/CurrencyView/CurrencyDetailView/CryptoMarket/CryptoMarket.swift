@@ -8,21 +8,22 @@
 import SwiftUI
 
 struct CryptoMarket: View {
-    @StateObject var MAPI:MarketAPI
+    @EnvironmentObject var context:ContextData
+    @StateObject var MAPI:CGMarketAPI
     var heading:String
     var size:CGSize
-    @EnvironmentObject var context:ContextData
     
     
-    init(heading:String,srt:String = "",order:Order = .desc,cardSize:CGSize = CardSize.slender){
+    
+    init(heading:String,order:CGMarketOrder = .market_cap_desc,cardSize:CGSize = CardSize.slender){
         self.size = cardSize
         self.heading = heading
-        self._MAPI = .init(wrappedValue: .init(sort: srt, limit: 10,order: order))
+        self._MAPI = .init(wrappedValue: .init(vs_currency: "usd",order:order))
     }
     
     func onAppear(){
         if self.MAPI.data.isEmpty{
-            self.MAPI.getMarketData()
+            self.MAPI.getCoinMarketData()
         }
     }
     
@@ -34,14 +35,15 @@ struct CryptoMarket: View {
         return nil
     }
     
-   func ViewElement(data:CoinMarketData,idx:Int) -> AnyView{
+   func ViewElement(data:CoinGeckoMarketData,idx:Int) -> AnyView{
        return AnyView(CryptoMarketCard(data: data,size: self.size, rank: idx + 1)
             .buttonify {
-                let asset_api = AssetAPI.shared(currency: data.s ?? "BTC")
-                asset_api.getAssetInfo { data in
-                    guard let safeData = data else {return}
-                    self.context.selectedCurrency = safeData
-                }
+               let asset_api = CGCoinAPI.shared
+               asset_api.currency = data.id ?? "bitcoin"
+               asset_api.getCoinData(completion: { data in
+                   guard let safeData = CGCoinAPI.parseCoinData(data: data)  else {return}
+                   self.context.selectedCurrency = safeData
+               })
             })
     }
     

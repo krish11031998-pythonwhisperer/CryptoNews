@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct CurrencyDetailView: View {
+    @EnvironmentObject var context:ContextData
     var onClose:(() -> Void)?
-    @Binding var currency:AssetData
+    var currency:AssetData
     var size:CGSize = .init()
+    @State var candle:Bool  = false
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
     @Binding var asset_feed:[AssetNewsData]
@@ -23,7 +25,7 @@ struct CurrencyDetailView: View {
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
 //        heading:String,
-         info:Binding<AssetData>,
+         info:AssetData,
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
          asset_feed:Binding<[AssetNewsData]>,
          news:Binding<[AssetNewsData]>,
@@ -32,7 +34,7 @@ struct CurrencyDetailView: View {
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
          onClose:(() -> Void)? = nil){
-        self._currency = info
+        self.currency = info
         self.onClose = onClose
         self.size = size
         self._asset_feed = asset_feed
@@ -56,7 +58,9 @@ extension CurrencyDetailView{
                 MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
 //                    Spacer()
 //                }
-                self.priceInfo
+                if self.candle{
+                    self.priceInfo
+                }
                 self.curveChart.clipContent(clipping: .roundClipping)
                 self.transactionHistoryView
                 self.CurrencySummary
@@ -174,8 +178,12 @@ extension CurrencyDetailView{
         
     }
     
+    var dataPoints:[CoinGeckoMainData.OHLCPointData]{
+        return self.context.selectedCurrency?.ohlcData ?? []
+    }
+    
     var priceInfo:some View{
-        let asset = self.choosen == -1 ? self.currency : self.currency.timeSeries?[self.choosen] ?? self.currency
+        let asset = self.choosen == -1 ? self.dataPoints.last ?? .init(data: [0,0,0,0,0]) : self.context.selectedCurrency?.getOHLCPoint(idx: choosen) ?? .init(data: [0,0,0,0,0])
         return HStack(alignment: .top, spacing: 20){
             MainSubHeading(heading: "Open", subHeading: convertToMoneyNumber(value: asset.open),headingSize: 12.5,subHeadingSize: 17.5)
             MainSubHeading(heading: "Low", subHeading: convertToMoneyNumber(value: asset.low),headingSize: 12.5,subHeadingSize: 17.5)
@@ -186,7 +194,8 @@ extension CurrencyDetailView{
     }
     
     var timeSeries:[Float]?{
-        return self.currency.timeSeries?.compactMap({$0.close})
+//        return self.currency.timeSeries?.compactMap({$0.close})
+        return self.context.selectedCurrency?.market_data?.sparkline_7d?.price
     }
     
     var curveChart:some View{

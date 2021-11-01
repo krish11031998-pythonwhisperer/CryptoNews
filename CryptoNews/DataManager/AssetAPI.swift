@@ -76,6 +76,10 @@ class AssetData:Identifiable,Codable,Equatable{
     var timeSinceLastUpdate:Double{
         return self.lastUpdate?.timeIntervalSinceNow.magnitude ?? 0.0
     }
+    
+    var isEmpty:Bool{
+        return self.symbol == nil
+    }
 }
 
 

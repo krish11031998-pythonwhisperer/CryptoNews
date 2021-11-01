@@ -20,18 +20,19 @@ enum CryptoIcon:String{
 
 struct CurrencySymbolView: View {
     
-    var currency:String
+    var currency:String?
+    var url:String?
     var size:CryptoIcon
     var width:CGFloat
-    init(currency:String = "btc",size:CryptoIcon = .small,width:CGFloat){
+    init(currency:String? = nil,url:String? = nil,size:CryptoIcon = .small,width:CGFloat){
         self.currency = currency
+        self.url = url
         self.size = size
         self.width = width
     }
     
     var img_url:String{
-//        let str = "https://api.coinicons.net/icon/\(currency.lowercased())/\(size.rawValue)"
-        let str = "https://cryptoicons.org/api/color/\(currency.lowercased())/\(size.rawValue)"
+        let str = self.currency != nil ? "https://cryptoicons.org/api/color/\(currency!.lowercased())/\(size.rawValue)" : self.url ?? ""
 //        print("DEBUG CryptoCoin : ",str);
         return str
     }

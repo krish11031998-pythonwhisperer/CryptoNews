@@ -8,8 +8,10 @@
 import SwiftUI
 
 struct HomePage: View {
-    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
-    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
+//    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
+    var currencies:[String] = ["bitcoin","litecoin","ethereum","ripple"]
+//    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
+    var color:[String:Color] = ["bitcoin":Color.orange,"litecoin":Color.yellow,"ethereum":Color.blue,"ripple":Color.red]
     @EnvironmentObject var context:ContextData
     var activeCurrency:Bool{
         return self.context.selectedCurrency != nil
@@ -20,11 +22,11 @@ struct HomePage: View {
             LazyVStack(alignment: .center, spacing: 15) {
                 Spacer().frame(height: 50)
                 self.PriceCards
+                CryptoMarket(heading: "Popular Coins")
+                CryptoMarket(heading: "Biggest Gainer",order: .gecko_desc,cardSize: CardSize.small)
+                CryptoMarket(heading: "Biggest Losers",order: .gecko_asc,cardSize: CardSize.small)
                 LatestTweets(currency: "all")
                 self.NewsSection
-                CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc)
-                CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
-                CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
                 Spacer(minLength: 200)
             }
         }.zIndex(1)

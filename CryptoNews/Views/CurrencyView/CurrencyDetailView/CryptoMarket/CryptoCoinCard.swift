@@ -8,10 +8,10 @@
 import SwiftUI
 
 struct CryptoMarketCard:View{
-    var data:CoinMarketData
+    var data:CoinGeckoMarketData
     var size:CGSize
     var rank:Int
-    init(data:CoinMarketData,size:CGSize = CardSize.slender,rank:Int){
+    init(data:CoinGeckoMarketData,size:CGSize = CardSize.slender,rank:Int){
         self.data = data
         self.size = size
         self.rank = rank
@@ -32,8 +32,12 @@ struct CryptoMarketCard:View{
     @ViewBuilder func chartView(size:CGSize) -> some View{
         let w = size.width
         let h = size.height
-        if let chartData = self.data.timeSeries{
-            CurveChart(data: chartData.compactMap({$0.p ?? nil}),interactions: false,size: size,bg: Color.clear)
+        
+        
+        if let chartData = self.data.sparkline_in_7d?.price,chartData.count > 10{
+            let chartData = chartData.compactMap({$0})
+            let len = chartData.count - 10
+            CurveChart(data: Array(chartData[len...]),interactions: false,size: size,bg: Color.clear)
         }else{
             Color.clear.frame(width: w, height: h * 0.5 - 10, alignment: .center)
         }
@@ -44,12 +48,12 @@ struct CryptoMarketCard:View{
         let h = size.height
         return VStack(alignment: .leading, spacing: 2.5) {
             HStack(alignment: .center, spacing: 5) {
-                CurrencySymbolView(currency: self.data.s?.lowercased() ?? "btc", size: .small, width: w * 0.2)
+                CurrencySymbolView(url: self.data.image, size: .small, width: w * 0.2)
                 Spacer()
                 self.chartView(size: .init(width: w * 0.5, height: h * 0.75))
             }.frame(width: w, height: h * 0.5, alignment: .center).padding(.top,5)
-            MainText(content: self.data.s ?? "BTC", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
-            MainText(content: convertToDecimals(value: self.data.p), fontSize: 13, color: .gray, fontWeight: .semibold, style: .monospaced)
+            MainText(content: self.data.symbol?.uppercased() ?? "BTC", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
+            MainText(content: convertToDecimals(value: self.data.current_price), fontSize: 13, color: .gray, fontWeight: .semibold, style: .monospaced)
         }
         .frame(width: size.width, height: size.height, alignment: .topLeading)
         
@@ -87,8 +91,8 @@ extension CryptoMarketCard{
             //            VStack(alignment: .leading, spacing: 0){
             HStack(alignment: .top, spacing: 10) {
                 VStack(alignment: .leading, spacing: 5){
-                    MainText(content: self.data.n ?? "Name", fontSize: 20,color: .white, fontWeight: .semibold)
-                    MainText(content: convertToMoneyNumber(value: self.data.p), fontSize: 17.5,color: .white)
+                    MainText(content: self.data.name ?? "Name", fontSize: 20,color: .white, fontWeight: .semibold)
+                    MainText(content: convertToMoneyNumber(value: self.data.current_price), fontSize: 17.5,color: .white)
                 }
                 Spacer()
                 MainText(content: "#\(self.rank)", fontSize: 10, color: .white, fontWeight: .medium)
@@ -112,10 +116,10 @@ extension CryptoMarketCard{
     func footerView(size:CGSize) -> AnyView{
         return AnyView(
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 100, maximum: size.width * 0.5 - 10), spacing:10, alignment: .topLeading),GridItem(.adaptive(minimum: 100, maximum: size.width * 0.4 - 10), spacing:10, alignment: .topLeading)],alignment: .leading,spacing:10){
-                self.footerEl(key: "Influence", value: "\(convertToMoneyNumber(value: self.data.d))%")
-                self.footerEl(key: "Interest", value: "\(convertToMoneyNumber(value: self.data.ss)) ")
-                self.footerEl(key: "Sentiment", value: "\(convertToMoneyNumber(value: self.data.as)) out of 5")
-                self.footerEl(key: "Dominance", value: "\(convertToMoneyNumber(value: self.data.sd))%")
+                self.footerEl(key: "Market Cap", value: "\(convertToMoneyNumber(value: self.data.market_cap))")
+                self.footerEl(key: "Total Volume", value: "\(convertToMoneyNumber(value: self.data.total_volume))")
+                self.footerEl(key: "Circulating Supply", value: "\(convertToMoneyNumber(value: self.data.circulating_supply))")
+                self.footerEl(key: "Max Supply", value: "\(convertToMoneyNumber(value: self.data.max_supply))")
             }.frame(width: size.width, height: size.height, alignment: .center)
 //            .background(Color.red)
         )

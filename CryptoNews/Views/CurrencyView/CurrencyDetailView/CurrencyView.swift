@@ -18,13 +18,13 @@ enum CurrencyViewSection{
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
-    @State var currency:AssetData = .init()
+    @State var assetData:AssetData = .init()
     var size:CGSize = .init()
-    @StateObject var asset_feed:FeedAPI
+    @StateObject var TwitterAPI:FeedAPI
     var asset_info:AssetAPI
     @State var showSection:CurrencyViewSection = .none
     @StateObject var TAPI:TransactionAPI = .init()
-    @StateObject var NAPI:FeedAPI
+    @StateObject var NewsAPI:FeedAPI
     @State var refresh:Bool = false
 //    @State var refreshData:Bool = false
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -36,31 +36,35 @@ struct CurrencyView:View{
         onClose:(() -> Void)? = nil
     ){
         if let info = info{
-            self._currency = .init(wrappedValue: info)
+            self._assetData = .init(wrappedValue: info)
         }
         self.onClose = onClose
         self.size = size
-        self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
-        self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
+        self._NewsAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
+        self._TwitterAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
         self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
     }
     
     
+    var currency:CoinGeckoAsset?{
+        return self.context.selectedCurrency
+    }
+    
     func onAppear(){
-        if self.currency.symbol == nil{
-            self.getAssetInfo()
-        }
-        
-        if self.asset_feed.FeedData.isEmpty{
-            self.asset_feed.getAssetInfo()
+        if self.TwitterAPI.FeedData.isEmpty{
+            self.TwitterAPI.getAssetInfo()
         }
         
         if self.TAPI.transactions.isEmpty{
             self.TAPI.loadTransaction()
         }
         
-        if self.NAPI.FeedData.isEmpty{
-            self.NAPI.getAssetInfo()
+        if self.NewsAPI.FeedData.isEmpty{
+            self.NewsAPI.getAssetInfo()
+        }
+        
+        if self.assetData.isEmpty{
+            self.getAssetInfo()
         }
     }
         
@@ -73,23 +77,21 @@ struct CurrencyView:View{
     }
     
     func getAssetInfo(){
-        self.refresh = true
         print("(DEBUG) Fetching Data for asset")
-         self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
+        self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
     }
 
     func onReceiveNewAssetInfo(asset:AssetData?){
         guard let data = asset else {return}
         DispatchQueue.main.async {
-            self.currency = data
-            self.refresh = false
+            self.assetData = data
             print("(DEBUG): Updated the Asset Data!")
         }
     }
     
     func onReceiveNewAssetInfo(asset:AssetData?,fn:() -> Void){
         guard let data = asset else {return}
-            self.currency = data
+            self.assetData = data
             fn()
 //            self.refresh = false
             print("(DEBUG): Updated the Asset Data!")
@@ -105,56 +107,57 @@ struct CurrencyView:View{
     
     
     func reloadNewsFeed(idx:Int){
-        if idx == self.NAPI.FeedData.count - 5{
+        if idx == self.NewsAPI.FeedData.count - 5{
             print("(DEBUG) Fetching more feedData")
-            self.NAPI.getNextPage()
+            self.NewsAPI.getNextPage()
         }
     }
     
     
     func reloadAssetFeed(idx:Int){
-        if idx == self.asset_feed.FeedData.count - 5{
+        if idx == self.TwitterAPI.FeedData.count - 5{
             print("(DEBUG) Fetching more feedData")
-            self.asset_feed.getNextPage()
+            self.TwitterAPI.getNextPage()
         }
     }
     
     
     func feedView(w:CGFloat) -> some View{
         
-        LazyScrollView(data: self.asset_feed.FeedData.compactMap({$0 as Any})) { data in
+        LazyScrollView(data: self.TwitterAPI.FeedData.compactMap({$0 as Any})) { data in
             if let data = data as? AssetNewsData{
                 let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
             }
         } reload: {
-            self.asset_feed.getNextPage()
+            self.TwitterAPI.getNextPage()
         }
     }
     
     func newsView(w:CGFloat) -> some View{
-        LazyScrollView(data: self.NAPI.FeedData.compactMap({$0 as Any})) { data in
+        LazyScrollView(data: self.NewsAPI.FeedData.compactMap({$0 as Any})) { data in
             if let news = data as? AssetNewsData{
                 NewsStandCard(news: news,size: .init(width: w, height: 150))
             }
         } reload: {
-            self.NAPI.getNextPage()
+            self.NewsAPI.getNextPage()
         }
     }
     
     var txnsForAsset:[Transaction]{
-        let symbol = (self.currency.symbol ?? "BTC").lowercased()
+        let symbol = (self.currency?.symbol?.uppercased() ?? "BTC").lowercased()
         return self.TAPI.transactions.filter({$0.symbol == symbol && ($0.type == "buy" || $0.type == "sell")})
     }
 
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
             ScrollView(.vertical, showsIndicators: false) {
-                Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth, onClose: self.onClose) { w in
+                Container(heading: "\(self.currency?.symbol?.uppercased() ?? "BTC")", width: totalWidth, onClose: self.onClose) { w in
                     let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, onClose: self.onClose)
+                    CurrencyDetailView(info: assetData, size: size, asset_feed: $TwitterAPI.FeedData, news: $NewsAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, onClose: self.onClose)
                 }.refreshableView(width: size.width,hasToRender:self.context.selectedCurrency != nil) { fun in
-                    self.getAssetInfo(fn: fun)
+//                    self.getAssetInfo(fn: fun)
+                    self.context.selectedCurrency?.updateData()
                 }
             }
         }else{
@@ -170,7 +173,7 @@ struct CurrencyView:View{
         }
         if self.showSection == .txns{
             HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency.symbol ?? "LTC", currencyCurrentPrice: self.currency.open ?? 0.0,width: w)
+                TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.symbol ?? "LTC", currencyCurrentPrice: self.assetData.open ?? 0.0,width: w)
             }
         }
         if self.showSection == .news{
@@ -187,13 +190,6 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-//        .onReceive(self.timer) { _ in self.refreshAsset()}
-//        .onChange(of: refresh) { newValue in
-//            print("onChange in CurrencyView")
-//            if newValue && !refreshData{
-//                self.getAssetInfo()
-//            }
-//        }
     }
     
     
