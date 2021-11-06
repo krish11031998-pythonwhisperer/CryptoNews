@@ -46,7 +46,7 @@ struct CurrencyFeedMainPage: View {
 
 extension CurrencyFeedMainPage{
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
             if self.assetAPI.FeedData.isEmpty{
                 self.assetAPI.getAssetInfo()
             }

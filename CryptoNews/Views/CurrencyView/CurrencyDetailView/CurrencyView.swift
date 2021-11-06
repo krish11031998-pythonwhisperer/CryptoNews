@@ -91,7 +91,6 @@ struct CurrencyView:View{
         guard let data = asset else {return}
             self.currency = data
             fn()
-//            self.refresh = false
             print("(DEBUG): Updated the Asset Data!")
     }
     
@@ -187,13 +186,6 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-//        .onReceive(self.timer) { _ in self.refreshAsset()}
-//        .onChange(of: refresh) { newValue in
-//            print("onChange in CurrencyView")
-//            if newValue && !refreshData{
-//                self.getAssetInfo()
-//            }
-//        }
     }
     
     

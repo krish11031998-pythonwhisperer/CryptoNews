@@ -12,6 +12,7 @@ struct PortfolioData{
     var type:String?
     var crypto_coins:Double
     var value_usd:Float
+    var current_val:Float
     var fee:Float
     var totalfee:Float
     var totalBuys:Int?
@@ -27,19 +28,47 @@ struct MarkerMainView:View{
         self.size = size
     }
     
-    func headLineText(heading:String,subText:String,large:Bool = false) -> some View{
-        return MainSubHeading(heading: heading, subHeading: subText, headingSize: 12, subHeadingSize: large ? 20 : 15, headingFont: .heading, subHeadingFont: .normal)
-//        return VStack(alignment: .leading, spacing: 10){
-//            MainText(content: heading, fontSize: 12)
-//            MainText(content: subText, fontSize: large ? 20 : 15,fontWeight: .semibold)
-//        }.frame(alignment: .leading)
-//        .fixedSize(horizontal: false, vertical: true)
+    var headerOrder:[String] = ["Value (now)","Profit","Percent"]
+    
+    var headerValues:[String:Float]{
+        let val_bought = self.data.value_usd
+        let val_now = Float(self.data.crypto_coins) * self.data.current_val
+        let profit = val_now - val_bought
+        return ["Value (now)":val_now,"Profit":profit,"Percent": (profit/val_bought) * 100]
+    }
+    
+    func percentChangeView(value:Float) -> some View{
+        let img = value > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill"
+        let color = value > 0 ? Color.green : value < 0 ? Color.red : Color.clear
+        let view = HStack(alignment: .center) {
+            Image(systemName: img)
+                .resizable()
+                .frame(width: 15, height: 15, alignment: .center)
+                .foregroundColor(.white)
+            MainText(content: convertToDecimals(value: value) + "%", fontSize: 12, color: .white, fontWeight: .bold,style: .monospaced)
+        }.padding()
+        .background(color)
+        .clipContent(clipping: .roundClipping)
+        
+        return view
     }
     
     func Header(size:CGSize) -> some View{
         return HStack(alignment: .top, spacing: 10){
-            headLineText(heading: "Coin(s)", subText: convertToDecimals(value: Float(self.data.crypto_coins)),large: true)
-            headLineText(heading: "Value", subText: convertToDecimals(value: self.data.value_usd),large: true)
+            ForEach(self.headerOrder,id: \.self) { key in
+                if let value = self.headerValues[key]{
+                    if key == "Percent"{
+                        Group{
+                            Spacer()
+                            self.percentChangeView(value: value)
+                        }
+                        
+                    }else{
+                        MainSubHeading(heading: key, subHeading: key == "Coin(s)" ? convertToDecimals(value:abs(value)) : convertToMoneyNumber(value: abs(value)), headingSize: 12, subHeadingSize: 20,subHeadColor: key == "Profit" ? value < 0 ? .red : .green : .white)
+                    }
+                    
+                } 
+            }
         }.aspectRatio(contentMode: .fit)
         .frame(width: size.width,alignment: .leading)
         .frame(maxHeight:size.height)
@@ -47,9 +76,9 @@ struct MarkerMainView:View{
     
     func transactionDetails(size:CGSize) -> some View{
         return HStack(alignment: .top, spacing: 20){
-            headLineText(heading: "Total gas fee", subText: convertToMoneyNumber(value: self.data.fee))
-            headLineText(heading: "Total fee", subText: convertToMoneyNumber(value: self.data.fee))
-            headLineText(heading: "Total Buy Txns", subText: "\(self.data.totalBuys ?? 0)")
+            MainSubHeading(heading: "Total gas fee", subHeading: convertToMoneyNumber(value: self.data.fee), headingSize: 12, subHeadingSize: 15)
+            MainSubHeading(heading: "Total fee", subHeading: convertToMoneyNumber(value: self.data.fee), headingSize: 12, subHeadingSize: 15)
+            MainSubHeading(heading: "Total Buy Txns", subHeading: "\(self.data.totalBuys ?? 0)", headingSize: 12, subHeadingSize: 15)
         }
     }
     
@@ -57,10 +86,10 @@ struct MarkerMainView:View{
         let percent:Float = -(txn.value_usd - data.totalfee)/data.totalfee
         return VStack(alignment: .leading, spacing: 5){
             HStack(alignment: .bottom, spacing: 10){
-                headLineText(heading: txn.type?.capitalized  ?? "Coins", subText: convertToDecimals(value: Float(txn.crypto_coins)))
+                MainSubHeading(heading: txn.type?.capitalized  ?? "Coins", subHeading: convertToDecimals(value: Float(txn.crypto_coins)), headingSize: 12, subHeadingSize: 15)
                 MainText(content: convertToDecimals(value: percent * 100), fontSize: 12,color: percent < 0 ? .red : .green)
             }
-            headLineText(heading: "Value", subText: convertToMoneyNumber(value: txn.totalfee))
+            MainSubHeading(heading: "Value", subHeading: convertToMoneyNumber(value: txn.totalfee), headingSize: 12, subHeadingSize: 15)
         }.padding()
         .frame(width: size.width, height: size.height, alignment: .topLeading)
         .background(BlurView(style: .systemThinMaterialDark))
@@ -87,12 +116,5 @@ struct MarkerMainView:View{
                 self.transactionHistory(size: .init(width: w, height: h * 0.4))
             }.padding(.vertical,10)
         })
-    }
-}
-
-struct MarkerView_Previews:PreviewProvider{
-    
-    static var previews:some View{
-        MarkerMainView(data: .init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1,txns: [.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1),.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1),.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1)]))
     }
 }

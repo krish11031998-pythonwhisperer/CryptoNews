@@ -157,6 +157,7 @@ struct SystemButtonModifier:ViewModifier{
             .padding(10)
             .background(bg)
             .clipShape(Circle())
+            .contentShape(Rectangle())
     }
 }
 
@@ -172,6 +173,7 @@ struct SpringButton:ViewModifier{
             self.handleTap()
         } label: {
             content
+                .contentShape(Rectangle())
         }.springButton()
     }
 }
@@ -216,12 +218,28 @@ struct ContentClipping:ViewModifier{
 struct BasicCard:ViewModifier{
     var size:CGSize
     func body(content: Content) -> some View {
-        content
-            .padding()
-            .frame(width: self.size.width, height: self.size.height, alignment: .center)
-            .background(BlurView(style: .systemThinMaterialDark))
-            .cornerRadius(20)
-            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        if self.size.height != 0{
+            content
+                .padding()
+                .frame(width: self.size.width, height: self.size.height, alignment: .center)
+                .background(BlurView(style: .systemThinMaterialDark))
+                .cornerRadius(20)
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        }else{
+            content
+                .padding()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: self.size.width, alignment: .center)
+                .background(BlurView(style: .systemThinMaterialDark))
+                .cornerRadius(20)
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        }
+//        content
+//            .padding()
+//            .frame(width: self.size.width, height: self.size.height, alignment: .center)
+//            .background(BlurView(style: .systemThinMaterialDark))
+//            .cornerRadius(20)
+//            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
     }
 }
 
@@ -297,20 +315,26 @@ struct MainSubHeading:View{
     var subHeadingSize:CGFloat
     var headingFont:TextStyle
     var subHeadingFont:TextStyle
-    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal){
+    var headColor:Color
+    var subHeadColor:Color
+    var alignment:HorizontalAlignment
+    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal,headColor:Color = .gray,subHeadColor:Color = .white,alignment:HorizontalAlignment = .leading){
         self.heading = heading
         self.subHeading = subHeading
         self.headingSize = headingSize
         self.subHeadingSize = subHeadingSize
         self.headingFont = headingFont
         self.subHeadingFont = subHeadingFont
+        self.headColor = headColor
+        self.subHeadColor = subHeadColor
+        self.alignment = alignment
     }
     
     var body: some View{
-        VStack(alignment: .leading, spacing: 5) {
-            MainText(content: self.heading, fontSize: self.headingSize, color: .gray, fontWeight: .semibold,style: headingFont)
+        VStack(alignment: alignment, spacing: 5) {
+            MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
                 .lineLimit(1)
-            MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: .white, fontWeight: .semibold,style: subHeadingFont)
+            MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
                 .fixedSize(horizontal: false, vertical: true)
 
                 

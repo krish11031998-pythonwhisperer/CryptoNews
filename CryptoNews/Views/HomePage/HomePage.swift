@@ -20,11 +20,12 @@ struct HomePage: View {
             LazyVStack(alignment: .center, spacing: 15) {
                 Spacer().frame(height: 50)
                 self.PriceCards
-                LatestTweets(currency: "all")
-                self.NewsSection
                 CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc)
                 CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
                 CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
+                LatestTweets(currency: "all")
+                self.NewsSection
+                
                 Spacer(minLength: 200)
             }
         }.zIndex(1)

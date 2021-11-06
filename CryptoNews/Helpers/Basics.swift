@@ -11,6 +11,7 @@ enum TextStyle:String{
 struct CardSize{
     static var slender = CGSize(width: totalWidth * 0.6, height: totalHeight * 0.5)
     static var small = CGSize(width: totalWidth * 0.45, height: totalHeight * 0.2)
+    static var tiny = CGSize(width: totalWidth * 0.25, height: totalHeight * 0.2)
 }
 
 struct BasicText: View {

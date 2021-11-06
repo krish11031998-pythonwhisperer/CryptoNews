@@ -27,8 +27,9 @@ struct ContentView: View {
                 TabBarMain()
                     .zIndex(2)
             }
-        }.edgesIgnoringSafeArea(.all)
+        }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
+        .edgesIgnoringSafeArea(.all)
     }
 }
 
@@ -46,6 +47,10 @@ extension ContentView{
             case .txn:
                 AddTxnMainView()
                     .environmentObject(self.context)
+            case .search:
+                    SearchMainPage()
+        case .profile:
+                ProfileView()
             default: Color.clear
         }
     }

@@ -20,13 +20,12 @@ struct SingleTransactionView: View {
     }
     
     var body: some View {
-        Button(action:{
-            withAnimation(.easeInOut) {
-                self.showMore.toggle()
+        self.mainInnerBody
+            .buttonify {
+                withAnimation(.easeInOut) {
+                    self.showMore.toggle()
+                }
             }
-        },label: {
-            self.mainInnerBody
-        }).springButton()
     }
 }
 
@@ -72,8 +71,8 @@ extension SingleTransactionView{
                 .foregroundColor(.white)
             MainText(content: convertToDecimals(value: txnPercent.0) + "%", fontSize: 12, color: .white, fontWeight: .bold,style: .monospaced)
         }.padding()
-            .background(self.txnPercent.1)
-            .clipContent(clipping: .roundClipping)
+        .background(self.txnPercent.1)
+        .clipContent(clipping: .roundClipping)
     }
     
     var txnSummary:some View{

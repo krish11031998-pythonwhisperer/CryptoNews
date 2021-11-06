@@ -15,6 +15,8 @@ enum Tabs:String{
     case news = "newspaper.fill"
     case txn = "plus.circle"
     case reddit = "RedditIcon"
+    case search = "magnifyingglass"
+    case profile = "person.fill"
     case none = ""
 }
 
@@ -26,6 +28,7 @@ class ContextData:ObservableObject{
     @Published private var _selectedSymbol:String? = nil
     @Published private var _addTxn:Bool = false
     @Published private var _prev_tab:Tabs = .none
+    @Published var user:ProfileData = .test
     
     
     var tab:Tabs{

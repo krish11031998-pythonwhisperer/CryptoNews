@@ -7,32 +7,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "E09DFC08-AA61-414B-A5AD-AF940CD66A6F"
+            uuid = "AAF28E30-2A6E-4AE7-AA73-185AE8532D1A"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/CurrencyView/CurrencyDetailView/CurrencyView.swift"
+            filePath = "CryptoNews/Views/CurrencyView/TransactionDetailView/AddTransactionView.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "102"
-            endingLineNumber = "102"
-            landmarkName = "getAssetInfo(fn:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "593326E2-9FDF-40F9-B5FF-D4CB659B9BBC"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/CurrencyView/CurrencyDetailView/CurrencyView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "59"
-            endingLineNumber = "59"
-            landmarkName = "onAppear()"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
+            landmarkName = "updateTxnObject()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

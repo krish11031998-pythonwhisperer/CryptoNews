@@ -43,7 +43,7 @@ struct CryptoMarketCard:View{
         let w = size.width
         let h = size.height
         return VStack(alignment: .leading, spacing: 2.5) {
-            HStack(alignment: .center, spacing: 5) {
+            HStack(alignment: .top, spacing: 5) {
                 CurrencySymbolView(currency: self.data.s?.lowercased() ?? "btc", size: .small, width: w * 0.2)
                 Spacer()
                 self.chartView(size: .init(width: w * 0.5, height: h * 0.75))

@@ -17,9 +17,8 @@ enum ModalType{
 
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
-    @State var txn:Transaction = .init()
     @State var amount_str:String = ""
-    @State var type:TransactionType = .none
+    @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
     @State var fee_str:String = ""
@@ -38,6 +37,7 @@ struct AddTransactionView:View {
     ){
         if let asset = currentAsset{
             self.currentAsset = asset
+            self.updateSpotPrice(asset: asset)
         }
         
         if let curr = curr_str{
@@ -70,31 +70,39 @@ struct AddTransactionView:View {
         }
     }
     
-    func updateTxnObject(){
+    
+    func convertToAED(_ val_str:String) -> String{
+        let val = val_str.toFloat()
+        return (val * 3.6).toString()
+    }
+    
+    func updateTxnObject() -> Transaction{
+        var txn:Transaction = .init()
         let subTotal = self.amount_str.toFloat() * self.spot_price.toFloat()
-        self.txn.fee = self.fee_str
-        self.txn.asset_spot_price = self.spot_price
-        self.txn.asset_quantity = self.amount_str
-        self.txn.asset = self.currency
+        txn.fee = self.convertToAED(self.fee_str != "" ? self.fee_str : "0")
+        txn.asset_spot_price = self.convertToAED(self.spot_price)
+        txn.asset_quantity = self.amount_str
+        txn.asset = self.currency == "XRP" ? self.currency : self.currentAsset?.name?.lowercased()
         
         if #available(iOS 15.0, *){
-            self.txn.time = self.date.ISO8601Format()
+            txn.time = self.date.ISO8601Format()
         }else {
-            self.date.stringDate()
+            txn.time = self.date.stringDate()
         }
-        self.txn.subtotal = String(subTotal)
-        self.txn.total_inclusive_price = String(subTotal + self.fee_str.toFloat())
-        self.txn.type = self.type.rawValue
-        
+        txn.subtotal = subTotal.toString()
+        txn.total_inclusive_price = self.convertToAED((subTotal + self.fee_str.toFloat()).toString())
+        txn.type = self.type.rawValue
+        txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
+        return txn
     }
     
     func buttonHandle(){
         if self.isKeyboardOn{
             hideKeyboard()
         }else{
-            self.updateTxnObject()
-            print("This is txn! : ",self.txn)
-            TransactionAPI.shared.uploadTransaction(txn: self.txn) { err in
+            let txn = self.updateTxnObject()
+            print("This is txn! : ",txn)
+            TransactionAPI.shared.uploadTransaction(txn: txn) { err in
                 if let err_msg = err?.localizedDescription {
                     print("error : ",err_msg)
                 }else{
@@ -180,10 +188,18 @@ struct AddTransactionView:View {
         }
         .keyboardAdaptive(isKeyBoardOn: $isKeyboardOn)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
+        .onChange(of: (self.currentAsset ?? .init()),perform: self.updateSpotPrice(asset:))
     }
 }
 
 extension AddTransactionView{
+    
+    func updateSpotPrice(asset:AssetData){
+        if let price = asset.price{
+            self.spot_price = price.toString()
+        }
+    }
+    
     
     var currency:String{
         return self._currency ?? self.coin.s ?? "Choose Currency"
@@ -226,7 +242,6 @@ extension AddTransactionView{
                                 self.type = type
                             }
                         }
-                        self.txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
                     }
             }
         }
@@ -309,7 +324,6 @@ extension AddTransactionView{
         self.swipeCard(w: w, h: totalHeight * 0.5,heading: "Update Fees") {
             return AnyView(Group{
                 TextField("0",text: $fee_str)
-//                TextField("0",text: self.$txn.fee)
                     .coloredTextField(color: .white,size: 30,rightViewTxt: "USD")
                     .keyboardType(.numberPad)
             })
@@ -357,20 +371,9 @@ struct AddTxnMainView:View{
     var body: some View{
         ZStack(alignment: .center) {
             Color.mainBGColor
-//            if let asset = self.asset{
             AddTransactionView(currentAsset: asset, curr_str: self.currency)
-//            }else if self.currency == nil{
-//                ScrollView(.vertical, showsIndicators: false) {
-//                    CurrencyCardView(currency: $coin,large: true)
-//                }
-//            }else{
-//                ProgressView()
-//            }
-        }.frame(width: totalWidth, height: totalHeight, alignment: .center)
+        }.edgesIgnoringSafeArea(.top).frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-//        .onChange(of: self.coin.s, perform: self.onChangeCoin(sym:))
-            
-            
     }
     
     

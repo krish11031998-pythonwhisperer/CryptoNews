@@ -45,18 +45,20 @@ struct Container<T:View>: View {
             }.padding(.horizontal,self.ignoreSides ? 15 : 0)
             Divider().frame(width:w * 0.5,alignment: .leading)
                 .padding(.bottom,10)
+                .padding(.horizontal,self.ignoreSides ? 15 : 0)
         }
         
     }
     
     @ViewBuilder var mainBody:some View{
-        let w = totalWidth - 30
+        let w = width - 30
         VStack(alignment: .leading, spacing: 10) {
             if let heading = self.heading{
                 self.headingView(heading:heading,w: w)
             }
             self.innerView(w)
         }
+        
         .padding(.horizontal, self.ignoreSides ? 0 : 15)
         .frame(width: self.width, alignment: .leading)
         

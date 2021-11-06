@@ -52,10 +52,7 @@ extension CurrencyDetailView{
 
     var mainView:some View{
             LazyVStack(alignment: .leading, spacing: 15){
-//                HStack(alignment: .center, spacing: 4) {
                 MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
-//                    Spacer()
-//                }
                 self.priceInfo
                 self.curveChart.clipContent(clipping: .roundClipping)
                 self.transactionHistoryView
@@ -64,7 +61,7 @@ extension CurrencyDetailView{
                 self.feedContainer
                 self.newsContainer
                 
-            }.padding(.bottom,50)
+            }.padding(.bottom,150)
     }
     
     var txnsForAsset:[Transaction]{
@@ -76,7 +73,7 @@ extension CurrencyDetailView{
     }
 
     var valueTotal:Float{
-        return self.txnsForAsset.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._asset_spot_price * $1._asset_quantity})
+        return self.txnsForAsset.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._total_inclusive_price})
     }
 
     var txnForAssetPortfolioData:[PortfolioData]{
@@ -111,13 +108,13 @@ extension CurrencyDetailView{
         if self.txnsForAsset.isEmpty{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }else{
-            Button (action:{
-                withAnimation(.easeInOut) {
-                    self.showMoreSection = .txns
+            
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+                .buttonify {
+                    withAnimation(.easeInOut) {
+                        self.showMoreSection = .txns
+                    }
                 }
-            },label: {
-                MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData),size: .init(width: size.width, height: size.height * 1.5))
-            }).springButton()
         }
         
     }
@@ -137,7 +134,6 @@ extension CurrencyDetailView{
                 }
             })
         }
-//        .background(Color.red)
     }
     
     var newsView:some View{
@@ -153,7 +149,6 @@ extension CurrencyDetailView{
                 }
             })
         }
-//        .background(Color.red)
     }
     
     @ViewBuilder var feedContainer:some View{

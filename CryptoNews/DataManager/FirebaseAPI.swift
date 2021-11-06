@@ -133,7 +133,7 @@ struct Transaction:Codable{
     }
     
     func parseToPortfolioData() -> PortfolioData{
-        return .init(type:self.type,crypto_coins: Double(self._asset_quantity), value_usd: self._asset_spot_price, fee: self._fee, totalfee: self._total_inclusive_price)
+        return .init(type:self.type,crypto_coins: Double(self._asset_quantity), value_usd: self._asset_spot_price,current_val: self._asset_spot_price, fee: self._fee, totalfee: self._total_inclusive_price)
     }
     
 }
@@ -161,18 +161,11 @@ class TransactionAPI:ObservableObject{
 //        db.collection("transactions").addSnapshotListener(self.FIRQueryListener(_:_:))
         db.collection("transactions").getDocuments(completion: self.FIRQueryListener(_:_:))
     }
-    
-//    func uploadTransaction(txn:Transaction){
-//        db.collection("transactions").addDocument(data: txn.decoded) { err in
-//            if let err = err {
-//                print("There was an error while trying to add the txn to the database : ",err.localizedDescription)
-//            }
-//        }
-//    }
-//    
-//    
+        
     func uploadTransaction(txn:Transaction,completion:((Error?) -> Void)? = nil){
-        db.collection("transactions").addDocument(data: txn.decoded) { err in
+        var val = txn.decoded
+        print("Date to Upload is : ",val)
+        db.collection("transactions").addDocument(data: val) { err in
             if let err = err {
                 print("There was an error while trying to add the txn to the database : ",err.localizedDescription)
                 
