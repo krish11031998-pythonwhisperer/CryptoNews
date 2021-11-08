@@ -17,12 +17,13 @@ enum ModalType{
 
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
-    @State var amount_str:String = ""
+    @State var txn:Transaction = .empty
+//    @State var amount_str:String = ""
     @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
-    @State var fee_str:String = ""
-    @State var spot_price:String = ""
+//    @State var fee_str:String = ""
+//    @State var spot_price:String = ""
     @State var showModal:ModalType = .none
     @State var isKeyboardOn:Bool = false
     @State var coin:CoinMarketData = .init()
@@ -62,11 +63,12 @@ struct AddTransactionView:View {
     
     func resetStates(){
         DispatchQueue.main.async {
-            self.amount_str = ""
-            self.fee_str = ""
-            self.type = .none
-            self.date = Date()
-            self.spot_price = ""
+//            self.amount_str = ""
+//            self.fee_str = ""
+//            self.type = .none
+//            self.date = Date()
+//            self.spot_price = ""
+            self.txn = .empty
         }
     }
     
@@ -76,31 +78,30 @@ struct AddTransactionView:View {
         return (val * 3.6).toString()
     }
     
-    func updateTxnObject() -> Transaction{
-        var txn:Transaction = .init()
-        let subTotal = self.amount_str.toFloat() * self.spot_price.toFloat()
-        txn.fee = self.convertToAED(self.fee_str != "" ? self.fee_str : "0")
-        txn.asset_spot_price = self.convertToAED(self.spot_price)
-        txn.asset_quantity = self.amount_str
-        txn.asset = self.currency == "XRP" ? self.currency : self.currentAsset?.name?.lowercased()
-        
+    func updateTxnObject(){
+        let subTotal = self.txn.asset_quantity.toFloat() * self.txn.asset_spot_price.toFloat()
+        txn.fee = self.convertToAED(txn.fee)
+        txn.asset_spot_price = self.convertToAED(txn.asset_spot_price)
+        if let currency = self.currency == "XRP" ? self.currency : self.currentAsset?.name?.lowercased() {
+            txn.asset = currency
+        }
         if #available(iOS 15.0, *){
             txn.time = self.date.ISO8601Format()
         }else {
             txn.time = self.date.stringDate()
         }
         txn.subtotal = subTotal.toString()
-        txn.total_inclusive_price = self.convertToAED((subTotal + self.fee_str.toFloat()).toString())
+        txn.total_inclusive_price = self.convertToAED((subTotal + txn.fee.toFloat()).toString())
         txn.type = self.type.rawValue
         txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
-        return txn
+//        return txn
     }
-    
+//
     func buttonHandle(){
         if self.isKeyboardOn{
             hideKeyboard()
         }else{
-            let txn = self.updateTxnObject()
+            self.updateTxnObject()
             print("This is txn! : ",txn)
             TransactionAPI.shared.uploadTransaction(txn: txn) { err in
                 if let err_msg = err?.localizedDescription {
@@ -196,7 +197,7 @@ extension AddTransactionView{
     
     func updateSpotPrice(asset:AssetData){
         if let price = asset.price{
-            self.spot_price = price.toString()
+            self.txn.asset_spot_price = price.toString()
         }
     }
     
@@ -257,6 +258,7 @@ extension AddTransactionView{
     }
     
     var value_size:CGFloat{
+        let amount_str = self.txn.asset_quantity
         if amount_str.count == 4{
             return 40
         }else if amount_str.count == 5{
@@ -272,7 +274,7 @@ extension AddTransactionView{
         VStack(alignment: .center, spacing: 10) {
             let color = Color.white
             let size:CGFloat = self.entryType == "coin" ? self.value_size : 30
-            TextField("0",text: $amount_str)
+            TextField("0",text: self.$txn.asset_quantity)
                 .coloredTextField(color: color,size: size,rightViewTxt: self.currency)
             MainText(content: "\(convertToMoneyNumber(value: self.currentAsset?.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
         }
@@ -293,8 +295,9 @@ extension AddTransactionView{
     }
     
     var spotPriceView:some View{
-        MainText(content: "Spot Price : $\(self.spot_price == "" ? "0" : self.spot_price)", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
-            .blobify(color: self.spot_price == "" ? .clear : .green)
+        let spot_price = self.txn.asset_spot_price
+        return MainText(content: "Spot Price : $\(spot_price == "" ? "0" : spot_price)", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
+            .blobify(color: spot_price == "" ? .clear : .green)
             .buttonify {
                 self.updateModal(type: .spot_price)
             }
@@ -313,8 +316,9 @@ extension AddTransactionView{
     }
     
     var feeButton:some View{
-        MainText(content: "Fee: $\(self.fee_str == "" ? "0" : self.fee_str)", fontSize: 15, color: .white)
-            .blobify(color: self.fee_str == "0" || self.fee_str == "" ? .clear : .green)
+        let fee_str = self.txn.fee
+        return MainText(content: "Fee: $\(fee_str == "" ? "0" : fee_str)", fontSize: 15,color: .white, fontWeight: .semibold)
+            .blobify(color: fee_str == "0" || fee_str == "" ? .clear : .green)
             .buttonify {
                 self.updateModal(type: .fee)
             }
@@ -323,7 +327,7 @@ extension AddTransactionView{
     func feefieldView(w:CGFloat) -> some View{
         self.swipeCard(w: w, h: totalHeight * 0.5,heading: "Update Fees") {
             return AnyView(Group{
-                TextField("0",text: $fee_str)
+                TextField("0",text: self.$txn.fee)
                     .coloredTextField(color: .white,size: 30,rightViewTxt: "USD")
                     .keyboardType(.numberPad)
             })
@@ -334,7 +338,7 @@ extension AddTransactionView{
     
     func spotPriceView(w:CGFloat) -> some View{
         self.swipeCard(w: w, h: totalHeight * 0.5, heading: "Update Spot Price") {
-            return AnyView(TextField("0", text: $spot_price)
+            return AnyView(TextField("0", text: self.$txn.asset_spot_price)
                             .coloredTextField(color: .white,size:30,rightViewTxt: "USD").keyboardType(.numberPad)
             )
         } action: {

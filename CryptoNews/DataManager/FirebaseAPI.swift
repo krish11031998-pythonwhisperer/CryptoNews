@@ -22,21 +22,23 @@ enum TransactionType:String{
 }
 
 struct Transaction:Codable{
-    var time:String?
-    var type:String?
-    var asset:String?
-    var asset_quantity:String?
-    var asset_spot_price:String?
-    var subtotal:String?
-    var total_inclusive_price:String?
-    var fee:String?
-    var memo:String?
+    var time:String
+    var type:String
+    var asset:String
+    var asset_quantity:String
+    var asset_spot_price:String
+    var subtotal:String
+    var total_inclusive_price:String
+    var fee:String
+    var memo:String
+    
+    static var empty:Transaction = .init(time: "", type: "", asset: "", asset_quantity: "", asset_spot_price: "", subtotal: "", total_inclusive_price: "", fee: "", memo: "")
     
     var timeStamp:Date{
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        guard let time = time, let date = dateFormatter.date(from: time) else {return Date()}
+        guard let date = dateFormatter.date(from: time) else {return Date()}
         return date
     }
     
@@ -51,7 +53,8 @@ struct Transaction:Codable{
     
     var symbol:String?{
         get{
-            guard let asset = asset?.lowercased(), let sym = Transaction.currencyToSymConverter[asset] else {return nil}
+            let asset = asset.lowercased()
+            guard let sym = Transaction.currencyToSymConverter[asset] else {return nil}
             return sym
         }
         set{
@@ -63,7 +66,8 @@ struct Transaction:Codable{
     
     var _asset_quantity:Float{
         get{
-            guard let val = self.asset_quantity, let val_fl = Float(val) else {return 0.0}
+            let val = self.asset_quantity
+            guard let val_fl = Float(val) else {return 0.0}
             return val_fl
         }
         
@@ -74,8 +78,9 @@ struct Transaction:Codable{
     
     var _asset_spot_price:Float{
         get{
-            guard let val = self.asset_spot_price,let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl * 0.27
+            let val = self.asset_spot_price
+            guard let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl
         }
         set{
             self.asset_spot_price = String(newValue)
@@ -85,8 +90,9 @@ struct Transaction:Codable{
     
     var _subtotal:Float{
         get{
-            guard let val = self.subtotal, let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl * 0.27
+            let val = self.subtotal
+            guard  let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl
         }
         
         set{
@@ -97,8 +103,9 @@ struct Transaction:Codable{
     
     var _total_inclusive_price:Float{
         get{
-            guard let val = self.total_inclusive_price, let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl * 0.27
+            let val = self.total_inclusive_price
+            guard let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl
         }
         set{
             self.total_inclusive_price = String(newValue)
@@ -108,8 +115,9 @@ struct Transaction:Codable{
     
     var _fee:Float{
         get{
-            guard let val = self.fee,let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl * 0.27
+            let val = self.fee
+            guard let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
+            return val_fl
         }
         
         set{
@@ -125,6 +133,7 @@ struct Transaction:Codable{
     static func parseFromQueryData(_ data : QueryDocumentSnapshot) -> Transaction?{
         var res:Transaction? = nil
         do{
+            print(data.data())
             res = try data.data(as: Transaction.self)
         }catch{
             print("There was an error while decoding the data!",error.localizedDescription)

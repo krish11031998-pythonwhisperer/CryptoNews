@@ -72,6 +72,7 @@ struct ProfileView: View {
                 self.userInfo(w: w)
                     .padding(.top,50)
                 self.userAccount(w:w)
+                self.userActivity(w: w)
             }
         }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
     }
@@ -122,9 +123,44 @@ extension ProfileView{
     
     func userAccount(w:CGFloat) -> some View{
         VStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: "NFO", subHeading: self.user.info_coins?.ToDecimals() ?? "", headingSize: 15, subHeadingSize: 45, alignment: .center)
+            MainSubHeading(heading: "MANA", subHeading: self.user.info_coins?.ToDecimals() ?? "", headingSize: 15, subHeadingSize: 45, alignment: .center)
             InfoGrid(info: self.SocialMetricsKeys,width: w, viewPopulator: self.SocialinfoGridEl(key:))
+            self.ManaSpendOptions(w: w)
         }.basicCard(size: .init(width: w, height: 0))
+    }
+    
+    func ManaSpendOptions(w:CGFloat) -> some View{
+        HStack(alignment: .center, spacing: 10) {
+            SystemButton(b_name: "bag.fill", b_content: "Shop", color: .black,size: .init(width: 15, height: 15), bgcolor: .white, alignment: .vertical) {
+                print("Clicked Shopped")
+            }
+            .basicCard(size: .init(width: w * 0.5 - 20, height: 100))
+            .buttonify {
+                print("Clicked Button")
+            }
+            SystemButton(b_name: "newspaper.fill", b_content: "Subscribe", color: .black,size: .init(width: 15, height: 15), bgcolor: .white, alignment: .vertical) {
+                print("Clicked Shopped")
+            }
+            .basicCard(size: .init(width: w * 0.5 - 20, height: 100))
+            .buttonify {
+                print("Clicked Button")
+            }
+        }
+    }
+    
+    func userActivity(w:CGFloat) -> some View{
+        Container(heading: "Activity", width: w, ignoreSides: true) {w in
+            InfoGrid(info: self.SocialMetricsKeys, width: w) { (key) in
+                if let value = self.SocialMetrics[key]{
+                    MainSubHeading(heading: key, subHeading: value, headingSize: 15, subHeadingSize: 30, headColor: .gray, subHeadColor: .white, alignment: .center)
+                }else{
+                    Color.clear
+                }
+                
+            }
+        }
+        .basicCard(size: .init(width: w, height: 0))
+        .padding(.top,15)
     }
     
 }

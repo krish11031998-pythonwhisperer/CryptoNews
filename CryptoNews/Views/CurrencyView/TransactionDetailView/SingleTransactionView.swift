@@ -57,7 +57,7 @@ extension SingleTransactionView{
     
     var txnHeader:some View{
         HStack {
-            MainText(content: self.txn.type?.capitalized ?? "No Type", fontSize: 20, color: .white, fontWeight: .regular, style: .normal)
+            MainText(content: self.txn.type.capitalized ?? "No Type", fontSize: 20, color: .white, fontWeight: .regular, style: .normal)
             Spacer()
             MainText(content: self.txn.timeStamp.stringDate(), fontSize: 10, color: .white, fontWeight: .semibold, style: .monospaced)
         }
