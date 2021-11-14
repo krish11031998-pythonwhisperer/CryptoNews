@@ -20,6 +20,12 @@ enum Tabs:String{
     case none = ""
 }
 
+enum LoginState{
+    case signedIn
+    case signedOut
+    case undefined
+}
+
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
@@ -28,7 +34,13 @@ class ContextData:ObservableObject{
     @Published private var _selectedSymbol:String? = nil
     @Published private var _addTxn:Bool = false
     @Published private var _prev_tab:Tabs = .none
-    @Published var user:ProfileData = .test
+    @Published var loggedIn:LoginState = .undefined
+    @Published var user:User = .init()
+    
+    
+    init(){
+        self.user.signInHandler = self.signInHandler
+    }
     
     
     var tab:Tabs{
@@ -100,6 +112,12 @@ class ContextData:ObservableObject{
             withAnimation(.easeInOut) {
                 self._addTxn = newValue
             }
+        }
+    }
+    
+    func signInHandler(){
+        if self.loggedIn != .signedIn{
+            self.loggedIn = .signedIn
         }
     }
 }

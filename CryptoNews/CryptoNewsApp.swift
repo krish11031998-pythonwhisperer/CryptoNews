@@ -17,7 +17,14 @@ struct CryptoNewsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            ContentView().environmentObject(self.context)
+            if self.context.loggedIn == .signedIn{
+                ContentView().environmentObject(self.context)
+            }else{
+                LoginView()
+                    .edgesIgnoringSafeArea(.all)
+                    .frame(width: totalWidth, height: totalHeight, alignment: .center)
+                    .environmentObject(self.context)
+            }
         }
     }
 }

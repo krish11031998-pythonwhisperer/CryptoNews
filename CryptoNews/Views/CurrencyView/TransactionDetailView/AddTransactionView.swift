@@ -18,16 +18,12 @@ enum ModalType{
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
     @State var txn:Transaction = .empty
-//    @State var amount_str:String = ""
     @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
-//    @State var fee_str:String = ""
-//    @State var spot_price:String = ""
     @State var showModal:ModalType = .none
     @State var isKeyboardOn:Bool = false
     @State var coin:CoinMarketData = .init()
-//    @ObservedObject var kGuardian =
     @State var _currency:String? = nil
     @State var currentAsset: AssetData? = nil
     
@@ -63,11 +59,6 @@ struct AddTransactionView:View {
     
     func resetStates(){
         DispatchQueue.main.async {
-//            self.amount_str = ""
-//            self.fee_str = ""
-//            self.type = .none
-//            self.date = Date()
-//            self.spot_price = ""
             self.txn = .empty
         }
     }
@@ -80,20 +71,20 @@ struct AddTransactionView:View {
     
     func updateTxnObject(){
         let subTotal = self.txn.asset_quantity.toFloat() * self.txn.asset_spot_price.toFloat()
-        txn.fee = self.convertToAED(txn.fee)
-        txn.asset_spot_price = self.convertToAED(txn.asset_spot_price)
-        if let currency = self.currency == "XRP" ? self.currency : self.currentAsset?.name?.lowercased() {
-            txn.asset = currency
-        }
+        txn.fee = txn.fee == "" ? "0" : txn.fee
+        txn.asset_spot_price = txn.asset_spot_price
+        txn.asset = self.currency
+        
         if #available(iOS 15.0, *){
             txn.time = self.date.ISO8601Format()
         }else {
             txn.time = self.date.stringDate()
         }
         txn.subtotal = subTotal.toString()
-        txn.total_inclusive_price = self.convertToAED((subTotal + txn.fee.toFloat()).toString())
+        txn.total_inclusive_price = (subTotal + txn.fee.toFloat()).toString()
         txn.type = self.type.rawValue
         txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
+        txn.uid = self.context.user.fir_user?.uid ?? ""
 //        return txn
     }
 //

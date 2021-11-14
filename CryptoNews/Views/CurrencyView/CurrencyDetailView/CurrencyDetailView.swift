@@ -64,20 +64,20 @@ extension CurrencyDetailView{
             }.padding(.bottom,150)
     }
     
-    var txnsForAsset:[Transaction]{
-        return self.txns.filter({$0.symbol?.lowercased() == self.currency.symbol?.lowercased()})
-    }
+//    var txnsForAsset:[Transaction]{
+//        return self.txns.filter({$0.symbol?.lowercased() == self.currency.symbol?.lowercased()})
+//    }
     
     var coinTotal:Float{
-        return self.txnsForAsset.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._asset_quantity})
+        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._asset_quantity})
     }
 
     var valueTotal:Float{
-        return self.txnsForAsset.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._total_inclusive_price})
+        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._total_inclusive_price})
     }
 
-    var txnForAssetPortfolioData:[PortfolioData]{
-        return self.txnsForAsset.compactMap({$0.parseToPortfolioData()})
+    var portfolioDataForAsset:[PortfolioData]{
+        return self.txns.compactMap({$0.parseToPortfolioData()})
     }
     
     var CurrencySummary:some View{
@@ -105,11 +105,11 @@ extension CurrencyDetailView{
     }
     
     @ViewBuilder var transactionHistoryView:some View{
-        if self.txnsForAsset.isEmpty{
+        if self.txns.isEmpty{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }else{
             
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.portfolioDataForAsset), size: .init(width: size.width, height: size.height * 1.5))
                 .buttonify {
                     withAnimation(.easeInOut) {
                         self.showMoreSection = .txns

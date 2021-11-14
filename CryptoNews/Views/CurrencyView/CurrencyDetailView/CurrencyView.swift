@@ -35,6 +35,7 @@ struct CurrencyView:View{
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
+        
         if let info = info{
             self._currency = .init(wrappedValue: info)
         }
@@ -43,6 +44,7 @@ struct CurrencyView:View{
         self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
         self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
         self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
+        self._TAPI = .init(wrappedValue: .init())
     }
     
     
@@ -56,7 +58,10 @@ struct CurrencyView:View{
         }
         
         if self.TAPI.transactions.isEmpty{
-            self.TAPI.loadTransaction()
+//            self.TAPI.loadTransaction(uuid: self.context.user.fir_user?.uid)
+            if let uid = self.context.user.fir_user?.uid, let sym = currency.symbol{
+                self.TAPI.loadTransactions(uuid: uid, currency: sym)
+            }
         }
         
         if self.NAPI.FeedData.isEmpty{
@@ -134,7 +139,7 @@ struct CurrencyView:View{
     func newsView(w:CGFloat) -> some View{
         LazyScrollView(data: self.NAPI.FeedData.compactMap({$0 as Any})) { data in
             if let news = data as? AssetNewsData{
-                NewsStandCard(news: news,size: .init(width: w, height: 150))
+                NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
             }
         } reload: {
             self.NAPI.getNextPage()
@@ -142,19 +147,37 @@ struct CurrencyView:View{
     }
     
     var txnsForAsset:[Transaction]{
-        let symbol = (self.currency.symbol ?? "BTC").lowercased()
-        return self.TAPI.transactions.filter({$0.symbol == symbol && ($0.type == "buy" || $0.type == "sell")})
+        return self.TAPI.transactions.filter({($0.type == "buy" || $0.type == "sell")})
+    }
+    
+    
+    func rightSideView() -> AnyView{
+        AnyView(HStack(alignment: .center, spacing: 10) {
+            SystemButton(b_name: "heart", color: .white, haveBG: true, size: .init(width: 10, height: 10), bgcolor: .black, alignment: .vertical) {
+                if let sym = self.currency.symbol{
+                    self.context.user.user?.watching.append(sym)
+                    self.context.user.updateUser()
+                }
+            }
+        })
     }
 
+    func innerView(w:CGFloat) -> some View{
+        let size:CGSize = .init(width: w, height: totalHeight * 0.3)
+        return CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, onClose: self.onClose)
+    }
+    
+    var currencyHeading:String{
+        return "\(currency.symbol ?? "BTC")"
+    }
+    
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
             ScrollView(.vertical, showsIndicators: false) {
-                Container(heading: "\(currency.symbol ?? "BTC")", width: totalWidth, onClose: self.onClose) { w in
-                    let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-                    CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, onClose: self.onClose)
-                }.refreshableView(width: size.width,hasToRender:self.context.selectedCurrency != nil) { fun in
-                    self.getAssetInfo(fn: fun)
-                }
+                Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
+                    .refreshableView(width: size.width,hasToRender:self.context.selectedCurrency != nil) { fun in
+                        self.getAssetInfo(fn: fun)
+                    }
             }
         }else{
             ProgressView()

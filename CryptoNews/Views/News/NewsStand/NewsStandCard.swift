@@ -16,11 +16,19 @@ struct NewsStandCard: View {
         self.size = size
     }
     
+    @ViewBuilder var mainText:some View{
+        if self.size.height >= CardSize.small.height{
+            MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+        }else{
+            MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+                .lineLimit(2)
+        }
+    }
+    
     func mainBody(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .top, spacing: 10) {
-            MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
-//                .fixedSize(horizontal: false, vertical: true)
-                .frame(maxHeight: h, alignment: .center)
+            self.mainText
+                .frame(maxHeight: h - 20, alignment: .center)
             Spacer()
             ImageView(url: self.news.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
         }

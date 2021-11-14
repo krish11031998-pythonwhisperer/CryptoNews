@@ -9,7 +9,7 @@ import SwiftUI
 
 struct Container<T:View>: View {
     var innerView:(CGFloat) -> T
-    var rightButton:T? = nil
+    var rightButton:(() -> AnyView)? = nil
     var heading:String?
     var onClose:(() -> Void)? = nil
     var width:CGFloat
@@ -20,14 +20,30 @@ struct Container<T:View>: View {
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
         onClose:(() -> Void)? = nil,
-        @ViewBuilder innerView: @escaping (CGFloat) -> T,
-        rightView: (() -> T)? = nil
+        @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
         self.heading = heading
         self.innerView = innerView
         self.onClose = onClose
         self.width = width
-        self.rightButton = rightView?() ?? nil
+        self.ignoreSides = ignoreSides
+        self.rightButton = nil
+    }
+    
+    
+    init(
+        heading:String? = nil,
+        width:CGFloat = totalWidth,
+        ignoreSides:Bool = false,
+        onClose:(() -> Void)? = nil,
+        rightView: (() -> AnyView)? = nil,
+        @ViewBuilder innerView: @escaping (CGFloat) -> T
+    ){
+        self.heading = heading
+        self.innerView = innerView
+        self.onClose = onClose
+        self.width = width
+        self.rightButton = rightView
         self.ignoreSides = ignoreSides
     }
     
@@ -40,7 +56,7 @@ struct Container<T:View>: View {
                 MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
                 Spacer()
                 if rightButton != nil{
-                    self.rightButton
+                    self.rightButton?()
                 }
             }.padding(.horizontal,self.ignoreSides ? 15 : 0)
             Divider().frame(width:w * 0.5,alignment: .leading)

@@ -423,6 +423,10 @@ extension View{
         self.transition(.slideRightLeft)
     }
     
+    func slideInOut() -> some View{
+        self.transition(.slideInOut)
+    }
+    
     func blobify(color:Color = .clear) -> some View{
         self.modifier(Blob(color: color))
     }
@@ -473,6 +477,8 @@ extension View{
     func systemButtonModifier(size:CGSize,color:Color,@ViewBuilder bg: () -> AnyView) -> some View{
         self.modifier(SystemButtonModifier(size: size, color: color, bg: bg))
     }
+    
+    
 }
 
 struct Corners:Shape{

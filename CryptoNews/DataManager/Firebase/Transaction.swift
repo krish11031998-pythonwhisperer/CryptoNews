@@ -1,8 +1,8 @@
 //
-//  FirebaseAPI.swift
+//  Transaction.swift
 //  CryptoNews
 //
-//  Created by Krishna Venkatramani on 02/10/2021.
+//  Created by Krishna Venkatramani on 11/11/2021.
 //
 
 import Foundation
@@ -11,6 +11,7 @@ import FirebaseAnalytics
 import FirebaseCore
 import FirebaseFirestore
 import FirebaseFirestoreSwift
+import SwiftUI
 
 
 enum TransactionType:String{
@@ -31,8 +32,9 @@ struct Transaction:Codable{
     var total_inclusive_price:String
     var fee:String
     var memo:String
+    var uid:String
     
-    static var empty:Transaction = .init(time: "", type: "", asset: "", asset_quantity: "", asset_spot_price: "", subtotal: "", total_inclusive_price: "", fee: "", memo: "")
+    static var empty:Transaction = .init(time: "", type: "", asset: "", asset_quantity: "", asset_spot_price: "", subtotal: "", total_inclusive_price: "", fee: "", memo: "",uid: "")
     
     var timeStamp:Date{
         let dateFormatter = DateFormatter()
@@ -54,12 +56,13 @@ struct Transaction:Codable{
     var symbol:String?{
         get{
             let asset = asset.lowercased()
-            guard let sym = Transaction.currencyToSymConverter[asset] else {return nil}
-            return sym
+//            guard let sym = Transaction.currencyToSymConverter[asset] else {return nil}
+//            return sym
+            return asset
         }
         set{
-            guard let sym = newValue?.lowercased(), let currency = Transaction.symToCurrencyConverter[sym] else {return}
-            self.asset = currency
+//            guard let sym = newValue?.lowercased(), let currency = Transaction.symToCurrencyConverter[sym] else {return}
+            self.asset = newValue ?? ""
         }
         
     }
@@ -147,40 +150,44 @@ struct Transaction:Codable{
     
 }
 
-class TransactionAPI:ObservableObject{
-    
+
+class TransactionAPI:FirebaseAPI,ObservableObject{
     @Published var transactions:[Transaction] = []
-    
+    init(){
+        super.init(collection: "transactions")
+    }
+        
     static var shared:TransactionAPI = .init()
-    
-    var db:Firestore{
-        return Firestore.firestore()
-    }
-    
-    func FIRQueryListener(_ snapshot:QuerySnapshot?, _ err:Error?){
-        guard let querySnapshot = snapshot else {return}
-        
+
+    override func parseData(data: [QueryDocumentSnapshot]) {
         DispatchQueue.main.async {
-            self.transactions = querySnapshot.documents.compactMap({Transaction.parseFromQueryData($0)})
+            self.transactions = data.compactMap({Transaction.parseFromQueryData($0)})
         }
-        
-    }
-    
-    func loadTransaction(){
-//        db.collection("transactions").addSnapshotListener(self.FIRQueryListener(_:_:))
-        db.collection("transactions").getDocuments(completion: self.FIRQueryListener(_:_:))
     }
         
     func uploadTransaction(txn:Transaction,completion:((Error?) -> Void)? = nil){
-        var val = txn.decoded
-        print("Date to Upload is : ",val)
-        db.collection("transactions").addDocument(data: val) { err in
-            if let err = err {
-                print("There was an error while trying to add the txn to the database : ",err.localizedDescription)
-                
-            }
-            completion?(err)
-        }
+        self.uploadTransaction(data: txn.decoded, completion: completion)
     }
     
+    func loadTransactions(uuid:String,currency:String){
+        self.db
+            .collection("transactions")
+            .whereField("uid", isEqualTo: uuid)
+            .whereField("asset", isEqualTo: currency)
+            .getDocuments { qss, err in
+                if let docs = qss?.documents{
+                    self.parseData(data: docs)
+                }else if let err = err{
+                    print("Error : ",err.localizedDescription)
+                }
+            }
+    }
+    
+    func loadTransaction(uuid:String? = nil){
+        if let uuid = uuid{
+            self.loadData(val: uuid)
+        }else{
+            self.loadData()
+        }
+    }
 }

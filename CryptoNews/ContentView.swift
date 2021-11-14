@@ -18,7 +18,7 @@ struct ContentView: View {
         }
     }
     
-    var body: some View {
+    var contentView:some View{
         ZStack(alignment: .bottom) {
             mainBGView.zIndex(0)
             self.mainBody
@@ -31,9 +31,11 @@ struct ContentView: View {
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
     }
+    
+    var body: some View {
+        self.contentView
+    }
 }
-
-
 
 extension ContentView{
     

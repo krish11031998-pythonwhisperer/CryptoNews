@@ -104,7 +104,7 @@ extension SingleTransactionView{
 
 struct SingleTransactionView_Previews: PreviewProvider {
     static var previews: some View {
-        SingleTransactionView(txn: .init(time: "2021-09-07 20:25:39.290665 +0000 UTC", type: "buy", asset: "XRP", asset_quantity: "23.243460", asset_spot_price: "4.05 AED", subtotal: "95.00 AED", total_inclusive_price: "100.00 AED", fee: "5.00 AED", memo: "You bought XRP"), currentPrice: 1.4)
+        SingleTransactionView(txn: .init(time: "2021-09-07 20:25:39.290665 +0000 UTC", type: "buy", asset: "XRP", asset_quantity: "23.243460", asset_spot_price: "4.05 AED", subtotal: "95.00 AED", total_inclusive_price: "100.00 AED", fee: "5.00 AED", memo: "You bought XRP",uid: ""), currentPrice: 1.4)
             .previewLayout(.sizeThatFits)
 //            .background(Color.mainBGColor)
     }

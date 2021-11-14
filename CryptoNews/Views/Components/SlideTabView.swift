@@ -17,8 +17,6 @@ struct SlideTabView: View {
     
     var body: some View {
         TabView(selection: $page){
-//            Color.red.tag(1)
-//            Color.blue.edgesIgnoringSafeArea(.all).tag(2)
             ForEach(Array(self.view.enumerated()),id:\.offset) { _view in
                 let idx = _view.offset
                 let view = _view.element

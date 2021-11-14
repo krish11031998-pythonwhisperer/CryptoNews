@@ -8,19 +8,25 @@
 import SwiftUI
 
 struct HomePage: View {
-    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
-    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
+//    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
+//    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
     @EnvironmentObject var context:ContextData
     var activeCurrency:Bool{
         return self.context.selectedCurrency != nil
     }
     
+    var currencies:[String]{
+        print(self.context.user.user?.watching)
+        return self.context.user.user?.watching ?? ["BTC","LTC","ETH","XRP"]
+    }
+    
+    
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             LazyVStack(alignment: .center, spacing: 15) {
                 Spacer().frame(height: 50)
-                self.PriceCards
-                CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc)
+                TrackedAssetView(asset: currencies)
+                CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc,leadingPadding: true)
                 CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
                 CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
                 LatestTweets(currency: "all")
@@ -47,23 +53,6 @@ extension HomePage{
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }
-    
-    var PriceCards:some View{
-        Container(heading: "Tracked Assets", width: totalWidth, ignoreSides: true) { w in
-            ScrollView(.horizontal, showsIndicators: false){
-                LazyHStack(alignment: .center, spacing: 10){
-                    ForEach(Array(self.currencies.enumerated()),id:\.offset) { _currency in
-                        let currency = _currency.element
-                        let idx = _currency.offset
-                        let pad_al:Edge.Set = idx == 0  ? .leading : .trailing
-                        let pad_val:CGFloat = idx == 0 || idx == self.currencies.count - 1 ? 10 : 0
-                        PriceCard(currency: currency,color: self.color[currency] ?? .white,font_color: .white).padding(pad_al,pad_val)
-                    }
-                }
-            }
-        }
-    }
-    
     
     var NewsSection:some View{
         return RecentNewsCarousel(heading: "News") { currency in

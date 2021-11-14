@@ -7,63 +7,6 @@
 
 import SwiftUI
 
-class ProfileData:Codable{
-    var firstName:String?
-    var middleName:String?
-    var lastName:String?
-    var userName:String?
-    var email:String?
-    var img:String?
-    var info_coins:Float?
-    var location:String?
-    var dob:String?
-    var followers:Int
-    init(
-        firstName:String?,
-        middleName:String?,
-        lastName:String?,
-        userName:String?,
-        email:String?,
-        img:String? = nil,
-        info_coins:Float?,
-        location:String? = "Dubai, UAE",
-        dob:String? = "11 March 1998",
-        followers:Int = 1000
-    ){
-        self.firstName = firstName
-        self.middleName = middleName
-        self.lastName = lastName
-        self.userName = userName
-        self.email = email
-        self.img = img
-        self.info_coins = info_coins
-        self.location = location
-        self.dob = dob
-        self.followers = followers
-    }
-    
-    var name:String{
-        return [self.firstName,self.middleName,self.lastName].reduce("", {$0 + " " + ($1 ?? "")})
-    }
-    
-    var userInfoKeys:[String]{
-        return ["Followers","Following","i.nfo Rank","Location","Date of Birth"]
-    }
-    
-    var userInfo:[String:String]{
-        var data:[String:String] = [:]
-        data["Followers"] = String(self.followers)
-        data["Following"] = String(230)
-        data["i.nfo Rank"] = String(3423)
-        data["Location"] = self.location ?? "NYC"
-        data["Date of Birth"] = self.dob ?? Date().stringDate()
-        return data
-    }
-    
-    
-    static var test:ProfileData = .init(firstName: "Krishna", middleName: "K", lastName: "Venkatramani", userName: "thecryptoknight", email: "thecryptoknight@gmail.com", info_coins: 100)
-}
-
 struct ProfileView: View {
     @EnvironmentObject var context:ContextData
     var body: some View {
@@ -81,7 +24,7 @@ struct ProfileView: View {
 extension ProfileView{
     
     var user:ProfileData{
-        return self.context.user
+        return self.context.user.user ?? .test
     }
     
     @ViewBuilder func UserinfoGridEl (key:String) -> some View{
@@ -95,7 +38,7 @@ extension ProfileView{
     func userInfo(w:CGFloat) -> some View{
         VStack(alignment: .center, spacing: 15) {
             ImageView(url: self.user.img, width: w * 0.3, height: w * 0.3, contentMode: .fill, alignment: .center, clipping: .circleClipping)
-            MainSubHeading(heading: self.user.name , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .gray, alignment: .center)
+            MainSubHeading(heading: self.user.name ?? "Name" , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .gray, alignment: .center)
             InfoGrid(info: self.user.userInfoKeys, width: w, viewPopulator: self.UserinfoGridEl(key:))
         }.basicCard(size: .init(width: w, height: 0))
     }
