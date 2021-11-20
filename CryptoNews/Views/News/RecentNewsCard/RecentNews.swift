@@ -53,7 +53,8 @@ struct RecentNews: View {
             }
             
         }
-        .padding()
+
+        .padding(15)
         .background(BlurView(style: .dark))
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)

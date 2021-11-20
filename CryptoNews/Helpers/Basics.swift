@@ -151,3 +151,30 @@ struct HeadingInfoText:View{
     }
     
 }
+
+struct SizeDataPreferenceKey: PreferenceKey{
+    
+    static var defaultValue: CGSize = .zero
+    
+    static func reduce(value:inout CGSize, nextValue: () -> CGSize){
+        value = nextValue()
+    }
+}
+
+
+extension View{
+    
+    func sizePreferenceKey(_ data:CGSize) -> some View{
+        self.preference(key: SizeDataPreferenceKey.self, value: data)
+    }
+    
+}
+
+
+struct PriceCardDataPreferenceKey: PreferenceKey{
+    static var defaultValue: AssetData = .init()
+    
+    static func reduce(value: inout AssetData, nextValue: () -> AssetData) {
+        value = nextValue()
+    }
+}

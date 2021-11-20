@@ -192,11 +192,15 @@ struct LoginView: View {
     
     func signInUser(){
         AuthManager.shared.signInUser(email: self.formDetails.email, password: self.formDetails.password) { user in
+            UserDefaults.standard.setValue(user.uid, forKey: "eID")
+            UserDefaults.standard.setValue(true, forKey: "isLoggedIn")
             DispatchQueue.main.async {
                 if self.context.user.fir_user?.uid != user.uid{
                     self.context.user.fir_user = user
                 }
+                
             }
+            
         }
     }
     

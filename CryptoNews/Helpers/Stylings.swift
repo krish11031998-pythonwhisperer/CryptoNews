@@ -336,8 +336,6 @@ struct MainSubHeading:View{
                 .lineLimit(1)
             MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
                 .fixedSize(horizontal: false, vertical: true)
-
-                
         }
     }
     

@@ -11,18 +11,17 @@ struct RecentNewsCarousel: View {
     var heading:String
     var view: (Any) -> AnyView
     var data:[Any]
-    init(heading:String,data:[String] = ["BTC","LTC","ETH","XRP"],view:@escaping (Any) -> AnyView){
+    var size:CGSize
+    init(heading:String,data:[Any] = ["BTC","LTC","ETH","XRP"],view:@escaping (Any) -> AnyView,size:CGSize = .init(width: totalWidth - 20, height: 350)){
         self.heading = heading
         self.data = data
         self.view = view
+        self.size = size
     }
     
     var body: some View {
-        let h = totalHeight * 0.7
         Container(heading: "News") { w  in
-            let size = CGSize(width: w, height: h)
-//            return AnyView(FancyHScroll(views: self.data.map({AnyView(self.view($0))}),headers: self.data as? [String], size: size))
-            FancyHScroll(views: self.data.map({AnyView(self.view($0))}),timeLimit: 60,headers: self.data as? [String], size: size)
+            FancyHScroll(data: self.data,timeLimit: 60, size: size,viewGen: self.view)
         }
         
     }

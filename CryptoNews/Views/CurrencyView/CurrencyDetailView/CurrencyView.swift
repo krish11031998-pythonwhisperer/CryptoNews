@@ -26,7 +26,6 @@ struct CurrencyView:View{
     @StateObject var TAPI:TransactionAPI = .init()
     @StateObject var NAPI:FeedAPI
     @State var refresh:Bool = false
-//    @State var refreshData:Bool = false
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     init(
@@ -58,8 +57,7 @@ struct CurrencyView:View{
         }
         
         if self.TAPI.transactions.isEmpty{
-//            self.TAPI.loadTransaction(uuid: self.context.user.fir_user?.uid)
-            if let uid = self.context.user.fir_user?.uid, let sym = currency.symbol{
+            if let uid = self.context.user.user?.uid, let sym = currency.symbol{
                 self.TAPI.loadTransactions(uuid: uid, currency: sym)
             }
         }

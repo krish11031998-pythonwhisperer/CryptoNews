@@ -43,7 +43,6 @@ struct CardSlidingView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-//            Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
             LazyHStack(alignment: .center, spacing: 0){
                 ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
                     let view = _view.element
@@ -52,10 +51,8 @@ struct CardSlidingView: View {
             }
             .padding(.leading, self.leading ? halfCardWidth : 0)
             .padding(.trailing,halfCardWidth)
-                
-//            Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
         }
-        .frame(height: cardSize.height,alignment: .leading)
+        .frame(width:totalWidth,height: cardSize.height,alignment: .leading)
     }
 }
 

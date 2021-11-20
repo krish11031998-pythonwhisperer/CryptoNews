@@ -73,10 +73,9 @@ struct Container<T:View>: View {
                 self.headingView(heading:heading,w: w)
             }
             self.innerView(w)
-        }
-        
-        .padding(.horizontal, self.ignoreSides ? 0 : 15)
+        }.padding(.horizontal, self.ignoreSides ? 0 : 15)
         .frame(width: self.width, alignment: .leading)
+       
         
     }
     

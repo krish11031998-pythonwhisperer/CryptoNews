@@ -12,9 +12,9 @@ struct ContentView: View {
     
     func closeNews(){
         if self.context.selectedNews != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
+//            withAnimation(.easeInOut(duration: 0.5)) {
                 self.context.selectedNews = nil
-            }
+//            }
         }
     }
     
@@ -51,20 +51,16 @@ extension ContentView{
                     .environmentObject(self.context)
             case .search:
                     SearchMainPage()
-        case .profile:
-                ProfileView()
+            case .profile:
+                    ProfileView()
             default: Color.clear
         }
     }
     
     
     @ViewBuilder var homeView:some View{
-        if self.hoverViewIsOn{
-            Color.clear
-        }else{
-            HomePage()
-                    .environmentObject(self.context)
-        }
+        HomePage()
+            .environmentObject(self.context)
     }
     
     var hoverViewIsOn:Bool{

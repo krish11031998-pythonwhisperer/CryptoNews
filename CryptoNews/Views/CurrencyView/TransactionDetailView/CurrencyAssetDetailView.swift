@@ -87,7 +87,7 @@ extension TransactionDetailsView{
     }
     
     var totalBoughtValue:Float{
-        return self.transactions.reduce(0, {$0 + $1._total_inclusive_price * ($1.type == "sell" ? -1 : 1)})
+        return self.transactions.reduce(0, {$0 + $1.total_inclusive_price * ($1.type == "sell" ? -1 : 1)})
     }
     
     var currentValue:Float{
@@ -99,11 +99,11 @@ extension TransactionDetailsView{
     }
     
     var totalCoins:Float{
-        return self.transactions.reduce(0, {$0 + $1._asset_quantity * ($1.type == "sell" ? -1 : 1)})
+        return self.transactions.reduce(0, {$0 + $1.asset_quantity * ($1.type == "sell" ? -1 : 1)})
     }
     
     var totalFees:Float{
-        return self.transactions.reduce(0, {$0 + $1._fee})
+        return self.transactions.reduce(0, {$0 + $1.fee})
     }
     
     var AssetHeadKeys:[String]{

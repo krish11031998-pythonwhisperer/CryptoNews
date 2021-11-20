@@ -11,7 +11,7 @@ struct NewsCard: View {
     var news:AssetNewsData
     var tapHandler:((Int) -> Void)?
     var size:CGSize
-    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),tapHandler: ((Int) -> Void)? = nil){
+    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth * 0.3, height: totalHeight * 0.5),tapHandler: ((Int) -> Void)? = nil){
         self.news = news
         self.size = size
         self.tapHandler = tapHandler
@@ -34,25 +34,23 @@ struct NewsCard: View {
     }
     
     func newsView(size:CGSize) -> some View{
-        GeometryReader{g in
-            let w = g.frame(in: .local).width
-            let h = g.frame(in: .local).height
+            let w = size.width - 20
+            let h = size.height - 10
             let publisher = self.news.publisher ?? "News Publisher"
-//            let title = Array(repeating: self.news.title ?? "News Publisher", count: 10).reduce("", {$0 + " " + $1})
+
             let title =  self.news.title ?? "News Publisher"
             let text_h = h - 60
+            let linelimit = Int(floor(text_h/16) - 2)
             
-            
-            VStack(alignment: .leading, spacing: 10) {
-                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 16, headingFont: .normal, subHeadingFont: .normal)
+            return VStack(alignment: .leading, spacing: 5) {
+                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: linelimit <= 0 ? 13 : 16, headingFont: .normal, subHeadingFont: .normal).fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(linelimit)
                     .frame(width: w,height: text_h,alignment: .topLeading)
-                    .lineLimit(4)
                 self.footer(w: w, h: 50)
                     .padding(.bottom,5)
-            }
-        }.padding(.horizontal,10)
-        .padding(.vertical,5)
-        .frame(width: size.width, height: size.height, alignment: .topLeading)
+            }.padding(.horizontal,10)
+            .padding(.vertical,5)
+            .frame(width: size.width, height: size.height, alignment: .topLeading)
     }
         
     func buttonArea(w:CGFloat,h:CGFloat,alignment:Alignment = .center,innerView: () -> AnyView,handler: (() -> Void)? = nil) -> some View{
@@ -69,7 +67,7 @@ struct NewsCard: View {
         }
     }
     
-    func nextCircle(w:CGFloat,h:CGFloat) -> some View{
+    func iteratingButton(w:CGFloat,h:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 0) {
             self.buttonArea(w: w * 0.25,h: h,alignment: .leading,innerView: {
                 AnyView(SystemButton(b_name: "chevron.left") {})
@@ -96,24 +94,39 @@ struct NewsCard: View {
         .frame(width: w, height: h, alignment: .center)
     }
     
+    @ViewBuilder var mainBody:some View{
+        if self.size.height < totalHeight * 0.4{
+            let h = size.height
+            let w = size.width
+            ZStack(alignment: .bottom) {
+                ImageView(url: self.news.thumbnail,width: w, height: h, contentMode: .fill, alignment: .center)
+                if let _ = self.tapHandler{
+                    self.iteratingButton(w: w, h: h)
+                }
+                self.newsView(size: .init(width: w, height: h * 0.5))
+                    .background(Color.darkGradColor.opacity(0.5).frame(height: h * 0.5))
+            }.frame(width: size.width, height: size.height, alignment: .topLeading)
+                
+        }else{
+                let img_h = size.height * 0.7
+                let news_h = size.height * 0.3 - 5
+                VStack(alignment: .leading, spacing: 5) {
+                    ZStack(alignment: .center) {
+                        ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
+                        if let _ = self.tapHandler{
+                            self.iteratingButton(w: size.width, h: img_h)
+                        }
+                    }.frame(width: size.width, height: img_h, alignment: .center)
+                    self.newsView(size: .init(width: size.width, height: news_h))
+                }.frame(width: size.width, height: size.height, alignment: .topLeading)
+        }
+    }
+    
     var body: some View {
-        GeometryReader{g in
-            let size = g.frame(in: .local).size
-            let img_h = size.height * 0.7
-            let news_h = size.height * 0.3 - 5
-            VStack(alignment: .leading, spacing: 5) {
-                ZStack(alignment: .center) {
-                    ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
-                    self.nextCircle(w: size.width, h: img_h)
-                }.frame(width: size.width, height: img_h, alignment: .center)
-                self.newsView(size: .init(width: size.width, height: news_h))
-            }
-            
-        }.frame(width: size.width, height: size.height, alignment: .topLeading)
-        .background(BlurView(style: .systemThinMaterialDark))
-        .clipContent(clipping: .roundClipping)
-        .defaultShadow()
-//        .gesture(DragGesture(minimumDistance: 0).onEnded(self.onEnded(value:)))
+        self.mainBody
+            .background(BlurView(style: .systemThinMaterialDark))
+            .clipContent(clipping: .roundClipping)
+            .defaultShadow()
         
     }
 }
@@ -185,8 +198,7 @@ struct NewsCardCarousel:View{
                     let news = _newsFeed.element
                     let idx = _newsFeed.offset
                     if idx == self.idx{
-                        NewsCard(news: news,size: _size,tapHandler: tapFunction(value:))
-//                            .overlay(self.nextCircle(w: _size.width, h: _size.height))
+                        NewsCard(news: news,size: _size,tapHandler: nil)
                             .zoomInOut()
                     }
                 }
@@ -200,8 +212,8 @@ struct NewsCardCarousel:View{
 
 struct NewsCard_Previews: PreviewProvider {
     static var previews: some View {
-        NewsCardCarousel(currency: ["LTC"])
+        let cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
+        NewsCardCarousel(currency: ["LTC"],size: .init(width: cardSize.width * 0.5 - 5, height: cardSize.height * 0.75))
             .background(Color.black)
-//            .animation(.easeInOut)
     }
 }

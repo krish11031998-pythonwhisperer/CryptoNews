@@ -61,8 +61,9 @@ extension CurrencyFeedMainPage{
 struct FeedMainPage_Previews: PreviewProvider {
     static var previews: some View {
         CurrencyFeedMainPage(type: .feed)
-            .edgesIgnoringSafeArea(.all)
             .background(Color.mainBGColor)
+            .edgesIgnoringSafeArea(.all)
+            
             
     }
 }

@@ -8,8 +8,6 @@
 import SwiftUI
 
 struct HomePage: View {
-//    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
-//    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
     @EnvironmentObject var context:ContextData
     var activeCurrency:Bool{
         return self.context.selectedCurrency != nil
@@ -23,17 +21,20 @@ struct HomePage: View {
     
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
-            LazyVStack(alignment: .center, spacing: 15) {
-                Spacer().frame(height: 50)
+            Spacer().frame(height: 50)
+            if self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil{
+                Color.clear
+                    .frame(width: totalWidth, height: totalHeight * 0.4, alignment: .center)
+                    .overlay(ProgressView())
+            }else{
                 TrackedAssetView(asset: currencies)
-                CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc,leadingPadding: true)
-                CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
-                CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
-                LatestTweets(currency: "all")
-                self.NewsSection
-                
-                Spacer(minLength: 200)
             }
+            CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc,leadingPadding: true)
+            CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
+            CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
+            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
+            self.CurrencyFeed
+            Spacer(minLength: 200)
         }.zIndex(1)
     }
     
@@ -54,13 +55,19 @@ extension HomePage{
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }
     
-    var NewsSection:some View{
-        return RecentNewsCarousel(heading: "News") { currency in
-            guard let curr = currency as? String  else {return AnyView(Color.clear)}
-            return AnyView(NewsCardCarousel(currency: [curr],size: .init(width: totalWidth, height: totalHeight * 0.65))
-            )
+    @ViewBuilder func CurrencyFeedEl( _ currency: String) -> some View{
+        Container(heading: "\(currency) Latest Feed", width: totalWidth, ignoreSides: true) { _ in
+            NewsSectionMain(currency: currency).padding(.vertical,10)
+            LatestTweets(currency: currency,type: .Influential)
         }
-        
+    }
+    
+    var CurrencyFeed:some View{
+        return Group{
+            ForEach(self.currencies,id:\.self) {currency in
+                self.CurrencyFeedEl(currency)
+            }
+        }
     }
 }
 

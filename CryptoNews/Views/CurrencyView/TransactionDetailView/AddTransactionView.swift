@@ -15,9 +15,31 @@ enum ModalType{
     case none
 }
 
+class TxnFormDetails:ObservableObject{
+    @Published var time:String = ""
+    @Published var type:String  = ""
+    @Published var asset:String  = ""
+    @Published var asset_quantity:String  = ""
+    @Published var asset_spot_price:String = ""
+    @Published var subtotal:String = ""
+    @Published var total_inclusive_price:String = ""
+    @Published var fee:String = ""
+    @Published var memo:String = ""
+    @Published var uid:String  = ""
+    
+    
+    
+    static var empty:TxnFormDetails = .init()
+    
+    func parseToTransaction() -> Transaction{
+        return .init(time: self.time, type: self.type, asset: self.asset, asset_quantity: self.asset_quantity.toFloat(), asset_spot_price: self.asset_spot_price.toFloat(), subtotal: self.subtotal.toFloat(), total_inclusive_price: self.total_inclusive_price.toFloat(), fee: self.fee.toFloat(), memo: self.memo, uid: self.uid)
+    }
+}
+
+
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
-    @State var txn:Transaction = .empty
+    @State var txn:TxnFormDetails = .empty
     @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
@@ -84,17 +106,16 @@ struct AddTransactionView:View {
         txn.total_inclusive_price = (subTotal + txn.fee.toFloat()).toString()
         txn.type = self.type.rawValue
         txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
-        txn.uid = self.context.user.fir_user?.uid ?? ""
-//        return txn
+        txn.uid = self.context.user.user?.uid ?? ""
     }
-//
+    
     func buttonHandle(){
         if self.isKeyboardOn{
             hideKeyboard()
         }else{
             self.updateTxnObject()
-            print("This is txn! : ",txn)
-            TransactionAPI.shared.uploadTransaction(txn: txn) { err in
+            print("This is txn! : ",txn.parseToTransaction())
+            TransactionAPI.shared.uploadTransaction(txn: txn.parseToTransaction()) { err in
                 if let err_msg = err?.localizedDescription {
                     print("error : ",err_msg)
                 }else{

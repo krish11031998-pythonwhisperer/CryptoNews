@@ -31,7 +31,7 @@ struct PriceCard: View {
     
     func parsePrices(data:AssetData?){
         
-        guard let data = data, let timeSeries = data.timeSeries else {return}
+        guard let data = data, let timeSeries = data.timeSeries, data.symbol?.lowercased() == self.currency.lowercased() else {return}
         DispatchQueue.main.async {
             self.prices = timeSeries
         }
@@ -125,8 +125,6 @@ struct PriceCard: View {
             }
             .onAppear(perform: self.onAppear)
             .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
-        
-            
     }
 }
 

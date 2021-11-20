@@ -26,15 +26,15 @@ struct Transaction:Codable{
     var time:String
     var type:String
     var asset:String
-    var asset_quantity:String
-    var asset_spot_price:String
-    var subtotal:String
-    var total_inclusive_price:String
-    var fee:String
+    var asset_quantity:Float
+    var asset_spot_price:Float
+    var subtotal:Float
+    var total_inclusive_price:Float
+    var fee:Float
     var memo:String
     var uid:String
     
-    static var empty:Transaction = .init(time: "", type: "", asset: "", asset_quantity: "", asset_spot_price: "", subtotal: "", total_inclusive_price: "", fee: "", memo: "",uid: "")
+    static var empty:Transaction = .init(time: "", type: "", asset: "", asset_quantity: 0, asset_spot_price: 0, subtotal: 0, total_inclusive_price: 0, fee: 0, memo: "",uid: "")
     
     var timeStamp:Date{
         let dateFormatter = DateFormatter()
@@ -56,81 +56,16 @@ struct Transaction:Codable{
     var symbol:String?{
         get{
             let asset = asset.lowercased()
-//            guard let sym = Transaction.currencyToSymConverter[asset] else {return nil}
-//            return sym
             return asset
         }
         set{
-//            guard let sym = newValue?.lowercased(), let currency = Transaction.symToCurrencyConverter[sym] else {return}
             self.asset = newValue ?? ""
         }
         
     }
     
-    var _asset_quantity:Float{
-        get{
-            let val = self.asset_quantity
-            guard let val_fl = Float(val) else {return 0.0}
-            return val_fl
-        }
-        
-        set{
-            self.asset_quantity = String(newValue)
-        }
-    }
-    
-    var _asset_spot_price:Float{
-        get{
-            let val = self.asset_spot_price
-            guard let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl
-        }
-        set{
-            self.asset_spot_price = String(newValue)
-        }
-        
-    }
-    
-    var _subtotal:Float{
-        get{
-            let val = self.subtotal
-            guard  let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl
-        }
-        
-        set{
-            self.subtotal = String(newValue)
-        }
-        
-    }
-    
-    var _total_inclusive_price:Float{
-        get{
-            let val = self.total_inclusive_price
-            guard let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl
-        }
-        set{
-            self.total_inclusive_price = String(newValue)
-        }
-        
-    }
-    
-    var _fee:Float{
-        get{
-            let val = self.fee
-            guard let val_str = val.split(separator: " ").first,let val_fl = Float(val_str) else {return 0.0}
-            return val_fl
-        }
-        
-        set{
-            self.fee = String(newValue)
-        }
-    }
-    
-    
     var decoded:[String:Any]{
-        return ["time":time,"type":type,"asset":asset,"asset_quantity":asset_quantity,"asset_spot_price":asset_spot_price,"subtotal":subtotal,"total_inclusive_price":total_inclusive_price,"fee":fee,"memo":memo]
+        return ["time":time,"type":type,"asset":asset,"asset_quantity":asset_quantity,"asset_spot_price":asset_spot_price,"subtotal":subtotal,"total_inclusive_price":total_inclusive_price,"fee":fee,"memo":memo,"uid":uid]
     }
     
     static func parseFromQueryData(_ data : QueryDocumentSnapshot) -> Transaction?{
@@ -145,7 +80,7 @@ struct Transaction:Codable{
     }
     
     func parseToPortfolioData() -> PortfolioData{
-        return .init(type:self.type,crypto_coins: Double(self._asset_quantity), value_usd: self._asset_spot_price,current_val: self._asset_spot_price, fee: self._fee, totalfee: self._total_inclusive_price)
+        return .init(type:self.type,crypto_coins: Double(self.asset_quantity), value_usd: self.asset_spot_price,current_val: self.asset_spot_price, fee: self.fee, totalfee: self.total_inclusive_price)
     }
     
 }

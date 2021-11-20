@@ -10,31 +10,34 @@ import SwiftUI
 struct AsyncContainer<T:View>: View {
     var view:T
     var size:CGSize
-    var triggerAction:(() -> Void)
-    init(size:CGSize,triggerAction:@escaping (() -> Void),@ViewBuilder view: () -> T){
+    @State var showView:Bool = false
+    init(size:CGSize,@ViewBuilder view: () -> T){
         self.view = view()
         self.size = size
-        self.triggerAction = triggerAction
+    }
+    
+    @ViewBuilder var progressView: T{
+        ProgressView() as! T
     }
     
     var body: some View {
-        GeometryReader { g -> T in
+//        VStack(alignment: .center, spacing: 0) {
+        GeometryReader { g -> AnyView in
             let maxY = g.frame(in: .global).maxY
             let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-//                if maxY <= totalHeight{
-//                    self.triggerAction()
-//                }
-                if minY <= totalHeight{
-                    self.triggerAction()
+                if (minY <= totalHeight && !self.showView) || (minY >= totalHeight && self.showView){
+                    self.showView.toggle()
                 }
-                print("DEBUG : maxY = ",maxY)
             }
             
-            return self.view
-        }.frame(width: self.size.width, alignment: .center)
-            .frame(maxHeight: .infinity)
+            if self.showView{
+                return AnyView(self.view)
+            }else{
+                return AnyView(ProgressView())
+            }
+        }
     }
 }
 

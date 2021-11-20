@@ -21,18 +21,10 @@ class User:ObservableObject{
     }
     @Published var fir_user:FirebaseAuth.User? = nil{
         didSet{
-            if let user = self.fir_user, let uid = self.fir_user?.uid{
-                ProfileAPI.shared.loadData(val: uid) { qss, err in
-                    guard let user = qss?.documents.first else {return self.updateUser(user: user)}
-                    do{
-                        let userData = try user.data(as: ProfileData.self)
-                        userData?.id = user.documentID
-                        self.user = userData
-                    }catch{
-                        print("(DEBUG) Retrieving the data of the user for the given uid")
-                    }
-                    
-                }
+            if let uid = self.fir_user?.uid{
+                self.signInUser_w_firUserUid(val: uid)
+            }else if let user = self.fir_user{
+                self.updateUser(user: user)
             }
         }
     }
@@ -49,6 +41,20 @@ class User:ObservableObject{
     
     func updateUser(user:FirebaseAuth.User){
         self.user = .init(uid: user.uid,email: user.email)
+    }
+    
+    func signInUser_w_firUserUid(val:String){
+        ProfileAPI.shared.loadData(val: val) { qss, err in
+            guard let user = qss?.documents.first else {return}
+            do{
+                let userData = try user.data(as: ProfileData.self)
+                userData?.id = user.documentID
+                self.user = userData
+            }catch{
+                print("(DEBUG) Retrieving the data of the user for the given uid")
+            }
+            
+        }
     }
     
     func updateUser(){

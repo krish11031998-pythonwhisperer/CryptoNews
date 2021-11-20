@@ -69,14 +69,14 @@ extension CurrencyDetailView{
 //    }
     
     var coinTotal:Float{
-        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._asset_quantity})
+        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.asset_quantity})
     }
 
     var valueTotal:Float{
-        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1._total_inclusive_price})
+        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.total_inclusive_price})
     }
 
-    var portfolioDataForAsset:[PortfolioData]{
+    var txnForAssetPortfolioData:[PortfolioData]{
         return self.txns.compactMap({$0.parseToPortfolioData()})
     }
     
@@ -109,7 +109,7 @@ extension CurrencyDetailView{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }else{
             
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.portfolioDataForAsset), size: .init(width: size.width, height: size.height * 1.5))
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
                 .buttonify {
                     withAnimation(.easeInOut) {
                         self.showMoreSection = .txns
