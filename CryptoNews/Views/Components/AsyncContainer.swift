@@ -16,33 +16,30 @@ struct AsyncContainer<T:View>: View {
         self.size = size
     }
     
-    @ViewBuilder var progressView: T{
-        ProgressView() as! T
-    }
     
-    var body: some View {
-//        VStack(alignment: .center, spacing: 0) {
+    var progressView:some View{
         GeometryReader { g -> AnyView in
             let maxY = g.frame(in: .global).maxY
-            let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-                if (minY <= totalHeight && !self.showView) || (minY >= totalHeight && self.showView){
-                    self.showView.toggle()
+                if !self.showView && maxY < totalHeight{
+                    withAnimation(.easeInOut) {
+                        self.showView.toggle()
+                    }
                 }
             }
             
-            if self.showView{
-                return AnyView(self.view)
-            }else{
-                return AnyView(ProgressView())
-            }
+            return AnyView(ProgressView().frame(width: totalWidth - 20, height: 25, alignment: .center))
+            
+        }
+    }
+    
+    
+    var body: some View {
+        if self.showView{
+            self.view
+        }else{
+            self.progressView
         }
     }
 }
-
-//struct AsyncContainer_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AsyncContainer()
-//    }
-//}

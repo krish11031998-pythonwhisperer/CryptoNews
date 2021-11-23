@@ -133,7 +133,7 @@ class AssetAPI:DAPI,ObservableObject{
     }
     
     func getAssetInfo(){
-        self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
+        self.getData(_url: self.assetURL, completion: self.parseData(data:))
     }
     
     func getUpdateAssetInfo(completion: @escaping (AssetData?) -> Void){
@@ -144,7 +144,7 @@ class AssetAPI:DAPI,ObservableObject{
     
     func getAssetInfo(completion: @escaping (AssetData?) -> Void){
         if let url = self.assetURL{
-            self.getInfo(_url: url) { data in
+            self.getData(_url: url) { data in
                 completion(self._parseData(data: data))
             }
         } else {

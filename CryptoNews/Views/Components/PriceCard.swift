@@ -99,15 +99,15 @@ struct PriceCard: View {
     }
     
     var chartView:some View{
-        GeometryReader{g in
-            let w = g.frame(in: .local).width
-            let h = g.frame(in: .local).height
-            
-            LazyVStack(alignment: .leading, spacing: 10) {
-                self.topView(w: w, h: h * 0.8)
-                self.footerView(w: w, h: h * 0.2)
-            }
+//        GeometryReader{g in
+        let w = size.width - 30
+        let h = size.height - 30
+        
+        return LazyVStack(alignment: .leading, spacing: 10) {
+            self.topView(w: w, h: h * 0.8)
+            self.footerView(w: w, h: h * 0.2)
         }
+//        }
         .padding()
         .frame(width: size.width, height: size.height, alignment: .center)
         .background(bgColor)

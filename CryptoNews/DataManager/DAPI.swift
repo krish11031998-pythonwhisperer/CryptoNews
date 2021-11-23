@@ -53,7 +53,35 @@ class DAPI{
     func CallCompletionHandler(url:URL,data:Data,completion:((Data) -> Void)){
 //        print("Setting Cached Data")
         DataCache.shared[url] = data
-        completion(data)
+//        if let t_data = data as? T{
+            completion(data)
+//        }
+        
+    }
+    
+    
+    func CallCompletionHandler<T:Codable>(url:URL,data:Data,completion:((T) -> Void)){
+//        print("Setting Cached Data")
+        DataCache.shared[url] = data
+        do{
+            let res = try JSONDecoder().decode(T.self, from: data)
+            completion(res)
+        }catch{
+            print("Unable to parse the data : ",error.localizedDescription)
+        }
+        
+    }
+    
+    func CallCompletionHandler<T:Codable>(url:URL,data:Data,completion:((Array<T>) -> Void)){
+//        print("Setting Cached Data")
+        DataCache.shared[url] = data
+        do{
+            let res = try JSONDecoder().decode([T].self, from: data)
+            completion(res)
+        }catch{
+            print("Unable to parse the data : ",error.localizedDescription)
+        }
+        
     }
     
     
@@ -81,7 +109,7 @@ class DAPI{
             .store(in: &cancellable)
     }
     
-    func getInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
+    func getData(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
         if let data = DataCache.shared[url]{
 //            print("Got Cached Data")
@@ -99,5 +127,34 @@ class DAPI{
         }
     }
     
+    func get_Data<T:Codable>(_url:URL?,completion:@escaping ((T) -> Void)){
+        guard let url = _url else {return}
+        if let data = DataCache.shared[url]{
+            self.CallCompletionHandler(url: url, data: data, completion: completion)
+        }else{
+            URLSession.shared.dataTaskPublisher(for: url)
+                .receive(on: DispatchQueue.main)
+                .tryMap(self.checkOutput(output:))
+                .sink(receiveCompletion: { _ in }, receiveValue: { data in
+                    self.CallCompletionHandler(url: url, data: data, completion: completion)
+                })
+                .store(in: &cancellable)
+        }
+    }
+    
+    func get_Data<T:Codable>(_url:URL?,completion:@escaping ((Array<T>) -> Void)){
+        guard let url = _url else {return}
+        if let data = DataCache.shared[url]{
+            self.CallCompletionHandler(url: url, data: data, completion: completion)
+        }else{
+            URLSession.shared.dataTaskPublisher(for: url)
+                .receive(on: DispatchQueue.main)
+                .tryMap(self.checkOutput(output:))
+                .sink(receiveCompletion: { _ in }, receiveValue: { data in
+                    self.CallCompletionHandler(url: url, data: data, completion: completion)
+                })
+                .store(in: &cancellable)
+        }
+    }
     
 }

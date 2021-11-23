@@ -11,7 +11,7 @@ import FirebaseAuth
 
 @main
 struct CryptoNewsApp: App {
-    @StateObject var context:ContextData = .init()
+    @StateObject var context: ContextData = .init()
     @State var loading:Bool = false
     init(){
         FirebaseApp.configure()

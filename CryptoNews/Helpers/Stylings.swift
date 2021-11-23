@@ -82,7 +82,7 @@ struct RefreshableView:ViewModifier{
                 }
            }.frame(width: width, alignment: .center))
             
-        }.frame(width: width, alignment: .center)
+        }
     }
     
     

@@ -72,7 +72,7 @@ struct Container<T:View>: View {
             if let heading = self.heading{
                 self.headingView(heading:heading,w: w)
             }
-            self.innerView(w)
+            self.innerView(w).padding(.top,10)
         }.padding(.horizontal, self.ignoreSides ? 0 : 15)
         .frame(width: self.width, alignment: .leading)
        

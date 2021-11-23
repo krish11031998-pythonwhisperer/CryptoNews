@@ -12,9 +12,7 @@ struct ContentView: View {
     
     func closeNews(){
         if self.context.selectedNews != nil{
-//            withAnimation(.easeInOut(duration: 0.5)) {
-                self.context.selectedNews = nil
-//            }
+            self.context.selectedNews = nil
         }
     }
     
@@ -80,11 +78,14 @@ extension ContentView{
                 .zIndex(3)
         }
         
-        if let asset = self.context.selectedCurrency{
-            self.CurrencyViewGetter(asset: asset, height: totalHeight * 0.3)
-        }else if let symb = self.context.selectedSymbol{
-            self.CurrencyViewGetter(name: symb, height: totalHeight * 0.3)
+        if self.context.selectedCurrency != nil || self.context.selectedSymbol != nil{
+            CurrencyView(name: self.context.selectedSymbol, info: self.context.selectedCurrency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+            .transition(.slideInOut)
+            .background(mainBGView)
+            .edgesIgnoringSafeArea(.all)
+            .zIndex(2)
         }
+    
     }
     
     
@@ -99,25 +100,7 @@ extension ContentView{
             }
         }
     }
-    
-    
-    func CurrencyViewGetter(asset:AssetData,height h :CGFloat) -> some View{
-        CurrencyView(info: asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-        .transition(.slideInOut)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        .zIndex(2)
-    }
-    
-    func CurrencyViewGetter(name:String,height h :CGFloat) -> some View{
-        CurrencyView(name: name, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-        .transition(.slideInOut)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        .zIndex(2)
-    }
-    
-    
+
 }
 
 struct ContentView_Previews: PreviewProvider {

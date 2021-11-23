@@ -8,23 +8,16 @@
 import Foundation
 import Combine
 
-//struct CoinGeckoEndpointQueries:Codable{
-//    var vs_currency:String?
-//    var ids:String?
-//    var id:String?
-//    var category:String?
-//    var order:String?
-//    var per_page:Int?
-//    var page:Int?
-//    var sparkline:Bool?
-//    var price_change_percentage:String?
-//    var localization:String?
-//    var market_data:Bool?
-//    var community_data:Bool?
-//    var develop_data:Bool?
-//
-//}
-
+enum CoinGeckoAPIKeys:String{
+//    URLQueryItem(name: "community_data", value: "true"),
+//    URLQueryItem(name: "developer_data", value: "true"),
+//    URLQueryItem(name: "sparkline", value: "true")
+    case id = "id"
+    case market_data = "market_data"
+    case community_data = "community_data"
+    case developer_data = "developer_data"
+    case sparkline = "sparkline"
+}
 
 enum CoinGeckoEndpoints{
     case coin

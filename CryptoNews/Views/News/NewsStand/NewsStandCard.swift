@@ -45,24 +45,23 @@ struct NewsStandCard: View {
     }
     
     var mainBody:some View{
-        GeometryReader{g in
-            let w = g.frame(in: .local).width
-            let h = g.frame(in: .local).height
-            
-            let main_h = h - 50
-            
-            VStack(alignment: .leading, spacing: 10){
-                self.mainBody(w: w, h: main_h)
-                RoundedRectangle(cornerRadius: 15)
-                    .frame(width: w, height: 1, alignment: .center)
-                    .foregroundColor(.gray)
-                    .padding(.top,5)
-                self.footer(w: w, h: 50)
-            }.frame(width: w, height: h, alignment: .topLeading)
+        //        GeometryReader{g in
+        let w = size.width - 30
+        let h = size.height - 30
+        
+        let main_h = h - 50
+        
+        return VStack(alignment: .leading, spacing: 10){
+            self.mainBody(w: w, h: main_h)
+            RoundedRectangle(cornerRadius: 15)
+                .frame(width: w, height: 1, alignment: .center)
+                .foregroundColor(.gray)
+                .padding(.top,5)
+            self.footer(w: w, h: 50)
         }.padding(15)
-        .frame(width: self.size.width, height: self.size.height, alignment: .center)
-        .background(BlurView(style: .systemThickMaterialDark))
-        .clipContent(clipping: .roundCornerMedium)
+            .frame(width: self.size.width, height: self.size.height, alignment: .center)
+            .background(BlurView(style: .systemThickMaterialDark))
+            .clipContent(clipping: .roundCornerMedium)
     }
 
     var body: some View {

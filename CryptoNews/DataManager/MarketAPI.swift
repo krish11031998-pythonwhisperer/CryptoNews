@@ -96,7 +96,7 @@ class MarketAPI:DAPI,ObservableObject{
     }
     
     func getMarketData(){
-        self.getInfo(_url: self.marketURL, completion: self.parseData(data:))
+        self.getData(_url: self.marketURL, completion: self.parseData(data:))
     }
     
     

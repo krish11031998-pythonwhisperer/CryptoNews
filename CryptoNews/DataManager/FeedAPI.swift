@@ -117,7 +117,7 @@ class FeedAPI:DAPI,ObservableObject{
     func getAssetInfo(){
         if !self.loading{
             self.loading = true
-            self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
         }
         
     }
@@ -127,7 +127,8 @@ class FeedAPI:DAPI,ObservableObject{
         if !self.loading{
             self.loading = true
             self.page += 1;
-            self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
+//            self.getDa
         }
         
     }
