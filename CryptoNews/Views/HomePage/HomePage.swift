@@ -21,12 +21,7 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            if self.context.selectedCurrency == nil{
-                TrackedAssetView(asset: currencies)
-            }else{
-                Color.clear.frame(width: totalWidth * 0.5, height: totalHeight * 0.4, alignment: .center)
-            }
-//                .opacity(self.context.selectedCurrency == nil ? 1 : 0)
+            self.trackedAsset
             CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc,leadingPadding: true)
             CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
             CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
@@ -41,14 +36,22 @@ struct HomePage: View {
             self.mainView
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
-        .onChange(of: self.context.selectedCurrency?.name) { newValue in
-            print("Currency choosen is : ",newValue)
-        }
+//        .onChange(of: self.context.selectedCurrency?.name) { newValue in
+//            print("Currency choosen is : ",newValue)
+//        }
     }
 }
 
 extension HomePage{
 
+    @ViewBuilder var trackedAsset:some View{
+        if self.context.selectedCurrency == nil{
+            TrackedAssetView(asset: currencies)
+        }else{
+            Color.clear.frame(width: totalWidth * 0.5, height: totalHeight * 0.4, alignment: .center)
+        }
+    }
+    
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }

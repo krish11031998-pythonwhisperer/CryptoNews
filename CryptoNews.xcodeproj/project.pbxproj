@@ -42,6 +42,8 @@
 		BC854F4E26FB222700C823EB /* AsyncContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC854F4D26FB222700C823EB /* AsyncContainer.swift */; };
 		BCAD1609271F5BCF0020F6A8 /* CurrencySymbolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */; };
 		BCB2978C26D57390005E2289 /* CurrencyInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */; };
+		BCB5BE0427514A1F00EA0394 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5BE0327514A1F00EA0394 /* NotificationModel.swift */; };
+		BCB5BE062751F3FD00EA0394 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5BE052751F3FD00EA0394 /* NotificationView.swift */; };
 		BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */; };
 		BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835326C181C0009D5822 /* LatestTweets.swift */; };
 		BCB7835626C1DB17009D5822 /* SystemButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835526C1DB17009D5822 /* SystemButton.swift */; };
@@ -104,6 +106,7 @@
 		BCE861BD2742D7A100F0E8C2 /* NewsSectionMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861BC2742D7A100F0E8C2 /* NewsSectionMain.swift */; };
 		BCE861BF2747F9DA00F0E8C2 /* NewsFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861BE2747F9DA00F0E8C2 /* NewsFeed.swift */; };
 		BCE861C1274817E000F0E8C2 /* TestFile.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861C0274817E000F0E8C2 /* TestFile.swift */; };
+		BCE861C3274D6E9200F0E8C2 /* NotificationTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */; };
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
 /* End PBXBuildFile section */
@@ -161,6 +164,8 @@
 		BC854F4D26FB222700C823EB /* AsyncContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AsyncContainer.swift; sourceTree = "<group>"; };
 		BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySymbolView.swift; sourceTree = "<group>"; };
 		BCB2978B26D57390005E2289 /* CurrencyInfoView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyInfoView.swift; sourceTree = "<group>"; };
+		BCB5BE0327514A1F00EA0394 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
+		BCB5BE052751F3FD00EA0394 /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTimeCardsView.swift; sourceTree = "<group>"; };
 		BCB7835326C181C0009D5822 /* LatestTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestTweets.swift; sourceTree = "<group>"; };
 		BCB7835526C1DB17009D5822 /* SystemButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemButton.swift; sourceTree = "<group>"; };
@@ -229,6 +234,7 @@
 		BCE861BC2742D7A100F0E8C2 /* NewsSectionMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsSectionMain.swift; sourceTree = "<group>"; };
 		BCE861BE2747F9DA00F0E8C2 /* NewsFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeed.swift; sourceTree = "<group>"; };
 		BCE861C0274817E000F0E8C2 /* TestFile.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestFile.swift; sourceTree = "<group>"; };
+		BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationTestView.swift; sourceTree = "<group>"; };
 		BCF98BA126D97E7000C45562 /* VideoPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoPlayer.swift; sourceTree = "<group>"; };
 		BCF98BA426D9811300C45562 /* CryptoYoutube.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoYoutube.swift; sourceTree = "<group>"; };
 		C1CBEBE1BBE6CDB5B6100756 /* Pods-CryptoNewsTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNewsTests.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNewsTests/Pods-CryptoNewsTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -371,6 +377,15 @@
 			path = CurrencyView;
 			sourceTree = "<group>";
 		};
+		BCB5BE00275149FE00EA0394 /* InAppNotifications */ = {
+			isa = PBXGroup;
+			children = (
+				BCB5BE0327514A1F00EA0394 /* NotificationModel.swift */,
+				BCB5BE052751F3FD00EA0394 /* NotificationView.swift */,
+			);
+			path = InAppNotifications;
+			sourceTree = "<group>";
+		};
 		BCB7834F26C180E5009D5822 /* Tweets */ = {
 			isa = PBXGroup;
 			children = (
@@ -400,6 +415,7 @@
 				BCC22D63272DC09A005E9BDB /* SlideTabView.swift */,
 				BCE861A72735534500F0E8C2 /* InfoGrid.swift */,
 				BCE861C0274817E000F0E8C2 /* TestFile.swift */,
+				BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -482,6 +498,7 @@
 		BCBC1DA026BE7DFD00B87E5C /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				BCB5BE00275149FE00EA0394 /* InAppNotifications */,
 				BCE861A9273AD9C200F0E8C2 /* LoginView */,
 				BCE861A2273549AB00F0E8C2 /* ProfileView */,
 				BCE8619F2732CFBB00F0E8C2 /* SearchPage  */,
@@ -941,6 +958,7 @@
 				BCC22D612729A765005E9BDB /* CoinGeckoAPI.swift in Sources */,
 				BCE861BA273DE11300F0E8C2 /* TrackedAssetView.swift in Sources */,
 				BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */,
+				BCB5BE062751F3FD00EA0394 /* NotificationView.swift in Sources */,
 				BCBC1DD826BF424D00B87E5C /* ImageView.swift in Sources */,
 				BCBC1DC226BE862400B87E5C /* Array.swift in Sources */,
 				BC6459352712455A00BAECBC /* SingleTransactionView.swift in Sources */,
@@ -979,6 +997,7 @@
 				BC4FD7D227243BD5007538AA /* CurrencyFeedMainPage.swift in Sources */,
 				BC854F4E26FB222700C823EB /* AsyncContainer.swift in Sources */,
 				BCBC1DC026BE835100B87E5C /* Constants.swift in Sources */,
+				BCE861C3274D6E9200F0E8C2 /* NotificationTestView.swift in Sources */,
 				BCE861A82735534500F0E8C2 /* InfoGrid.swift in Sources */,
 				BCBC1DB726BE824300B87E5C /* ChartsMainView.swift in Sources */,
 				BCB7836626C67874009D5822 /* TimerBlobs.swift in Sources */,
@@ -986,6 +1005,7 @@
 				BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */,
 				BCC22D5F2729A3EE005E9BDB /* CoinGeckoData.swift in Sources */,
 				BC305F0926D8209000826AB4 /* DAPI.swift in Sources */,
+				BCB5BE0427514A1F00EA0394 /* NotificationModel.swift in Sources */,
 				BC10D9D526F5CAE7007ADE34 /* BarChart.swift in Sources */,
 				BCB7835C26C31865009D5822 /* LatestRedditView.swift in Sources */,
 				BCBCACCB2705132100E76436 /* WebModelView.swift in Sources */,

@@ -64,6 +64,7 @@ struct CryptoNewsApp: App {
     var body: some Scene {
         WindowGroup {
             self.mainView
+//            NotificationViewTester()
 //            NewsSectionMain()
         }
     }

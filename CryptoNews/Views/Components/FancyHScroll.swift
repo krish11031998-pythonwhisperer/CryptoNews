@@ -47,6 +47,7 @@ struct FancyHScroll<T:View>: View {
             let size = g.frame(in: .local)
             let midX = g.frame(in: .global).midX
             
+            
             self.viewGen(data)
                 .frame(width: size.width, height: size.height, alignment: .center)
                 .scaleEffect(scaleEff(midX: midX))
@@ -64,7 +65,9 @@ struct FancyHScroll<T:View>: View {
                 }
         }else{
             view
-                .gesture(dragGesture)
+                .buttonify {
+                    self.onTap?(self.SP.swiped)
+                }
         }
     }
     

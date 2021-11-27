@@ -98,7 +98,10 @@ class FirebaseAPI:CompletionHandler{
                 print("There was an error while trying to add the txn to the database : ",err.localizedDescription)
                 
             }
-            completion?(err)
+            DispatchQueue.main.async {
+                completion?(err)
+            }
+            
         }
     }
     

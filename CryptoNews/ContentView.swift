@@ -44,9 +44,9 @@ extension ContentView{
                 SlideTabView {
                     return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
                 }
-            case .txn:
-                AddTxnMainView()
-                    .environmentObject(self.context)
+//            case .txn:
+//                AddTxnMainView()
+//                    .environmentObject(self.context)
             case .search:
                     SearchMainPage()
             case .profile:
@@ -72,7 +72,7 @@ extension ContentView{
                 .transition(.slideInOut)
                 .zIndex(3)
         }
-        if self.context.addTxn{
+        if self.context.addTxn || self.context.tab == .txn{
             AddTxnMainView(currency: self.context.selectedSymbol)
                 .transition(.slideInOut)
                 .zIndex(3)
@@ -85,6 +85,8 @@ extension ContentView{
             .edgesIgnoringSafeArea(.all)
             .zIndex(2)
         }
+        
+        
     
     }
     

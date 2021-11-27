@@ -36,6 +36,7 @@ class ContextData:ObservableObject{
     @Published private var _prev_tab:Tabs = .none
     @Published var loggedIn:LoginState = .undefined
     @Published var user:User = .init()
+    @Published var notification:NotificationModel = NotificationModel()
     
     
     init(){

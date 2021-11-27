@@ -364,7 +364,8 @@ struct TabButton:View{
         .frame(width: size.width, height: size.height, alignment: .center)
         .clipContent(clipping: .roundClipping)
         .defaultShadow()
-        .onTapGesture(perform: self.action)
+//        .onTapGesture(perform: self.action)
+        .buttonify(handler: self.action)
     }
     
 }

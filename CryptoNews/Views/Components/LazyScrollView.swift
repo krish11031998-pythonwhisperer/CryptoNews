@@ -45,7 +45,7 @@ struct LazyScrollView<T:View>: View {
     
     
     var refreshingView:some View{
-        VStack(alignment: .center, spacing: 10) {
+        LazyVStack(alignment: .center, spacing: 10) {
             ForEach(Array(self.data.enumerated()), id:\.offset) {_data in
                 let data = _data.element
                 self.viewGen(data)

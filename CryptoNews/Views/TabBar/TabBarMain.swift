@@ -17,10 +17,16 @@ struct TabBarMain: View {
         HStack(alignment: .center, spacing: 20) {
             ForEach(self.tabs,id:\.rawValue) {tab in
                 self.systemButtonView(tab: tab){
-                    if self.context.tab != tab{
+                    if self.context.tab != tab && tab != .txn{
                         DispatchQueue.main.async {
                             withAnimation(.easeOut) {
                                 self.context.tab = tab
+                            }
+                        }
+                    }else if self.context.tab != tab && tab == .txn{
+                        DispatchQueue.main.async {
+                            withAnimation(.easeOut) {
+                                self.context.addTxn.toggle()
                             }
                         }
                     }

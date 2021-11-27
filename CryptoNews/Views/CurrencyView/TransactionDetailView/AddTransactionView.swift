@@ -72,6 +72,12 @@ struct AddTransactionView:View {
                 self.context.addTxn.toggle()
             }
         }
+//        else if self.context.tab == .txn{
+//            withAnimation(.easeInOut) {
+//                self.context.tab = self.context.prev_tab
+//                self.context.prev_tab = .none
+//            }
+//        }
         
         if self.context.prev_tab != .none{
             self.context.tab = self.context.prev_tab
@@ -80,9 +86,11 @@ struct AddTransactionView:View {
     }
     
     func resetStates(){
-        DispatchQueue.main.async {
-            self.txn = .empty
-        }
+//        DispatchQueue.main.async {
+            self.txn.asset_quantity = "0"
+            self.context.addTxn = false
+            
+//        }
     }
     
     
@@ -119,6 +127,7 @@ struct AddTransactionView:View {
                 if let err_msg = err?.localizedDescription {
                     print("error : ",err_msg)
                 }else{
+//                        self.context.notification.updateNotification(heading:"Success!!",message:"You're Txn entry was successful !",onClose:self.onClose)
                     self.resetStates()
                 }
             }

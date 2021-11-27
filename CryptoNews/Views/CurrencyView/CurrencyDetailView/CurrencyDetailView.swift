@@ -57,16 +57,13 @@ extension CurrencyDetailView{
                 self.curveChart.clipContent(clipping: .roundClipping)
                 self.transactionHistoryView
                 self.CurrencySummary
-                self.SocialMediaMetric
+//                self.SocialMediaMetric
                 self.feedContainer
                 self.newsContainer
                 
             }.padding(.bottom,150)
     }
     
-//    var txnsForAsset:[Transaction]{
-//        return self.txns.filter({$0.symbol?.lowercased() == self.currency.symbol?.lowercased()})
-//    }
     
     var coinTotal:Float{
         return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.asset_quantity})
