@@ -36,9 +36,6 @@ struct HomePage: View {
             self.mainView
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
-//        .onChange(of: self.context.selectedCurrency?.name) { newValue in
-//            print("Currency choosen is : ",newValue)
-//        }
     }
 }
 

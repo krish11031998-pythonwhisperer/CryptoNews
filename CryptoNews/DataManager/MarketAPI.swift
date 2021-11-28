@@ -49,7 +49,7 @@ struct CoinMarketData:Codable{
     var timeSeries:Array<CoinMarketData>?
 }
 
-class MarketAPI:DAPI,ObservableObject{
+class MarketAPI:DAPI{
     @Published var data:Array<CoinMarketData> = .init()
     var sort:String?
     var limit:Int
@@ -80,7 +80,8 @@ class MarketAPI:DAPI,ObservableObject{
     
     
     
-    func parseData(data:Data){
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(AllMarketData.self, from: data)
@@ -96,7 +97,8 @@ class MarketAPI:DAPI,ObservableObject{
     }
     
     func getMarketData(){
-        self.getData(_url: self.marketURL, completion: self.parseData(data:))
+//        self.getData(_url: self.marketURL, completion: self.parseData(data:))
+        self.getData(_url: self.marketURL)
     }
     
     

@@ -70,7 +70,7 @@ extension LatestTweets{
                     Color.clear.frame(width: size.width, height: size.height, alignment: .center)
                 }
             })
-        }else{
+        }else if self.tweetsAPI.loading{
             Color.clear.frame(width: size.width, height: size.height, alignment: .center).overlay(ProgressView())
         }
     }

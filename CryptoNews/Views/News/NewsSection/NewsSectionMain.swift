@@ -30,7 +30,8 @@ struct NewsSectionMain: View {
     var cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
     
     func autoTimedCards() -> some View{
-        FancyHScroll(data: Array(self.data[0..<5]), timeLimit: 30, size: self.cardSize, scrollable: true, onTap: self.onTapHandle(_:) ,viewGen: self.autoTimeCardViewGen(_:))
+        let data = Array(self.data[0..<self.data.count - 2])
+        return FancyHScroll(data: data, timeLimit: 30, size: self.cardSize, scrollable: true, onTap: self.onTapHandle(_:) ,viewGen: self.autoTimeCardViewGen(_:))
     }
     
     
@@ -55,16 +56,14 @@ struct NewsSectionMain: View {
     
     func moreCards() -> some View{
         HStack(alignment: .center, spacing: 10) {
-            ForEach(Array(self.data[5...6].enumerated()),id:\.offset){ _data in
+            ForEach(Array(self.data[(self.data.count - 2)...].enumerated()),id:\.offset){ _data in
                 let data = _data.element
                 
                 NewsCard(news: data, size: .init(width: self.cardSize.width * 0.5 - 5, height: self.cardSize.height * 0.75))
                     .buttonify {
-//                        withAnimation(.easeInOut) {
-                            if self.context.selectedNews?.lunar_id != data.lunar_id{
-                                self.context.selectedNews = data
-                            }
-//                        }
+                        if self.context.selectedNews?.lunar_id != data.lunar_id{
+                            self.context.selectedNews = data
+                        }
                     }
             }
         }.frame(width: totalWidth, alignment: .center)
@@ -79,7 +78,7 @@ struct NewsSectionMain: View {
                     self.moreCards()
                 }
                 .aspectRatio(contentMode: .fill)
-                .frame(width: totalWidth,height: self.cardSize.height * 1.75, alignment: .center)
+                .frame(width: totalWidth, alignment: .center)
             }else{
                 ProgressView()
             }

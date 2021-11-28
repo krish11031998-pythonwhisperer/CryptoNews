@@ -79,7 +79,7 @@ class AssetData:Identifiable,Codable,Equatable{
 }
 
 
-class AssetAPI:DAPI,ObservableObject{
+class AssetAPI:DAPI{
     var currency:String
     @Published var data:AssetData? = nil
 //    static var shared:AssetAPI = .init()
@@ -117,7 +117,8 @@ class AssetAPI:DAPI,ObservableObject{
         return result
     }
     
-    func parseData(data:Data){
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(Asset.self, from: data)
@@ -133,7 +134,8 @@ class AssetAPI:DAPI,ObservableObject{
     }
     
     func getAssetInfo(){
-        self.getData(_url: self.assetURL, completion: self.parseData(data:))
+//        self.getData(_url: self.assetURL, completion: self.parseData(data:))
+        self.getData(_url: self.assetURL)
     }
     
     func getUpdateAssetInfo(completion: @escaping (AssetData?) -> Void){
