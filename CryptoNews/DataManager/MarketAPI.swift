@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct AllMarketData:Codable{
     var data:Array<CoinMarketData>?
@@ -17,7 +18,7 @@ enum Order:String{
     case incr = "incr"
 }
 
-struct CoinMarketData:Codable{
+struct CoinMarketData:Codable,Equatable{
     var id:Int?
     var s:String?
     var n:String?
@@ -87,12 +88,17 @@ class MarketAPI:DAPI{
             let res = try decoder.decode(AllMarketData.self, from: data)
             if let data = res.data{
                 DispatchQueue.main.async {
-                    self.data = data
+                    withAnimation(.easeInOut) {
+                        self.data = data
+                    }
                 }
             }
             
         }catch{
             print("There was an error while : ",error.localizedDescription)
+        }
+        DispatchQueue.main.async {
+            self.loading = false
         }
     }
     

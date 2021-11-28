@@ -40,7 +40,7 @@ class TxnFormDetails:ObservableObject{
 
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
-    @State var txn:TxnFormDetails = .empty
+    @StateObject var txn:TxnFormDetails = .empty
     @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
@@ -142,9 +142,12 @@ struct AddTransactionView:View {
         let aapi = AssetAPI.shared(currency: sym)
         aapi.getAssetInfo { data in
             guard let data = data else {return}
-            withAnimation(.easeInOut) {
-                self.currentAsset = data
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self.currentAsset = data
+                }
             }
+            
         }
     }
     
@@ -164,15 +167,23 @@ struct AddTransactionView:View {
     
     var body: some View {
         ZStack(alignment:.bottom){
-            Container(heading: self.currency ?? "Choose the currency", width: totalWidth,onClose: self.onClose) { w in
+            Container(heading: self.currency, width: totalWidth,onClose: self.onClose) { w in
                 VStack(alignment: .leading, spacing: 10) {
                     if self.currentAsset == nil{
-                        CurrencyCardView(currency: $coin,width: w)
+                        CurrencyCardView(width: w)
+                            .onPreferenceChange(CurrencySelectorPreference.self) { newValue in
+                                if self.coin != newValue{
+                                    self.coin = newValue
+                                }
+                            }
                     }
                     self.transactionType.frame(width: w, alignment: .leading)
                     self.txnValueField.frame(width: w, alignment: .center)
                     self.detailButtons.padding(.vertical,10)
-                    self.numPad(w: w)
+                    if self.currentAsset != nil{
+                        self.numPad(w: w)
+                    }
+                    
 //                    Spacer()
                     TabButton(width: w, height: 50, title: self.isKeyboardOn ? "Update" : "Add Transaction", textColor: .white,action: self.buttonHandle)
                 }
@@ -231,7 +242,7 @@ extension AddTransactionView{
     
     
     var currency:String{
-        return self._currency ?? self.coin.s ?? "???"
+        return self._currency ?? self.coin.s ?? "Choose Currency"
     }
     
     
@@ -250,6 +261,21 @@ extension AddTransactionView{
         .zIndex(2)
     }
     
+    func numPadEventHandler(val:String){
+        DispatchQueue.main.async {
+            if val != "Del"{
+                if self.txn.asset_quantity == "0"{
+                    self.txn.asset_quantity = val
+                }else{
+                    self.txn.asset_quantity += val
+                }
+            }else if self.txn.asset_quantity.count > 0{
+                self.txn.asset_quantity.removeLast()
+            }
+        }
+        
+    }
+    
     func numPad(w:CGFloat) -> some View{
         let numIconW = (w * 0.3) - 2.5
         var numPadSeq = Array(1...9).map({"\($0)"})
@@ -260,13 +286,7 @@ extension AddTransactionView{
                 MainText(content: numVal, fontSize: 17, color: .white, fontWeight: .semibold)
                     .frame(width: numIconW, height: numIconW * 0.6, alignment: .center)
                     .buttonify {
-                        print("Clicked : ",numVal)
-                        if self.txn.asset_quantity == "0"{
-                            self.txn.asset_quantity = numVal
-                        }else{
-                            self.txn.asset_quantity += numVal
-                        }
-                        
+                        self.numPadEventHandler(val: numVal)
                     }
             }
         }
@@ -326,17 +346,19 @@ extension AddTransactionView{
     
     var txnValueField:some View{
         VStack(alignment: .center, spacing: 10) {
-            let color = Color.white
-            let size:CGFloat = self.entryType == "coin" ? self.value_size : 30
-            
+            let color:Color = self.txn.asset_quantity != "" ? .white : .gray
+            let quantity:String = self.txn.asset_quantity != "" ? self.txn.asset_quantity : "0"
 //            TextField("0",text: self.$txn.asset_quantity)
 //                .coloredTextField(color: color,size: size,rightViewTxt: self.currency)
             HStack(alignment: .top, spacing: 5) {
-                MainText(content: self.txn.asset_quantity, fontSize: 45, color: .white, fontWeight: .semibold)
-                MainText(content: self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
+                MainText(content: quantity, fontSize: self.value_size, color: color, fontWeight: .semibold)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                MainText(content: self.currency == "Choose Currency" ? "XXX" : self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
             }
             MainText(content: "\(convertToMoneyNumber(value: self.currentAsset?.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
         }.padding(.vertical,10)
+            .frame(height: totalHeight * 0.15, alignment: .center)
     }
     
     

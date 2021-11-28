@@ -111,6 +111,9 @@ class FeedAPI:DAPI{
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
         
     }
     

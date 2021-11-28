@@ -7,6 +7,17 @@
 
 import SwiftUI
 
+class CurrencySelectorPreference:PreferenceKey{
+    
+    static var defaultValue:CoinMarketData = .init()
+    
+    static func reduce(value: inout CoinMarketData, nextValue: () -> CoinMarketData) {
+        value = nextValue()
+    }
+    
+    
+}
+
 struct CurrencyViewButtonModifier:ViewModifier{
     var large:Bool
     @ViewBuilder func body(content: Content) -> some View {
@@ -56,11 +67,12 @@ struct CurrencyCard:View{
 
 struct CurrencyCardView: View {
     @StateObject var MAPI:MarketAPI
-    @Binding var currency:CoinMarketData
+//    @Binding var currency:CoinMarketData
     var width:CGFloat
     var large:Bool
-    init(currency:Binding<CoinMarketData>,width:CGFloat = totalWidth,large:Bool = false){
-        self._currency = currency
+    @State var currency:CoinMarketData = .init()
+
+    init(width:CGFloat = totalWidth,large:Bool = false){
         self._MAPI = .init(wrappedValue: .init(sort: "d", limit: 100, order: .desc))
         self.large = large
         self.width = width
@@ -75,6 +87,7 @@ struct CurrencyCardView: View {
             }
             
         }.onAppear(perform: self.onAppear)
+            .preference(key: CurrencySelectorPreference.self, value: self.currency)
     }
 }
 
