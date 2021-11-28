@@ -439,22 +439,23 @@ extension View{
         self.modifier(SpringButton(handleTap: handler))
     }
     
-    func coloredTextField(color:Color,size:CGFloat = 50,maxWidth:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{
+    func coloredTextField(color:Color,size:CGFloat = 50,width:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{
         if let rightViewTxt = rightViewTxt {
             return AnyView(HStack(alignment: .firstTextBaseline, spacing: 5) {
                 self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
-                    .multilineTextAlignment(.trailing)
-                    .aspectRatio(contentMode:.fit)
-                    .frame(idealWidth:20,maxWidth: 100,alignment: .center)
+//                    .multilineTextAlignment(.leading)
+                    .frame(width: width, alignment: .topLeading)
+                    .truncationMode(.tail)
                     .keyboardType(.decimalPad)
 
                 MainText(content: rightViewTxt, fontSize: 13, color: .white, fontWeight: .bold, style: .monospaced)
             }.frame(alignment: .top))
         }
         return AnyView(self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
-                        .multilineTextAlignment(.trailing)
+//                        .multilineTextAlignment(.leading)
                         .aspectRatio(contentMode:.fit)
-                        .frame(idealWidth:20,maxWidth: 100,alignment: .center)
+                        .frame(width: width, alignment: .topLeading)
+                        .truncationMode(.tail)
                         .keyboardType(.numberPad)
         )
     }
@@ -705,14 +706,14 @@ struct GradientShadows:View{
     
 }
 
-struct Stylings_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack{
-            AnimatedWaves(image: UIImage(named: "NightLifeStockImage")!, offset: 0.15)
-            
-            Spacer()
-        }.edgesIgnoringSafeArea(.all)
-        
-    }
-}
+//struct Stylings_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VStack{
+//            AnimatedWaves(image: UIImage(named: "NightLifeStockImage")!, offset: 0.15)
+//
+//            Spacer()
+//        }.edgesIgnoringSafeArea(.all)
+//
+//    }
+//}
 

@@ -83,14 +83,9 @@ struct MainText: View {
     
     var body: some View {
         Text(self.content)
-//            .font(self.style != .normal ? .custom(self.style.rawValue, size: self.fontSize) : Font.system(size: self.fontSize, weight: .regular, design: .monospaced))
-//
             .font(_font_)
             .fontWeight(self.fontWeight)
             .foregroundColor(self.color)
-//            .padding(.all,addBG ? 10 : 0)
-//            .background(addBG ? self.oppColor : .clear)
-//            .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
             .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor))
             
     }

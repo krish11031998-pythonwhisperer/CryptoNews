@@ -54,10 +54,16 @@ struct CurrencyCard:View{
         return self.coin.s ?? ""
     }
     
+    var width:CGFloat{
+        return large ? 100 : 30
+    }
+    
     var body: some View{
         VStack(alignment: .center, spacing: 5) {
-            CurrencySymbolView(currency: sym, size: .medium, width: large ? 100 : 30)
-            MainText(content: sym, fontSize: large ? 25 : 12, color: .white, fontWeight: .regular, style: .normal)
+            CurrencySymbolView(currency: sym, size: .medium, width: self.width)
+            MainText(content: sym, fontSize: 10, color: .white, fontWeight: .regular, style: .normal)
+                .lineLimit(1)
+                .frame(minWidth:width,maxWidth:50, alignment: .center)
         }.modifier(CurrencyViewButtonModifier(large: large))
         .buttonify(handler: self.onTap)
     }
@@ -140,8 +146,11 @@ extension CurrencyCardView{
 
 }
 
-//struct CurrencyCardView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CurrencyCardView()
-//    }
-//}
+struct CurrencyCardView_Previews: PreviewProvider {
+    static var previews: some View {
+        CurrencyCardView(large: false)
+//            .padding(.vertical)
+            .background(Color.mainBGColor)
+            .ignoresSafeArea()
+    }
+}
