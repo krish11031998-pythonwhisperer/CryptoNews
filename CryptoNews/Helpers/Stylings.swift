@@ -181,20 +181,25 @@ struct SpringButton:ViewModifier{
 struct Blob:ViewModifier{
     var color:Color
     
-    @ViewBuilder var bg:some View{
-        if self.color == .clear{
-            BlurView(style: .systemThinMaterialDark)
-        }else{
-            self.color
-        }
-    }
+//    @ViewBuilder var bg:some View{
+////        if self.color == .clear{
+//////            BlurView(style: .systemThinMaterialDark)
+////
+////        }else{
+////            self.color
+////        }
+//        self.color
+//    }
     
     func body(content: Content) -> some View {
         content
             .padding(.horizontal,10)
             .padding(.vertical,10)
-            .background(bg)
+            .background(color)
             .clipContent(clipping: .squareClipping)
+            .overlay(RoundedRectangle(cornerRadius: Clipping.squareClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
+            
+            
     }
 }
 

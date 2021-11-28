@@ -154,7 +154,7 @@ struct CurrencyView:View{
         let bgcolor = self.context.user.user?.watching.contains(self.currencyHeading) ?? false ? Color.white : Color.black
         return AnyView(HStack(alignment: .center, spacing: 10) {
             SystemButton(b_name: "heart", color: color , haveBG: true, size: .init(width: 10, height: 10), bgcolor: bgcolor, alignment: .vertical) {
-                if let sym = self.currency.symbol{
+                if let sym = self.currency.symbol, let included = self.context.user.user?.watching.contains(sym), !included{
                     self.context.user.user?.watching.append(sym)
                     self.context.user.updateUser()
                 }

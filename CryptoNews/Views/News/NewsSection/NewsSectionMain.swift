@@ -26,11 +26,12 @@ struct NewsSectionMain: View {
             self.newsFeed.getAssetInfo()
         }
     }
-    
+
     var cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
     
     func autoTimedCards() -> some View{
-        FancyHScroll(data: Array(self.data[0..<5]), timeLimit: 30, size: self.cardSize, scrollable: true, onTap: self.onTapHandle(_:) ,viewGen: self.autoTimeCardViewGen(_:))
+        let data = Array(self.data[..<(self.data.count - 2)])
+        return FancyHScroll(data: data, timeLimit: 30, size: self.cardSize, scrollable: true, onTap: self.onTapHandle(_:) ,viewGen: self.autoTimeCardViewGen(_:))
     }
     
     
@@ -55,7 +56,7 @@ struct NewsSectionMain: View {
     
     func moreCards() -> some View{
         HStack(alignment: .center, spacing: 10) {
-            ForEach(Array(self.data[5...6].enumerated()),id:\.offset){ _data in
+            ForEach(Array(self.data[(self.data.count - 2)...].enumerated()),id:\.offset){ _data in
                 let data = _data.element
                 
                 NewsCard(news: data, size: .init(width: self.cardSize.width * 0.5 - 5, height: self.cardSize.height * 0.75))
@@ -75,6 +76,8 @@ struct NewsSectionMain: View {
         ZStack{
             if !self.newsFeed.FeedData.isEmpty{
                 VStack(alignment: .leading, spacing: 10) {
+//                Group{
+                    
                     self.autoTimedCards()
                     self.moreCards()
                 }

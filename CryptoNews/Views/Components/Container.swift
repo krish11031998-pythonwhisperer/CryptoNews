@@ -69,11 +69,15 @@ struct Container<T:View>: View {
     @ViewBuilder var mainBody:some View{
         let w = width - 30
         VStack(alignment: .leading, spacing: 10) {
+//        Group{
             if let heading = self.heading{
                 self.headingView(heading:heading,w: w)
             }
             self.innerView(w).padding(.top,10)
-        }.padding(.horizontal, self.ignoreSides ? 0 : 15)
+        }
+            
+//        }
+        .padding(.horizontal, self.ignoreSides ? 0 : 15)
         .frame(width: self.width, alignment: .leading)
        
         

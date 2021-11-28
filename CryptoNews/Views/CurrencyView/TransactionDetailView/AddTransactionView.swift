@@ -19,13 +19,14 @@ class TxnFormDetails:ObservableObject{
     @Published var time:String = ""
     @Published var type:String  = ""
     @Published var asset:String  = ""
-    @Published var asset_quantity:String  = ""
-    @Published var asset_spot_price:String = ""
-    @Published var subtotal:String = ""
+    @Published var asset_quantity:String  = "0"
+    @Published var asset_spot_price:String = "0"
+    @Published var subtotal:String = "0"
     @Published var total_inclusive_price:String = ""
-    @Published var fee:String = ""
+    @Published var fee:String = "0"
     @Published var memo:String = ""
     @Published var uid:String  = ""
+    @Published var added_Success:Bool? = nil
     
     
     
@@ -72,16 +73,14 @@ struct AddTransactionView:View {
                 self.context.addTxn.toggle()
             }
         }
-//        else if self.context.tab == .txn{
-//            withAnimation(.easeInOut) {
-//                self.context.tab = self.context.prev_tab
-//                self.context.prev_tab = .none
-//            }
-//        }
         
-        if self.context.prev_tab != .none{
-            self.context.tab = self.context.prev_tab
-            self.context.prev_tab = .none
+        if self.context.tab == .txn{
+            if self.context.prev_tab != .none{
+                self.context.tab = self.context.prev_tab
+                self.context.prev_tab = .none
+            }else{
+                self.context.tab = .home
+            }
         }
     }
     
@@ -126,9 +125,13 @@ struct AddTransactionView:View {
             TransactionAPI.shared.uploadTransaction(txn: txn.parseToTransaction()) { err in
                 if let err_msg = err?.localizedDescription {
                     print("error : ",err_msg)
+                    DispatchQueue.main.async {
+                        self.txn.added_Success = false
+                    }
                 }else{
-//                        self.context.notification.updateNotification(heading:"Success!!",message:"You're Txn entry was successful !",onClose:self.onClose)
-                    self.resetStates()
+                    DispatchQueue.main.async {
+                        self.txn.added_Success = true
+                    }
                 }
             }
         }
@@ -158,7 +161,6 @@ struct AddTransactionView:View {
             }
         }
     }
-
     
     var body: some View {
         ZStack(alignment:.bottom){
@@ -168,10 +170,10 @@ struct AddTransactionView:View {
                         CurrencyCardView(currency: $coin,width: w)
                     }
                     self.transactionType.frame(width: w, alignment: .leading)
-                    Spacer().frame(height: totalHeight * 0.2, alignment: .center)
                     self.txnValueField.frame(width: w, alignment: .center)
-                    Spacer()
-                    self.detailButtons
+                    self.detailButtons.padding(.vertical,10)
+                    self.numPad(w: w)
+//                    Spacer()
                     TabButton(width: w, height: 50, title: self.isKeyboardOn ? "Update" : "Add Transaction", textColor: .white,action: self.buttonHandle)
                 }
             }
@@ -211,6 +213,11 @@ struct AddTransactionView:View {
         .keyboardAdaptive(isKeyBoardOn: $isKeyboardOn)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
         .onChange(of: (self.currentAsset ?? .init()),perform: self.updateSpotPrice(asset:))
+        .onChange(of: self.txn.added_Success) { newValue in
+            if let value = newValue{
+                print("The txn is : ",value)
+            }
+        }
     }
 }
 
@@ -224,7 +231,7 @@ extension AddTransactionView{
     
     
     var currency:String{
-        return self._currency ?? self.coin.s ?? "Choose Currency"
+        return self._currency ?? self.coin.s ?? "???"
     }
     
     
@@ -243,13 +250,39 @@ extension AddTransactionView{
         .zIndex(2)
     }
     
+    func numPad(w:CGFloat) -> some View{
+        let numIconW = (w * 0.3) - 2.5
+        var numPadSeq = Array(1...9).map({"\($0)"})
+        numPadSeq.append(contentsOf: [".","0","Del"])
+        let col = GridItem(.adaptive(minimum: numIconW, maximum: numIconW))
+        let res = LazyVGrid(columns: [col], alignment: .center, spacing: 5) {
+            ForEach(numPadSeq, id:\.self) { numVal in
+                MainText(content: numVal, fontSize: 17, color: .white, fontWeight: .semibold)
+                    .frame(width: numIconW, height: numIconW * 0.6, alignment: .center)
+                    .buttonify {
+                        print("Clicked : ",numVal)
+                        if self.txn.asset_quantity == "0"{
+                            self.txn.asset_quantity = numVal
+                        }else{
+                            self.txn.asset_quantity += numVal
+                        }
+                        
+                    }
+            }
+        }
+
+        return res
+    }
+    
+    
     var detailButtons:some View{
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 5) {
                 self.dateField
                 self.feeButton
                 self.spotPriceView
-            }
+            }.padding(.horizontal,2.5)
+                .padding(.vertical,5)
         }
     }
     
@@ -295,10 +328,15 @@ extension AddTransactionView{
         VStack(alignment: .center, spacing: 10) {
             let color = Color.white
             let size:CGFloat = self.entryType == "coin" ? self.value_size : 30
-            TextField("0",text: self.$txn.asset_quantity)
-                .coloredTextField(color: color,size: size,rightViewTxt: self.currency)
+            
+//            TextField("0",text: self.$txn.asset_quantity)
+//                .coloredTextField(color: color,size: size,rightViewTxt: self.currency)
+            HStack(alignment: .top, spacing: 5) {
+                MainText(content: self.txn.asset_quantity, fontSize: 45, color: .white, fontWeight: .semibold)
+                MainText(content: self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
+            }
             MainText(content: "\(convertToMoneyNumber(value: self.currentAsset?.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
-        }
+        }.padding(.vertical,10)
     }
     
     
@@ -360,7 +398,7 @@ extension AddTransactionView{
     func spotPriceView(w:CGFloat) -> some View{
         self.swipeCard(w: w, h: totalHeight * 0.5, heading: "Update Spot Price") {
             return AnyView(TextField("0", text: self.$txn.asset_spot_price)
-                            .coloredTextField(color: .white,size:30,rightViewTxt: "USD").keyboardType(.numberPad)
+                    .coloredTextField(color: .white,size:30,rightViewTxt: "USD").keyboardType(.numberPad)
             )
         } action: {
             self.updateModal(type: .none)
