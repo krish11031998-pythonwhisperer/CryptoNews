@@ -26,11 +26,10 @@ struct NewsSectionMain: View {
             self.newsFeed.getAssetInfo()
         }
     }
-    
     var cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
     
     func autoTimedCards() -> some View{
-        let data = Array(self.data[0..<self.data.count - 2])
+        let data = Array(self.data[..<(self.data.count - 2)])
         return FancyHScroll(data: data, timeLimit: 30, size: self.cardSize, scrollable: true, onTap: self.onTapHandle(_:) ,viewGen: self.autoTimeCardViewGen(_:))
     }
     

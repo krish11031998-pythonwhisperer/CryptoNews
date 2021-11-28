@@ -20,6 +20,7 @@ struct HomePage: View {
     
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
+//            LazyVStack(alignment: .leading, spacing: 10){
             Spacer().frame(height: 50)
             self.trackedAsset
             CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc,leadingPadding: true)
@@ -28,6 +29,7 @@ struct HomePage: View {
             LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
             self.CurrencyFeed
             Spacer(minLength: 200)
+//            }
         }.zIndex(1)
     }
     
@@ -63,16 +65,18 @@ extension HomePage{
     var CurrencyFeed:some View{
         return Group{
             ForEach(self.currencies,id:\.self) {currency in
-                AsyncContainer(size: .zero) {
-                    self.CurrencyFeedEl(currency)
-                }
+                self.CurrencyFeedEl(currency)
+                    .padding(.vertical,15)
             }
         }
     }
 }
 
 struct HomePage_Previews: PreviewProvider {
+    @StateObject static var context:ContextData = .init()
     static var previews: some View {
         HomePage()
+            .environmentObject(HomePage_Previews.context)
+            .background(Color.mainBGColor.ignoresSafeArea())
     }
 }

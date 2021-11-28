@@ -19,10 +19,11 @@ struct AsyncContainer<T:View>: View {
     
     var progressView:some View{
         GeometryReader { g -> AnyView in
-            let maxY = g.frame(in: .global).maxY
+//            let maxY = g.frame(in: .global).maxY
+            let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-                if !self.showView && maxY < totalHeight{
+                if !self.showView && minY < totalHeight * 1.2{
                     withAnimation(.easeInOut) {
                         self.showView.toggle()
                     }

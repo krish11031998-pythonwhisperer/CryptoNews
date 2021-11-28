@@ -49,9 +49,11 @@ struct FancyHScroll<T:View>: View {
             
             
             self.viewGen(data)
-                .frame(width: size.width, height: size.height, alignment: .center)
                 .scaleEffect(scaleEff(midX: midX))
                 .animation(.easeInOut)
+                .frame(width: size.width, height: size.height, alignment: .center)
+                
+                
 
         }.padding(.horizontal,15)
             .frame(width: totalWidth, height: size.height, alignment: .center)
@@ -153,7 +155,6 @@ struct FancyHScroll<T:View>: View {
             }
         })
         .onChange(of: self.SP.swiped, perform: self.resetTimer)
-//        .animation(.easeInOut)
        
     }
 }
