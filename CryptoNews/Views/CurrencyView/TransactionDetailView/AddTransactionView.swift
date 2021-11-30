@@ -50,12 +50,12 @@ class TxnFormDetails:ObservableObject{
 
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
+    @Namespace var animation
     @StateObject var txn:TxnFormDetails = .empty
     @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
     @State var showModal:ModalType = .none
-//    @State var isKeyboardOn:Bool = false
     @State var coin:CoinMarketData = .init()
     @State var _currency:String? = nil
     @State var currentAsset: AssetData? = nil
@@ -187,7 +187,7 @@ struct AddTransactionView:View {
     var body: some View {
         ZStack(alignment:.bottom){
             Container(heading: self.currency, width: totalWidth,onClose: self.onClose) { w in
-                VStack(alignment: .leading, spacing: 10) {
+                VStack(alignment: .leading, spacing: 20) {
                     if self.currentAsset == nil{
                         CurrencyCardView(width: w)
                             .onPreferenceChange(CurrencySelectorPreference.self) { newValue in
@@ -196,9 +196,9 @@ struct AddTransactionView:View {
                                 }
                             }
                     }
-                    self.transactionType.frame(width: w, alignment: .leading)
                     self.txnValueField.frame(width: w, alignment: .center)
-                    self.detailButtons.padding(.vertical,10)
+                    self.transactionType(w:w)
+                    self.detailButtons
                     if self.currentAsset != nil{
                         self.numPad(w: w)
                     }
@@ -230,7 +230,6 @@ struct AddTransactionView:View {
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
         .onDisappear(perform: self.onDisappear)
-//        .keyboardAdaptive(isKeyBoardOn: $isKeyboardOn)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
         .onChange(of: (self.currentAsset ?? .init()),perform: self.updateSpotPrice(asset:))
         .onChange(of: self.txn.added_Success) { newValue in
@@ -321,11 +320,30 @@ extension AddTransactionView{
         }
     }
     
-    var transactionType:some View{
-        HStack(alignment: .center, spacing: 5) {
-            ForEach(self.types, id: \.rawValue) {type in
+    func transactionType(w:CGFloat) -> some View{
+        let el_width = w/4 - 2.5
+        return HStack(alignment: .center, spacing: 5) {
+            ForEach(Array(self.types.enumerated()), id: \.offset) {_type in
+                let type = _type.element
+                let idx = _type.offset
+                let id = self.type == type
+                
+                
                 MainText(content: type.rawValue.capitalized, fontSize: 15, color: .white, fontWeight: .bold, style: .normal)
-                    .blobify(color: self.type == type ? .green : .clear)
+                    .padding(.vertical,15)
+                    .frame(width: el_width, alignment: .center)
+                    .background(
+                        ZStack(alignment: .center){
+                            if id{
+                                Color.mainBGColor
+                                    .frame(width: el_width, alignment: .center)
+                                    .clipContent(clipping: .roundClipping)
+                                    .matchedGeometryEffect(id: "box", in: self.animation,properties: .frame)
+                                    .animation(.linear(duration: 0.175))
+                            }else{
+                                Color.clear
+                            }
+                        })
                     .buttonify {
                         withAnimation(.easeInOut) {
                             if self.type != type{
@@ -333,8 +351,10 @@ extension AddTransactionView{
                             }
                         }
                     }
+               
             }
-        }
+        }.frame(width: w, alignment: .center)
+        .background(BlurView(style: .regular).clipContent(clipping: .roundClipping))
     }
     
     
@@ -382,7 +402,7 @@ extension AddTransactionView{
             date = self.date.formatted(date: .abbreviated, time: .shortened)
         }
         return MainText(content: date, fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
-            .blobify(color: .clear)
+            .blobify(color: AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .date)
             }
@@ -425,7 +445,7 @@ extension AddTransactionView{
     var spotPriceView:some View{
         let spot_price = self.txn.asset_spot_price
         return MainText(content: "Spot Price : $\(spot_price == "" ? "0" : spot_price)", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
-            .blobify(color: spot_price == "" ? .clear : .green)
+            .blobify(color: spot_price == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .spot_price)
             }
@@ -435,7 +455,7 @@ extension AddTransactionView{
     var feeButton:some View{
         let fee_str = self.txn.fee
         return MainText(content: "Fee: $\(fee_str == "" ? "0" : fee_str)", fontSize: 15,color: .white, fontWeight: .semibold)
-            .blobify(color: fee_str == "0" || fee_str == "" ? .clear : .green)
+            .blobify(color: fee_str == "0" || fee_str == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .fee)
             }
@@ -469,7 +489,8 @@ struct AddTxnMainView:View{
     
     var body: some View{
         ZStack(alignment: .center) {
-            mainBGView
+//            mainBGView
+            Color.mainBGColor
             AddTransactionView(currentAsset: asset, curr_str: self.currency)
         }.edgesIgnoringSafeArea(.top).frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
@@ -484,12 +505,9 @@ struct AddTransactionView_Previews: PreviewProvider {
     @StateObject static var context:ContextData = .init()
     
     static var previews: some View {
-//        AddTxnMainView()
-//            .edgesIgnoringSafeArea(.all)
         AddTransactionView(currentAsset: nil, curr_str: nil)
             .environmentObject(self.context)
             .background(Color.mainBGColor)
             .ignoresSafeArea()
-//            .animation(.easeInOut)
     }
 }

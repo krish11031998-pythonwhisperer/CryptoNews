@@ -179,18 +179,8 @@ struct SpringButton:ViewModifier{
 }
 
 struct Blob:ViewModifier{
-    var color:Color
-    
-//    @ViewBuilder var bg:some View{
-////        if self.color == .clear{
-//////            BlurView(style: .systemThinMaterialDark)
-////
-////        }else{
-////            self.color
-////        }
-//        self.color
-//    }
-    
+    var color:AnyView
+
     func body(content: Content) -> some View {
         content
             .padding(.horizontal,10)
@@ -239,12 +229,6 @@ struct BasicCard:ViewModifier{
                 .cornerRadius(20)
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         }
-//        content
-//            .padding()
-//            .frame(width: self.size.width, height: self.size.height, alignment: .center)
-//            .background(BlurView(style: .systemThinMaterialDark))
-//            .cornerRadius(20)
-//            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
     }
 }
 
@@ -431,7 +415,7 @@ extension View{
         self.transition(.slideInOut)
     }
     
-    func blobify(color:Color = .clear) -> some View{
+    func blobify(color:AnyView = AnyView(Color.clear)) -> some View{
         self.modifier(Blob(color: color))
     }
     

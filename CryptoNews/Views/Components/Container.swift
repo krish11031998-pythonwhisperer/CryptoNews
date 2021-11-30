@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-
 struct Container<T:View>: View {
     var innerView:(CGFloat) -> T
     var rightButton:(() -> AnyView)? = nil

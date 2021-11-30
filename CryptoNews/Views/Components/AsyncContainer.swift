@@ -11,7 +11,7 @@ struct AsyncContainer<T:View>: View {
     var view:T
     var size:CGSize
     @State var showView:Bool = false
-    init(size:CGSize,@ViewBuilder view: () -> T){
+    init(size:CGSize = .init(width: totalWidth - 20, height: 25),@ViewBuilder view: () -> T){
         self.view = view()
         self.size = size
     }
@@ -23,7 +23,7 @@ struct AsyncContainer<T:View>: View {
             let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-                if !self.showView && minY < totalHeight * 1.2{
+                if !self.showView && minY < totalHeight * 0.75{
                     withAnimation(.easeInOut) {
                         self.showView.toggle()
                     }

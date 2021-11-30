@@ -38,21 +38,17 @@ struct ContentView: View {
 extension ContentView{
     
     @ViewBuilder var mainBody:some View{
-        switch(self.context.tab){
-            case .home: self.homeView
-            case .info :
-                SlideTabView {
-                    return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
-                }
-//            case .txn:
-//                AddTxnMainView()
-//                    .environmentObject(self.context)
-            case .search:
-                    SearchMainPage()
-            case .profile:
-                    ProfileView()
-            default: Color.clear
+        TabView(selection: self.$context.tab) {
+            self.homeView.tag(Tabs.home)
+            SearchMainPage()
+                .tag(Tabs.search)
+            SlideTabView {
+                return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+            }.tag(Tabs.info)
+            ProfileView()
+                .tag(Tabs.profile)
         }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     

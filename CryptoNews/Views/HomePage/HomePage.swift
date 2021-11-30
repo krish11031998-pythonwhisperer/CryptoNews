@@ -23,10 +23,13 @@ struct HomePage: View {
 //            LazyVStack(alignment: .leading, spacing: 10){
             Spacer().frame(height: 50)
             self.trackedAsset
-            CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc,leadingPadding: true)
-            CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
-            CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
-            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
+            CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
+            CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
+            CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
+            AsyncContainer(size: .zero) {
+                LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
+            }
+            
             self.CurrencyFeed
             Spacer(minLength: 200)
 //            }
@@ -51,6 +54,14 @@ extension HomePage{
         }
     }
     
+    
+    func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
+        AsyncContainer(size: .zero) {
+            CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)
+        }
+    }
+    
+    
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }
@@ -65,8 +76,10 @@ extension HomePage{
     var CurrencyFeed:some View{
         return Group{
             ForEach(self.currencies,id:\.self) {currency in
-                self.CurrencyFeedEl(currency)
-                    .padding(.vertical,15)
+                AsyncContainer(size: .zero) {
+                    self.CurrencyFeedEl(currency)
+                        .padding(.vertical,15)
+                }
             }
         }
     }
