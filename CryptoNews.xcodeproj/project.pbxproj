@@ -11,6 +11,7 @@
 		99C9BA08EF79222CB1F58B4D /* Pods_CryptoNews_CryptoNewsUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6AE6BC9FF86AE733BA0674A4 /* Pods_CryptoNews_CryptoNewsUITests.framework */; };
 		B604296EF35B5328FC78F538 /* Pods_CryptoNews.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E420CC55E1502BDA8A86DBFC /* Pods_CryptoNews.framework */; };
 		BC01BA0626F60AF900557EB7 /* MarkersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC01BA0526F60AF900557EB7 /* MarkersView.swift */; };
+		BC06AE5227578850006F00DE /* CrybPostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC06AE5127578850006F00DE /* CrybPostData.swift */; };
 		BC10D9D526F5CAE7007ADE34 /* BarChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC10D9D426F5CAE7007ADE34 /* BarChart.swift */; };
 		BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */; };
 		BC1C614B2719CE68006AD9C8 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1C614A2719CE68006AD9C8 /* AddTransactionView.swift */; };
@@ -134,6 +135,7 @@
 		6AE6BC9FF86AE733BA0674A4 /* Pods_CryptoNews_CryptoNewsUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CryptoNews_CryptoNewsUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7BF8A61F81D5A4EA47865B57 /* Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNews-CryptoNewsUITests/Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC01BA0526F60AF900557EB7 /* MarkersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkersView.swift; sourceTree = "<group>"; };
+		BC06AE5127578850006F00DE /* CrybPostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybPostData.swift; sourceTree = "<group>"; };
 		BC10D9D426F5CAE7007ADE34 /* BarChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BarChart.swift; sourceTree = "<group>"; };
 		BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluentialTweets.swift; sourceTree = "<group>"; };
 		BC1C614A2719CE68006AD9C8 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
@@ -443,6 +445,7 @@
 			isa = PBXGroup;
 			children = (
 				BCBBD14C2756CC7F002CBECE /* CrybPostCard.swift */,
+				BC06AE5127578850006F00DE /* CrybPostData.swift */,
 			);
 			path = CrybPosts;
 			sourceTree = "<group>";
@@ -962,6 +965,7 @@
 				BC01BA0626F60AF900557EB7 /* MarkersView.swift in Sources */,
 				BCBC1DBB26BE824300B87E5C /* CircleChart.swift in Sources */,
 				BC305F0B26D820CD00826AB4 /* AssetAPI.swift in Sources */,
+				BC06AE5227578850006F00DE /* CrybPostData.swift in Sources */,
 				BCE861BF2747F9DA00F0E8C2 /* NewsFeed.swift in Sources */,
 				BC27E4EA2725FCA800E47CA2 /* CurrencyFeedView.swift in Sources */,
 				BCE861C1274817E000F0E8C2 /* TestFile.swift in Sources */,

@@ -67,16 +67,17 @@ struct Container<T:View>: View {
     
     @ViewBuilder var mainBody:some View{
         let w = width - 30
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 20) {
 //        Group{
             if let heading = self.heading{
                 self.headingView(heading:heading,w: w)
             }
-            self.innerView(w).padding(.top,10)
+            self.innerView(w)
         }
             
 //        }
         .padding(.horizontal, self.ignoreSides ? 0 : 15)
+        .padding(.vertical,10)
         .frame(width: self.width, alignment: .leading)
        
         
