@@ -7,6 +7,9 @@
 
 import SwiftUI
 import Combine
+import FirebaseAuth
+import Firebase
+import FirebaseFirestore
 
 class CrybPostBacker:Codable{
     
@@ -41,6 +44,10 @@ class CrybPostBacker:Codable{
     
     var StakedValue:Float{
         return self.stakedVal ?? 0
+    }
+    
+    var decoded:[String:Any]{
+        return ["user_uid":self.User_Uid,"userName":self.UserName,"img":self.Img,"stakedVal":self.StakedValue]
     }
 }
 
@@ -98,6 +105,9 @@ class CrybPostPrediction:Codable{
         return self.graphData ?? []
     }
     
+    var decoded:[String:Any]{
+        return ["coin":self.Coin,"price":self.Price,"high":self.High,"low":self.Low,"graphData":self.GraphData,"time":self.Time]
+    }
 }
 
 
@@ -124,20 +134,23 @@ class CrybPostUser:Codable{
     var Img:String{
         return self.img ?? ""
     }
+    
+    var decoded:[String:Any]{
+        return ["user_uid":self.User_Uid,"userName":self.UserName,"img":self.Img]
+    }
 }
 
 struct CrybPostData:Codable{
     
-    private var id:String?
     private var user:CrybPostUser?
     private var postMessage:String?
     private var likes:Int?
     private var comments:Int?
+    private var views:Int?
     private var pricePrediction:CrybPostPrediction?
     private var stakers:[CrybPostBacker]?
     
     init(
-        id:String = "1",
         user:CrybPostUser = .init(),
         postMessage:String = "",
         likes:Int = 150,
@@ -145,7 +158,6 @@ struct CrybPostData:Codable{
         pricePrediction:CrybPostPrediction = .init(),
         stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15)
     ){
-        self.id = id
         self.user = user
         self.postMessage = postMessage
         self.likes = likes
@@ -182,8 +194,27 @@ struct CrybPostData:Codable{
         return self.stakers ?? []
     }
     
+    var Views:Int{
+        return self.views ?? 0
+    }
+    
+    var decoded:[String:Any]{
+        return ["user":self.User.decoded,"postMessage":self.PostMessage,"likes":self.Likes,"comments":self.Comments,"views":self.Views,"pricePrediction":self.PricePrediction.decoded,"stakers":self.Stakers.map({$0.decoded})]
+    }
+    
     static var test:CrybPostData{
         return .init(postMessage: Array(repeating: "Message", count: 50).reduce("", {"\($0) \($1)"}))
+    }
+
+    static func parseFromQueryData(_ data : QueryDocumentSnapshot) -> CrybPostData?{
+        var res:CrybPostData? = nil
+        do{
+            print(data.data())
+            res = try data.data(as: CrybPostData.self)
+        }catch{
+            print("There was an error while decoding the data!",error.localizedDescription)
+        }
+        return res
     }
 }
 

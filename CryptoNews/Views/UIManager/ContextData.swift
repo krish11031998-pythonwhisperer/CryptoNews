@@ -28,9 +28,10 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .txn
+    @Published private var _tab:Tabs = .home
     @Published private var _selectedCurrency:AssetData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
+    @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedSymbol:String? = nil
     @Published private var _addTxn:Bool = false
     @Published private var _prev_tab:Tabs = .none
@@ -103,6 +104,19 @@ class ContextData:ObservableObject{
                 self._selectedNews = newValue
             }
         }
+    }
+    
+    var selectedPost:CrybPostData?{
+        get{
+            return self._selectedPost
+        }
+        
+        set{
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self._selectedPost = newValue
+            }
+        }
+        
     }
     
     var addTxn:Bool{

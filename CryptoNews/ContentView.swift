@@ -43,7 +43,7 @@ extension ContentView{
             SearchMainPage()
                 .tag(Tabs.search)
             SlideTabView {
-                return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
             }.tag(Tabs.info)
             ProfileView()
                 .tag(Tabs.profile)
@@ -80,6 +80,14 @@ extension ContentView{
             .background(mainBGView)
             .edgesIgnoringSafeArea(.all)
             .zIndex(2)
+        }
+        
+        if let post = self.context.selectedPost{
+            CrybPostDetailView(postData: post)
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
         }
         
         

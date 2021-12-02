@@ -9,11 +9,13 @@ import SwiftUI
 
 struct CrybPostCard: View {
     
+    @EnvironmentObject var context:ContextData
     var postData:CrybPostData
     var cardWidth:CGFloat = .zero
     @State var width:CGFloat = .zero
     @State var showMore:Bool = false
     @State var showAnalysis:Bool = false
+    
     
     init(data:CrybPostData,cardWidth:CGFloat){
         self.postData = data
@@ -38,7 +40,8 @@ struct CrybPostCard: View {
     var body: some View {
         Container(width: self.cardWidth, ignoreSides: false) { w in
             self.view(w: w)
-        }.background(Color.white.opacity(0.35).overlay(BlurView(style: .regular))).clipContent(clipping: .roundClipping)
+        }.background(Color.white.opacity(0.35).overlay(BlurView.thinLightBlur))
+        .clipContent(clipping: .roundClipping)
     }
 }
 
@@ -116,9 +119,10 @@ extension CrybPostCard{
     
     func RatingsMeter(header:String,percent:Float,w:CGFloat) -> some View{
         let subHeading:String = percent > 60 ? "Very Likely" : percent > 40 ? "Likely" : "Unlikely"
+        let color:Color = percent > 60 ? .green : percent > 40 ? .orange : .red
         return HStack(alignment: .center, spacing: 10) {
             CircleChart(percent: percent, size: .init(width: w * 0.35, height: w * 0.35))
-            MainSubHeading(heading: header, subHeading: subHeading, headingSize: 12, subHeadingSize: 14, headColor: .gray, subHeadColor: .black, alignment: .leading)
+            MainSubHeading(heading: header, subHeading: subHeading, headingSize: 12, subHeadingSize: 14, headColor: .black, subHeadColor: color, alignment: .leading)
         }.padding(.top,20)
     }
 
@@ -130,14 +134,16 @@ extension CrybPostCard{
             self.cryptoScale
             LazyVGrid(columns: [.init(.adaptive(minimum: w_el, maximum: w_el), alignment: .leading)], alignment: .center, spacing: 10) {
                 self.RatingsMeter(header: "Cryb. Rating", percent: 60,w: w_el)
-                    .frame(width: w_el, alignment: .topLeading)
+//                    .frame(width: w_el, alignment: .topLeading)
                 self.RatingsMeter(header: "Audience Rating", percent: 75,w: w_el)
-                    .frame(width: w_el, alignment: .topTrailing)
+//                    .frame(width: w_el, alignment: .topTrailing)
             }.frame(width: self.width, alignment: .leading)
             MainText(content: "Analysis →", fontSize: 15, color: .white, fontWeight: .regular)
                 .blobify(color: AnyView(Color.white.opacity(0.2)))
                 .buttonify {
-                    print("Analysis Clicked")
+                    withAnimation(.easeInOut) {
+                        self.context.selectedPost = self.postData
+                    }
                 }
                 .padding(.vertical,15)
                 .frame(width: self.width, alignment: .trailing)

@@ -84,6 +84,8 @@ struct Container<T:View>: View {
             VStack(alignment: .leading, spacing: 20) {
                 if let heading = self.heading{
                     self.headingView(heading:heading,w: w)
+                }else if let onClose = self.onClose{
+                    SystemButton(b_name: "xmark",action: onClose)
                 }
                 self.innerView(w)
             }
