@@ -10,12 +10,20 @@ import Combine
 
 class CrybPostPrediction:Codable{
     
-    init(coin:String = "BTC",price:Float = 51000,high:Float = 53000,low:Float = 49000,time:Date = Date()){
+    init(
+        coin:String = "BTC",
+        price:Float = 51000,
+        high:Float = 53000,
+        low:Float = 49000,
+        graphData:[Float] = Array(repeating: Float(0), count: 15).map({ _ in Float.random(in: 49000...53000)}),
+        time:Date = Date()
+    ){
         self.coin = coin
         self.price = price
         self.high = high
         self.low = low
         self.time = time
+        self.graphData = graphData
     }
     
     private var coin:String?
@@ -23,6 +31,7 @@ class CrybPostPrediction:Codable{
     private var high:Float?
     private var low:Float?
     private var time:Date?
+    private var graphData:[Float]?
     
     var Coin:String{
         return self.coin ?? "XXX"
@@ -46,6 +55,10 @@ class CrybPostPrediction:Codable{
     
     var Time:Date{
         return self.time ?? Date()
+    }
+    
+    var GraphData:[Float]{
+        return self.graphData ?? []
     }
     
 }

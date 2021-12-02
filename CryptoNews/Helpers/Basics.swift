@@ -47,7 +47,8 @@ struct MainText: View {
     var fontWeight:Font.Weight
     var style:TextStyle
     var addBG:Bool
-    init(content:String,fontSize:CGFloat,color:Color = .white, fontWeight:Font.Weight = .thin,style:TextStyle = .normal,addBG:Bool = false){
+    var padding:CGFloat
+    init(content:String,fontSize:CGFloat,color:Color = .white, fontWeight:Font.Weight = .thin,style:TextStyle = .normal,addBG:Bool = false,padding:CGFloat = 10){
         self.content = content.stripSpaces().removeEndLine()
         self.fontSize = fontSize
         self.color = color
@@ -55,15 +56,16 @@ struct MainText: View {
         self.font = .custom(self.style.rawValue, size: self.fontSize)
         self.fontWeight = fontWeight
         self.addBG = addBG
+        self.padding = padding
     }
     
     struct CustomFontModifier:ViewModifier{
         var addBG:Bool
         var oppColor:Color
-        
+        var padding:CGFloat
         func body(content: Content) -> some View {
             content
-                .padding(.all,addBG ? 10 : 0)
+                .padding(.all,addBG ? self.padding : 0)
                 .background(addBG ? self.oppColor : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
                 
@@ -86,7 +88,7 @@ struct MainText: View {
             .font(_font_)
             .fontWeight(self.fontWeight)
             .foregroundColor(self.color)
-            .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor))
+            .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor,padding: self.padding))
             
     }
 }

@@ -180,14 +180,14 @@ struct SpringButton:ViewModifier{
 
 struct Blob:ViewModifier{
     var color:AnyView
-
+    var clipping:Clipping
     func body(content: Content) -> some View {
         content
             .padding(.horizontal,10)
             .padding(.vertical,10)
             .background(color)
-            .clipContent(clipping: .squareClipping)
-            .overlay(RoundedRectangle(cornerRadius: Clipping.squareClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
+            .clipContent(clipping: self.clipping)
+            .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
             
             
     }
@@ -415,8 +415,8 @@ extension View{
         self.transition(.slideInOut)
     }
     
-    func blobify(color:AnyView = AnyView(Color.clear)) -> some View{
-        self.modifier(Blob(color: color))
+    func blobify(color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
+        self.modifier(Blob(color: color,clipping: clipping))
     }
     
     func buttonify(handler:@escaping (() -> Void)) -> some View{
@@ -562,6 +562,10 @@ struct BlurView:UIViewRepresentable{
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         
     }
+    
+    static var thinDarkBlur:BlurView = .init(style: .systemUltraThinMaterialDark)
+    static var regularBlur:BlurView = .init(style: .regular)
+    static var thinLightBlur:BlurView = .init(style: .systemUltraThinMaterialLight)
 }
 
 

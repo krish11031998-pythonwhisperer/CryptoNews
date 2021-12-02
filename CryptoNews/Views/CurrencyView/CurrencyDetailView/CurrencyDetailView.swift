@@ -57,7 +57,7 @@ extension CurrencyDetailView{
                 self.curveChart.clipContent(clipping: .roundClipping)
                 self.transactionHistoryView
                 self.CurrencySummary
-//                self.SocialMediaMetric
+                self.SocialMediaMetric
                 self.feedContainer
                 self.newsContainer
                 
