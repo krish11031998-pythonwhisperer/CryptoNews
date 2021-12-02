@@ -14,10 +14,15 @@ struct Container<T:View>: View {
     var width:CGFloat
     var ignoreSides:Bool
     var refreshFn:(() -> Void)? = nil
+    var orientation:Axis
+    var paddingSize:CGSize = .zero
     init(
         heading:String? = nil,
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
+        horizontalPadding:CGFloat = 15,
+        verticalPadding:CGFloat = 10,
+        orientation:Axis = .vertical,
         onClose:(() -> Void)? = nil,
         @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
@@ -25,8 +30,10 @@ struct Container<T:View>: View {
         self.innerView = innerView
         self.onClose = onClose
         self.width = width
+        self.orientation = orientation
         self.ignoreSides = ignoreSides
         self.rightButton = nil
+        self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
     }
     
     
@@ -34,6 +41,9 @@ struct Container<T:View>: View {
         heading:String? = nil,
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
+        horizontalPadding:CGFloat = 15,
+        verticalPadding:CGFloat = 10,
+        orientation:Axis = .vertical,
         onClose:(() -> Void)? = nil,
         rightView: (() -> AnyView)? = nil,
         @ViewBuilder innerView: @escaping (CGFloat) -> T
@@ -44,6 +54,8 @@ struct Container<T:View>: View {
         self.width = width
         self.rightButton = rightView
         self.ignoreSides = ignoreSides
+        self.orientation = orientation
+        self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
     }
     
     func headingView(heading:String,w:CGFloat) -> some View{
@@ -57,28 +69,40 @@ struct Container<T:View>: View {
                 if rightButton != nil{
                     self.rightButton?()
                 }
-            }.padding(.horizontal,self.ignoreSides ? 15 : 0)
+            }.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
             Divider().frame(width:w * 0.5,alignment: .leading)
                 .padding(.bottom,10)
-                .padding(.horizontal,self.ignoreSides ? 15 : 0)
+                .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
         }
         
     }
     
     @ViewBuilder var mainBody:some View{
-        let w = width - 30
-        VStack(alignment: .leading, spacing: 20) {
-//        Group{
-            if let heading = self.heading{
-                self.headingView(heading:heading,w: w)
+        let w = width - (self.paddingSize.width * 2)
+        
+        if self.orientation == .vertical{
+            VStack(alignment: .leading, spacing: 20) {
+                if let heading = self.heading{
+                    self.headingView(heading:heading,w: w)
+                }
+                self.innerView(w)
             }
-            self.innerView(w)
+            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
+            .padding(.vertical,self.paddingSize.height)
+            .frame(width: self.width, alignment: .leading)
+        }else if self.orientation == .horizontal{
+            HStack(alignment: .center, spacing: 20) {
+                if let heading = self.heading{
+                    self.headingView(heading:heading,w: w)
+                }
+                self.innerView(w)
+            }
+            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
+            .padding(.vertical,self.paddingSize.height)
+            .frame(width: self.width, alignment: .leading)
         }
-            
-//        }
-        .padding(.horizontal, self.ignoreSides ? 0 : 15)
-        .padding(.vertical,10)
-        .frame(width: self.width, alignment: .leading)
+        
+        
        
         
     }

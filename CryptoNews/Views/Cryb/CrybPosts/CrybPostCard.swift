@@ -9,10 +9,17 @@ import SwiftUI
 
 struct CrybPostCard: View {
     
-    var postCardData:CrybPostData
+    var postData:CrybPostData
+    var cardWidth:CGFloat = .zero
     @State var width:CGFloat = .zero
     @State var showMore:Bool = false
     @State var showAnalysis:Bool = false
+    
+    init(data:CrybPostData,cardWidth:CGFloat){
+        self.postData = data
+        self.cardWidth = cardWidth
+    }
+    
     
     func view(w:CGFloat) -> some View{
         DispatchQueue.main.async {
@@ -24,15 +31,12 @@ struct CrybPostCard: View {
         return VStack(alignment:.center,spacing: 20){
             self.header
             self.mainBody
-//            if !self.postCardData.PricePrediction.GraphData.isEmpty{
-//                self.graphChart
-//            }
             self.footer
         }
     }
     
     var body: some View {
-        Container(width: totalWidth - 20, ignoreSides: false) { w in
+        Container(width: self.cardWidth, ignoreSides: false) { w in
             self.view(w: w)
         }.background(Color.white.opacity(0.35).overlay(BlurView(style: .regular))).clipContent(clipping: .roundClipping)
     }
@@ -45,19 +49,19 @@ extension CrybPostCard{
     }
     
     var graphChart:some View{
-        CurveChart(data: self.postCardData.PricePrediction.GraphData, interactions: false, size: .init(width: self.width * 0.5, height: 75), bg: .clear, chartShade: true)
+        CurveChart(data: self.postData.PricePrediction.GraphData, interactions: false, size: .init(width: self.width * 0.5, height: 75), bg: .clear, chartShade: true)
     }
     
     var header:some View{
         HStack(alignment: .center, spacing: 10) {
-            ImageView(url: self.postCardData.User.Img, width: self.img_width, height: self.img_width, contentMode: .fill, alignment: .center,clipping: .circleClipping)
-            MainSubHeading(heading: self.postCardData.User.UserName, subHeading: self.postCardData.PricePrediction.Time.stringDate(), headingSize: 15, subHeadingSize: 13, headColor: .black, subHeadColor: .gray,alignment: .leading)
+            ImageView(url: self.postData.User.Img, width: self.img_width, height: self.img_width, contentMode: .fill, alignment: .center,clipping: .circleClipping)
+            MainSubHeading(heading: self.postData.User.UserName, subHeading: self.postData.PricePrediction.Time.stringDate(), headingSize: 15, subHeadingSize: 13, headColor: .black, subHeadColor: .gray,alignment: .leading)
             Spacer()
         }.frame(width: self.width, alignment: .leading)
     }
     
     var mainBody:some View{
-        MainText(content: self.postCardData.PostMessage, fontSize: 15, color: .black, fontWeight: .semibold)
+        MainText(content: self.postData.PostMessage, fontSize: 15, color: .black, fontWeight: .semibold)
             .padding(.horizontal,10)
             .frame(width: self.width,alignment: .leading)
     }
@@ -65,11 +69,11 @@ extension CrybPostCard{
     var cryptoSection:some View{
         HStack(alignment: .center, spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
-                CurrencySymbolView(currency: self.postCardData.Coin, size: .medium, width: self.img_width * 0.75)
-                MainText(content: self.postCardData.Coin, fontSize: 15, color: .black, fontWeight: .regular)
+                CurrencySymbolView(currency: self.postData.Coin, size: .medium, width: self.img_width * 0.75)
+                MainText(content: self.postData.Coin, fontSize: 15, color: .black, fontWeight: .regular)
             }
             Spacer()
-            if !self.postCardData.PricePrediction.GraphData.isEmpty{
+            if !self.postData.PricePrediction.GraphData.isEmpty{
                 self.graphChart
             }
         }.frame(width: self.width, alignment: .leading)
@@ -84,26 +88,26 @@ extension CrybPostCard{
                     .fill(Color.mainBGColor)
                     .frame(width: w, height: 5, alignment: .center)
                 HStack(alignment: .center, spacing: 10) {
-                    MainSubHeading(heading: "Low", subHeading: self.postCardData.PricePrediction.Low.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .leading)
+                    MainSubHeading(heading: "Low", subHeading: self.postData.PricePrediction.Low.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .leading)
                     Spacer()
-                    MainSubHeading(heading: "High", subHeading: self.postCardData.PricePrediction.High.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .trailing)
+                    MainSubHeading(heading: "High", subHeading: self.postData.PricePrediction.High.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .trailing)
                 }
             }.frame(width: w, alignment: .center)
             MainText(content: "C", fontSize: 7, color: .black,fontWeight: .semibold,addBG: true,padding: 4.5)
                 .clipContent(clipping: .circleClipping)
-                .offset(x: CGFloat(self.postCardData.PricePrediction.NormalizedPricePercent) * w,y: -5)
+                .offset(x: CGFloat(self.postData.PricePrediction.NormalizedPricePercent) * w,y: -5)
             MainText(content: "O", fontSize: 7, color: .black,fontWeight: .semibold,addBG: true,padding: 4.5)
                 .clipContent(clipping: .circleClipping)
-                .offset(x: CGFloat(self.postCardData.PricePrediction.NormalizedPricePercent) * 0.65 * w,y: -5)
+                .offset(x: CGFloat(self.postData.PricePrediction.NormalizedPricePercent) * 0.65 * w,y: -5)
         }
         
         return VStack(alignment: .leading, spacing: 10) {
             MainText(content: "Prediction", fontSize: 14, color: .black, fontWeight: .semibold)
             view
             HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: "O : Open Market Price", subHeading: self.postCardData.PricePrediction.Price.ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
+                MainSubHeading(heading: "O : Open Market Price", subHeading: self.postData.PricePrediction.Price.ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
-                MainSubHeading(heading: "C : Close Market Price", subHeading: (self.postCardData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
+                MainSubHeading(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
             }
         }
@@ -146,7 +150,7 @@ struct CrybPostCard_Previews: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center) {
             Color.mainBGColor
-            CrybPostCard(postCardData: .test)
+            CrybPostCard(data: .test,cardWidth: totalWidth - 20)
         }.ignoresSafeArea()
     }
 }

@@ -8,7 +8,51 @@
 import SwiftUI
 import Combine
 
+class CrybPostBacker:Codable{
+    
+    private var user_uid:String?
+    private var userName:String?
+    private var img:String?
+    private var stakedVal:Float?
+    
+    init(
+        user_uid:String = "\(Int.random(in: 0...1000))",
+        userName:String = "johnDoe",
+        img:String = "",
+        stakedVal:Float = 100.0
+    ){
+        self.user_uid = user_uid
+        self.userName = userName
+        self.img = img
+        self.stakedVal = stakedVal
+    }
+    
+    var User_Uid:String{
+        return self.user_uid ?? ""
+    }
+    
+    var UserName:String{
+        return self.userName ?? ""
+    }
+    
+    var Img:String{
+        return self.img ?? ""
+    }
+    
+    var StakedValue:Float{
+        return self.stakedVal ?? 0
+    }
+}
+
+
 class CrybPostPrediction:Codable{
+
+    private var coin:String?
+    private var price:Float?
+    private var high:Float?
+    private var low:Float?
+    private var time:Date?
+    private var graphData:[Float]?
     
     init(
         coin:String = "BTC",
@@ -25,13 +69,6 @@ class CrybPostPrediction:Codable{
         self.time = time
         self.graphData = graphData
     }
-    
-    private var coin:String?
-    private var price:Float?
-    private var high:Float?
-    private var low:Float?
-    private var time:Date?
-    private var graphData:[Float]?
     
     var Coin:String{
         return self.coin ?? "XXX"
@@ -91,21 +128,31 @@ class CrybPostUser:Codable{
 
 struct CrybPostData:Codable{
     
-    init(id:String = "1",user:CrybPostUser = .init(),postMessage:String = "",likes:Int = 150,comments:Int = 20,pricePrediction:CrybPostPrediction = .init()){
-        self.id = id
-        self.user = user
-        self.postMessage = postMessage
-        self.likes = likes
-        self.comments = comments
-        self.pricePrediction = pricePrediction
-    }
-    
     private var id:String?
     private var user:CrybPostUser?
     private var postMessage:String?
     private var likes:Int?
     private var comments:Int?
     private var pricePrediction:CrybPostPrediction?
+    private var stakers:[CrybPostBacker]?
+    
+    init(
+        id:String = "1",
+        user:CrybPostUser = .init(),
+        postMessage:String = "",
+        likes:Int = 150,
+        comments:Int = 20,
+        pricePrediction:CrybPostPrediction = .init(),
+        stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15)
+    ){
+        self.id = id
+        self.user = user
+        self.postMessage = postMessage
+        self.likes = likes
+        self.comments = comments
+        self.pricePrediction = pricePrediction
+        self.stakers = stakers
+    }
     
     var PostMessage:String{
         return self.postMessage ?? "No Post Message"
@@ -129,6 +176,10 @@ struct CrybPostData:Codable{
     
     var PricePrediction:CrybPostPrediction{
         return self.pricePrediction ?? .init()
+    }
+    
+    var Stakers:[CrybPostBacker]{
+        return self.stakers ?? []
     }
     
     static var test:CrybPostData{
