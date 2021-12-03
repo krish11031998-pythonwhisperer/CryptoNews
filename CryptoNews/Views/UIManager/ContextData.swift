@@ -28,7 +28,7 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .home
+    @Published private var _tab:Tabs = .info
     @Published private var _selectedCurrency:AssetData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil
@@ -51,10 +51,15 @@ class ContextData:ObservableObject{
         }
         
         set{
-            if self.prev_tab != self._tab{
-                self.prev_tab = self.tab
+            DispatchQueue.main.async{
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    if self.prev_tab != self._tab{
+                        self.prev_tab = self.tab
+                    }
+                    self._tab = newValue
+                }
             }
-            self._tab = newValue
+            
         }
     }
     
@@ -65,7 +70,12 @@ class ContextData:ObservableObject{
         }
         
         set{
-            self._prev_tab = newValue
+            DispatchQueue.main.async{
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self._prev_tab = newValue
+                    
+                }
+            }
         }
     }
     
@@ -76,8 +86,10 @@ class ContextData:ObservableObject{
         }
         
         set{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self._selectedCurrency = newValue
+            DispatchQueue.main.async{
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self._selectedCurrency = newValue
+                }
             }
         }
     }
@@ -88,8 +100,10 @@ class ContextData:ObservableObject{
         }
         
         set{
-            withAnimation(.easeInOut) {
-                self._selectedSymbol = newValue
+            DispatchQueue.main.async{
+                withAnimation(.easeInOut) {
+                    self._selectedSymbol = newValue
+                }
             }
         }
     }
@@ -100,8 +114,10 @@ class ContextData:ObservableObject{
         }
         
         set{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self._selectedNews = newValue
+            DispatchQueue.main.async{
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self._selectedNews = newValue
+                }
             }
         }
     }
@@ -112,8 +128,10 @@ class ContextData:ObservableObject{
         }
         
         set{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self._selectedPost = newValue
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self._selectedPost = newValue
+                }
             }
         }
         

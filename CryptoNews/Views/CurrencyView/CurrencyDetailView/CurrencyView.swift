@@ -129,8 +129,11 @@ struct CurrencyView:View{
                 let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
             }
-        } reload: {
-            self.asset_feed.getNextPage()
+        }
+        .onPreferenceChange(LazyScrollPreference.self) { reload in
+            if reload{
+                self.asset_feed.getNextPage()
+            }
         }
     }
     
@@ -139,8 +142,11 @@ struct CurrencyView:View{
             if let news = data as? AssetNewsData{
                 NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
             }
-        } reload: {
-            self.NAPI.getNextPage()
+        }
+        .onPreferenceChange(LazyScrollPreference.self) { reload in
+            if reload{
+                self.NAPI.getNextPage()
+            }
         }
     }
     

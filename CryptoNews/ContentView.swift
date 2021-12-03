@@ -37,20 +37,39 @@ struct ContentView: View {
 
 extension ContentView{
     
+    var tabs:[Tabs]{
+        return [.home,.search,.info,.profile]
+    }
+    
     @ViewBuilder var mainBody:some View{
         TabView(selection: self.$context.tab) {
-            self.homeView.tag(Tabs.home)
-            SearchMainPage()
-                .tag(Tabs.search)
-            SlideTabView {
-                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
-            }.tag(Tabs.info)
-            ProfileView()
-                .tag(Tabs.profile)
+            ForEach(self.tabs, id: \.rawValue) { tab in
+                self.dynamicTabPage(page: tab).tag(tab)
+            }
         }
         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
+    @ViewBuilder func tabPage(page:Tabs) -> some View{
+        switch(page){
+            case .home: self.homeView
+            case .search: SearchMainPage()
+            case .info: SlideTabView {
+                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+            }
+            case .profile: ProfileView()
+            default: Color.clear
+        }
+    }
+    
+    
+    @ViewBuilder func dynamicTabPage(page:Tabs) -> some View{
+        if page == self.context.tab{
+            self.tabPage(page: page)
+        }else{
+            Color.clear
+        }
+    }
     
     @ViewBuilder var homeView:some View{
         HomePage()

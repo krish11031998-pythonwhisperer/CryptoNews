@@ -170,7 +170,11 @@ struct SpringButton:ViewModifier{
     
     func body(content: Content) -> some View {
         Button {
-            self.handleTap()
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self.handleTap()
+                }
+            }
         } label: {
             content
                 .contentShape(Rectangle())
@@ -363,8 +367,9 @@ struct TabButton:View{
 struct ButtonModifier:ButtonStyle{
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
             .opacity(configuration.isPressed ? 0.9 : 1)
+            
     }
 }
 

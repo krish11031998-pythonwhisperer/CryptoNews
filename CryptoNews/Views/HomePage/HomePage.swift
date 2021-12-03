@@ -20,7 +20,6 @@ struct HomePage: View {
     
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
-//            LazyVStack(alignment: .leading, spacing: 10){
             Spacer().frame(height: 50)
             self.trackedAsset
             CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
@@ -32,7 +31,6 @@ struct HomePage: View {
             
             self.CurrencyFeed
             Spacer(minLength: 200)
-//            }
         }.zIndex(1)
     }
     

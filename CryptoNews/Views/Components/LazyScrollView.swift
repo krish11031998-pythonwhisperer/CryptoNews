@@ -7,24 +7,29 @@
 
 import SwiftUI
 
+struct LazyScrollPreference:PreferenceKey{
+    static var defaultValue: Bool = false
+    
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+    
+}
+
+
+
 struct LazyScrollView<T:View>: View {
     var data:[Any]
+    var embedScrollView:Bool
     var viewGen: (Any) -> T
-    var reload:() -> Void
     @State var reloadNow:Bool = false
     
-    init(data:[Any],@ViewBuilder viewGen: @escaping (Any) -> T, reload: @escaping () -> Void){
+    init(data:[Any],embedScrollView:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
         self.data = data
         self.viewGen = viewGen
-        self.reload = reload
+        self.embedScrollView = embedScrollView
     }
     
-    
-    func reload(idx:Int){
-        if idx == self.data.count - 5{
-            self.reload()
-        }
-    }
     
     var reloadContainer:some View{
         GeometryReader{g -> AnyView in
@@ -35,7 +40,6 @@ struct LazyScrollView<T:View>: View {
             DispatchQueue.main.async {
                 if maxY < (totalHeight) && !self.reloadNow{
                     self.reloadNow.toggle()
-                    self.reload()
                 }
             }
             
@@ -57,9 +61,18 @@ struct LazyScrollView<T:View>: View {
                 self.reloadNow.toggle()
             }
         }
+        .preference(key: LazyScrollPreference.self, value: self.reloadNow)
     }
     
     var body: some View {
-        self.refreshingView
+        if self.embedScrollView{
+            ScrollView(.vertical, showsIndicators: false) {
+                self.refreshingView
+                    .padding(.vertical,50)
+            }
+        }else{
+            self.refreshingView
+        }
+        
     }
 }

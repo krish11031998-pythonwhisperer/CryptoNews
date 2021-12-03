@@ -10,7 +10,7 @@ import SwiftUI
 struct CrybPostDetailView: View {
     var postData:CrybPostData
     @State var width:CGFloat = .zero
-    @State var chartIndicator:Int = 0
+    @State var chartIndicator:Int = -1
     @EnvironmentObject var context:ContextData
     
     init(postData:CrybPostData){
@@ -124,12 +124,12 @@ extension CrybPostDetailView{
                         .foregroundColor(.white)
                     MainText(content: txnPercent.0.ToDecimals() + "%", fontSize: 12, color: .white, fontWeight: .bold,style: .monospaced)
                 }.padding()
-                    .background(txnPercent.1)
-                    .clipContent(clipping: .roundClipping)
+                .background(txnPercent.1)
+                .clipContent(clipping: .roundClipping)
             }
             
             CurveChart(data: self.postData.PricePrediction.GraphData, choosen: self.$chartIndicator, interactions: true, size: size, bg: .clear)
-        }.padding(.vertical,10)
+        }.padding(.vertical,20)
     }
     
     var cryptoScale:some View{
@@ -155,7 +155,7 @@ extension CrybPostDetailView{
         
         return VStack(alignment: .leading, spacing: 10) {
             MainText(content: "Prediction", fontSize: 18, color: .white, fontWeight: .semibold)
-            view
+            view.padding(.top,15)
             HStack(alignment: .center, spacing: 10) {
                 MainSubHeading(heading: "O : Open Market Price", subHeading: self.postData.PricePrediction.Price.ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)

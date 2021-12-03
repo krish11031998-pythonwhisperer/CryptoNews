@@ -45,8 +45,10 @@ struct CurrencyFeedPage: View {
                 }else{
                     Color.clear
                 }
-            } reload: {
-                self.reload()
+            }.onPreferenceChange(LazyScrollPreference.self) { reload in
+                if reload{
+                    self.reload()
+                }
             }
         }else{
             ProgressView()

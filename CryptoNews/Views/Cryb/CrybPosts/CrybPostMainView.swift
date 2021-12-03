@@ -10,7 +10,7 @@ import SwiftUI
 struct CrybPostMainView: View {
     @EnvironmentObject var context:ContextData
     @StateObject var crybPostAPI:CrybPostAPI = .init()
-    @State var width:CGFloat = .zero
+    @State var width:CGFloat = totalWidth
     @State var ignoreSides:Bool = false
     
     init(width:CGFloat = .zero){
@@ -34,27 +34,31 @@ struct CrybPostMainView: View {
     }
     
     
+    @ViewBuilder func viewGen(data:Any) -> some View{
+        if let postData = data as? CrybPostData{
+            CrybPostCard(data: postData, cardWidth: self.width)
+        }else{
+            Color.clear.frame(width: self.width, height: 150, alignment: .center)
+        }
+    }
+    
+    func reload(){
+        print("Reload!")
+    }
+    
     func mainBodyGen(w:CGFloat) -> some View{
         DispatchQueue.main.async {
-            if self.width == .zero{
+            if self.width != w{
                 self.width = w
             }
         }
         
-        let view = ScrollView(.vertical, showsIndicators: false) {
-            ForEach(Array(self.posts.enumerated()), id:\.offset) { _post in
-                CrybPostCard(data: _post.element, cardWidth: w)
-                    .buttonify {
-                        withAnimation(.easeInOut) {
-                            self.context.selectedPost = _post.element
-                        }
-                    }
-                    .padding(.vertical,10)
+        return LazyScrollView(data: self.posts, embedScrollView: true, viewGen: self.viewGen(data:))
+            .onPreferenceChange(LazyScrollPreference.self) { reload in
+            if reload{
+                self.reload()
             }
         }
-        
-        return view
-        
     }
     
     var body: some View {

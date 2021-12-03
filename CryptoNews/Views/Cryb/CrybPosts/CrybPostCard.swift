@@ -12,7 +12,7 @@ struct CrybPostCard: View {
     @EnvironmentObject var context:ContextData
     var postData:CrybPostData
     var cardWidth:CGFloat = .zero
-    @State var width:CGFloat = .zero
+    @State var width:CGFloat = totalWidth
     @State var showMore:Bool = false
     @State var showAnalysis:Bool = false
     
@@ -25,7 +25,7 @@ struct CrybPostCard: View {
     
     func view(w:CGFloat) -> some View{
         DispatchQueue.main.async {
-            if self.width == .zero{
+            if self.width != w{
                 self.width = w
             }
         }
@@ -129,9 +129,9 @@ extension CrybPostCard{
     
     var footer:some View{
         let w_el = self.width * 0.5 - 5
-        return VStack(alignment: .leading, spacing: 15) {
+        return LazyVStack(alignment: .leading, spacing: 15) {
             self.cryptoSection
-            self.cryptoScale
+//            self.cryptoScale
             LazyVGrid(columns: [.init(.adaptive(minimum: w_el, maximum: w_el), alignment: .leading)], alignment: .center, spacing: 10) {
                 self.RatingsMeter(header: "Cryb. Rating", percent: 60,w: w_el)
 //                    .frame(width: w_el, alignment: .topLeading)
@@ -141,9 +141,7 @@ extension CrybPostCard{
             MainText(content: "Analysis →", fontSize: 15, color: .white, fontWeight: .regular)
                 .blobify(color: AnyView(Color.white.opacity(0.2)))
                 .buttonify {
-                    withAnimation(.easeInOut) {
-                        self.context.selectedPost = self.postData
-                    }
+                    self.context.selectedPost = self.postData
                 }
                 .padding(.vertical,15)
                 .frame(width: self.width, alignment: .trailing)
