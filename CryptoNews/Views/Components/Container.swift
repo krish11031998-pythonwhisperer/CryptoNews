@@ -58,50 +58,59 @@ struct Container<T:View>: View {
         self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
     }
     
-    func headingView(heading:String,w:CGFloat) -> some View{
+    var innerWidth:CGFloat{
+        return width - (self.paddingSize.width * 2)
+    }
+    
+    
+    @ViewBuilder var onCloseView:some View{
+        if let close = self.onClose{
+            SystemButton(b_name: "xmark",action: close)
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+    
+    var headingView: some View{
+        let heading = self.heading!
         return Group{
             HStack {
-                if let onClose = self.onClose{
-                    SystemButton(b_name: "xmark",action: onClose)
-                }
+                self.onCloseView
                 MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
                 Spacer()
                 if rightButton != nil{
                     self.rightButton?()
                 }
             }.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
-            Divider().frame(width:w * 0.5,alignment: .leading)
+            Divider().frame(width:self.innerWidth * 0.5,alignment: .leading)
                 .padding(.bottom,10)
                 .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
         }
         
     }
     
+    var mainInnerView:some View{
+        Group{
+            if self.heading != nil{
+                self.headingView
+            }else if self.onClose != nil{
+                self.onCloseView
+            }
+            self.innerView(self.innerWidth)
+        }
+    }
+    
+    
     @ViewBuilder var mainBody:some View{
-        let w = width - (self.paddingSize.width * 2)
-        
+    
         if self.orientation == .vertical{
             VStack(alignment: .leading, spacing: 20) {
-                if let heading = self.heading{
-                    self.headingView(heading:heading,w: w)
-                }else if let onClose = self.onClose{
-                    SystemButton(b_name: "xmark",action: onClose)
-                }
-                self.innerView(w)
+                self.mainInnerView
             }
-            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
-            .padding(.vertical,self.paddingSize.height)
-            .frame(width: self.width, alignment: .leading)
         }else if self.orientation == .horizontal{
             HStack(alignment: .center, spacing: 20) {
-                if let heading = self.heading{
-                    self.headingView(heading:heading,w: w)
-                }
-                self.innerView(w)
+                self.mainInnerView
             }
-            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
-            .padding(.vertical,self.paddingSize.height)
-            .frame(width: self.width, alignment: .leading)
         }
         
         
@@ -111,5 +120,8 @@ struct Container<T:View>: View {
     
     var body: some View {
         self.mainBody
+            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
+            .padding(.vertical,self.paddingSize.height)
+            .frame(width: self.width, alignment: .leading)
     }
 }

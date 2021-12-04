@@ -53,7 +53,7 @@ struct CrybPostMainView: View {
             }
         }
         
-        return LazyScrollView(data: self.posts, embedScrollView: true, viewGen: self.viewGen(data:))
+        return LazyScrollView(data: self.posts, embedScrollView: false, viewGen: self.viewGen(data:))
             .onPreferenceChange(LazyScrollPreference.self) { reload in
             if reload{
                 self.reload()
@@ -62,11 +62,11 @@ struct CrybPostMainView: View {
     }
     
     var body: some View {
-        
-        Container(width: totalWidth, ignoreSides: self.ignoreSides) { w in
-            self.mainBodyGen(w: w)
-        }
-        
+        ScrollView(.vertical, showsIndicators: false) {
+            Container(heading:"CrybPosts", width: totalWidth, ignoreSides: self.ignoreSides) { w in
+                self.mainBodyGen(w: w)
+            }
+        }.padding(.top,30)
     }
 }
 

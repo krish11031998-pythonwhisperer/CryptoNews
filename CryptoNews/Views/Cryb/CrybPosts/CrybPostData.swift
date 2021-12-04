@@ -142,6 +142,7 @@ class CrybPostUser:Codable{
 
 struct CrybPostData:Codable{
     
+    var id:UUID?
     private var user:CrybPostUser?
     private var postMessage:String?
     private var likes:Int?
@@ -151,6 +152,7 @@ struct CrybPostData:Codable{
     private var stakers:[CrybPostBacker]?
     
     init(
+        id:UUID = UUID(),
         user:CrybPostUser = .init(),
         postMessage:String = "",
         likes:Int = 150,
@@ -158,6 +160,7 @@ struct CrybPostData:Codable{
         pricePrediction:CrybPostPrediction = .init(),
         stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15)
     ){
+        self.id = id
         self.user = user
         self.postMessage = postMessage
         self.likes = likes

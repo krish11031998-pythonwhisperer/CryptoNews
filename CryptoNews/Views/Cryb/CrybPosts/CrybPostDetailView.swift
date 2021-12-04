@@ -26,6 +26,7 @@ struct CrybPostDetailView: View {
         
         return VStack(alignment: .leading, spacing: 25) {
             self.postBody
+            self.socialEngagementView
             self.cryptoSection
             self.cryptoScale
             self.ratingsView
@@ -45,7 +46,7 @@ struct CrybPostDetailView: View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(width: totalWidth,ignoreSides: false, horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose) { w in
                 self.mainBodyGen(w: w)
-            }
+            }.padding(.bottom,150)
         }
     }
 }
@@ -55,12 +56,34 @@ extension CrybPostDetailView{
         return self.width * 0.15
     }
     
+    func likeButtonHandler(){
+        print("Clicked on Like")
+    }
+    
+    func commentButtonHandler(){
+        print("Clicked on Comment")
+    }
+    
+    func shareButtonHandler(){
+        print("Clicked on Share")
+    }
+    
+    var socialEngagementView:some View{
+        let buttons:[(String,String,() -> Void)] = [("heart","Like",self.likeButtonHandler),("message","Comment",self.commentButtonHandler),("square.and.arrow.up","Share",self.shareButtonHandler)]
+        return Container(width: self.width, ignoreSides: true, orientation: .horizontal) { _ in
+            ForEach(buttons, id:\.0) { button in
+                SystemButton(b_name: button.0, b_content: button.1, color: .white,haveBG: false, bgcolor: .white, alignment: .horizontal,borderedBG: true,action: button.2)
+            }
+        }
+    }
+    
     var postBody:some View{
 
         Container(width: self.width, ignoreSides: false) { w in
             self.header(w: w)
             self.mainBody(w: w)
         }
+        .padding(.bottom,25)
         .frame(width: self.width, alignment: .center)
         .background(BlurView.thinLightBlur)
         .clipContent(clipping: .roundClipping)
@@ -107,29 +130,31 @@ extension CrybPostDetailView{
     
     var predictedChartwDelta:some View{
         let size = CGSize(width: self.width, height: 150)
-        let prediction = self.postData.PricePrediction.GraphData[self.indicator]
         let cryb_prediction = self.crybPredictedData[self.indicator]
-        let percent:Float = 1 - cryb_prediction/prediction
-        let txnPercent:(Float,Color,String) = percent > 0 ? (percent,.green,"arrowtriangle.up.fill") : (percent,.red,"arrowtriangle.down.fill")
         
         return VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: "Prediction", subHeading: prediction.ToMoney(), headingSize: 13, subHeadingSize: 15, headColor: .gray, subHeadColor: .white, alignment: .leading)
-                MainSubHeading(heading: "Cryb Prediction", subHeading: cryb_prediction.ToMoney(), headingSize: 13, subHeadingSize: 15, headColor: .gray, subHeadColor: .white, alignment: .leading)
-                Spacer()
-                HStack(alignment: .center) {
-                    Image(systemName: txnPercent.2)
-                        .resizable()
-                        .frame(width: 15, height: 15, alignment: .center)
-                        .foregroundColor(.white)
-                    MainText(content: txnPercent.0.ToDecimals() + "%", fontSize: 12, color: .white, fontWeight: .bold,style: .monospaced)
-                }.padding()
-                .background(txnPercent.1)
-                .clipContent(clipping: .roundClipping)
-            }
+            MainText(content: "Crybot's Prediction", fontSize: 18, color: .white, fontWeight: .semibold).padding(.bottom,10)
+            MainSubHeading(heading: "Value", subHeading: cryb_prediction.ToMoney(), headingSize: 13, subHeadingSize: 15, headColor: .gray, subHeadColor: .white, alignment: .leading)
+                .frame(width: self.width, alignment: .leading)
             
             CurveChart(data: self.postData.PricePrediction.GraphData, choosen: self.$chartIndicator, interactions: true, size: size, bg: .clear)
+            
+            HStack(alignment: .center, spacing: 10) {
+                MainText(content: "Crybot's Market Prediction", fontSize: 15, color: .white, fontWeight: .medium)
+                Spacer()
+                MainText(content: "Bear 🐻", fontSize: 20, color: .red, fontWeight: .semibold)
+            }.blobify(color: .init(BlurView.regularBlur), clipping: .roundCornerMedium)
+            .padding(.vertical,10)
         }.padding(.vertical,20)
+    }
+    
+    var userPredictionMarket:some View{
+        HStack(alignment: .center, spacing: 10) {
+            MainText(content: "User's Market Prediction", fontSize: 15, color: .white, fontWeight: .medium)
+            Spacer()
+            MainText(content: "Bull 🐂", fontSize: 20, color: .green, fontWeight: .semibold)
+        }.blobify(color: .init(BlurView.regularBlur), clipping: .roundCornerMedium)
+            .padding(.vertical,10)
     }
     
     var cryptoScale:some View{
@@ -162,6 +187,7 @@ extension CrybPostDetailView{
                 MainSubHeading(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
             }
+            self.userPredictionMarket
             self.predictedChartwDelta
         }
         

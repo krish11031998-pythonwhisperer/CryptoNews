@@ -23,8 +23,10 @@ struct LazyScrollView<T:View>: View {
     var embedScrollView:Bool
     var viewGen: (Any) -> T
     @State var reloadNow:Bool = false
+    var header:String?
     
-    init(data:[Any],embedScrollView:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
+    init(header:String? = nil,data:[Any],embedScrollView:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
+        self.header = header
         self.data = data
         self.viewGen = viewGen
         self.embedScrollView = embedScrollView
@@ -63,7 +65,7 @@ struct LazyScrollView<T:View>: View {
         }
         .preference(key: LazyScrollPreference.self, value: self.reloadNow)
     }
-    
+        
     var body: some View {
         if self.embedScrollView{
             ScrollView(.vertical, showsIndicators: false) {

@@ -138,13 +138,9 @@ extension CrybPostCard{
                 self.RatingsMeter(header: "Audience Rating", percent: 75,w: w_el)
 //                    .frame(width: w_el, alignment: .topTrailing)
             }.frame(width: self.width, alignment: .leading)
-            MainText(content: "Analysis →", fontSize: 15, color: .white, fontWeight: .regular)
-                .blobify(color: AnyView(Color.white.opacity(0.2)))
-                .buttonify {
-                    self.context.selectedPost = self.postData
-                }
-                .padding(.vertical,15)
-                .frame(width: self.width, alignment: .trailing)
+            SystemButton(b_content: "Analysis →", haveBG: false, bgcolor: .white, alignment: .horizontal, borderedBG: true) {
+                self.context.selectedPost = self.postData
+            }.frame(width: self.width, alignment: .trailing)
         }
     }
     
