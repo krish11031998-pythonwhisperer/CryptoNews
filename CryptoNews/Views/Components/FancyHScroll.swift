@@ -7,22 +7,30 @@
 
 import SwiftUI
 
-struct FancyHScroll: View {
-    var views:[AnyView]
+struct FancyHScroll<T:View>: View {
+    @EnvironmentObject var context:ContextData
+    @State var time:Int = 0
+    @StateObject var SP:swipeParams
+    
+    @ViewBuilder var viewGen:(Any) -> T
+    var onTap:((Int) -> Void)?
+    var data:[Any]
     var timeLimit:Int
-    //    var view: (CGSize) -> AnyView
+    var scrollable:Bool
     var size:CGSize
     var headers:[String]?
-    @StateObject var SP:swipeParams
-    var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-    @State var time:Int = 0
     
-    init(views:[AnyView],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize){
-        self.views = views
+    var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
+    init(data:[Any],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize,scrollable:Bool = false,onTap:((Int) -> Void)? = nil,@ViewBuilder viewGen: @escaping (Any) -> T){
+        self.data = data
         self.timeLimit = timeLimit
-        self._SP = StateObject(wrappedValue: .init(0, views.count - 1, 100, type: .Carousel))
+        self._SP = StateObject(wrappedValue: .init(0, data.count - 1, 50 , type: .Carousel,onTap:onTap))
         self.size = size
         self.headers = headers
+        self.scrollable = scrollable
+        self.viewGen = viewGen
+        self.onTap = onTap
     }
     
     func scaleEff(midX:CGFloat) -> CGFloat{
@@ -33,17 +41,36 @@ struct FancyHScroll: View {
         let scale = midX < thres || midX > (1 - thres) ? 1 - 0.2 * CGFloat(perc) : 1
         return scale
     }
-    
-    func Card(view:AnyView,size:CGSize) -> some View{
-        return GeometryReader{g in
+
+    @ViewBuilder func Card(data:Any,size:CGSize) -> some View{
+        let view = GeometryReader{g in
+            let size = g.frame(in: .local)
             let midX = g.frame(in: .global).midX
-            view
-                .frame(width: size.width, height: size.height, alignment: .center)
+            
+            
+            self.viewGen(data)
                 .scaleEffect(scaleEff(midX: midX))
-            
-            
-        }.frame(width: size.width, height: size.height, alignment: .center)
-//        .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
+                .animation(.easeInOut)
+                .frame(width: size.width, height: size.height, alignment: .center)
+                
+                
+
+        }.padding(.horizontal,15)
+            .frame(width: totalWidth, height: size.height, alignment: .center)
+        
+        let dragGesture = DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:))
+        if self.scrollable{
+            view
+                .gesture(dragGesture)
+                .buttonify {
+                    self.onTap?(self.SP.swiped)
+                }
+        }else{
+            view
+                .buttonify {
+                    self.onTap?(self.SP.swiped)
+                }
+        }
     }
     
     var offset:CGFloat{
@@ -52,7 +79,7 @@ struct FancyHScroll: View {
     
     func onReceiveTimer(){
         if self.time == self.timeLimit{
-            self.SP.swiped = self.SP.swiped + 1 <= self.views.count - 1 ? self.SP.swiped + 1 : 0
+            self.SP.swiped = self.SP.swiped + 1 <= self.data.count - 1 ? self.SP.swiped + 1 : 0
         }else{
             self.time += 1
         }
@@ -62,44 +89,72 @@ struct FancyHScroll: View {
         self.time = 0
     }
     
-    var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
+    func headerView(h:CGFloat) -> some View{
+        HStack(alignment: .center, spacing: 10) {
+            ForEach(Array(self.headers!.enumerated()),id:\.offset) { _cur in
+                let cur = _cur.element
+                let idx = _cur.offset
+                
+                Button {
+                    withAnimation(.easeInOut) {
+                        self.SP.swiped = idx
+                    }
+                } label: {
+                    TimerBlobs(text: cur, h: h, time: self.$time, targetTime: timeLimit, active: self.SP.swiped == idx)
+                }
+            }
+        }.frame(width:size.width,height:h)
+    }
+    
+    
+    var mainBodywithHeaders:some View{
+        LazyVStack(alignment: .leading, spacing: 10) {
             let timeBlob_h = self.size.height * 0.1 - 5
             let mainView_h = self.size.height * ( self.headers == nil ? 1 : 0.9) - 5
 
 
-            if let headers = self.headers{
-                HStack(alignment: .center, spacing: 10) {
-                    ForEach(Array(headers.enumerated()),id:\.offset) { _cur in
-                        let cur = _cur.element
-                        let idx = _cur.offset
-                        
-                        Button {
-                            withAnimation(.easeInOut) {
-                                self.SP.swiped = idx
-                            }
-                        } label: {
-                            TimerBlobs(text: cur, h: timeBlob_h, time: self.$time, targetTime: timeLimit, active: self.SP.swiped == idx)
-                        }  
-                    }
-                }.frame(width:size.width,height:timeBlob_h)
+            if let _ = self.headers{
+                self.headerView(h:timeBlob_h)
             }
-            HStack(alignment: .center, spacing: 30) {
-                ForEach(Array(self.views.enumerated()),id:\.offset) { _view in
-                    let view = _view.element
-                    let idx = _view.offset
-                    self.Card(view: view, size: CGSize(width: size.width, height: mainView_h))
-                        .id(idx)
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
+                    let data = _data.element
+                    
+                    self.Card(data: data, size: CGSize(width: size.width, height: mainView_h))
                 }
             }
             
-            .offset(x: self.SP.extraOffset + self.offset)
             Spacer()
-        }.frame(width:size.width,height: size.height, alignment: .leading)
+        }
+    }
+    
+    var mainBodywithoutHeaders:some View{
+        HStack(alignment: .center, spacing: 0) {
+            ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
+                let data = _data.element
+                self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
+            }
+        }
+    }
+    
+    @ViewBuilder var mainBody:some View{
+        if self.headers != nil{
+            self.mainBodywithHeaders
+        }else{
+            self.mainBodywithoutHeaders
+        }
+    }
+    
+    var body: some View {
+        self.mainBody
+        .frame(width:totalWidth,height: size.height, alignment: .leading)
+        .offset(x: self.SP.extraOffset + self.offset)
         .onReceive(self.timer, perform: { _ in
-            self.onReceiveTimer()
+            withAnimation(.easeInOut) {
+                self.onReceiveTimer()
+            }
         })
         .onChange(of: self.SP.swiped, perform: self.resetTimer)
-//        .animation(.easeInOut)
+       
     }
 }

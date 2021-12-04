@@ -3,6 +3,7 @@ import Combine
 enum Clipping:CGFloat{
     case roundClipping = 20
     case squareClipping = 10
+    case roundCornerMedium = 15
     case circleClipping = 50
     case clipped = 0
 }
@@ -27,18 +28,21 @@ struct RefreshableView:ViewModifier{
     @State var refreshing:Bool = false
     @State var refresh_off:CGFloat = 0.0
     @State var pageRendered:Bool = false
+    var hasToRender:Bool
     var width:CGFloat
     var refreshFn:((@escaping () -> Void) -> Void)
     
     
-    init(width:CGFloat,refreshFn: @escaping (( @escaping () -> Void) -> Void)){
+    init(width:CGFloat,hasToRender:Bool,refreshFn: @escaping (( @escaping () -> Void) -> Void)){
         self.width = width
         self.refreshFn = refreshFn
+        self.hasToRender = hasToRender
     }
     
     func resetOff(){
         withAnimation(.easeInOut) {
             self.refresh_off = 0
+            self.refreshing = false
         }
     }
     
@@ -47,25 +51,26 @@ struct RefreshableView:ViewModifier{
         withAnimation(.easeInOut) {
             self.refreshing = true
             self.refresh_off = 100
+            self.pageRendered = false
             print("DEBUG Refresh was toggled!")
         }
         self.refreshFn(self.resetOff)
     }
     
     var refreshState:Bool{
-        return !self.refreshing && self.refresh_off == 0
+        return !self.refreshing && self.refresh_off == 0 && self.pageRendered
     }
     
     var refreshableView:some View{
         GeometryReader{g -> AnyView in
             let minY = g.frame(in: .global).minY
             DispatchQueue.main.async {
-                if !self.pageRendered && minY < 0{
-                    self.pageRendered = true
-                }else if minY >= 100 && self.pageRendered && self.refreshState{
-                    self.refresh(minY: minY)
-                }else if minY < 0 && self.refreshing{
-                    self.refreshing = false
+                if self.hasToRender{
+                    if !self.pageRendered && minY < 0{
+                        self.pageRendered = true
+                    }else if minY >= 100  && self.refreshState{
+                        self.refresh(minY: minY)
+                    }
                 }
             }
             
@@ -77,7 +82,7 @@ struct RefreshableView:ViewModifier{
                 }
            }.frame(width: width, alignment: .center))
             
-        }.frame(width: width, alignment: .center)
+        }
     }
     
     
@@ -88,13 +93,6 @@ struct RefreshableView:ViewModifier{
         }
         .frame(width: width, alignment: .top)
         .offset(y: -25 + self.refresh_off)
-        .onChange(of: self.refreshing) { refreshing in
-            if !refreshing && self.refresh_off != 0{
-                withAnimation(.easeInOut) {
-                    self.refresh_off = 0
-                }
-            }
-        }
     }
 }
 
@@ -159,6 +157,7 @@ struct SystemButtonModifier:ViewModifier{
             .padding(10)
             .background(bg)
             .clipShape(Circle())
+            .contentShape(Rectangle())
     }
 }
 
@@ -171,30 +170,30 @@ struct SpringButton:ViewModifier{
     
     func body(content: Content) -> some View {
         Button {
-            self.handleTap()
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self.handleTap()
+                }
+            }
         } label: {
             content
+                .contentShape(Rectangle())
         }.springButton()
     }
 }
 
 struct Blob:ViewModifier{
-    var color:Color
-    
-    @ViewBuilder var bg:some View{
-        if self.color == .clear{
-            BlurView(style: .systemThinMaterialDark)
-        }else{
-            self.color
-        }
-    }
-    
+    var color:AnyView
+    var clipping:Clipping
     func body(content: Content) -> some View {
         content
             .padding(.horizontal,10)
             .padding(.vertical,10)
-            .background(bg)
-            .clipContent(clipping: .squareClipping)
+            .background(color)
+            .clipContent(clipping: self.clipping)
+            .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
+            
+            
     }
 }
 
@@ -218,12 +217,22 @@ struct ContentClipping:ViewModifier{
 struct BasicCard:ViewModifier{
     var size:CGSize
     func body(content: Content) -> some View {
-        content
-            .padding()
-            .frame(width: self.size.width, height: self.size.height, alignment: .center)
-            .background(BlurView(style: .systemThinMaterialDark))
-            .cornerRadius(20)
-            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        if self.size.height != 0{
+            content
+                .padding()
+                .frame(width: self.size.width, height: self.size.height, alignment: .center)
+                .background(BlurView(style: .systemThinMaterialDark))
+                .cornerRadius(20)
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        }else{
+            content
+                .padding()
+                .aspectRatio(contentMode: .fit)
+                .frame(width: self.size.width, alignment: .center)
+                .background(BlurView(style: .systemThinMaterialDark))
+                .cornerRadius(20)
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+        }
     }
 }
 
@@ -299,19 +308,27 @@ struct MainSubHeading:View{
     var subHeadingSize:CGFloat
     var headingFont:TextStyle
     var subHeadingFont:TextStyle
-    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal){
+    var headColor:Color
+    var subHeadColor:Color
+    var alignment:HorizontalAlignment
+    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal,headColor:Color = .gray,subHeadColor:Color = .white,alignment:HorizontalAlignment = .leading){
         self.heading = heading
         self.subHeading = subHeading
         self.headingSize = headingSize
         self.subHeadingSize = subHeadingSize
         self.headingFont = headingFont
         self.subHeadingFont = subHeadingFont
+        self.headColor = headColor
+        self.subHeadColor = subHeadColor
+        self.alignment = alignment
     }
     
     var body: some View{
-        VStack(alignment: .leading, spacing: 5) {
-            MainText(content: self.heading, fontSize: self.headingSize, color: .gray, fontWeight: .semibold,style: headingFont)
-            MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: .white, fontWeight: .semibold,style: subHeadingFont)
+        VStack(alignment: alignment, spacing: 5) {
+            MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
+                .lineLimit(1)
+            MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
+                .fixedSize(horizontal: false, vertical: true)
         }
     }
     
@@ -340,7 +357,8 @@ struct TabButton:View{
         .frame(width: size.width, height: size.height, alignment: .center)
         .clipContent(clipping: .roundClipping)
         .defaultShadow()
-        .onTapGesture(perform: self.action)
+//        .onTapGesture(perform: self.action)
+        .buttonify(handler: self.action)
     }
     
 }
@@ -349,8 +367,9 @@ struct TabButton:View{
 struct ButtonModifier:ButtonStyle{
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
             .opacity(configuration.isPressed ? 0.9 : 1)
+            
     }
 }
 
@@ -397,30 +416,35 @@ extension View{
         self.transition(.slideRightLeft)
     }
     
-    func blobify(color:Color = .clear) -> some View{
-        self.modifier(Blob(color: color))
+    func slideInOut() -> some View{
+        self.transition(.slideInOut)
+    }
+    
+    func blobify(color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
+        self.modifier(Blob(color: color,clipping: clipping))
     }
     
     func buttonify(handler:@escaping (() -> Void)) -> some View{
         self.modifier(SpringButton(handleTap: handler))
     }
     
-    func coloredTextField(color:Color,size:CGFloat = 50,maxWidth:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{
+    func coloredTextField(color:Color,size:CGFloat = 50,width:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{
         if let rightViewTxt = rightViewTxt {
             return AnyView(HStack(alignment: .firstTextBaseline, spacing: 5) {
                 self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
-                    .multilineTextAlignment(.trailing)
-                    .aspectRatio(contentMode:.fit)
-                    .frame(idealWidth:20,maxWidth: 100,alignment: .center)
+//                    .multilineTextAlignment(.leading)
+                    .frame(width: width, alignment: .topLeading)
+                    .truncationMode(.tail)
                     .keyboardType(.decimalPad)
 
                 MainText(content: rightViewTxt, fontSize: 13, color: .white, fontWeight: .bold, style: .monospaced)
             }.frame(alignment: .top))
         }
         return AnyView(self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
-                        .multilineTextAlignment(.trailing)
+//                        .multilineTextAlignment(.leading)
                         .aspectRatio(contentMode:.fit)
-                        .frame(idealWidth:20,maxWidth: 100,alignment: .center)
+                        .frame(width: width, alignment: .topLeading)
+                        .truncationMode(.tail)
                         .keyboardType(.numberPad)
         )
     }
@@ -440,13 +464,15 @@ extension View{
     }
     
     
-    func refreshableView(width:CGFloat,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
-        self.modifier(RefreshableView(width: width, refreshFn: refreshFn))
+    func refreshableView(width:CGFloat,hasToRender:Bool,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
+        self.modifier(RefreshableView(width: width,hasToRender: hasToRender, refreshFn: refreshFn))
     }
     
     func systemButtonModifier(size:CGSize,color:Color,@ViewBuilder bg: () -> AnyView) -> some View{
         self.modifier(SystemButtonModifier(size: size, color: color, bg: bg))
     }
+    
+    
 }
 
 struct Corners:Shape{
@@ -541,6 +567,10 @@ struct BlurView:UIViewRepresentable{
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         
     }
+    
+    static var thinDarkBlur:BlurView = .init(style: .systemUltraThinMaterialDark)
+    static var regularBlur:BlurView = .init(style: .regular)
+    static var thinLightBlur:BlurView = .init(style: .systemUltraThinMaterialLight)
 }
 
 
@@ -669,14 +699,14 @@ struct GradientShadows:View{
     
 }
 
-struct Stylings_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack{
-            AnimatedWaves(image: UIImage(named: "NightLifeStockImage")!, offset: 0.15)
-            
-            Spacer()
-        }.edgesIgnoringSafeArea(.all)
-        
-    }
-}
+//struct Stylings_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VStack{
+//            AnimatedWaves(image: UIImage(named: "NightLifeStockImage")!, offset: 0.15)
+//
+//            Spacer()
+//        }.edgesIgnoringSafeArea(.all)
+//
+//    }
+//}
 

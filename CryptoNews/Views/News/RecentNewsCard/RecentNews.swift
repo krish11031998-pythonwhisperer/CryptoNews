@@ -33,27 +33,29 @@ struct RecentNews: View {
     
     
     var mainBody:some View{
-        GeometryReader{g in
+//        GeometryReader{g in
             
-            let w = g.frame(in: .local).width
-            let h = g.frame(in: .local).height
-            
-            VStack(alignment: .leading, spacing: 10) {
-                ForEach(Array(self.newsData.enumerated()),id:\.offset) { _data in
-                    let data = _data.element
-                    let idx = _data.offset
-                    let isSelected = self.idx == idx
-                    let cardSize = CGSize(width: w, height: h * (isSelected ? 0.5 : 0.25) - 5)
-                    
-                    RecentNewsCard(data: data, size: cardSize, selected: isSelected)
-                        .onTapGesture{
-                            self.idx = idx
-                        }
-                }
+        let w = containerSize.width - 30
+        let h = containerSize.height - 30
+        
+        return VStack(alignment: .leading, spacing: 10) {
+            ForEach(Array(self.newsData.enumerated()),id:\.offset) { _data in
+                let data = _data.element
+                let idx = _data.offset
+                let isSelected = self.idx == idx
+                let cardSize = CGSize(width: w, height: h * (isSelected ? 0.5 : 0.25) - 5)
+                
+                RecentNewsCard(data: data, size: cardSize, selected: isSelected)
+                    .onTapGesture{
+                        self.idx = idx
+                    }
             }
+            //            }
             
         }
-        .padding()
+        
+        .padding(15)
+        .frame(width: containerSize.width, height: containerSize.height, alignment: .center)
         .background(BlurView(style: .dark))
         .cornerRadius(20)
         .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
@@ -61,16 +63,7 @@ struct RecentNews: View {
         .onAppear(perform: self.onAppear)
     }
     var body: some View {
-        if self.ext_h{
-            self.mainBody
-        }else{
-            self.mainBody
-                .frame(width: containerSize.width, height: containerSize.height, alignment: .center)
-        }
-        
-        
-    
-    
+        self.mainBody
     }
 }
 

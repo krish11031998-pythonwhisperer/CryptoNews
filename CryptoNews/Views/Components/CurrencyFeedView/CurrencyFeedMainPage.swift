@@ -46,12 +46,14 @@ struct CurrencyFeedMainPage: View {
 
 extension CurrencyFeedMainPage{
     func onAppear(){
-        if self.assetAPI.FeedData.isEmpty{
-            self.assetAPI.getAssetInfo()
-        }
-        
-        if self.MAPI.data.isEmpty{
-            self.MAPI.getMarketData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+            if self.assetAPI.FeedData.isEmpty{
+                self.assetAPI.getAssetInfo()
+            }
+            
+            if self.MAPI.data.isEmpty{
+                self.MAPI.getMarketData()
+            }
         }
     }
 }
@@ -59,8 +61,9 @@ extension CurrencyFeedMainPage{
 struct FeedMainPage_Previews: PreviewProvider {
     static var previews: some View {
         CurrencyFeedMainPage(type: .feed)
-            .edgesIgnoringSafeArea(.all)
             .background(Color.mainBGColor)
+            .edgesIgnoringSafeArea(.all)
+            
             
     }
 }

@@ -6,63 +6,122 @@
 //
 
 import SwiftUI
-
 struct Container<T:View>: View {
     var innerView:(CGFloat) -> T
-    var rightButton:T? = nil
+    var rightButton:(() -> AnyView)? = nil
     var heading:String?
     var onClose:(() -> Void)? = nil
     var width:CGFloat
     var ignoreSides:Bool
     var refreshFn:(() -> Void)? = nil
+    var orientation:Axis
+    var paddingSize:CGSize = .zero
     init(
         heading:String? = nil,
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
+        horizontalPadding:CGFloat = 15,
+        verticalPadding:CGFloat = 10,
+        orientation:Axis = .vertical,
         onClose:(() -> Void)? = nil,
-        @ViewBuilder innerView: @escaping (CGFloat) -> T,
-        rightView: (() -> T)? = nil
+        @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
         self.heading = heading
         self.innerView = innerView
         self.onClose = onClose
         self.width = width
-        self.rightButton = rightView?() ?? nil
+        self.orientation = orientation
         self.ignoreSides = ignoreSides
+        self.rightButton = nil
+        self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
     }
     
-    func headingView(heading:String,w:CGFloat) -> some View{
+    
+    init(
+        heading:String? = nil,
+        width:CGFloat = totalWidth,
+        ignoreSides:Bool = false,
+        horizontalPadding:CGFloat = 15,
+        verticalPadding:CGFloat = 10,
+        orientation:Axis = .vertical,
+        onClose:(() -> Void)? = nil,
+        rightView: (() -> AnyView)? = nil,
+        @ViewBuilder innerView: @escaping (CGFloat) -> T
+    ){
+        self.heading = heading
+        self.innerView = innerView
+        self.onClose = onClose
+        self.width = width
+        self.rightButton = rightView
+        self.ignoreSides = ignoreSides
+        self.orientation = orientation
+        self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
+    }
+    
+    var innerWidth:CGFloat{
+        return width - (self.paddingSize.width * 2)
+    }
+    
+    
+    @ViewBuilder var onCloseView:some View{
+        if let close = self.onClose{
+            SystemButton(b_name: "xmark",action: close)
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+    
+    var headingView: some View{
+        let heading = self.heading!
         return Group{
             HStack {
-                if let onClose = self.onClose{
-                    SystemButton(b_name: "xmark",action: onClose)
-                }
+                self.onCloseView
                 MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
                 Spacer()
                 if rightButton != nil{
-                    self.rightButton
+                    self.rightButton?()
                 }
-            }.padding(.horizontal,self.ignoreSides ? 15 : 0)
-            Divider().frame(width:w * 0.5,alignment: .leading)
+            }.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
+            Divider().frame(width:self.innerWidth * 0.5,alignment: .leading)
                 .padding(.bottom,10)
+                .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
         }
         
     }
     
-    @ViewBuilder var mainBody:some View{
-        let w = totalWidth - 30
-        VStack(alignment: .leading, spacing: 10) {
-            if let heading = self.heading{
-                self.headingView(heading:heading,w: w)
+    var mainInnerView:some View{
+        Group{
+            if self.heading != nil{
+                self.headingView
+            }else if self.onClose != nil{
+                self.onCloseView
             }
-            self.innerView(w)
+            self.innerView(self.innerWidth)
         }
-        .padding(.horizontal, self.ignoreSides ? 0 : 15)
-        .frame(width: self.width, alignment: .leading)
+    }
+    
+    
+    @ViewBuilder var mainBody:some View{
+    
+        if self.orientation == .vertical{
+            VStack(alignment: .leading, spacing: 20) {
+                self.mainInnerView
+            }
+        }else if self.orientation == .horizontal{
+            HStack(alignment: .center, spacing: 20) {
+                self.mainInnerView
+            }
+        }
+        
+        
+       
         
     }
     
     var body: some View {
         self.mainBody
+            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
+            .padding(.vertical,self.paddingSize.height)
+            .frame(width: self.width, alignment: .leading)
     }
 }

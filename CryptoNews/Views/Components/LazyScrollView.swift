@@ -7,44 +7,74 @@
 
 import SwiftUI
 
+struct LazyScrollPreference:PreferenceKey{
+    static var defaultValue: Bool = false
+    
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+    
+}
+
+
+
 struct LazyScrollView<T:View>: View {
     var data:[Any]
+    var embedScrollView:Bool
     var viewGen: (Any) -> T
-    var reload:() -> Void
+    @State var reloadNow:Bool = false
+    var header:String?
     
-    
-    init(data:[Any],@ViewBuilder viewGen: @escaping (Any) -> T, reload: @escaping () -> Void){
+    init(header:String? = nil,data:[Any],embedScrollView:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
+        self.header = header
         self.data = data
         self.viewGen = viewGen
-        self.reload = reload
+        self.embedScrollView = embedScrollView
     }
     
     
-    func reload(idx:Int){
-        if idx == self.data.count - 5{
-            self.reload()
+    var reloadContainer:some View{
+        GeometryReader{g -> AnyView in
+            
+//            let minY = g.frame(in: .global).minY
+            let maxY = g.frame(in: .global).maxY
+            
+            DispatchQueue.main.async {
+                if maxY < (totalHeight) && !self.reloadNow{
+                    self.reloadNow.toggle()
+                }
+            }
+            
+            return AnyView(ProgressView().frame(width: totalWidth - 20, height: 100, alignment: .center))
         }
     }
     
-    var body: some View {
+    
+    var refreshingView:some View{
         LazyVStack(alignment: .center, spacing: 10) {
             ForEach(Array(self.data.enumerated()), id:\.offset) {_data in
                 let data = _data.element
-                let idx = _data.offset
-                
                 self.viewGen(data)
-                    .onAppear {
-                        self.reload(idx: idx)
-                    }
-                
             }
-            ProgressView().padding(.bottom,25).frame(alignment:.center)
+            self.reloadContainer
+                .padding(.bottom,200)
+        }.onChange(of: self.data.count) { newCount in
+            if self.reloadNow{
+                self.reloadNow.toggle()
+            }
         }
+        .preference(key: LazyScrollPreference.self, value: self.reloadNow)
+    }
+        
+    var body: some View {
+        if self.embedScrollView{
+            ScrollView(.vertical, showsIndicators: false) {
+                self.refreshingView
+                    .padding(.vertical,50)
+            }
+        }else{
+            self.refreshingView
+        }
+        
     }
 }
-
-//struct LazyScrollView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        LazyScrollView()
-//    }
-//}

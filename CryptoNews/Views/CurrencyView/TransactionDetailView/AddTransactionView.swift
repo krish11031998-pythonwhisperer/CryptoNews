@@ -15,19 +15,48 @@ enum ModalType{
     case none
 }
 
+class TxnFormDetails:ObservableObject{
+    @Published var time:String = ""
+    @Published var type:String  = ""
+    @Published var asset:String  = ""
+    @Published var asset_quantity:String  = ""
+    @Published var asset_spot_price:String = ""
+    @Published var subtotal:String = ""
+    @Published var total_inclusive_price:String = ""
+    @Published var fee:String = ""
+    @Published var memo:String = ""
+    @Published var uid:String  = ""
+    @Published var added_Success:Bool? = nil
+    
+    
+    
+    static var empty:TxnFormDetails = .init()
+    
+    func parseToTransaction() -> Transaction{
+        return .init(time: self.time, type: self.type, asset: self.asset, asset_quantity: self.asset_quantity.toFloat(), asset_spot_price: self.asset_spot_price.toFloat(), subtotal: self.subtotal.toFloat(), total_inclusive_price: self.total_inclusive_price.toFloat(), fee: self.fee.toFloat(), memo: self.memo, uid: self.uid)
+    }
+    
+    func updateTxnDetails(_ value:String,_ type:ModalType){
+        if type == .fee{
+            self.fee = value
+        }else if type == .spot_price{
+            self.asset_spot_price = value
+        }else{
+            self.asset_quantity = value
+        }
+    }
+}
+
+
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
-    @State var txn:Transaction = .init()
-    @State var amount_str:String = ""
-    @State var type:TransactionType = .none
+    @Namespace var animation
+    @StateObject var txn:TxnFormDetails = .empty
+    @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
-    @State var fee_str:String = ""
-    @State var spot_price:String = ""
     @State var showModal:ModalType = .none
-    @State var isKeyboardOn:Bool = false
     @State var coin:CoinMarketData = .init()
-//    @ObservedObject var kGuardian =
     @State var _currency:String? = nil
     @State var currentAsset: AssetData? = nil
     
@@ -38,6 +67,7 @@ struct AddTransactionView:View {
     ){
         if let asset = currentAsset{
             self.currentAsset = asset
+            self.updateSpotPrice(asset: asset)
         }
         
         if let curr = curr_str{
@@ -54,52 +84,63 @@ struct AddTransactionView:View {
             }
         }
         
-        if self.context.prev_tab != .none{
-            self.context.tab = self.context.prev_tab
-            self.context.prev_tab = .none
+        if self.context.tab == .txn{
+            if self.context.prev_tab != .none{
+                self.context.tab = self.context.prev_tab
+                self.context.prev_tab = .none
+            }else{
+                self.context.tab = .home
+            }
         }
     }
     
     func resetStates(){
         DispatchQueue.main.async {
-            self.amount_str = ""
-            self.fee_str = ""
-            self.type = .none
-            self.date = Date()
-            self.spot_price = ""
+            self.txn.asset_quantity = "0"
         }
+    }
+    
+    
+    func convertToAED(_ val_str:String) -> String{
+        let val = val_str.toFloat()
+        return (val * 3.6).toString()
     }
     
     func updateTxnObject(){
-        let subTotal = self.amount_str.toFloat() * self.spot_price.toFloat()
-        self.txn.fee = self.fee_str
-        self.txn.asset_spot_price = self.spot_price
-        self.txn.asset_quantity = self.amount_str
-        self.txn.asset = self.currency
+        let subTotal = self.txn.asset_quantity.toFloat() * self.txn.asset_spot_price.toFloat()
+        txn.fee = txn.fee == "" ? "0" : txn.fee
+        txn.asset_spot_price = txn.asset_spot_price == "" ? "0" : txn.asset_spot_price
+        txn.asset = self.currency
         
         if #available(iOS 15.0, *){
-            self.txn.time = self.date.ISO8601Format()
+            txn.time = self.date.ISO8601Format()
         }else {
-            self.date.stringDate()
+            txn.time = self.date.stringDate()
         }
-        self.txn.subtotal = String(subTotal)
-        self.txn.total_inclusive_price = String(subTotal + self.fee_str.toFloat())
-        self.txn.type = self.type.rawValue
-        
+        txn.subtotal = subTotal.toString()
+        txn.total_inclusive_price = (subTotal + txn.fee.toFloat()).toString()
+        txn.type = self.type.rawValue
+        txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
+        txn.uid = self.context.user.user?.uid ?? ""
+    }
+    
+    func updateTxnAdditionState(state:Bool){
+        DispatchQueue.main.async {
+            withAnimation(.easeInOut) {
+                self.txn.added_Success = state
+            }
+        }
     }
     
     func buttonHandle(){
-        if self.isKeyboardOn{
-            hideKeyboard()
-        }else{
-            self.updateTxnObject()
-            print("This is txn! : ",self.txn)
-            TransactionAPI.shared.uploadTransaction(txn: self.txn) { err in
-                if let err_msg = err?.localizedDescription {
-                    print("error : ",err_msg)
-                }else{
-                    self.resetStates()
-                }
+        self.updateTxnObject()
+        print("This is txn! : ",txn.parseToTransaction())
+        TransactionAPI.shared.uploadTransaction(txn: txn.parseToTransaction()) { err in
+            if let err_msg = err?.localizedDescription {
+                print("error : ",err_msg)
+                self.updateTxnAdditionState(state: false)
+            }else{
+                self.updateTxnAdditionState(state: true)
             }
         }
     }
@@ -109,9 +150,12 @@ struct AddTransactionView:View {
         let aapi = AssetAPI.shared(currency: sym)
         aapi.getAssetInfo { data in
             guard let data = data else {return}
-            withAnimation(.easeInOut) {
-                self.currentAsset = data
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self.currentAsset = data
+                }
             }
+            
         }
     }
     
@@ -128,62 +172,82 @@ struct AddTransactionView:View {
             }
         }
     }
-
+    
+    func onDisappear(){
+        if self.context.selectedSymbol != nil{
+            self.context.selectedSymbol = nil
+        }
+        withAnimation(.easeInOut) {
+            if  !self.context.showTab{
+                self.context.showTab.toggle()
+            }
+        }
+    }
     
     var body: some View {
         ZStack(alignment:.bottom){
-            Container(heading: self.currency ?? "Choose the currency", width: totalWidth,onClose: self.onClose) { w in
-                VStack(alignment: .leading, spacing: 10) {
+            Container(heading: self.currency, width: totalWidth,onClose: self.onClose) { w in
+                VStack(alignment: .leading, spacing: 20) {
                     if self.currentAsset == nil{
-                        CurrencyCardView(currency: $coin,width: w)
+                        CurrencyCardView(width: w)
+                            .onPreferenceChange(CurrencySelectorPreference.self) { newValue in
+                                if self.coin != newValue{
+                                    self.coin = newValue
+                                }
+                            }
                     }
-                    self.transactionType.frame(width: w, alignment: .leading)
-                    Spacer().frame(height: totalHeight * 0.2, alignment: .center)
                     self.txnValueField.frame(width: w, alignment: .center)
-                    Spacer()
+                    self.transactionType(w:w)
                     self.detailButtons
-                    TabButton(width: w, height: 50, title: self.isKeyboardOn ? "Update" : "Add Transaction", textColor: .white,action: self.buttonHandle)
+                    if self.currentAsset != nil{
+                        self.numPad(w: w)
+                    }
+                    
+                    TabButton(width: w, height: 50, title: "Add Transaction", textColor: .white,action: self.buttonHandle)
                 }
             }
             .padding(.vertical,50)
             .frame(height: totalHeight, alignment: .topLeading)
             
-            if self.showModal == .date{
-                self.datepickerView(w: totalWidth)
+            if self.showModal != .none{
+                self.choosenSideView(w: totalWidth)
             }
-            if self.showModal == .fee{
-                self.feefieldView(w: totalWidth)
-            }
-            if self.showModal == .spot_price{
-                self.spotPriceView(w: totalWidth)
+            
+            if let state = self.txn.added_Success{
+                self.swipeCard(w: totalWidth, heading: "Add Transaction", buttonText: "Close") {
+                    return AnyView(MainText(content: "\(state ? "Success" : "Failed")", fontSize: 15, color: .white, fontWeight: .semibold))
+                } action: {
+                    withAnimation(.easeInOut) {
+                        self.txn.added_Success = nil
+                        self.resetStates()
+                    }
+                    
+                }
+
             }
         }
         .edgesIgnoringSafeArea(.all)
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-        .onDisappear {
-            if self.context.selectedSymbol != nil{
-                self.context.selectedSymbol = nil
-            }
-            
-            if self.isKeyboardOn{
-                self.isKeyboardOn.toggle()
-                hideKeyboard()
-            }
-            
-            withAnimation(.easeInOut) {
-                if  !self.context.showTab{
-                    self.context.showTab.toggle()
-                }
-            }
-            
-        }
-        .keyboardAdaptive(isKeyBoardOn: $isKeyboardOn)
+        .onDisappear(perform: self.onDisappear)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
+        .onChange(of: (self.currentAsset ?? .init()),perform: self.updateSpotPrice(asset:))
+        .onChange(of: self.txn.added_Success) { newValue in
+            if let value = newValue{
+                print("The txn is : ",value)
+            }
+        }
     }
 }
 
 extension AddTransactionView{
+    
+    func updateSpotPrice(asset:AssetData){
+        if let price = asset.price{
+            self.txn.asset_spot_price = price.toString()
+        }
+    }
+    
     
     var currency:String{
         return self._currency ?? self.coin.s ?? "Choose Currency"
@@ -198,12 +262,52 @@ extension AddTransactionView{
             TabButton(width: w - 20, height: 50, title: buttonText, textColor: .white,action: action).padding(.bottom,15)
         }
         .padding(10)
-        .frame(width: w,height: totalHeight * 0.3, alignment: .topLeading)
+        .frame(width: w, alignment: .topLeading)
+        .aspectRatio(contentMode: .fit)
         .background(BlurView(style: .systemThickMaterialDark))
         .clipContent(clipping: .roundClipping)
         .transition(.slideInOut)
         .zIndex(2)
     }
+    
+
+    func numPadEventHandler(val:String,updateVal:((String) -> Void)? = nil){
+        var valToUpdate = self.showModal == .fee ? self.txn.fee : self.showModal == .spot_price ? self.txn.asset_spot_price : self.txn.asset_quantity
+        DispatchQueue.main.async {
+            if val != "Del"{
+                if valToUpdate == "0"{
+                    valToUpdate = val
+                }else{
+                    valToUpdate += val
+                }
+            }else if valToUpdate.count > 0{
+                valToUpdate.removeLast()
+            }
+            updateVal?(valToUpdate) ?? self.txn.updateTxnDetails(valToUpdate,self.showModal)
+        }
+        
+    }
+    
+    
+    
+    func numPad(w:CGFloat) -> some View{
+        let numIconW = (w * 0.3) - 2.5
+        var numPadSeq = Array(1...9).map({"\($0)"})
+        numPadSeq.append(contentsOf: [".","0","Del"])
+        let col = GridItem(.adaptive(minimum: numIconW, maximum: numIconW))
+        let res = LazyVGrid(columns: [col], alignment: .center, spacing: 10) {
+            ForEach(numPadSeq, id:\.self) { numVal in
+                MainText(content: numVal, fontSize: 17, color: .white, fontWeight: .semibold)
+                    .frame(width: numIconW,height: numIconW * 0.75 ,alignment: .center)
+                    .buttonify {
+                        self.numPadEventHandler(val: numVal)
+                    }
+            }
+        }
+
+        return res
+    }
+    
     
     var detailButtons:some View{
         ScrollView(.horizontal, showsIndicators: false) {
@@ -211,25 +315,46 @@ extension AddTransactionView{
                 self.dateField
                 self.feeButton
                 self.spotPriceView
-            }
+            }.padding(.horizontal,2.5)
+                .padding(.vertical,10)
         }
     }
     
-    var transactionType:some View{
-        HStack(alignment: .center, spacing: 5) {
-            ForEach(self.types, id: \.rawValue) {type in
+    func transactionType(w:CGFloat) -> some View{
+        let el_width = w/4 - 2.5
+        return HStack(alignment: .center, spacing: 5) {
+            ForEach(Array(self.types.enumerated()), id: \.offset) {_type in
+                let type = _type.element
+                let idx = _type.offset
+                let id = self.type == type
+                
+                
                 MainText(content: type.rawValue.capitalized, fontSize: 15, color: .white, fontWeight: .bold, style: .normal)
-                    .blobify(color: self.type == type ? .green : .clear)
+                    .padding(.vertical,15)
+                    .frame(width: el_width, alignment: .center)
+                    .background(
+                        ZStack(alignment: .center){
+                            if id{
+                                Color.mainBGColor
+                                    .frame(width: el_width, alignment: .center)
+                                    .clipContent(clipping: .roundClipping)
+                                    .matchedGeometryEffect(id: "box", in: self.animation,properties: .frame)
+                                    .animation(.linear(duration: 0.175))
+                            }else{
+                                Color.clear
+                            }
+                        })
                     .buttonify {
                         withAnimation(.easeInOut) {
                             if self.type != type{
                                 self.type = type
                             }
                         }
-                        self.txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
                     }
+               
             }
-        }
+        }.frame(width: w, alignment: .center)
+        .background(BlurView(style: .regular).clipContent(clipping: .roundClipping))
     }
     
     
@@ -242,6 +367,7 @@ extension AddTransactionView{
     }
     
     var value_size:CGFloat{
+        let amount_str = self.txn.asset_quantity
         if amount_str.count == 4{
             return 40
         }else if amount_str.count == 5{
@@ -255,12 +381,17 @@ extension AddTransactionView{
     
     var txnValueField:some View{
         VStack(alignment: .center, spacing: 10) {
-            let color = Color.white
-            let size:CGFloat = self.entryType == "coin" ? self.value_size : 30
-            TextField("0",text: $amount_str)
-                .coloredTextField(color: color,size: size,rightViewTxt: self.currency)
+            let color:Color = self.txn.asset_quantity != "" ? .white : .gray
+            let quantity:String = self.txn.asset_quantity != "" ? self.txn.asset_quantity : "0"
+            HStack(alignment: .top, spacing: 5) {
+                MainText(content: quantity, fontSize: self.value_size, color: color, fontWeight: .semibold)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                MainText(content: self.currency == "Choose Currency" ? "XXX" : self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
+            }
             MainText(content: "\(convertToMoneyNumber(value: self.currentAsset?.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
-        }
+        }.padding(.vertical,10)
+        .frame(height: totalHeight * 0.15, alignment: .center)
     }
     
     
@@ -271,61 +402,63 @@ extension AddTransactionView{
             date = self.date.formatted(date: .abbreviated, time: .shortened)
         }
         return MainText(content: date, fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
-            .blobify(color: .clear)
+            .blobify(color: AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .date)
             }
     }
     
+    @ViewBuilder func choosenSideView(w:CGFloat) -> some View{
+        if self.showModal == .spot_price{
+            self.swipeCard(w: w, h: totalHeight * 0.5, heading: "Update Spot Price") {
+                return AnyView(Group{
+                    MainText(content: "$\(self.txn.asset_spot_price)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
+                    self.numPad(w: w)
+                })
+            } action: {
+                self.updateModal(type: .none)
+            }
+        }else if self.showModal == .fee{
+            self.swipeCard(w: w, h: totalHeight * 0.6,heading: "Update Fees") {
+                return AnyView(Group{
+                    MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
+                    self.numPad(w: w)
+                })
+                            
+            } action: {
+                self.updateModal(type: .none)
+            }
+            
+        }else{
+            self.swipeCard(w: w,heading: "Select Date") {
+                return AnyView(DatePicker("", selection: $date, displayedComponents: [.date,.hourAndMinute])
+                                .datePickerStyle(.automatic)
+                                .labelsHidden()
+                )
+            } action: {
+                self.updateModal(type: .none)
+            }
+        }
+    }
+    
+    
     var spotPriceView:some View{
-        MainText(content: "Spot Price : $\(self.spot_price == "" ? "0" : self.spot_price)", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
-            .blobify(color: self.spot_price == "" ? .clear : .green)
+        let spot_price = self.txn.asset_spot_price
+        return MainText(content: "Spot Price : $\(spot_price == "" ? "0" : spot_price)", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
+            .blobify(color: spot_price == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .spot_price)
             }
     }
-    
-    
-    func datepickerView(w:CGFloat) -> some View{
-        self.swipeCard(w: w,heading: "Select Date") {
-            return AnyView(DatePicker("", selection: $date, displayedComponents: [.date,.hourAndMinute])
-                    .datePickerStyle(.automatic)
-                    .labelsHidden()
-            )
-        } action: {
-            self.updateModal(type: .none)
-        }
-    }
+
     
     var feeButton:some View{
-        MainText(content: "Fee: $\(self.fee_str == "" ? "0" : self.fee_str)", fontSize: 15, color: .white)
-            .blobify(color: self.fee_str == "0" || self.fee_str == "" ? .clear : .green)
+        let fee_str = self.txn.fee
+        return MainText(content: "Fee: $\(fee_str == "" ? "0" : fee_str)", fontSize: 15,color: .white, fontWeight: .semibold)
+            .blobify(color: fee_str == "0" || fee_str == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .fee)
             }
-    }
-    
-    func feefieldView(w:CGFloat) -> some View{
-        self.swipeCard(w: w, h: totalHeight * 0.5,heading: "Update Fees") {
-            return AnyView(Group{
-                TextField("0",text: $fee_str)
-//                TextField("0",text: self.$txn.fee)
-                    .coloredTextField(color: .white,size: 30,rightViewTxt: "USD")
-                    .keyboardType(.numberPad)
-            })
-        } action: {
-            self.updateModal(type: .none)
-        }
-    }
-    
-    func spotPriceView(w:CGFloat) -> some View{
-        self.swipeCard(w: w, h: totalHeight * 0.5, heading: "Update Spot Price") {
-            return AnyView(TextField("0", text: $spot_price)
-                            .coloredTextField(color: .white,size:30,rightViewTxt: "USD").keyboardType(.numberPad)
-            )
-        } action: {
-            self.updateModal(type: .none)
-        }
     }
     
 }
@@ -356,21 +489,11 @@ struct AddTxnMainView:View{
     
     var body: some View{
         ZStack(alignment: .center) {
+//            mainBGView
             Color.mainBGColor
-//            if let asset = self.asset{
             AddTransactionView(currentAsset: asset, curr_str: self.currency)
-//            }else if self.currency == nil{
-//                ScrollView(.vertical, showsIndicators: false) {
-//                    CurrencyCardView(currency: $coin,large: true)
-//                }
-//            }else{
-//                ProgressView()
-//            }
-        }.frame(width: totalWidth, height: totalHeight, alignment: .center)
+        }.edgesIgnoringSafeArea(.top).frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-//        .onChange(of: self.coin.s, perform: self.onChangeCoin(sym:))
-            
-            
     }
     
     
@@ -378,8 +501,13 @@ struct AddTxnMainView:View{
 
 
 struct AddTransactionView_Previews: PreviewProvider {
+    
+    @StateObject static var context:ContextData = .init()
+    
     static var previews: some View {
-        AddTxnMainView()
-            .edgesIgnoringSafeArea(.all)
+        AddTransactionView(currentAsset: nil, curr_str: nil)
+            .environmentObject(self.context)
+            .background(Color.mainBGColor)
+            .ignoresSafeArea()
     }
 }

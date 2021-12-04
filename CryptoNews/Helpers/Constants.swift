@@ -5,6 +5,7 @@ var AppWidth = totalWidth * 0.9
 var totalHeight = UIScreen.main.bounds.height
 extension Color{
     static var mainBGColor = LinearGradient(gradient: .init(colors: [.red,.blue]), startPoint: .topTrailing, endPoint: .bottomLeading)
+    static var darkGradColor = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)
     static var cardColor = BlurView(style: .dark)
     static var primaryColor:Color = .init(UIColor(hex: "#191A1DFF") ?? .white)
     

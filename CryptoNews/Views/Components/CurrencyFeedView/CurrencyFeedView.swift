@@ -44,7 +44,7 @@ extension CurrencyFeedView{
     
     func CurrencyView(w:CGFloat) -> some View{
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .center, spacing: 7.5) {
+            LazyHStack(alignment: .center, spacing: 7.5) {
                 ForEach(Array(self.currency_data.enumerated()),id:\.offset) { _data in
                     let data = _data.element
                     let curr = data.s ?? "NOC"
@@ -53,7 +53,7 @@ extension CurrencyFeedView{
                         MainText(content: curr, fontSize: 12, color: .white, fontWeight: .regular, style: .normal)
                     }.padding(10)
                         .aspectRatio(contentMode:.fit)
-                    .background(Color.mainBGColor.opacity(0.5))
+                        .background(self.bg(condition: curr == currency))
                     .clipContent(clipping: .roundClipping)
                     .buttonify {
                         DispatchQueue.main.async {
@@ -62,6 +62,15 @@ extension CurrencyFeedView{
                     }
                 }
             }
+        }
+    }
+    
+    
+    @ViewBuilder func bg(condition:Bool) -> some View{
+        if condition{
+            Color.mainBGColor.opacity(0.5)
+        }else{
+            BlurView(style: .systemThinMaterialDark)
         }
     }
     

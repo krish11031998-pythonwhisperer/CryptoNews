@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct AllMarketData:Codable{
     var data:Array<CoinMarketData>?
@@ -17,7 +18,7 @@ enum Order:String{
     case incr = "incr"
 }
 
-struct CoinMarketData:Codable{
+struct CoinMarketData:Codable,Equatable{
     var id:Int?
     var s:String?
     var n:String?
@@ -49,7 +50,7 @@ struct CoinMarketData:Codable{
     var timeSeries:Array<CoinMarketData>?
 }
 
-class MarketAPI:DAPI,ObservableObject{
+class MarketAPI:DAPI{
     @Published var data:Array<CoinMarketData> = .init()
     var sort:String?
     var limit:Int
@@ -80,23 +81,30 @@ class MarketAPI:DAPI,ObservableObject{
     
     
     
-    func parseData(data:Data){
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(AllMarketData.self, from: data)
             if let data = res.data{
                 DispatchQueue.main.async {
-                    self.data = data
+                    withAnimation(.easeInOut) {
+                        self.data = data
+                    }
                 }
             }
             
         }catch{
             print("There was an error while : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
     }
     
     func getMarketData(){
-        self.getInfo(_url: self.marketURL, completion: self.parseData(data:))
+//        self.getData(_url: self.marketURL, completion: self.parseData(data:))
+        self.getData(_url: self.marketURL)
     }
     
     

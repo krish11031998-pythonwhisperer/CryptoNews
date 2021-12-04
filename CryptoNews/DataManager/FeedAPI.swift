@@ -35,6 +35,14 @@ class AssetNewsData:Identifiable,Codable{
     var publisher:String?
     var shares:Float?
     var url:String?
+    
+    
+    var date:Date{
+        guard let time = self.time else {return Date()}
+        let epochTime = TimeInterval(time)
+        let date = Date(timeIntervalSince1970: epochTime)
+        return date
+    }
 }
 
 
@@ -44,14 +52,13 @@ enum FeedType:String{
     case Chronological = "chronological"
 }
 
-class FeedAPI:DAPI,ObservableObject{
+class FeedAPI:DAPI{
     var currency:[String]
     var sources:[String]
     var type:FeedType
     var limit:Int
     var page:Int
     @Published var FeedData:[AssetNewsData] = []
-    private var loading:Bool = false
     static var shared:FeedAPI = .init()
     
     
@@ -84,7 +91,8 @@ class FeedAPI:DAPI,ObservableObject{
         self.getAssetInfo()
     }
     
-    func parseData(data:Data){
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(News.self, from: data)
@@ -103,13 +111,17 @@ class FeedAPI:DAPI,ObservableObject{
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
         
     }
     
     func getAssetInfo(){
         if !self.loading{
             self.loading = true
-            self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+//            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
+            self.getData(_url: self.tweetURL)
         }
         
     }
@@ -119,7 +131,9 @@ class FeedAPI:DAPI,ObservableObject{
         if !self.loading{
             self.loading = true
             self.page += 1;
-            self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+//            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
+            self.getData(_url: self.tweetURL)
+//            self.getDa
         }
         
     }

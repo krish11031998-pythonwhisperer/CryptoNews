@@ -12,42 +12,73 @@ struct ContentView: View {
     
     func closeNews(){
         if self.context.selectedNews != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
-                self.context.selectedNews = nil
-            }
+            self.context.selectedNews = nil
         }
     }
     
-    var body: some View {
+    var contentView:some View{
         ZStack(alignment: .bottom) {
             mainBGView.zIndex(0)
-            switch(self.context.tab){
-                case .home: HomePage()
-                        .environmentObject(self.context)
-                case .feed : CurrencyFeedMainPage(type: .feed)
-                                .environmentObject(self.context)
-                case .news : CurrencyFeedMainPage(type: .news)
-                        .environmentObject(self.context)
-                case .txn:
-                    AddTxnMainView()
-                    .environmentObject(self.context)
-//                case .reddit : CurrencyFeedMainPage(type: .reddit)
-//                        .environmentObject(self.context)
-                
-                default: Color.clear
-            }
+            self.mainBody
             self.hoverView
             if self.context.showTab{
                 TabBarMain()
+                    .zIndex(2)
             }
-        }.edgesIgnoringSafeArea(.all)
+        }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
+        .edgesIgnoringSafeArea(.all)
+    }
+    
+    var body: some View {
+        self.contentView
     }
 }
 
-
-
 extension ContentView{
+    
+    var tabs:[Tabs]{
+        return [.home,.search,.info,.profile]
+    }
+    
+    @ViewBuilder var mainBody:some View{
+        TabView(selection: self.$context.tab) {
+            ForEach(self.tabs, id: \.rawValue) { tab in
+                self.dynamicTabPage(page: tab).tag(tab)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+    }
+    
+    @ViewBuilder func tabPage(page:Tabs) -> some View{
+        switch(page){
+            case .home: self.homeView
+            case .search: SearchMainPage()
+            case .info: SlideTabView {
+                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+            }
+            case .profile: ProfileView()
+            default: Color.clear
+        }
+    }
+    
+    
+    @ViewBuilder func dynamicTabPage(page:Tabs) -> some View{
+        if page == self.context.tab{
+            self.tabPage(page: page)
+        }else{
+            Color.clear
+        }
+    }
+    
+    @ViewBuilder var homeView:some View{
+        HomePage()
+            .environmentObject(self.context)
+    }
+    
+    var hoverViewIsOn:Bool{
+        return self.context.addTxn || self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil
+    }
     
     
     @ViewBuilder var hoverView:some View{
@@ -56,17 +87,30 @@ extension ContentView{
                 .transition(.slideInOut)
                 .zIndex(3)
         }
-        if self.context.addTxn{
+        if self.context.addTxn || self.context.tab == .txn{
             AddTxnMainView(currency: self.context.selectedSymbol)
                 .transition(.slideInOut)
                 .zIndex(3)
         }
         
-        if let asset = self.context.selectedCurrency{
-            self.CurrencyViewGetter(asset: asset, height: totalHeight * 0.3)
-        }else if let symb = self.context.selectedSymbol{
-            self.CurrencyViewGetter(name: symb, height: totalHeight * 0.3)
+        if self.context.selectedCurrency != nil || self.context.selectedSymbol != nil{
+            CurrencyView(name: self.context.selectedSymbol, info: self.context.selectedCurrency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+            .transition(.slideInOut)
+            .background(mainBGView)
+            .edgesIgnoringSafeArea(.all)
+            .zIndex(2)
         }
+        
+        if let post = self.context.selectedPost{
+            CrybPostDetailView(postData: post)
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
+        
+        
+    
     }
     
     
@@ -81,25 +125,7 @@ extension ContentView{
             }
         }
     }
-    
-    
-    func CurrencyViewGetter(asset:AssetData,height h :CGFloat) -> some View{
-        CurrencyView(info: asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-        .transition(.slideInOut)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        .zIndex(2)
-    }
-    
-    func CurrencyViewGetter(name:String,height h :CGFloat) -> some View{
-        CurrencyView(name: name, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-        .transition(.slideInOut)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        .zIndex(2)
-    }
-    
-    
+
 }
 
 struct ContentView_Previews: PreviewProvider {

@@ -10,36 +10,37 @@ import SwiftUI
 struct AsyncContainer<T:View>: View {
     var view:T
     var size:CGSize
-    var triggerAction:(() -> Void)
-    init(size:CGSize,triggerAction:@escaping (() -> Void),@ViewBuilder view: () -> T){
+    @State var showView:Bool = false
+    init(size:CGSize = .init(width: totalWidth - 20, height: 25),@ViewBuilder view: () -> T){
         self.view = view()
         self.size = size
-        self.triggerAction = triggerAction
     }
     
-    var body: some View {
-        GeometryReader { g -> T in
-            let maxY = g.frame(in: .global).maxY
+    
+    var progressView:some View{
+        GeometryReader { g -> AnyView in
+//            let maxY = g.frame(in: .global).maxY
             let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-//                if maxY <= totalHeight{
-//                    self.triggerAction()
-//                }
-                if minY <= totalHeight{
-                    self.triggerAction()
+                if !self.showView && minY < totalHeight * 0.75{
+                    withAnimation(.easeInOut) {
+                        self.showView.toggle()
+                    }
                 }
-                print("DEBUG : maxY = ",maxY)
             }
             
-            return self.view
-        }.frame(width: self.size.width, alignment: .center)
-            .frame(maxHeight: .infinity)
+            return AnyView(ProgressView().frame(width: totalWidth - 20, height: 25, alignment: .center))
+            
+        }
+    }
+    
+    
+    var body: some View {
+        if self.showView{
+            self.view
+        }else{
+            self.progressView
+        }
     }
 }
-
-//struct AsyncContainer_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AsyncContainer()
-//    }
-//}

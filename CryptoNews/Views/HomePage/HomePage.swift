@@ -8,25 +8,29 @@
 import SwiftUI
 
 struct HomePage: View {
-    var currencies:[String] = ["BTC","LTC","ETH","XRP"]
-    var color:[String:Color] = ["BTC":Color.orange,"LTC":Color.yellow,"ETH":Color.blue,"XRP":Color.red]
     @EnvironmentObject var context:ContextData
     var activeCurrency:Bool{
         return self.context.selectedCurrency != nil
     }
     
+    var currencies:[String]{
+        return self.context.user.user?.watching ?? ["BTC","LTC","ETH","XRP"]
+    }
+    
+    
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
-            LazyVStack(alignment: .center, spacing: 15) {
-                Spacer().frame(height: 50)
-                self.PriceCards
-                LatestTweets(currency: "all")
-                self.NewsSection
-                CryptoMarket(heading: "Popular Coins",srt:"d",order:.desc)
-                CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
-                CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
-                Spacer(minLength: 200)
+            Spacer().frame(height: 50)
+            self.trackedAsset
+            CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
+            CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
+            CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
+            AsyncContainer(size: .zero) {
+                LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
             }
+            
+            self.CurrencyFeed
+            Spacer(minLength: 200)
         }.zIndex(1)
     }
     
@@ -35,47 +39,55 @@ struct HomePage: View {
             self.mainView
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
-        .onChange(of: self.context.selectedCurrency?.name) { newValue in
-            print("Currency choosen is : ",newValue)
-        }
     }
 }
 
 extension HomePage{
 
+    @ViewBuilder var trackedAsset:some View{
+        if self.context.selectedCurrency == nil{
+            TrackedAssetView(asset: currencies)
+        }else{
+            Color.clear.frame(width: totalWidth * 0.5, height: totalHeight * 0.4, alignment: .center)
+        }
+    }
+    
+    
+    func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
+        AsyncContainer(size: .zero) {
+            CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)
+        }
+    }
+    
+    
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }
     
-    var PriceCards:some View{
-        Container(heading: "Tracked Assets", width: totalWidth, ignoreSides: true) { w in
-            ScrollView(.horizontal, showsIndicators: false){
-                LazyHStack(alignment: .center, spacing: 10){
-                    ForEach(Array(self.currencies.enumerated()),id:\.offset) { _currency in
-                        let currency = _currency.element
-                        let idx = _currency.offset
-                        let pad_al:Edge.Set = idx == 0  ? .leading : .trailing
-                        let pad_val:CGFloat = idx == 0 || idx == self.currencies.count - 1 ? 10 : 0
-                        PriceCard(currency: currency,color: self.color[currency] ?? .white,font_color: .white).padding(pad_al,pad_val)
-                    }
+    @ViewBuilder func CurrencyFeedEl( _ currency: String) -> some View{
+        Container(heading: "\(currency) Latest Feed", width: totalWidth, ignoreSides: true) { _ in
+            NewsSectionMain(currency: currency).padding(.vertical,10)
+            LatestTweets(currency: currency,type: .Influential)
+        }
+    }
+    
+    var CurrencyFeed:some View{
+        return Group{
+            ForEach(self.currencies,id:\.self) {currency in
+                AsyncContainer(size: .zero) {
+                    self.CurrencyFeedEl(currency)
+                        .padding(.vertical,15)
                 }
             }
         }
     }
-    
-    
-    var NewsSection:some View{
-        return RecentNewsCarousel(heading: "News") { currency in
-            guard let curr = currency as? String  else {return AnyView(Color.clear)}
-            return AnyView(NewsCardCarousel(currency: [curr],size: .init(width: totalWidth, height: totalHeight * 0.65))
-            )
-        }
-        
-    }
 }
 
 struct HomePage_Previews: PreviewProvider {
+    @StateObject static var context:ContextData = .init()
     static var previews: some View {
         HomePage()
+            .environmentObject(HomePage_Previews.context)
+            .background(Color.mainBGColor.ignoresSafeArea())
     }
 }

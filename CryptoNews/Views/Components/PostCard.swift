@@ -19,13 +19,14 @@ struct PostCard: View {
     var size:CGSize
     var font_color:Color
     var const_size:Bool
-    
-    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,font_color:Color = .white,const_size:Bool = false){
+    var isButton:Bool
+    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,font_color:Color = .white,const_size:Bool = false,isButton:Bool = true){
         self.cardType = cardType
         self.data = data
         self.size = size
         self.font_color = font_color
         self.const_size = const_size
+        self.isButton = isButton
     }
     
     var card:some View{
@@ -33,40 +34,33 @@ struct PostCard: View {
         let h = size.height - 20
         
         let view =
-        Button {
-            withAnimation(.easeInOut) {
-                self.context.selectedNews = self.data
-            }
-        } label: {
-            ZStack(alignment: .bottom) {
-                Color.mainBGColor.frame(width: size.width, height: size.height * 0.15, alignment: .center)
-                BlurView(style: .dark)
-                VStack(alignment: .leading, spacing: 10) {
-                    self.Header(size: .init(width: w, height: h * 0.1))
-                    if self.data.link?.isImgURLStr() ?? false{
-                        ImageView(url: self.data.link, width: w, height: h * 0.8 - 40, contentMode: .fill, alignment: .center)
-                            .clipShape(RoundedRectangle(cornerRadius: 15))
-                            .overlay(
-                                VStack(alignment: .leading, spacing: 10){
-                                    Spacer()
-                                    self.Body(size: .init(width: w - 20, height: (h * 0.6) - 20))
-                                }.padding(10)
-                            )
-                    }else{
-                        self.Body(size: .init(width: w, height: (h * 0.8) - 40))
-                    }
-                    Spacer(minLength: 0)
-                    Divider().frame(width: w, alignment: .center)
-                    self.Footer(data: data, size: .init(width: w, height: h * 0.1))
-                }.padding()
-            }
-            .frame(width: size.width, alignment: .center)
-            .aspectRatio(contentMode: .fill)
-            .frame(minHeight: self.const_size ? size.height : 0)
-//            .clipShape(RoundedRectangle(cornerRadius: 20))
-            .clipContent(clipping: .roundClipping)
-            .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 0)
-        }.springButton()
+        ZStack(alignment: .bottom) {
+            Color.mainBGColor.frame(width: size.width, height: size.height * 0.15, alignment: .center)
+            BlurView(style: .dark)
+            VStack(alignment: .leading, spacing: 10) {
+                self.Header(size: .init(width: w, height: h * 0.1))
+                if self.data.link?.isImgURLStr() ?? false{
+                    ImageView(url: self.data.link, width: w, height: h * 0.8 - 40, contentMode: .fill, alignment: .center)
+                        .clipShape(RoundedRectangle(cornerRadius: 15))
+                        .overlay(
+                            VStack(alignment: .leading, spacing: 10){
+                                Spacer()
+                                self.Body(size: .init(width: w - 20, height: (h * 0.6) - 20))
+                            }.padding(10)
+                        )
+                }else{
+                    self.Body(size: .init(width: w, height: (h * 0.8) - 40))
+                }
+                Spacer(minLength: 0)
+                Divider().frame(width: w, alignment: .center)
+                self.Footer(data: data, size: .init(width: w, height: h * 0.1))
+            }.padding()
+        }
+        .frame(width: size.width, alignment: .center)
+        .aspectRatio(contentMode: .fill)
+        .frame(minHeight: self.const_size ? size.height : 0)
+        .clipContent(clipping: .roundClipping)
+        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 0)
         
         return view
         
@@ -88,18 +82,25 @@ struct PostCard: View {
     }
     
     var body: some View {
-//        Button {
-//            withAnimation(.easeInOut) {
-//                self.context.selectedNews = self.data
-//            }
-//        } label: {
-            if self.cardType == .Reddit && self.data.link?.isImgURLStr() ?? false{
-                self.imageViewCard
-            }else if self.data.body != nil || self.data.title != nil{
+        if self.cardType == .Reddit && self.data.link?.isImgURLStr() ?? false{
+            self.imageViewCard
+        }else if self.data.body != nil || self.data.title != nil{
+            if self.isButton{
                 self.card
+                    .buttonify {
+                        withAnimation(.easeInOut) {
+                            withAnimation(.easeInOut) {
+                                self.context.selectedNews = self.data
+                            }
+                        }
+                    }
             }else{
-                Color.clear.frame(width: 0, height: 0, alignment: .center)
+                self.card
             }
+            
+        }else{
+            Color.clear.frame(width: 0, height: 0, alignment: .center)
+        }
 //        }.springButton()
 
         
@@ -113,7 +114,9 @@ extension PostCard{
         return AnyView(
             HStack(alignment: .center, spacing: 15) {
                 ImageView(url: data.profile_image, width: h, height: h, contentMode: .fill, alignment: .center)
-                    .clipShape(Circle())
+                    .clipContent(clipping: .circleClipping)
+                    .padding(10)
+                    .background(BlurView(style: .light).clipContent(clipping: .circleClipping))
                 VStack(alignment: .leading, spacing: 5) {
                     MainText(content: self.cardType == .Reddit ?  "/\(data.subreddit ?? "Subreddit")" : "@\(data.twitter_screen_name ?? "Tweet")", fontSize: 12.5,color: font_color,fontWeight: .semibold)
                     MainText(content: "\(Date(timeIntervalSince1970: .init(data.time ?? 0)).stringDate())", fontSize: 10, color: .gray, fontWeight: .regular)
@@ -134,16 +137,19 @@ extension PostCard{
     }
     
     
-    func Body(size:CGSize) -> AnyView{
+    func Body(size:CGSize) -> some View{
         let w = size.width
         let h = size.height
         
-        return AnyView(
-            MainText(content: self.data.body ?? self.data.title ?? "No Text", fontSize: 14, color: .white,fontWeight: .regular,style: .heading)
-                .multilineTextAlignment(.leading)
-                .frame(width: w, alignment: .topLeading)
-                .frame(maxHeight: h)
-        )
+        let (content,_url) = (self.data.body ?? self.data.title ?? "No Text").containsURL()
+        let url = _url.first
+        
+        
+        return MainText(content: content, fontSize: 14, color: .white,fontWeight: .regular,style: .heading)
+            .multilineTextAlignment(.leading)
+            .padding(.vertical,5)
+            .frame(width: w, alignment: .leading)
+            .frame(maxHeight: h, alignment: .top)
     }
     
     func Footer(data:AssetNewsData,size:CGSize) -> AnyView{

@@ -79,7 +79,7 @@ class AssetData:Identifiable,Codable,Equatable{
 }
 
 
-class AssetAPI:DAPI,ObservableObject{
+class AssetAPI:DAPI{
     var currency:String
     @Published var data:AssetData? = nil
 //    static var shared:AssetAPI = .init()
@@ -114,10 +114,14 @@ class AssetAPI:DAPI,ObservableObject{
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
         return result
     }
     
-    func parseData(data:Data){
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(Asset.self, from: data)
@@ -130,10 +134,14 @@ class AssetAPI:DAPI,ObservableObject{
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
     }
     
     func getAssetInfo(){
-        self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
+//        self.getData(_url: self.assetURL, completion: self.parseData(data:))
+        self.getData(_url: self.assetURL)
     }
     
     func getUpdateAssetInfo(completion: @escaping (AssetData?) -> Void){
@@ -144,7 +152,7 @@ class AssetAPI:DAPI,ObservableObject{
     
     func getAssetInfo(completion: @escaping (AssetData?) -> Void){
         if let url = self.assetURL{
-            self.getInfo(_url: url) { data in
+            self.getData(_url: url) { data in
                 completion(self._parseData(data: data))
             }
         } else {

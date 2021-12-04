@@ -22,12 +22,14 @@ class swipeParams:ObservableObject,Equatable{
     var end:Int = 0
     var thresValue:CGFloat = 0
     fileprivate var _type:SliderType = .Carousel
+    var onTap: ((Int) -> Void)? = nil
     
-    init(_ start:Int? = nil,_ end:Int? = nil, _ thresValue:CGFloat? = nil,type:SliderType = .Carousel){
+    init(_ start:Int? = nil,_ end:Int? = nil, _ thresValue:CGFloat? = nil,type:SliderType = .Carousel,onTap:((Int) -> Void)? = nil){
         self.start = start ?? 0
         self.end = end ?? 0
         self.thresValue = thresValue ?? 100
         self._type = type
+        self.onTap = onTap
     }
     
     var type:SliderType{
@@ -45,6 +47,7 @@ class swipeParams:ObservableObject,Equatable{
     @Published var extraOffset:CGFloat = 0.0
     @Published var xOffset:CGFloat = 0.0
     @Published var yOffset:CGFloat = 0.0
+    
     
     func onChanged(value:CGFloat){
         if self.swiped >= self.start || self.swiped < self.end{
@@ -77,7 +80,10 @@ class swipeParams:ObservableObject,Equatable{
                     val = value < 0 && self.swiped < self.end ? 1 : value > 0 && self.swiped > self.start ? -1 : 0
             }
             self.updateSwipe(val: val)
+        }else if abs(value) <= 5 {
+            self.onTap?(self.swiped)
         }
+        
         withAnimation(.easeInOut) {
             self.extraOffset = 0
         }

@@ -31,7 +31,7 @@ struct PriceCard: View {
     
     func parsePrices(data:AssetData?){
         
-        guard let data = data, let timeSeries = data.timeSeries else {return}
+        guard let data = data, let timeSeries = data.timeSeries, data.symbol?.lowercased() == self.currency.lowercased() else {return}
         DispatchQueue.main.async {
             self.prices = timeSeries
         }
@@ -50,64 +50,81 @@ struct PriceCard: View {
     
     func headingSize(w:CGFloat,h:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
-            CurrencySymbolView(currency: self.currency, size: .medium, width: w * 0.2)
-            MainText(content: self.currency, fontSize: 20,color: font_color)
+            MainText(content: self.asset_api.data?.name ?? "No Name", fontSize: 20,color: font_color,fontWeight: .regular)
+            Spacer()
+            MainText(content: self.currency, fontSize: 20,color: font_color,fontWeight: .semibold)
         }.frame(width: w, height: h, alignment: .leading)
     }
     
     func PriceView(size:CGSize) -> some View{
         let pointData = self.selected >= 0 && self.selected <= self.prices.count - 1 ? self.prices[self.selected] : self.prices.last
-        let open = pointData?.open ?? 0
-        let close = pointData?.close ?? 0
+        let price = self.asset_api.data?.price?.ToMoney() ?? "0.0"
+        let percentage = "\((self.asset_api.data?.percent_change_24h ?? 0.0).ToDecimals())%"
         
         return HStack(alignment: .center, spacing: 10){
-            RoundedRectangle(cornerRadius: 10)
-                .fill(color)
-                .frame(width: 10, height: size.height, alignment: .center)
-            VStack(alignment: .leading, spacing: 2){
-                MainText(content: "Open", fontSize: 8.5,color: color)
-                MainText(content: String(format: "%.2f", open), fontSize: 20,color: color,fontWeight: .bold)
-                MainText(content: "Close", fontSize: 8.5,color: font_color)
-                MainText(content: String(format: "%.2f", close), fontSize: 15,color: font_color)
-            }.frame(height: size.height, alignment: .leading)
+            CurrencySymbolView(currency: self.currency, size: .small, width: size.width * 0.2)
             Spacer()
+            VStack(alignment: .trailing, spacing: 2.5) {
+                MainText(content: percentage, fontSize: 10, color: .white, fontWeight: .semibold)
+                MainText(content: price, fontSize: 20, color: .white, fontWeight: .semibold)
+                
+            }
         }.frame(width: size.width, height: size.height, alignment: .bottom)
     }
     
-    var chartView:some View{
-        GeometryReader{g in
-            let w = g.frame(in: .local).width
-            let h = g.frame(in: .local).height
-            
-            LazyVStack(alignment: .leading, spacing: 10){
-//                MainText(content: self.currency, fontSize: 20,color: font_color)
-                self.headingSize(w: w, h: h * 0.15)
-                PriceView(size: .init(width: w, height: h * 0.25))
-                CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: w, height: h * 0.6), bg: .clear, chartShade: true)
-            }.frame(width: w, height: h, alignment: .leading)
-            
+    func topView(w:CGFloat,h:CGFloat) -> some View{
+        LazyVStack(alignment: .leading, spacing: 0) {
+            self.headingSize(w: w, h: h * 0.15)
+            CurveChart(data: self.prices.compactMap({$0.close}),choosen: self.$selected, interactions: false, size: .init(width: w, height: h * 0.6), bg: .clear,lineColor: .white, chartShade: true)
+            PriceView(size: .init(width: w, height: h * 0.25))
         }
-//        .padding()
-//        .frame(width: self.size.width, height: self.size.height, alignment: .center)
-//        .background(BlurView(style: .systemThinMaterialDark))
-//        .cornerRadius(20)
-//        .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
-        .basicCard(size: size)
-        .onAppear(perform: self.onAppear)
-        .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
+        .frame(width:w,height: h)
+    }
+    
+    func footerView(w:CGFloat,h:CGFloat) -> some View{
+        LazyVStack(alignment: .leading, spacing: 3.5) {
+            MainText(content: "Balance", fontSize: 10,color: .black,fontWeight: .semibold)
+            MainText(content: self.asset_api.data?.price?.ToMoney() ?? "No Money", fontSize: 20, color: .black, fontWeight: .bold)
+        }
+        .padding(.bottom,10)
+        .frame(width:w,height: h,alignment: .bottomLeading)
+    }
+    
+    var bgColor:some View{
+        VStack(alignment: .leading, spacing: 0) {
+            Color.mainBGColor.frame(width: size.width, height: size.height * 0.8, alignment: .center)
+            Color.white.frame(width: size.width, height: size.height * 0.2, alignment: .center)
+//                .background(Color.white.opacity(0.85))
+        }
+    }
+    
+    var chartView:some View{
+//        GeometryReader{g in
+        let w = size.width - 30
+        let h = size.height - 30
+        
+        return LazyVStack(alignment: .leading, spacing: 10) {
+            self.topView(w: w, h: h * 0.8)
+            self.footerView(w: w, h: h * 0.2)
+        }
+//        }
+        .padding()
+        .frame(width: size.width, height: size.height, alignment: .center)
+        .background(bgColor)
+        .clipContent(clipping: .roundClipping)
+        
     }
     
     var body: some View {
-        Button(action: {
-            DispatchQueue.main.async {
-                self.context.selectedCurrency = self.asset_api.data
+        self.chartView
+            .buttonify {
+                DispatchQueue.main.async {
+                    self.context.selectedCurrency = self.asset_api.data
+                }
+                
             }
-            
-        }, label: {
-            self.chartView
-        }).springButton()
-        
-            
+            .onAppear(perform: self.onAppear)
+            .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
     }
 }
 
@@ -115,5 +132,6 @@ struct PriceCard_Previews: PreviewProvider {
     static var previews: some View {
         PriceCard(currency: "BTC")
             .previewLayout(.sizeThatFits)
+            .background(Color.black)
     }
 }

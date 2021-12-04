@@ -12,12 +12,14 @@ struct CryptoMarket: View {
     var heading:String
     var size:CGSize
     @EnvironmentObject var context:ContextData
+    var leadingPadding:Bool
     
     
-    init(heading:String,srt:String = "",order:Order = .desc,cardSize:CGSize = CardSize.slender){
+    init(heading:String,srt:String = "",order:Order = .desc,cardSize:CGSize = CardSize.slender,leadingPadding:Bool = false){
         self.size = cardSize
         self.heading = heading
         self._MAPI = .init(wrappedValue: .init(sort: srt, limit: 10,order: order))
+        self.leadingPadding = leadingPadding
     }
     
     func onAppear(){
@@ -49,7 +51,7 @@ struct CryptoMarket: View {
         Container(heading: self.heading, width: totalWidth,ignoreSides: true) { w in
             ZStack{
                 if let views = self.view{
-                    CardSlidingView(cardSize: size,views: views)
+                    CardSlidingView(cardSize: size,views: views,leading: leadingPadding)
                 }else{
                     ProgressView()
                 }

@@ -37,20 +37,22 @@ struct CardSlidingView: View {
         }.frame(width: cardSize.width, height: cardSize.height, alignment: .center)
     }
     
+    var halfCardWidth:CGFloat{
+        return (totalWidth - self.cardSize.width) * 0.5
+    }
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
             LazyHStack(alignment: .center, spacing: 0){
-                Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
                 ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
                     let view = _view.element
                     zoomInOut(view: view)
                 }
-                Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
             }
-            
+            .padding(.leading, self.leading ? halfCardWidth : 0)
+            .padding(.trailing,halfCardWidth)
         }
-        .frame(height: cardSize.height * 1,alignment: .leading)
+        .frame(width:totalWidth,height: cardSize.height,alignment: .leading)
     }
 }
 

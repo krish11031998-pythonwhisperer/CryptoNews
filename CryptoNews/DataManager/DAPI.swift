@@ -8,6 +8,11 @@
 import Foundation
 import Combine
 
+protocol DataParsingProtocol{
+    func parseData(url:URL,data:Data)
+}
+
+
 protocol DataDictCache{
     subscript(_ url:URL) -> Data? {get set}
 }
@@ -36,8 +41,13 @@ struct DataCache:DataDictCache{
 }
 
 
-class DAPI{
+class DAPI:ObservableObject,DataParsingProtocol{
+    func parseData(url: URL, data: Data) {
+        DataCache.shared[url] = data
+    }
     
+    
+    @Published var loading:Bool = false
     var cancellable = Set<AnyCancellable>()
     
     func checkOutput(output: URLSession.DataTaskPublisher.Output) throws -> Data{
@@ -51,11 +61,12 @@ class DAPI{
     
     
     func CallCompletionHandler(url:URL,data:Data,completion:((Data) -> Void)){
-//        print("Setting Cached Data")
         DataCache.shared[url] = data
         completion(data)
+        DispatchQueue.main.async {
+            self.loading = false
+        }
     }
-    
     
     var baseComponent:URLComponents{
         var uC = URLComponents()
@@ -70,30 +81,61 @@ class DAPI{
     
     func updateInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
-//        print("Getting Updated Data")
         URLSession.shared.dataTaskPublisher(for: url)
             .receive(on: DispatchQueue.main)
             .tryMap(self.checkOutput(output:))
             .sink(receiveCompletion: { _ in }, receiveValue: { data in
-//                print("Got Updated Data")
+
                 self.CallCompletionHandler(url: url, data: data, completion: completion)
             })
             .store(in: &cancellable)
     }
     
-    func getInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
+    func getData(_url:URL?){
+        if !self.loading{
+            DispatchQueue.main.async {
+                self.loading = true
+            }
+        }
         guard let url = _url else {return}
         if let data = DataCache.shared[url]{
-//            print("Got Cached Data")
-            completion(data)
+            DispatchQueue.main.async {
+                self.loading = false
+            }
+            self.parseData(url: url, data: data)
         }else{
-//            print("Getting New Data")
             URLSession.shared.dataTaskPublisher(for: url)
                 .receive(on: DispatchQueue.main)
                 .tryMap(self.checkOutput(output:))
                 .sink(receiveCompletion: { _ in }, receiveValue: { data in
-//                    print("Got New Data")
-                    self.CallCompletionHandler(url: url, data: data, completion: completion)
+                    self.parseData(url: url, data: data)
+                })
+                .store(in: &cancellable)
+        }
+    }
+    
+    
+    func getData(_url:URL?,completion:@escaping (Data)->Void){
+        if !self.loading{
+            DispatchQueue.main.async {
+                self.loading = true
+            }
+        }
+        guard let url = _url else {return}
+        if let data = DataCache.shared[url]{
+            DispatchQueue.main.async {
+                self.loading = false
+            }
+            completion(data)
+        }else{
+
+            URLSession.shared.dataTaskPublisher(for: url)
+                .receive(on: DispatchQueue.main)
+                .tryMap(self.checkOutput(output:))
+                .sink(receiveCompletion: { _ in }, receiveValue: { data in
+//                    self.parseData(url: url, data: data)
+                    DataCache.shared[url] = data
+                    completion(data)
                 })
                 .store(in: &cancellable)
         }

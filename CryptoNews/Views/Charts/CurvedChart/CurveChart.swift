@@ -114,8 +114,21 @@ struct CurveChart: View {
     }
     
     
+    @ViewBuilder var chartView:some View{
+        if let header = header {
+            VStack(alignment: .leading, spacing: 10) {
+                MainText(content: header, fontSize: 25, color: .white, fontWeight: .semibold)
+                    .frame(width: size.width,alignment: .topLeading)
+                self.chart(width: size.width, height: size.height - 50)
+//                    .background(Color.red)
+            }.frame(width: size.width, height: size.height, alignment: .topLeading)
+        }else{
+            self.chart(width: size.width, height: size.height)
+        }
+    }
+    
     var body: some View {
-        self.chart(width: size.width, height: size.height)
+        self.chartView
     }
 }
 
@@ -238,7 +251,7 @@ extension CurveChart{
 
 struct CurveChart_Previews: PreviewProvider {
     static var previews: some View {
-        CurveChart(data: [45,25,10,60,30,79].shuffled(),bg: .black)
+        CurveChart(data: [45,25,10,60,30,79].shuffled(),header: "Chart",bg: .black)
             .background(Color.black)
     }
 }

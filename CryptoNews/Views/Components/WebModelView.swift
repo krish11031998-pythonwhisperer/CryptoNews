@@ -41,23 +41,32 @@ struct WebModelView: View {
         self.close = close ?? dummyFunction
     }
     
+    func actionSheet() {
+        guard let urlShare = url else { return }
+        let activityVC = UIActivityViewController(activityItems: [urlShare], applicationActivities: nil)
+        UIApplication.shared.windows.first?.rootViewController?.present(activityVC, animated: true, completion: nil)
+    }
+    
     var headerView:some View{
         HStack(alignment: .center, spacing: 0) {
             SystemButton(b_name: "xmark", action: self.close)
             Spacer()
-        }.padding(.horizontal)
-            .frame(width: totalWidth, height: totalHeight * 0.125, alignment: .leading)
+            SystemButton(b_name: "square.and.arrow.up", action: self.actionSheet)
+        }.padding()
+            .padding(.top,15)
+            .frame(width: totalWidth, height: totalHeight * 0.1, alignment: .leading)
+            .background(Color.mainBGColor.opacity(0.5))
     }
     
     @ViewBuilder var mainView:some View{
         CustomWebView(url: self.url)
-            .frame(width: totalWidth, height: totalHeight * 0.875, alignment: .center)
+            .frame(width: totalWidth, height: totalHeight * 0.9, alignment: .center)
     }
     
     
     var body: some View {
         VStack(alignment: .leading,spacing: 0) {
-            self.headerView.background(Color.mainBGColor)
+            self.headerView
             self.mainView
         }.edgesIgnoringSafeArea(.all).frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
     }

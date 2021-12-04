@@ -8,9 +8,12 @@
 import SwiftUI
 
 enum CryptoIcon:String{
-    case small = "32x32"
-    case medium = "64x64"
-    case large = "128x128"
+//    case small = "32x32"
+//    case medium = "64x64"
+//    case large = "128x128"
+    case small = "200"
+    case medium = "400"
+    case large = "600"
     
 }
 
@@ -27,7 +30,9 @@ struct CurrencySymbolView: View {
     }
     
     var img_url:String{
-        let str = "https://api.coinicons.net/icon/\(currency)/\(size.rawValue)"
+//        let str = "https://api.coinicons.net/icon/\(currency.lowercased())/\(size.rawValue)"
+        let str = "https://cryptoicons.org/api/color/\(currency.lowercased())/\(size.rawValue)"
+//        print("DEBUG CryptoCoin : ",str);
         return str
     }
     
