@@ -15,6 +15,16 @@ enum ModalType{
     case none
 }
 
+class AddTxnUpdatePreference:PreferenceKey{
+    static var defaultValue: Bool = false
+    
+    
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+    
+}
+
 class TxnFormDetails:ObservableObject{
     @Published var time:String = ""
     @Published var type:String  = ""
@@ -259,6 +269,7 @@ struct AddTransactionView:View {
                 print("The txn is : ",value)
             }
         }
+        .preference(key: AddTxnUpdatePreference.self, value: self.txn.added_Success ?? false)
     }
 }
 
@@ -404,7 +415,7 @@ extension AddTransactionView{
                     .truncationMode(.tail)
                 MainText(content: self.currency == "Choose Currency" ? "XXX" : self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
             }
-            MainText(content: "\(convertToMoneyNumber(value: self.currentAsset?.price)) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
+            MainText(content: "\(convertToMoneyNumber(value: self.txn.asset_spot_price != "" ? self.currentAsset?.price : self.txn.asset_spot_price.toFloat())) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
         }.padding(.vertical,10)
         .frame(height: totalHeight * 0.15, alignment: .center)
     }

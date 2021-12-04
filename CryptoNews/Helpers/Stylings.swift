@@ -353,13 +353,11 @@ struct TabButton:View{
     
     var body: some View{
         ZStack(alignment: .center) {
-            BlurView(style: .regular)
+            Color.clear
             MainText(content: self.title, fontSize: 15, color: self.color, fontWeight: .semibold)
         }
+        .blobify(color: AnyView(BlurView.thinDarkBlur), clipping: .roundCornerMedium)
         .frame(width: size.width, height: size.height, alignment: .center)
-        .clipContent(clipping: .roundClipping)
-        .defaultShadow()
-//        .onTapGesture(perform: self.action)
         .buttonify(handler: self.action)
     }
     

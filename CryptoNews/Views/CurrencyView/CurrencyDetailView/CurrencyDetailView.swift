@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CurrencyDetailView: View {
+    @EnvironmentObject var context:ContextData
     var onClose:(() -> Void)?
     @Binding var currency:AssetData
     var size:CGSize = .init()
@@ -44,7 +45,6 @@ struct CurrencyDetailView: View {
     
     var body:some View{
         self.mainView
-        
     }
 }
 
@@ -103,7 +103,15 @@ extension CurrencyDetailView{
     
     @ViewBuilder var transactionHistoryView:some View{
         if self.txns.isEmpty{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+            TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white) {
+                if !self.context.addTxn{
+                    self.context.addTxn.toggle()
+                }
+                
+                if let sym = self.currency.symbol,self.context.selectedSymbol != sym{
+                    self.context.selectedSymbol = sym
+                }
+            }
         }else{
             
             MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))

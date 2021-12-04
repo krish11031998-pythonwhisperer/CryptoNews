@@ -35,9 +35,3 @@ struct CurrencySummaryView: View {
         }.padding(.top,20)
     }
 }
-
-//struct CurrencySummaryView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CurrencySummaryView()
-//    }
-//}

@@ -57,13 +57,17 @@ struct CurrencyView:View{
         }
         
         if self.TAPI.transactions.isEmpty{
-            if let uid = self.context.user.user?.uid, let sym = currency.symbol{
-                self.TAPI.loadTransactions(uuid: uid, currency: sym)
-            }
+            self.loadTxns()
         }
         
         if self.NAPI.FeedData.isEmpty{
             self.NAPI.getAssetInfo()
+        }
+    }
+    
+    func loadTxns(){
+        if let uid = self.context.user.user?.uid, let sym = currency.symbol{
+            self.TAPI.loadTransactions(uuid: uid, currency: sym)
         }
     }
         
@@ -215,6 +219,11 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
+        .onPreferenceChange(AddTxnUpdatePreference.self) { addTxnOpened in
+            if !addTxnOpened{
+                self.loadTxns()
+            }
+        }
     }
     
     
