@@ -34,11 +34,12 @@ struct SearchMainPage: View {
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            VStack(alignment: .leading, spacing: 10) {
+//            VStack(alignment: .leading, spacing: 10) {
+                Spacer().frame(height: 50, alignment: .center)
                 self.SearchView
                 CryptoMarket(heading: "Biggest Gainer", srt: "pc",order: .desc,cardSize: CardSize.small)
                 CryptoMarket(heading: "Biggest Losers", srt: "pc",order: .incr,cardSize: CardSize.small)
-            }.padding(.top,50)
+//            }.padding(.top,50)
             
         }
         

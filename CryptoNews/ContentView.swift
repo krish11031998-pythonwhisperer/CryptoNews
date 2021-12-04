@@ -37,24 +37,39 @@ struct ContentView: View {
 
 extension ContentView{
     
+    var tabs:[Tabs]{
+        return [.home,.search,.info,.profile]
+    }
+    
     @ViewBuilder var mainBody:some View{
-        switch(self.context.tab){
+        TabView(selection: self.$context.tab) {
+            ForEach(self.tabs, id: \.rawValue) { tab in
+                self.dynamicTabPage(page: tab).tag(tab)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+    }
+    
+    @ViewBuilder func tabPage(page:Tabs) -> some View{
+        switch(page){
             case .home: self.homeView
-            case .info :
-                SlideTabView {
-                    return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
-                }
-//            case .txn:
-//                AddTxnMainView()
-//                    .environmentObject(self.context)
-            case .search:
-                    SearchMainPage()
-            case .profile:
-                    ProfileView()
+            case .search: SearchMainPage()
+            case .info: SlideTabView {
+                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+            }
+            case .profile: ProfileView()
             default: Color.clear
         }
     }
     
+    
+    @ViewBuilder func dynamicTabPage(page:Tabs) -> some View{
+        if page == self.context.tab{
+            self.tabPage(page: page)
+        }else{
+            Color.clear
+        }
+    }
     
     @ViewBuilder var homeView:some View{
         HomePage()
@@ -84,6 +99,14 @@ extension ContentView{
             .background(mainBGView)
             .edgesIgnoringSafeArea(.all)
             .zIndex(2)
+        }
+        
+        if let post = self.context.selectedPost{
+            CrybPostDetailView(postData: post)
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
         }
         
         

@@ -16,16 +16,20 @@ struct SystemButton: View {
     var customIcon:String?
     var alignment:Axis.Set?
     var size:CGSize = .init(width: 10, height: 10)
+    var borderedBG:Bool
     fileprivate var bgcolor:Color? = nil
-    init(b_name:String? = nil,
-         b_content:String? = nil,
-         color:Color = .white,
-         haveBG:Bool = true,
-         size:CGSize? = nil,
-         customIcon:String? = nil,
-         bgcolor:Color? = nil,
-         alignment:Axis.Set? = nil,
-         action:@escaping () -> Void){
+    init(
+        b_name:String? = nil,
+        b_content:String? = nil,
+        color:Color = .white,
+        haveBG:Bool = true,
+        size:CGSize? = nil,
+        customIcon:String? = nil,
+        bgcolor:Color? = nil,
+        alignment:Axis.Set? = nil,
+        borderedBG:Bool = false,
+        action:@escaping () -> Void
+    ){
         self.buttonName = b_name
         self.buttonContent = b_content
         self.actionHandler = action
@@ -34,6 +38,7 @@ struct SystemButton: View {
         self.bgcolor = bgcolor
         self.customIcon = customIcon
         self.alignment = alignment
+        self.borderedBG = borderedBG
         if let safeSize = size{
             self.size = safeSize
         }
@@ -78,7 +83,7 @@ struct SystemButton: View {
             VStack(alignment:.center,spacing:5){
                 self.ButtonImg
                 if let content = self.buttonContent{
-                    MainText(content: content, fontSize: size.width,color: bgColor)
+                    MainText(content: content, fontSize: size.width,color: bgColor,fontWeight: .medium)
                 }
                 
             }
@@ -86,7 +91,7 @@ struct SystemButton: View {
             HStack(alignment:.center,spacing:5){
                 self.ButtonImg
                 if let content = self.buttonContent{
-                    MainText(content: content, fontSize: size.width,color: bgColor)
+                    MainText(content: content, fontSize: size.width,color: bgColor,fontWeight: .medium)
                 }
                 
             }
@@ -96,8 +101,14 @@ struct SystemButton: View {
     }
     
     var body: some View {
-        self.labelView
-            .buttonify(handler: self.actionHandler)
+        if self.borderedBG{
+            self.labelView
+                .blobify(color: AnyView(BlurView.regularBlur), clipping: .roundCornerMedium)
+                .buttonify(handler: self.actionHandler)
+        }else{
+            self.labelView
+                .buttonify(handler: self.actionHandler)
+        }
     }
 }
 

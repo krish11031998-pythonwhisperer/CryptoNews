@@ -33,7 +33,7 @@ struct CurrencyFeedPage: View {
     var body: some View {
         
         if !self.data.isEmpty{
-            LazyScrollView(data: self.data.map({$0 as Any})) { data in
+            LazyScrollView(data: self.data.map({$0 as Any}),embedScrollView: false) { data in
                 if let data = data as? AssetNewsData{
                     if self.type == .feed{
                         let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
@@ -45,8 +45,10 @@ struct CurrencyFeedPage: View {
                 }else{
                     Color.clear
                 }
-            } reload: {
-                self.reload()
+            }.onPreferenceChange(LazyScrollPreference.self) { reload in
+                if reload{
+                    self.reload()
+                }
             }
         }else{
             ProgressView()

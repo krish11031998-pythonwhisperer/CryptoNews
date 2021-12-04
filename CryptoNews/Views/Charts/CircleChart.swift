@@ -10,44 +10,60 @@ import SwiftUI
 struct CircleChart: View {
     @State var percent:Float = 0
     var Percent:Float
-    var header:String
+    var header:String?
     var size:CGSize
     var increase:Bool
-    var infoView:AnyView
+    var infoView:AnyView?
+    var widthFactor:CGFloat
     
-    init(percent:Float,header:String,size:CGSize = .init(width: totalWidth * 0.45, height: 300),infoView:AnyView = AnyView(Color.clear)){
+    init(percent:Float,header:String? = nil,size:CGSize = .init(width: totalWidth * 0.45, height: 300),widthFactor:CGFloat = 0.075,infoView:AnyView? = nil){
         self.Percent = percent
         self.header = header
         self.size = size
         self.increase = true
         self.infoView = infoView
+        self.widthFactor = widthFactor
     }
     
     func onAppear(){
-        withAnimation(.easeInOut) {
+        withAnimation(.easeInOut(duration: 0.5)) {
             self.percent = Percent
         }
     }
     
+    var percentObj:(CGFloat,Color){
+        let percent = CGFloat(self.percent/100)
+        let color:Color = self.percent > 60 ? .green : self.percent > 40 ? .yellow : .red
+        return (percent,color)
+    }
+    
     @ViewBuilder func CircleChart(w:CGFloat,h:CGFloat) -> some View{
         let chartW = w * 0.8
+        let (percent,color) = self.percentObj
         ZStack(alignment: .center) {
             Circle()
                 .trim(from: 0, to: 1)
-                .stroke(Color.gray.opacity(0.125), lineWidth: w * 0.045)
+                .stroke(Color.gray.opacity(0.125), lineWidth: w * self.widthFactor)
                 .frame(width: chartW, height: chartW, alignment: .center)
             Circle()
-                .trim(from: 0, to: CGFloat(self.percent/100))
-                .stroke(Color.green.opacity(0.75), lineWidth: w * 0.045)
+                .trim(from: 0, to: percent)
+                .stroke(color, lineWidth: w * self.widthFactor)
                 .frame(width: chartW , height: chartW , alignment: .center)
                 .rotationEffect(.init(degrees: -90), anchor: .center)
-            self.infoView
+            if let infoView = infoView {
+                infoView
+            }
         }.frame(width: w, height: h, alignment: .center)
     }
     
     var body: some View {
-        ChartCard(header: self.header, size: self.size, insideView: self.CircleChart(w:h:))
-//            .animation(.easeInOut)
+        ZStack(alignment: .center) {
+            if let header = header {
+                ChartCard(header: header, size: self.size, insideView: self.CircleChart(w:h:))
+            }else{
+                self.CircleChart(w: self.size.width, h: self.size.height)
+            }
+        }
             .onAppear(perform: self.onAppear)
     }
 }

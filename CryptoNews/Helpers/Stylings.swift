@@ -170,7 +170,11 @@ struct SpringButton:ViewModifier{
     
     func body(content: Content) -> some View {
         Button {
-            self.handleTap()
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut(duration: 0.5)) {
+                    self.handleTap()
+                }
+            }
         } label: {
             content
                 .contentShape(Rectangle())
@@ -179,25 +183,15 @@ struct SpringButton:ViewModifier{
 }
 
 struct Blob:ViewModifier{
-    var color:Color
-    
-//    @ViewBuilder var bg:some View{
-////        if self.color == .clear{
-//////            BlurView(style: .systemThinMaterialDark)
-////
-////        }else{
-////            self.color
-////        }
-//        self.color
-//    }
-    
+    var color:AnyView
+    var clipping:Clipping
     func body(content: Content) -> some View {
         content
             .padding(.horizontal,10)
             .padding(.vertical,10)
             .background(color)
-            .clipContent(clipping: .squareClipping)
-            .overlay(RoundedRectangle(cornerRadius: Clipping.squareClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
+            .clipContent(clipping: self.clipping)
+            .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
             
             
     }
@@ -239,12 +233,6 @@ struct BasicCard:ViewModifier{
                 .cornerRadius(20)
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         }
-//        content
-//            .padding()
-//            .frame(width: self.size.width, height: self.size.height, alignment: .center)
-//            .background(BlurView(style: .systemThinMaterialDark))
-//            .cornerRadius(20)
-//            .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
     }
 }
 
@@ -379,8 +367,9 @@ struct TabButton:View{
 struct ButtonModifier:ButtonStyle{
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
+            .scaleEffect(configuration.isPressed ? 0.9 : 1)
             .opacity(configuration.isPressed ? 0.9 : 1)
+            
     }
 }
 
@@ -431,8 +420,8 @@ extension View{
         self.transition(.slideInOut)
     }
     
-    func blobify(color:Color = .clear) -> some View{
-        self.modifier(Blob(color: color))
+    func blobify(color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
+        self.modifier(Blob(color: color,clipping: clipping))
     }
     
     func buttonify(handler:@escaping (() -> Void)) -> some View{
@@ -578,6 +567,10 @@ struct BlurView:UIViewRepresentable{
     func updateUIView(_ uiView: UIVisualEffectView, context: Context) {
         
     }
+    
+    static var thinDarkBlur:BlurView = .init(style: .systemUltraThinMaterialDark)
+    static var regularBlur:BlurView = .init(style: .regular)
+    static var thinLightBlur:BlurView = .init(style: .systemUltraThinMaterialLight)
 }
 
 
