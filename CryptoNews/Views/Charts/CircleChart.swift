@@ -8,68 +8,63 @@
 import SwiftUI
 
 struct CircleChart: View {
-    var percent:Float
-    var header:String
+    @State var percent:Float = 0
+    var Percent:Float
+    var header:String?
     var size:CGSize
     var increase:Bool
-    var infoView:AnyView
+    var infoView:AnyView?
+    var widthFactor:CGFloat
     
-    init(percent:Float,header:String,size:CGSize = .init(width: totalWidth * 0.45, height: 300),infoView:AnyView = AnyView(Color.clear)){
-        self.percent = percent
+    init(percent:Float,header:String? = nil,size:CGSize = .init(width: totalWidth * 0.45, height: 300),widthFactor:CGFloat = 0.075,infoView:AnyView? = nil){
+        self.Percent = percent
         self.header = header
         self.size = size
         self.increase = true
         self.infoView = infoView
+        self.widthFactor = widthFactor
     }
     
+    func onAppear(){
+        withAnimation(.easeInOut(duration: 0.5)) {
+            self.percent = Percent
+        }
+    }
     
-    func CircleChart(w:CGFloat,h:CGFloat) -> AnyView{
+    var percentObj:(CGFloat,Color){
+        let percent = CGFloat(self.percent/100)
+        let color:Color = self.percent > 60 ? .green : self.percent > 40 ? .yellow : .red
+        return (percent,color)
+    }
+    
+    @ViewBuilder func CircleChart(w:CGFloat,h:CGFloat) -> some View{
         let chartW = w * 0.8
-        return AnyView(
-            ZStack(alignment: .center) {
-                Circle()
-                    .trim(from: 0, to: 1)
-                    .stroke(Color.gray.opacity(0.125), lineWidth: w * 0.045)
-                    .frame(width: chartW, height: chartW, alignment: .center)
-                Circle()
-                    .trim(from: 0, to: CGFloat(self.percent/100))
-                    .stroke(Color.green.opacity(0.75), lineWidth: w * 0.045)
-                    .frame(width: chartW , height: chartW , alignment: .center)
-                    .rotationEffect(.init(degrees: -90), anchor: .center)
-//                VStack(spacing: 2.5){
-//                    MainText(content: "\(String(format: "%.0f" ,self.percent))%", fontSize: 25, color: .white, fontWeight: .semibold)
-//                    MainText(content: "of the Viewers", fontSize: 12.5, color: .white, fontWeight: .semibold)
-//                }
-                self.infoView
-            }.frame(width: w, height: h, alignment: .center)
-            
-        
-        )
+        let (percent,color) = self.percentObj
+        ZStack(alignment: .center) {
+            Circle()
+                .trim(from: 0, to: 1)
+                .stroke(Color.gray.opacity(0.125), lineWidth: w * self.widthFactor)
+                .frame(width: chartW, height: chartW, alignment: .center)
+            Circle()
+                .trim(from: 0, to: percent)
+                .stroke(color, lineWidth: w * self.widthFactor)
+                .frame(width: chartW , height: chartW , alignment: .center)
+                .rotationEffect(.init(degrees: -90), anchor: .center)
+            if let infoView = infoView {
+                infoView
+            }
+        }.frame(width: w, height: h, alignment: .center)
     }
     
-    
-    func mainBody(w:CGFloat,h:CGFloat) -> AnyView{
-////        return AnyView(
-////            Group{
-                return self.CircleChart(w: w , h: w )
-////                HStack{
-////                    VStack(alignment: .leading, spacing: 10){
-////                        MainText(content: "45k", fontSize: 20, color: .white, fontWeight: .semibold)
-////                        MainText(content: "Likes", fontSize: 15, color: .white, fontWeight: .regular)
-////                    }
-////                    Spacer()
-////                    VStack(alignment: .center, spacing: 10){
-////                        MainText(content: "\(self.increase ? "↑" : "↓") 30%", fontSize: 20, color: .white, fontWeight: .semibold)
-////                        MainText(content: "Last Week", fontSize: 15, color: .white, fontWeight: .regular)
-////                    }
-////                }
-////            }
-//
-//        )
-    }
-//
     var body: some View {
-        ChartCard(header: self.header, size: self.size, insideView: self.mainBody)
+        ZStack(alignment: .center) {
+            if let header = header {
+                ChartCard(header: header, size: self.size, insideView: self.CircleChart(w:h:))
+            }else{
+                self.CircleChart(w: self.size.width, h: self.size.height)
+            }
+        }
+            .onAppear(perform: self.onAppear)
     }
 }
 

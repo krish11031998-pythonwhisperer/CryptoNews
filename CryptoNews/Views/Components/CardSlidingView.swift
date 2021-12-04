@@ -12,7 +12,7 @@ struct CardSlidingView: View {
     var views:Array<AnyView>
     @StateObject var SP:swipeParams
     var leading:Bool
-    init(cardSize:CGSize = .init(width: totalWidth * 0.6, height: totalHeight * 0.5),views:Array<AnyView>,leading:Bool = true){
+    init(cardSize:CGSize = CardSize.slender,views:Array<AnyView>,leading:Bool = true){
         self.cardSize = cardSize
         self.views = views
         self.leading = leading
@@ -25,34 +25,34 @@ struct CardSlidingView: View {
     }
     
     
+    func zoomInOut(view:AnyView) -> some View{
+        GeometryReader{g in
+            let midX = g.frame(in: .global).midX
+            let diff = abs(midX - (totalWidth * 0.5))/totalWidth
+            let diff_percent = (diff > 0.25 ? 1 : diff/0.25)
+            let scale = 1 - 0.075 * diff_percent
+            
+            view.scaleEffect(scale)
+            
+        }.frame(width: cardSize.width, height: cardSize.height, alignment: .center)
+    }
+    
+    var halfCardWidth:CGFloat{
+        return (totalWidth - self.cardSize.width) * 0.5
+    }
+    
     var body: some View {
-        HStack(alignment: .center, spacing: 0){
-            Spacer().frame(width: self.leading ? (totalWidth - self.cardSize.width) * 0.5 : 0)
-            ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
-                let view = _view.element
-                let idx = _view.offset
-                let selected = idx == self.SP.swiped
-                let scale:CGFloat = selected ? 1.05 : 0.9
-                if idx >= self.SP.swiped - 2 && idx <= self.SP.swiped + 2{
-                    Button {
-                        withAnimation(.easeInOut) {
-                            self.SP.swiped = idx
-                        }
-                    } label: {
-                        view
-                            .scaleEffect(scale)
-                            .gesture(DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:)))
-                    }.springButton()
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(alignment: .center, spacing: 0){
+                ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
+                    let view = _view.element
+                    zoomInOut(view: view)
                 }
             }
-            Spacer().frame(width: (totalWidth - self.cardSize.width) * 0.5)
+            .padding(.leading, self.leading ? halfCardWidth : 0)
+            .padding(.trailing,halfCardWidth)
         }
-        .edgesIgnoringSafeArea(.horizontal)
-        .frame(width:totalWidth,height: cardSize.height * 1.01,alignment: .leading)
-        .padding(.leading,10)
-        .offset(x: self.scrolledOffset)
-        .offset(x: self.SP.extraOffset)
-//        .animation(.easeInOut(duration: 0.65))
+        .frame(width:totalWidth,height: cardSize.height,alignment: .leading)
     }
 }
 

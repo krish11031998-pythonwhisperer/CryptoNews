@@ -92,9 +92,9 @@ struct ImageView:View{
                     }else{
                         Spacer().frame(height:25)
                     }
-                }
-            }.padding()
-            .frame(width: self.width, height: h, alignment: .center)
+                }.padding()
+                .frame(width: self.width, height: h, alignment: .center)
+            }
     }
     
     

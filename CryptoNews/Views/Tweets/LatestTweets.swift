@@ -17,40 +17,62 @@ extension Date{
 }
 
 struct LatestTweets: View {
-    @StateObject var tweets:FeedAPI
+    @EnvironmentObject var context:ContextData
+    @StateObject var tweetsAPI:FeedAPI
     var currency:String
     let font_color:Color = .black
-    init(currency:String = "all"){
+    var heading:String? = nil
+    init(header:String? = nil,currency:String = "all",type:FeedType = .Chronological, limit:Int = 5){
         self.currency = currency
-        self._tweets = .init(wrappedValue: .init(currency: currency == "all" ? ["BTC","LTC","DOGE"] : [currency], sources: ["twitter"], type: .Chronological,limit:5))
+        self.heading = header
+        self._tweetsAPI = .init(wrappedValue: .init(currency: currency == "all" ? ["BTC","LTC","DOGE"] : [currency], sources: ["twitter"], type: type,limit:limit))
     }
     
     func onAppear(){
-        if self.tweets.FeedData.isEmpty{
-            self.tweets.getAssetInfo()
+        if self.tweetsAPI.FeedData.isEmpty{
+            self.tweetsAPI.getAssetInfo()
         }
     }
     
     
     
     var body: some View {
-        Container(heading: "Trending Tweets") { w in
-            return self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
+//        AsyncContainer(size: .init(width: totalWidth, height: 0)) {
+        Container(heading:self.heading,ignoreSides: true) { w in
+            self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
         }.onAppear(perform: self.onAppear)
+//        }
     }
 }
 
+
+
 extension LatestTweets{
     
-    func TweetsFeed(size:CGSize) -> AnyView{
-        var view = AnyView(Color.clear.frame(width: size.width, height: size.height, alignment: .center).overlay(ProgressView()))
-        if !self.tweets.FeedData.isEmpty{
-            view = AnyView(AutoTimeCardsView(data: self.tweets.FeedData,size: size, view: { data, size in
-                guard let data = data as? AssetNewsData else {return AnyView(Color.clear.frame(width: size.width, height: size.height, alignment: .center))}
-                return AnyView(PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height), const_size: true))
-            }))
+    var tweets:[AssetNewsData]{
+        return self.tweetsAPI.FeedData
+    }
+    
+    func onTapHandler(_ idx:Int){
+        if idx >= 0 && idx < self.tweets.count{
+            withAnimation(.easeInOut) {
+                self.context.selectedNews = self.tweets[idx]
+            }
         }
-        return view
+    }
+    
+    @ViewBuilder func TweetsFeed(size:CGSize) -> some View{
+        if !self.tweetsAPI.FeedData.isEmpty{
+            FancyHScroll(data: self.tweetsAPI.FeedData, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { data in
+                if let data = data as? AssetNewsData{
+                    PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height), const_size: true,isButton: false)
+                }else{
+                    Color.clear.frame(width: size.width, height: size.height, alignment: .center)
+                }
+            })
+        }else if self.tweetsAPI.loading{
+            Color.clear.frame(width: size.width, height: size.height, alignment: .center).overlay(ProgressView())
+        }
     }
 }
 

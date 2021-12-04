@@ -35,6 +35,14 @@ class AssetNewsData:Identifiable,Codable{
     var publisher:String?
     var shares:Float?
     var url:String?
+    
+    
+    var date:Date{
+        guard let time = self.time else {return Date()}
+        let epochTime = TimeInterval(time)
+        let date = Date(timeIntervalSince1970: epochTime)
+        return date
+    }
 }
 
 
@@ -44,15 +52,17 @@ enum FeedType:String{
     case Chronological = "chronological"
 }
 
-class FeedAPI:DAPI,ObservableObject{
+class FeedAPI:DAPI{
     var currency:[String]
     var sources:[String]
     var type:FeedType
     var limit:Int
     var page:Int
     @Published var FeedData:[AssetNewsData] = []
+    static var shared:FeedAPI = .init()
     
-    init(currency:[String] = ["BTC","LTC","XRP"],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType,limit:Int = 15,page:Int = 0){
+    
+    init(currency:[String] = ["BTC","LTC","XRP"],sources:[String] = ["twitter","reddit","news","urls"],type:FeedType = .Chronological,limit:Int = 15,page:Int = 0){
         self.currency = currency
         self.sources = sources
         self.type = type
@@ -73,7 +83,16 @@ class FeedAPI:DAPI,ObservableObject{
         return uC.url
     }
     
-    func parseData(data:Data){
+    func fetchNewCurrency(currency:String){
+//        DispatchQueue.main.async {
+            self.currency = [currency]
+            self.FeedData = []
+//        }
+        self.getAssetInfo()
+    }
+    
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(News.self, from: data)
@@ -84,21 +103,38 @@ class FeedAPI:DAPI,ObservableObject{
                     }else{
                         self.FeedData.append(contentsOf: news)
                     }
-                    
+                    if self.loading{
+                        self.loading = false
+                    }
                 }
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
+        
     }
     
     func getAssetInfo(){
-        self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+        if !self.loading{
+            self.loading = true
+//            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
+            self.getData(_url: self.tweetURL)
+        }
+        
     }
     
     
     func getNextPage(){
-        self.page += 1;
-        self.getInfo(_url: self.tweetURL, completion: self.parseData(data:))
+        if !self.loading{
+            self.loading = true
+            self.page += 1;
+//            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
+            self.getData(_url: self.tweetURL)
+//            self.getDa
+        }
+        
     }
 }

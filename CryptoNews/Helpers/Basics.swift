@@ -1,16 +1,19 @@
 import SwiftUI
 
 enum TextStyle:String{
-    case main = "Avenir Next Medium"
-//    case main = "NeueMachina-Regular"
-//    case heading = "BungeeShade-Regular"
-//    case title = "SortsMillGoudy-Regular"
-//    case normal = "Avenir Next Medium"
+    case heading = "Avenir Next Medium"
+//    case normal = "NixieOne-Regular"
 //    case normal = "Cochin"
-//    case normal = "SpaceGrotesk"
-    case normal = "Verdana"
-//    case normal = "SortsMillGoudy-Regular"
+    case normal = "Avenir Next"
+    case monospaced = ""
 }
+
+struct CardSize{
+    static var slender = CGSize(width: totalWidth * 0.6, height: totalHeight * 0.5)
+    static var small = CGSize(width: totalWidth * 0.45, height: totalHeight * 0.2)
+    static var tiny = CGSize(width: totalWidth * 0.25, height: totalHeight * 0.2)
+}
+
 struct BasicText: View {
     
     var content:String
@@ -28,6 +31,7 @@ struct BasicText: View {
     }
     
     var body:some View{
+        
         Text(self.content)
             .font(.system(size: self.size, weight: self.weight, design: self.fontDesign))
 //            .foregroundColor(.black)
@@ -43,7 +47,8 @@ struct MainText: View {
     var fontWeight:Font.Weight
     var style:TextStyle
     var addBG:Bool
-    init(content:String,fontSize:CGFloat,color:Color = .white, fontWeight:Font.Weight = .thin,style:TextStyle = .normal,addBG:Bool = false){
+    var padding:CGFloat
+    init(content:String,fontSize:CGFloat,color:Color = .white, fontWeight:Font.Weight = .thin,style:TextStyle = .normal,addBG:Bool = false,padding:CGFloat = 10){
         self.content = content.stripSpaces().removeEndLine()
         self.fontSize = fontSize
         self.color = color
@@ -51,16 +56,16 @@ struct MainText: View {
         self.font = .custom(self.style.rawValue, size: self.fontSize)
         self.fontWeight = fontWeight
         self.addBG = addBG
-        
+        self.padding = padding
     }
     
     struct CustomFontModifier:ViewModifier{
         var addBG:Bool
         var oppColor:Color
-        
+        var padding:CGFloat
         func body(content: Content) -> some View {
             content
-                .padding(.all,addBG ? 10 : 0)
+                .padding(.all,addBG ? self.padding : 0)
                 .background(addBG ? self.oppColor : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
                 
@@ -72,17 +77,18 @@ struct MainText: View {
     var oppColor:Color{
         return self.color == .black ? .white : .black
     }
-     
+    
+    var _font_:Font{
+        return self.style != .monospaced ? .custom(self.style.rawValue, size: self.fontSize) : Font.system(size: self.fontSize, weight: .regular, design: .monospaced)
+//        return .custom(self.style.rawValue, size: self.fontSize)
+    }
+    
     var body: some View {
         Text(self.content)
-            .font(self.style != .normal ? self.font : Font.system(size: self.fontSize, weight: .regular, design: .monospaced))
-            
+            .font(_font_)
             .fontWeight(self.fontWeight)
             .foregroundColor(self.color)
-//            .padding(.all,addBG ? 10 : 0)
-//            .background(addBG ? self.oppColor : .clear)
-//            .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
-            .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor))
+            .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor,padding: self.padding))
             
     }
 }
@@ -141,4 +147,31 @@ struct HeadingInfoText:View{
         self.infoText()
     }
     
+}
+
+struct SizeDataPreferenceKey: PreferenceKey{
+    
+    static var defaultValue: CGSize = .zero
+    
+    static func reduce(value:inout CGSize, nextValue: () -> CGSize){
+        value = nextValue()
+    }
+}
+
+
+extension View{
+    
+    func sizePreferenceKey(_ data:CGSize) -> some View{
+        self.preference(key: SizeDataPreferenceKey.self, value: data)
+    }
+    
+}
+
+
+struct PriceCardDataPreferenceKey: PreferenceKey{
+    static var defaultValue: AssetData = .init()
+    
+    static func reduce(value: inout AssetData, nextValue: () -> AssetData) {
+        value = nextValue()
+    }
 }

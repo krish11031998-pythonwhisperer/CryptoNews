@@ -7,18 +7,18 @@
 
 import SwiftUI
 
-struct ChartCard: View {
+struct ChartCard<T:View>: View {
     var header:String
     var size:CGSize
-    var insideView:((CGFloat,CGFloat) -> AnyView)? = nil
+    var insideView:((CGFloat,CGFloat) -> T)
     var aR:ContentMode
     
-    init(header:String = "Header",size:CGSize  = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),aR:ContentMode = .fill,insideView:((CGFloat,CGFloat) -> AnyView)? = nil){
+    init(header:String = "Header",size:CGSize  = .init(width: totalWidth * 0.5, height: totalHeight * 0.5),aR:ContentMode = .fill, @ViewBuilder insideView:@escaping ((CGFloat,CGFloat) -> T)){
         self.header = header
         self.size = size
-        if let safeView = insideView{
-            self.insideView = safeView
-        }
+//        if let safeView = insideView{
+        self.insideView = insideView
+//        }
         self.aR = aR
     }
 
@@ -35,11 +35,11 @@ struct ChartCard: View {
             let w = local.width
             let h = local.height
             VStack(alignment: .center, spacing: 10){
-                MainText(content: self.header, fontSize: 20, color: .white, fontWeight: .semibold)
+                MainText(content: self.header, fontSize: 20, color: .white, fontWeight: .semibold,style: .heading)
                     .frame(width: w,alignment: .leading)
-                if let safeIS = self.insideView{
-                    safeIS(w,h * 0.95)
-                }
+//                if let safeIS = self.insideView{
+                insideView(w,h * 0.95)
+//                }
             }
         }
         .padding(self.aR == .fill ? 15 : 0)
@@ -50,8 +50,8 @@ struct ChartCard: View {
     }
 }
 
-struct ChartCard_Previews: PreviewProvider {
-    static var previews: some View {
-        ChartCard()
-    }
-}
+//struct ChartCard_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ChartCard()
+//    }
+//}

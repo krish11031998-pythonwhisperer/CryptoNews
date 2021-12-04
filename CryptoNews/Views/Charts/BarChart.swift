@@ -53,25 +53,26 @@ struct BarChart: View {
         let bar_h_factor = CGFloat(data/self.totalOfDataPoints) < 0.1 ? 0.1 : CGFloat(data/self.totalOfDataPoints)
         let key = (idx + 1) > axis_keys.count ? "😞" : axis_keys[idx]
         let bar_h = bar_h_factor * size.height * 0.9
-        return Button(action: {
+
+        return VStack(alignment: .center, spacing: 10){
+            RoundedRectangle(cornerRadius: bar_w * 0.5)
+                .foregroundColor(.white)
+                .frame(width: bar_w, height: bar_h, alignment: .bottom)
+                .scaleEffect(self.selected == idx ? 1.1 : 1)
+            MainText(content: key, fontSize: 12, color: .white)
+                .frame(width:bar_w,height:size.height * 0.1)
+        }
+        .buttonify {
             withAnimation(.easeInOut) {
                 self.selected = self.selected == idx ? -1 : idx
             }
-        }, label: {
-            VStack(alignment: .center, spacing: 10){
-                RoundedRectangle(cornerRadius: bar_w * 0.5)
-                    .frame(width: bar_w, height: bar_h, alignment: .bottom)
-                    .scaleEffect(self.selected == idx ? 1.1 : 1)
-                MainText(content: key, fontSize: 12, color: .white)
-                    .frame(width:bar_w,height:size.height * 0.1)
-            }
-        }).springButton()
+        }
     }
     
     func barChart(size:CGSize) -> some View {
         let spacing:CGFloat = 10
         let bar_w = size.width/CGFloat(self.dataPoints.count) - spacing
-        return HStack(alignment: .bottom, spacing: spacing){
+        return LazyHStack(alignment: .bottom, spacing: spacing){
             ForEach(Array(self.dataPoints.enumerated()), id: \.offset) { _data in
                 self.barElement(bar_val: _data, size: .init(width: bar_w, height: size.height))
             }

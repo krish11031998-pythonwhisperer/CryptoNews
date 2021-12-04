@@ -8,14 +8,129 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        HomePage()
-//        BarChart(heading:"Test",bar_elements: [BarElement(data: 75, axis_key: "🐻", key: "Very Bearish", info_data: 90892),BarElement(data: 15, axis_key: "😞", key: "Bearish", info_data: 908),BarElement(data: 150, axis_key: "😐", key: "Normal", info_data: 90098),BarElement(data: 190, axis_key: "☺️", key: "Bullish", info_data: 9098),BarElement(data: 50, axis_key: "🐂", key: "Very Bullish", info_data: 9098)], size: .init(width: totalWidth * 0.65, height: totalHeight * 0.5))
+    @EnvironmentObject var context:ContextData
+    
+    func closeNews(){
+        if self.context.selectedNews != nil{
+            self.context.selectedNews = nil
+        }
     }
+    
+    var contentView:some View{
+        ZStack(alignment: .bottom) {
+            mainBGView.zIndex(0)
+            self.mainBody
+            self.hoverView
+            if self.context.showTab{
+                TabBarMain()
+                    .zIndex(2)
+            }
+        }
+        .frame(width: totalWidth, height: totalHeight, alignment: .center)
+        .edgesIgnoringSafeArea(.all)
+    }
+    
+    var body: some View {
+        self.contentView
+    }
+}
+
+extension ContentView{
+    
+    var tabs:[Tabs]{
+        return [.home,.search,.info,.profile]
+    }
+    
+    @ViewBuilder var mainBody:some View{
+        TabView(selection: self.$context.tab) {
+            ForEach(self.tabs, id: \.rawValue) { tab in
+                self.dynamicTabPage(page: tab).tag(tab)
+            }
+        }
+        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+    }
+    
+    @ViewBuilder func tabPage(page:Tabs) -> some View{
+        switch(page){
+            case .home: self.homeView
+            case .search: SearchMainPage()
+            case .info: SlideTabView {
+                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+            }
+            case .profile: ProfileView()
+            default: Color.clear
+        }
+    }
+    
+    
+    @ViewBuilder func dynamicTabPage(page:Tabs) -> some View{
+        if page == self.context.tab{
+            self.tabPage(page: page)
+        }else{
+            Color.clear
+        }
+    }
+    
+    @ViewBuilder var homeView:some View{
+        HomePage()
+            .environmentObject(self.context)
+    }
+    
+    var hoverViewIsOn:Bool{
+        return self.context.addTxn || self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil
+    }
+    
+    
+    @ViewBuilder var hoverView:some View{
+        if let news = self.context.selectedNews, let urlStr = news.url,let url  = URL(string: urlStr){
+            WebModelView(url: url, close: self.closeNews)
+                .transition(.slideInOut)
+                .zIndex(3)
+        }
+        if self.context.addTxn || self.context.tab == .txn{
+            AddTxnMainView(currency: self.context.selectedSymbol)
+                .transition(.slideInOut)
+                .zIndex(3)
+        }
+        
+        if self.context.selectedCurrency != nil || self.context.selectedSymbol != nil{
+            CurrencyView(name: self.context.selectedSymbol, info: self.context.selectedCurrency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+            .transition(.slideInOut)
+            .background(mainBGView)
+            .edgesIgnoringSafeArea(.all)
+            .zIndex(2)
+        }
+        
+        if let post = self.context.selectedPost{
+            CrybPostDetailView(postData: post)
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
+        
+        
+    
+    }
+    
+    
+    func closeAsset(){
+        if self.context.selectedCurrency != nil{
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self.context.selectedCurrency = nil
+            }
+        }else if self.context.selectedSymbol != nil{
+            withAnimation(.easeInOut(duration: 0.5)) {
+                self.context.selectedSymbol = nil
+            }
+        }
+    }
+
 }
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
         ContentView()
+            .environmentObject(ContextData())
     }
 }

@@ -2,6 +2,11 @@ import Foundation
 
 extension String{
     
+    
+    func toFloat() -> Float{
+        return Float(self) ?? 0.0
+    }
+    
     func removeEndLine() -> String{
         let text = self
         return text.replacingOccurrences(of: "\n", with: "")
@@ -41,5 +46,25 @@ extension String{
     
     func isImgURLStr() -> Bool{
         return self.contains(".jpg") || self.contains(".png")
+    }
+    
+    func isURL() -> Bool{
+        return self.contains("https://")
+    }
+    
+    func containsURL() -> (body:String,url:[String]){
+        let word = self
+        var urls:[String] = []
+        let fin_word = word.split(separator: " ").compactMap{ sequence -> String? in
+            var res:String? = nil
+            let word = String(sequence)
+            if !word.isURL(){
+                res = word
+            }else{
+                urls.append(word)
+            }
+            return res
+        }.reduce("", {"\($0) \($1)"})
+        return (body:fin_word,url:urls)
     }
 }

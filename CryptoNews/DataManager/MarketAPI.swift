@@ -7,12 +7,18 @@
 
 import Foundation
 import Combine
+import SwiftUI
 
 struct AllMarketData:Codable{
     var data:Array<CoinMarketData>?
 }
 
-struct CoinMarketData:Codable{
+enum Order:String{
+    case desc = "desc"
+    case incr = "incr"
+}
+
+struct CoinMarketData:Codable,Equatable{
     var id:Int?
     var s:String?
     var n:String?
@@ -44,43 +50,61 @@ struct CoinMarketData:Codable{
     var timeSeries:Array<CoinMarketData>?
 }
 
-class MarketAPI:DAPI,ObservableObject{
+class MarketAPI:DAPI{
     @Published var data:Array<CoinMarketData> = .init()
-    var sort:String
+    var sort:String?
     var limit:Int
-    init(sort:String = "d",limit:Int = 10){
+    var order:Order
+    init(sort:String? = nil,limit:Int = 10,order:Order = .desc){
         self.sort = sort
         self.limit = limit
+        self.order = order
     }
     
     var marketURL:URL?{
         var uC = self.baseComponent
         uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "market"),
-            URLQueryItem(name: "sort", value: self.sort),
-            URLQueryItem(name: "desc", value: "true"),
             URLQueryItem(name: "limit", value: "\(self.limit)")
         ])
+        
+        if let sort = self.sort{
+            uC.queryItems?.append(URLQueryItem(name: "sort", value: sort))
+        }
+        
+        if self.order == .desc{
+            uC.queryItems?.append(URLQueryItem(name: "desc", value: "true"))
+        }
+        
         return uC.url
     }
     
-    func parseData(data:Data){
+    
+    
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(AllMarketData.self, from: data)
             if let data = res.data{
                 DispatchQueue.main.async {
-                    self.data = data
+                    withAnimation(.easeInOut) {
+                        self.data = data
+                    }
                 }
             }
             
         }catch{
             print("There was an error while : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
     }
     
     func getMarketData(){
-        self.getInfo(_url: self.marketURL, completion: self.parseData(data:))
+//        self.getData(_url: self.marketURL, completion: self.parseData(data:))
+        self.getData(_url: self.marketURL)
     }
     
     

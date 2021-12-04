@@ -5,6 +5,7 @@ var AppWidth = totalWidth * 0.9
 var totalHeight = UIScreen.main.bounds.height
 extension Color{
     static var mainBGColor = LinearGradient(gradient: .init(colors: [.red,.blue]), startPoint: .topTrailing, endPoint: .bottomLeading)
+    static var darkGradColor = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)
     static var cardColor = BlurView(style: .dark)
     static var primaryColor:Color = .init(UIColor(hex: "#191A1DFF") ?? .white)
     
@@ -88,8 +89,10 @@ func convertToMoneyNumber(value:Float?) -> String{
         return "$\(String(format: decimal, value/1000))k"
     }else if value > 1000000 && value < 1000000000{
         return "$\(String(format: decimal,value/1000000))M"
-    }else if value > 1000000000{
+    }else if value > 1000000000 && value < 1000000000000{
         return "$\(String(format: decimal,value/1000000000))B"
+    }else if value >= 1000000000000{
+        return "$\(String(format: decimal,value/1000000000000))T"
     }else{
         return "$\(String(format: decimal,value))"
     }

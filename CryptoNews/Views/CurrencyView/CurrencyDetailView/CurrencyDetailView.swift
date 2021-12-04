@@ -8,73 +8,91 @@
 import SwiftUI
 
 struct CurrencyDetailView: View {
-    let interval:Int = 60
-    @State var currency:AssetData
+    var onClose:(() -> Void)?
+    @Binding var currency:AssetData
     var size:CGSize = .init()
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
-    @StateObject var asset_feed:FeedAPI
-    var asset_info:AssetAPI
-    @State var time:Int = 0
+    @Binding var asset_feed:[AssetNewsData]
+    @Binding var news:[AssetNewsData]
+    @Binding var txns:[Transaction]
+    var reloadFeed:(() -> Void)?
+    var reloadAsset:(() -> Void)?
+    @Binding var showMoreSection:CurrencyViewSection
+    
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
-    init(info:AssetData,size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3)){
-        self._currency = .init(wrappedValue: info)
+    init(
+//        heading:String,
+         info:Binding<AssetData>,
+         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
+         asset_feed:Binding<[AssetNewsData]>,
+         news:Binding<[AssetNewsData]>,
+         txns:Binding<[Transaction]>,
+         showSection:Binding<CurrencyViewSection>,
+         reloadAsset:(() -> Void)? = nil,
+         reloadFeed:(() -> Void)? = nil,
+         onClose:(() -> Void)? = nil){
+        self._currency = info
+        self.onClose = onClose
         self.size = size
-        self._asset_feed = .init(wrappedValue: .init(currency: [info.symbol ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
-        self.asset_info = AssetAPI.shared(currency: info.symbol ?? "BTC")
+        self._asset_feed = asset_feed
+        self._showMoreSection = showSection
+        self._txns = txns
+        self._news = news
     }
+    
     
     var body:some View{
-        VStack(alignment: .leading, spacing: 25){
-            HStack(alignment: .center, spacing: 4) {
-                self.text(heading: "Now", info:convertToMoneyNumber(value: self.price))
-                Spacer()
-                SystemButton(b_name: "arrow.clockwise", b_content: "Refresh", color: .white, haveBG: true, bgcolor: .black, alignment: .vertical, action: self.getAssetInfo)
-            }
-            self.priceInfo
-            self.curveChart.clipContent(clipping: .roundClipping)
-            self.transactionHistoryView
-            self.Avg_Sentiment
-            self.SocialMedia_Metrics
-            self.barTweetChart
-            self.feedContainer
-        }.onAppear(perform: self.onAppear)
+        self.mainView
+        
     }
-    
-    func getAssetInfo(){
-        print("(DEBUG) Fetching Data for asset")
-        self.asset_info.getAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
-    }
-    
-    
-    func checkTimer(){
-        if self.time == 0{
-            self.time += interval
-        }else{
-            self.asset_info.getAssetInfo()
-        }
-    }
-
-    func onReceiveNewAssetInfo(asset:AssetData?){
-        guard let data = asset else {return}
-        DispatchQueue.main.async {
-            self.currency = data
-            print("(DEBUG): Updated the Asset Data!")
-        }
-    }
-    
 }
 
 extension CurrencyDetailView{
 
-    func onAppear(){
-        if self.asset_feed.FeedData.isEmpty{
-            self.asset_feed.getAssetInfo()
+    var mainView:some View{
+            LazyVStack(alignment: .leading, spacing: 15){
+                MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+                self.priceInfo
+                self.curveChart.clipContent(clipping: .roundClipping)
+                self.transactionHistoryView
+                self.CurrencySummary
+                self.SocialMediaMetric
+                self.feedContainer
+                self.newsContainer
+                
+            }.padding(.bottom,150)
+    }
+    
+    
+    var coinTotal:Float{
+        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.asset_quantity})
+    }
+
+    var valueTotal:Float{
+        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.total_inclusive_price})
+    }
+
+    var txnForAssetPortfolioData:[PortfolioData]{
+        return self.txns.compactMap({$0.parseToPortfolioData()})
+    }
+    
+    var CurrencySummary:some View{
+        ChartCard(header: "Statistics", size: self.size) { w, h in
+            CurrencySummaryView(currency: currency, size: .init(width: w, height: h))
         }
     }
     
     var barChartValues:[BarElement]{
         return [BarElement(data: Float(self.currency.tweet_sentiment1 ?? 0), axis_key: "🐻", key: "Very Bearish", info_data: Float(self.currency.tweet_sentiment_impact1 ?? 0)),BarElement(data: Float(self.currency.tweet_sentiment2 ?? 0), axis_key: "😞", key: "Bearish", info_data:  Float(self.currency.tweet_sentiment_impact2 ?? 0)),BarElement(data: Float(self.currency.tweet_sentiment3 ?? 0), axis_key: "😐", key: "Normal", info_data:  Float(self.currency.tweet_sentiment_impact3 ?? 0)),BarElement(data: Float(self.currency.tweet_sentiment4 ?? 0), axis_key: "☺️", key: "Bullish", info_data:  Float(self.currency.tweet_sentiment_impact4 ?? 0)),BarElement(data: Float(self.currency.tweet_sentiment5 ?? 0), axis_key: "🐂", key: "Very Bullish", info_data:  Float(self.currency.tweet_sentiment_impact5 ?? 0))]
+    }
+    
+    var SocialMediaMetric:some View{
+        Group{
+            MainText(content: "Social Media Metrics", fontSize: 25, color: .white,fontWeight: .bold, style: .heading)
+            self.Avg_Sentiment
+            self.SocialMedia_Metrics
+        }
     }
     
     var barTweetChart:AnyView{
@@ -83,48 +101,67 @@ extension CurrencyDetailView{
         )
     }
     
-    var transactionHistoryView:some View{
-        MarkerMainView(data: .init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1,txns: [.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1),.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1),.init(crypto_coins: 1, value_usd: 185.43, fee: 1.36, totalfee: 186.79, totalBuys: 1)]),size: .init(width: size.width, height: size.height * 1.5))
-    }
-    
-    func reload(idx:Int){
-        if idx == self.asset_feed.FeedData.count - 5{
-            print("(DEBUG) Fetching more feedData")
-            self.asset_feed.getNextPage()
-        }
-    }
-    
-    func reload(){
-//        if idx == self.asset_feed.FeedData.count - 1{
-            print("(DEBUG) Fetching more feedData")
-            self.asset_feed.getNextPage()
-//        }
-    }
-    
-    var feed:some View{
-//        AsyncContainer(size: .init(width: self.size.width, height: .infinity),triggerAction: self.reload) {
-            LazyVStack(alignment: .leading, spacing: 10){
-                MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold)
-                ForEach(Array(self.asset_feed.FeedData.enumerated()),id:\.offset){ _data in
-                    let data = _data.element
-                    let idx = _data.offset
-                    let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                    PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
-                        .onAppear {
-                            self.reload(idx: idx)
-                        }
+    @ViewBuilder var transactionHistoryView:some View{
+        if self.txns.isEmpty{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }else{
+            
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+                .buttonify {
+                    withAnimation(.easeInOut) {
+                        self.showMoreSection = .txns
+                    }
                 }
-//            }
-
         }
-        //        .transition(.opacity)
+        
+    }
+    
+    
+    var feedView:some View{
+        Group{
+            MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold, style: .heading)
+            ForEach(Array(self.asset_feed[0...4].enumerated()),id:\.offset){ _data in
+                let data = _data.element
+                let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
+                PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
+            }
+            TabButton(width: size.width, title: "Load More", action: {
+                withAnimation(.easeInOut) {
+                    self.showMoreSection = .feed
+                }
+            })
+        }
+    }
+    
+    var newsView:some View{
+        Group{
+            MainText(content: "News", fontSize: 25, color: .white,fontWeight: .bold)
+            ForEach(Array(self.news[0...4].enumerated()),id:\.offset) { _news in
+                let news = _news.element
+                NewsStandCard(news: news,size:.init(width: size.width, height: 150))
+            }
+            TabButton(width: size.width, title: "Load More", action: {
+                withAnimation(.easeInOut) {
+                    self.showMoreSection = .news
+                }
+            })
+        }
     }
     
     @ViewBuilder var feedContainer:some View{
-        if self.asset_feed.FeedData.isEmpty{
+        if self.asset_feed.isEmpty{
             ProgressView()
-        }else{
-            self.feed
+        }else if self.news.count >= 5{
+            self.feedView
+        }
+        
+    }
+    
+    @ViewBuilder var newsContainer:some View{
+        if self.news.isEmpty{
+            ProgressView()
+        }else if self.news.count >= 5{
+            self.newsView
         }
         
     }
@@ -132,10 +169,10 @@ extension CurrencyDetailView{
     var priceInfo:some View{
         let asset = self.choosen == -1 ? self.currency : self.currency.timeSeries?[self.choosen] ?? self.currency
         return HStack(alignment: .top, spacing: 20){
-            self.text(heading: "Open", info: convertToMoneyNumber(value: asset.open))
-            self.text(heading: "Low", info: convertToMoneyNumber(value: asset.low))
-            self.text(heading: "High", info: convertToMoneyNumber(value: asset.high))
-            self.text(heading: "Close", info: convertToMoneyNumber(value: asset.close))
+            MainSubHeading(heading: "Open", subHeading: convertToMoneyNumber(value: asset.open),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "Low", subHeading: convertToMoneyNumber(value: asset.low),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "High", subHeading: convertToMoneyNumber(value: asset.high),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "Close", subHeading: convertToMoneyNumber(value: asset.close),headingSize: 12.5,subHeadingSize: 17.5)
         }.padding(.vertical)
         .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
     }
@@ -217,62 +254,29 @@ extension CurrencyDetailView{
         ChartCard(header: "Sentiment Time Series", size: .init(width: self.size.width, height: self.size.height)) { w, h in
             let sentiment = self.choosen_sent >= 0 && self.choosen_sent < self.sentiment_set.count - 1 ? self.sentiment_set[self.choosen_sent] : self.currency.average_sentiment ?? 3.0
             let curve_sentiment = self.sentiment_set
-            return AnyView(
+//            return
                 VStack(alignment: .leading, spacing: 10){
                     MainText(content: self.find_sentiment(sentiment: sentiment), fontSize: 13, color: .white).padding(.leading,5)
                     
                     CurveChart(data: curve_sentiment,choosen: $choosen_sent, interactions: true, size: .init(width: w, height: h * 0.75), bg: .clear, chartShade: true)
                 }.frame(width: w, height: h, alignment: .leading)
-            )
+            
         }
+    }
+    
+    var social_media_metrics_values:[String:Float]{
+        return ["Average Sentiment":(self.currency.average_sentiment ?? 0)/5,"Correlation Rank":(self.currency.correlation_rank ?? 0)/5,"Social Impact Score":(self.currency.social_impact_score ?? 0)/5,"Price Score":(self.currency.price_score ?? 0)/5]
+    }
+    
+    func social_media_size ( _ w:CGFloat, _ h:CGFloat) -> CGSize{
+        var min = min(w,h)
+        min -= min == 0 ? 0 : 35
+        return CGSize(width: min , height: min)
     }
     
     var SocialMedia_Metrics:some View{
-        ChartCard(header: "Social Media Metrics", size: .init(width: self.size.width, height: self.size.height)) { w, h in
-            var min = min(w,h)
-            min -= min == 0 ? 0 : 35
-            let size = CGSize(width: min , height: min)
-            
-            let values = ["Average Sentiment":(self.currency.average_sentiment ?? 0)/5,"Correlation Rank":(self.currency.correlation_rank ?? 0)/5,"Social Impact Score":(self.currency.social_impact_score ?? 0)/5,"Price Score":(self.currency.price_score ?? 0)/5]
-            let view = DiamondChart(size: size, percent: values).zIndex(1)
-                
-            return AnyView(view)
+        ChartCard(header: "Social Media Metrics", size: .init(width: self.size.width, height: self.size.height)) { w, h  in
+            DiamondChart(size: self.social_media_size(w, h), percent: self.social_media_metrics_values).zIndex(1)
         }
-    }
-}
-
-private struct testView:View{
-    @StateObject var asset:AssetAPI = .init(currency: "ETH")
-    
-    func onAppear(){
-        self.asset.getAssetInfo()
-    }
-    
-    var body: some View{
-        Container(heading: "\(self.asset.currency)") { w in
-//            return AnyView(
-                ZStack(alignment: .center){
-                    if let data = self.asset.data{
-                        CurrencyDetailView(info: data)
-                    }else{
-                        ProgressView()
-                    }
-                }
-//            )
-        }.onAppear(perform : self.onAppear)
-    }
-}
-
-
-struct CurrencyDetailView_Previews: PreviewProvider {
-    
-    static var previews: some View {
-        ScrollView(.vertical, showsIndicators: false){
-            testView()
-        }
-        .padding(.top,50)
-        .background(mainBGView)
-        .edgesIgnoringSafeArea(.all)
-        
     }
 }

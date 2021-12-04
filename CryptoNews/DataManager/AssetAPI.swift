@@ -11,7 +11,11 @@ class Asset:Codable{
     var data:[AssetData]
 }
 
-class AssetData:Identifiable,Codable{
+class AssetData:Identifiable,Codable,Equatable{
+    static func == (lhs: AssetData, rhs: AssetData) -> Bool {
+        return lhs.lastUpdate == rhs.lastUpdate
+    }
+    
     var id:Int?
     var timeSeries:[AssetData]?
     var time:Float?
@@ -25,8 +29,10 @@ class AssetData:Identifiable,Codable{
     var price:Float?
     var price_btc:Float?
     var market_cap:Float?
+    var market_cap_rank:Int?
     var percent_change_24h:Float?
     var percent_change_7d:Float?
+    var max_supply:String?
     var percent_change_30d:Float?
     var volume_24h:Float?
     var average_sentiment_calc_24h_previous:Float?
@@ -60,14 +66,20 @@ class AssetData:Identifiable,Codable{
     var price_score:Float?
     var social_impact_score:Float?
     var social_score:Float?
+    var market_dominance:Float?
 //    var sentiment_relative:Float?
 //    var news:Int?
 //    var social_dominance:Float?
 //    var market_dominance:Float?
+    var lastUpdate:Date?
+    
+    var timeSinceLastUpdate:Double{
+        return self.lastUpdate?.timeIntervalSinceNow.magnitude ?? 0.0
+    }
 }
 
 
-class AssetAPI:DAPI,ObservableObject{
+class AssetAPI:DAPI{
     var currency:String
     @Published var data:AssetData? = nil
 //    static var shared:AssetAPI = .init()
@@ -97,34 +109,50 @@ class AssetAPI:DAPI,ObservableObject{
             let res = try decoder.decode(Asset.self, from: data)
             if let first = res.data.first {
                 result = first
+                result?.lastUpdate = Date()
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
         return result
     }
     
-    func parseData(data:Data){
+    override func parseData(url:URL,data:Data){
+        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(Asset.self, from: data)
             if let first = res.data.first {
                 DispatchQueue.main.async {
                     self.data = first
+                    self.data?.lastUpdate = Date()
                 }
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
         }
+        DispatchQueue.main.async {
+            self.loading = false
+        }
     }
     
     func getAssetInfo(){
-        self.getInfo(_url: self.assetURL, completion: self.parseData(data:))
+//        self.getData(_url: self.assetURL, completion: self.parseData(data:))
+        self.getData(_url: self.assetURL)
+    }
+    
+    func getUpdateAssetInfo(completion: @escaping (AssetData?) -> Void){
+        self.updateInfo(_url: self.assetURL) { data in
+            completion(self._parseData(data: data))
+        }
     }
     
     func getAssetInfo(completion: @escaping (AssetData?) -> Void){
         if let url = self.assetURL{
-            self.getInfo(_url: url) { data in
+            self.getData(_url: url) { data in
                 completion(self._parseData(data: data))
             }
         } else {
