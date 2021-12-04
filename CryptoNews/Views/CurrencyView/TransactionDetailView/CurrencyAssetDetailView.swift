@@ -67,12 +67,14 @@ struct TransactionDetailsView: View {
                 SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
             }
             TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
-                withAnimation(.easeInOut) {
+//                withAnimation(.easeInOut) {
                     if !self.context.addTxn{
                         self.context.addTxn.toggle()
+                    }
+                    if self.context.selectedSymbol != self.currency{
                         self.context.selectedSymbol = self.currency
                     }
-                }
+//                }
             }
         }.padding(.bottom,150).frame(width: width, alignment: .topLeading)
     }

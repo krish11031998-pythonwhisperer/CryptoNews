@@ -143,8 +143,10 @@ class ContextData:ObservableObject{
             return _addTxn
         }
         set{
-            withAnimation(.easeInOut) {
-                self._addTxn = newValue
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self._addTxn = newValue
+                }
             }
         }
     }

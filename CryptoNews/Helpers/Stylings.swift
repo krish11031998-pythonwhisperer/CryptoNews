@@ -162,9 +162,11 @@ struct SystemButtonModifier:ViewModifier{
 }
 
 struct SpringButton:ViewModifier{
+    var withBG:Bool
     var handleTap:(() -> Void)
     
-    init(handleTap: @escaping (() -> Void)){
+    init(withBG:Bool = false,handleTap: @escaping () -> Void){
+        self.withBG = withBG
         self.handleTap = handleTap
     }
     
@@ -178,7 +180,7 @@ struct SpringButton:ViewModifier{
         } label: {
             content
                 .contentShape(Rectangle())
-        }.springButton()
+        }.springButton(withBG: withBG)
     }
 }
 
@@ -365,11 +367,26 @@ struct TabButton:View{
 
 
 struct ButtonModifier:ButtonStyle{
+    
+    var withBG:Bool = false
+    
+    init(withBG:Bool = false){
+        self.withBG = withBG
+    }
+    
+    
     func makeBody(configuration: Configuration) -> some View {
-        configuration.label
-            .scaleEffect(configuration.isPressed ? 0.9 : 1)
-            .opacity(configuration.isPressed ? 0.9 : 1)
-            
+        if self.withBG{
+            configuration.label
+                .scaleEffect(configuration.isPressed ? 0.9 : 1)
+                .opacity(configuration.isPressed ? 0.9 : 1)
+                .background((self.withBG ? AnyView(BlurView.thinDarkBlur) : AnyView(Color.clear)).opacity(configuration.isPressed ? 1 : 0))
+                .clipContent(clipping: self.withBG ? .circleClipping : .clipped)
+        }else{
+            configuration.label
+                .scaleEffect(configuration.isPressed ? 0.9 : 1)
+                .opacity(configuration.isPressed ? 0.9 : 1)
+        }
     }
 }
 
@@ -392,8 +409,8 @@ extension AnyTransition{
 
 
 extension View{
-    func springButton() -> some View{
-        self.buttonStyle(ButtonModifier())
+    func springButton(withBG:Bool = false) -> some View{
+        self.buttonStyle(ButtonModifier(withBG: withBG))
     }
     
     func clipContent(clipping:Clipping = .clipped) -> some View{
@@ -424,8 +441,8 @@ extension View{
         self.modifier(Blob(color: color,clipping: clipping))
     }
     
-    func buttonify(handler:@escaping (() -> Void)) -> some View{
-        self.modifier(SpringButton(handleTap: handler))
+    func buttonify(withBG:Bool = false,handler:@escaping () -> Void) -> some View{
+        self.modifier(SpringButton(withBG: withBG,handleTap: handler))
     }
     
     func coloredTextField(color:Color,size:CGFloat = 50,width:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{

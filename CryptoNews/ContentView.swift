@@ -87,8 +87,15 @@ extension ContentView{
                 .transition(.slideInOut)
                 .zIndex(3)
         }
-        if self.context.addTxn || self.context.tab == .txn{
+        
+        if self.context.addTxn{
             AddTxnMainView(currency: self.context.selectedSymbol)
+                .transition(.slideInOut)
+                .zIndex(3)
+        }
+        
+        if self.context.tab == .txn{
+            AddTransactionView()
                 .transition(.slideInOut)
                 .zIndex(3)
         }

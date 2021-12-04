@@ -28,7 +28,10 @@ class TxnFormDetails:ObservableObject{
     @Published var uid:String  = ""
     @Published var added_Success:Bool? = nil
     
-    
+    init(asset:String? = nil,assetPrice:String? = nil){
+        self.asset_spot_price = assetPrice ?? ""
+        self.asset = asset ?? ""
+    }
     
     static var empty:TxnFormDetails = .init()
     
@@ -45,33 +48,53 @@ class TxnFormDetails:ObservableObject{
             self.asset_quantity = value
         }
     }
+    
+    func reset(){
+        self.time = ""
+        self.type = ""
+        self.asset = ""
+        self.asset_spot_price = ""
+        self.asset_quantity = ""
+        self.asset = ""
+        self.subtotal = ""
+        self.total_inclusive_price = ""
+        self.fee = ""
+        self.memo = ""
+        self.uid = ""
+        self.added_Success = nil
+        
+    }
 }
 
 
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
     @Namespace var animation
-    @StateObject var txn:TxnFormDetails = .empty
+    @StateObject var txn:TxnFormDetails
     @State var type:TransactionType = .buy
     @State var entryType = "coin"
     @State var date:Date = Date()
     @State var showModal:ModalType = .none
     @State var coin:CoinMarketData = .init()
-    @State var _currency:String? = nil
-    @State var currentAsset: AssetData? = nil
+    @State var curr_sym:String? = nil
+    @State var currentAsset: AssetData?
     
     var types:[TransactionType] = [.buy,.sell,.receive,.send]
     
-    init(currentAsset:AssetData? = nil,
+    init(
+        currentAsset:AssetData? = nil,
          curr_str:String? = nil
     ){
         if let asset = currentAsset{
-            self.currentAsset = asset
-            self.updateSpotPrice(asset: asset)
+            self._currentAsset = .init(wrappedValue: asset)
+            self._txn = .init(wrappedValue: .init(asset: asset.symbol ?? "XXX", assetPrice: asset.price?.toString() ?? "0"))
+        }else{
+            self._txn = .init(wrappedValue: .empty)
         }
         
+        
         if let curr = curr_str{
-            self.__currency = .init(wrappedValue: curr)
+            self._curr_sym = .init(wrappedValue: curr)
         }
         
     }
@@ -96,7 +119,7 @@ struct AddTransactionView:View {
     
     func resetStates(){
         DispatchQueue.main.async {
-            self.txn.asset_quantity = "0"
+            self.txn.reset()
         }
     }
     
@@ -160,12 +183,12 @@ struct AddTransactionView:View {
     }
     
     func onAppear(){
-        if let curr = self._currency , self.currentAsset == nil{
+        if let curr = self.curr_sym , self.currentAsset == nil{
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
                 self.fetchAssetData(sym: curr)
             }
         }
-        
+
         withAnimation(.easeInOut) {
             if self.context.showTab{
                 self.context.showTab.toggle()
@@ -231,7 +254,6 @@ struct AddTransactionView:View {
         .onAppear(perform: self.onAppear)
         .onDisappear(perform: self.onDisappear)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
-        .onChange(of: (self.currentAsset ?? .init()),perform: self.updateSpotPrice(asset:))
         .onChange(of: self.txn.added_Success) { newValue in
             if let value = newValue{
                 print("The txn is : ",value)
@@ -241,16 +263,9 @@ struct AddTransactionView:View {
 }
 
 extension AddTransactionView{
-    
-    func updateSpotPrice(asset:AssetData){
-        if let price = asset.price{
-            self.txn.asset_spot_price = price.toString()
-        }
-    }
-    
-    
+        
     var currency:String{
-        return self._currency ?? self.coin.s ?? "Choose Currency"
+        return self.curr_sym ?? self.coin.s ?? "Choose Currency"
     }
     
     
@@ -275,7 +290,7 @@ extension AddTransactionView{
         var valToUpdate = self.showModal == .fee ? self.txn.fee : self.showModal == .spot_price ? self.txn.asset_spot_price : self.txn.asset_quantity
         DispatchQueue.main.async {
             if val != "Del"{
-                if valToUpdate == "0"{
+                if valToUpdate == ""{
                     valToUpdate = val
                 }else{
                     valToUpdate += val
@@ -293,17 +308,18 @@ extension AddTransactionView{
     func numPad(w:CGFloat) -> some View{
         let numIconW = (w * 0.3) - 2.5
         var numPadSeq = Array(1...9).map({"\($0)"})
+        let height = totalHeight * 0.35
         numPadSeq.append(contentsOf: [".","0","Del"])
         let col = GridItem(.adaptive(minimum: numIconW, maximum: numIconW))
         let res = LazyVGrid(columns: [col], alignment: .center, spacing: 10) {
             ForEach(numPadSeq, id:\.self) { numVal in
                 MainText(content: numVal, fontSize: 17, color: .white, fontWeight: .semibold)
-                    .frame(width: numIconW,height: numIconW * 0.75 ,alignment: .center)
-                    .buttonify {
+                    .frame(width: numIconW,height: height * 0.25 - 10 ,alignment: .center)
+                    .buttonify(withBG: true) {
                         self.numPadEventHandler(val: numVal)
                     }
             }
-        }
+        }.frame(width: w, alignment: .center)
 
         return res
     }
@@ -325,7 +341,6 @@ extension AddTransactionView{
         return HStack(alignment: .center, spacing: 5) {
             ForEach(Array(self.types.enumerated()), id: \.offset) {_type in
                 let type = _type.element
-                let idx = _type.offset
                 let id = self.type == type
                 
                 
@@ -473,14 +488,12 @@ struct AddTxnMainView:View{
     }
     
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
+        DispatchQueue.main.async {
             if let curr = self.currency,self.asset == nil{
                 let aapi = AssetAPI.shared(currency: curr)
                 aapi.getAssetInfo { data in
                     guard let safeData = data else {return}
-                    DispatchQueue.main.async {
-                        self.asset = safeData
-                    }
+                    self.asset = safeData
                 }
             }
         }
