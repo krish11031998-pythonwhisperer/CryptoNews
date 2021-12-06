@@ -50,17 +50,17 @@ extension TabBarMain{
     
     func onTapHandler(tab:Tabs){
         if self.context.tab != tab && tab != .txn{
-            DispatchQueue.main.async {
-                withAnimation(.easeOut) {
+//            DispatchQueue.main.async {
+//                withAnimation(.easeOut) {
                     self.context.tab = tab
-                }
-            }
+//                }
+//            }
         }else if self.context.tab != tab && tab == .txn{
-            DispatchQueue.main.async {
-                withAnimation(.easeOut) {
+//            DispatchQueue.main.async {
+//                withAnimation(.easeOut) {
                     self.context.addTxn.toggle()
-                }
-            }
+//                }
+//            }
         }
 
     }

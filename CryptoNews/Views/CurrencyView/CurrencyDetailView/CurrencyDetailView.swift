@@ -51,19 +51,23 @@ struct CurrencyDetailView: View {
 extension CurrencyDetailView{
 
     var mainView:some View{
-            LazyVStack(alignment: .leading, spacing: 15){
-                MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
-                self.priceInfo
-                self.curveChart.clipContent(clipping: .roundClipping)
-                self.transactionHistoryView
-                self.CurrencySummary
-                self.SocialMediaMetric
-                self.feedContainer
-                self.newsContainer
-                
-            }.padding(.bottom,150)
+        let views:[AnyView] = [AnyView(self.priceMainInfo),AnyView(self.transactionHistoryView),AnyView(self.CurrencySummary),AnyView(self.SocialMediaMetric),AnyView(self.feedContainer),AnyView(self.newsContainer)]
+        return VStack(alignment: .leading, spacing: 15){
+            ForEach(Array(views.enumerated()), id: \.offset) { _view in
+                AsyncContainer(size: .init(width: totalWidth, height: .zero)) {
+                    _view.element
+                }
+            }
+        }.padding(.bottom,150)
     }
     
+    var  priceMainInfo:some View{
+        VStack(alignment: .leading, spacing: 10) {
+            MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+            self.priceInfo
+            self.curveChart.clipContent(clipping: .roundClipping)
+        }
+    }
     
     var coinTotal:Float{
         return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.asset_quantity})

@@ -44,10 +44,9 @@ extension ContentView{
     @ViewBuilder var mainBody:some View{
         TabView(selection: self.$context.tab) {
             ForEach(self.tabs, id: \.rawValue) { tab in
-                self.dynamicTabPage(page: tab).tag(tab)
+                self.tabPage(page: tab).tag(tab)
             }
-        }
-        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
     }
     
     @ViewBuilder func tabPage(page:Tabs) -> some View{
@@ -62,14 +61,6 @@ extension ContentView{
         }
     }
     
-    
-    @ViewBuilder func dynamicTabPage(page:Tabs) -> some View{
-        if page == self.context.tab{
-            self.tabPage(page: page)
-        }else{
-            Color.clear
-        }
-    }
     
     @ViewBuilder var homeView:some View{
         HomePage()
@@ -88,14 +79,8 @@ extension ContentView{
                 .zIndex(3)
         }
         
-        if self.context.addTxn{
+        if self.context.addTxn || self.context.tab == .txn{
             AddTxnMainView(currency: self.context.selectedSymbol)
-                .transition(.slideInOut)
-                .zIndex(3)
-        }
-        
-        if self.context.tab == .txn{
-            AddTransactionView()
                 .transition(.slideInOut)
                 .zIndex(3)
         }

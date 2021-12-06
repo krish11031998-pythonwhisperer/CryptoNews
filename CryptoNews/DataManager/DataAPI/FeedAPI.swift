@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class News:Codable{
     var data:[AssetNewsData]?
@@ -98,13 +99,15 @@ class FeedAPI:DAPI{
             let res = try decoder.decode(News.self, from: data)
             if let news = res.data {
                 DispatchQueue.main.async {
-                    if self.FeedData.isEmpty{
-                        self.FeedData = news
-                    }else{
-                        self.FeedData.append(contentsOf: news)
-                    }
-                    if self.loading{
-                        self.loading = false
+                    withAnimation(.easeInOut) {
+                        if self.FeedData.isEmpty{
+                            self.FeedData = news
+                        }else{
+                            self.FeedData.append(contentsOf: news)
+                        }
+                        if self.loading{
+                            self.loading = false
+                        }
                     }
                 }
             }

@@ -25,10 +25,9 @@ struct HomePage: View {
             CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
             CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
             CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
-            AsyncContainer(size: .zero) {
-                LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
-            }
-            
+//            AsyncContainer(size: .zero) {
+            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
+//            }
             self.CurrencyFeed
             Spacer(minLength: 200)
         }.zIndex(1)
@@ -65,20 +64,20 @@ extension HomePage{
     }
     
     @ViewBuilder func CurrencyFeedEl( _ currency: String) -> some View{
-        Container(heading: "\(currency) Latest Feed", width: totalWidth, ignoreSides: true) { _ in
-            NewsSectionMain(currency: currency).padding(.vertical,10)
-            LatestTweets(currency: currency,type: .Influential)
+        AsyncContainer(size: .zero) {
+            Container(heading: "\(currency) Latest Feed", width: totalWidth, ignoreSides: true) { _ in
+                NewsSectionMain(currency: currency).padding(.vertical,10)
+                LatestTweets(currency: currency,type: .Influential)
+            }
+            
         }
     }
     
     var CurrencyFeed:some View{
-        return Group{
-            ForEach(self.currencies,id:\.self) {currency in
-                AsyncContainer(size: .zero) {
-                    self.CurrencyFeedEl(currency)
-                        .padding(.vertical,15)
-                }
-            }
+        return
+        ForEach(self.currencies,id:\.self) {currency in
+            self.CurrencyFeedEl(currency)
+                .padding(.vertical,15)
         }
     }
 }

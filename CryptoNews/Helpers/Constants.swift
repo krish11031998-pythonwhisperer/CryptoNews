@@ -32,7 +32,8 @@ extension Color{
             )
         }
     
-    static var mainBGColor = LinearGradient(gradient: .init(colors: [Color(hex: "#D16BA5"),Color(hex: "#86A8E7"),Color(hex: "#5FFBF1")]), startPoint: .topTrailing, endPoint: .bottomLeading)
+//    static var mainBGColor = Color.linearGradient(colors: [Color(hex: "#D16BA5"),Color(hex: "#86A8E7"),Color(hex: "#5FFBF1")], start: .topTrailing, end: .bottomLeading)
+    static var mainBGColor = Color.linearGradient()
     static var darkGradColor = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)
     static var cardColor = BlurView(style: .dark)
     static var primaryColor:Color = .init(UIColor(hex: "#191A1DFF") ?? .white)
@@ -51,8 +52,18 @@ extension Color{
         })
     }
     
-    static func linearGradient(colorOne:UIColor,colorTwo:UIColor) -> LinearGradient{
-        return LinearGradient(gradient: .init(colors: [Color(colorOne),Color(colorTwo)]), startPoint: .top, endPoint: .bottom)
+    static func linearGradient(colors _colors:[Any] = [],start:UnitPoint = .topLeading,end:UnitPoint = .bottomTrailing) -> LinearGradient{
+        var parsedColors:[Color] = [.red,.blue]
+        if !_colors.isEmpty{
+            if let colors = _colors as? [Color]{
+                parsedColors = colors
+            }else if let colors = _colors as? [UIColor]{
+                parsedColors = colors.map({Color($0)})
+            }
+        }
+        
+        return LinearGradient(gradient: .init(colors: parsedColors), startPoint: start, endPoint: end)
+        
     }
 }
 var mainBGView: some View {

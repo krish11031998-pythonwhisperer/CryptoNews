@@ -75,50 +75,49 @@ struct Container<T:View>: View {
         let heading = self.heading!
         return Group{
             HStack {
-                self.onCloseView
+                if let close = self.onClose{
+                    SystemButton(b_name: "xmark",action: close)
+                }
                 MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
                 Spacer()
                 if rightButton != nil{
                     self.rightButton?()
                 }
-            }.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
-            Divider().frame(width:self.innerWidth * 0.5,alignment: .leading)
-                .padding(.bottom,10)
-                .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
+            }
+            .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
+            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading).padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
+ 
         }
         
     }
-    
-    var mainInnerView:some View{
-        Group{
-            if self.heading != nil{
-                self.headingView
-            }else if self.onClose != nil{
-                self.onCloseView
-            }
-            self.innerView(self.innerWidth)
-        }
-    }
-    
-    
+
     @ViewBuilder var mainBody:some View{
     
         if self.orientation == .vertical{
-            VStack(alignment: .leading, spacing: 20) {
-                self.mainInnerView
+            VStack(alignment: .leading, spacing: 10) {
+                if self.heading != nil{
+                    self.headingView
+                }else if self.onClose != nil{
+                    self.onCloseView
+                }
+                self.innerView(self.innerWidth).padding(.top,10)
             }
         }else if self.orientation == .horizontal{
-            HStack(alignment: .center, spacing: 20) {
-                self.mainInnerView
+            VStack(alignment: .leading, spacing: 10) {
+                if self.heading != nil{
+                    self.headingView
+                }else if self.onClose != nil{
+                    self.onCloseView
+                }
+                HStack(alignment: .center, spacing: 10) {
+                    self.innerView(self.innerWidth).padding(.top,10)
+                }
             }
         }
-        
-        
-       
-        
     }
     
     var body: some View {
+
         self.mainBody
             .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
             .padding(.vertical,self.paddingSize.height)
