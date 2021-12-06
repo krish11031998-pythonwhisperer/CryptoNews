@@ -74,6 +74,15 @@ var mainBGView: some View {
         
     }
 }
+
+var mainLightBGView:some View{
+    ZStack(alignment: .bottom){
+        Color.white
+        Color.mainBGColor.frame(height: 50, alignment: .center)
+        BlurView(style: .light)
+    }
+}
+
 var baseURL = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
 var bottomShadow = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)
 var lightbottomShadow = LinearGradient(gradient: .init(colors: [.clear,Color.black.opacity(0.5)]), startPoint: .top, endPoint: .bottom)

@@ -150,6 +150,8 @@ struct CrybPostData:Codable{
     private var views:Int?
     private var pricePrediction:CrybPostPrediction?
     private var stakers:[CrybPostBacker]?
+    private var postImg:String?
+    
     
     init(
         id:UUID = UUID(),
@@ -158,7 +160,8 @@ struct CrybPostData:Codable{
         likes:Int = 150,
         comments:Int = 20,
         pricePrediction:CrybPostPrediction = .init(),
-        stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15)
+        stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15),
+        postImg:String? = nil
     ){
         self.id = id
         self.user = user
@@ -167,6 +170,11 @@ struct CrybPostData:Codable{
         self.comments = comments
         self.pricePrediction = pricePrediction
         self.stakers = stakers
+        self.postImg = postImg
+    }
+    
+    var PostImage:String{
+        return self.postImg ?? ""
     }
     
     var PostMessage:String{
@@ -206,7 +214,7 @@ struct CrybPostData:Codable{
     }
     
     static var test:CrybPostData{
-        return .init(postMessage: Array(repeating: "Message", count: 50).reduce("", {"\($0) \($1)"}))
+        return .init(postMessage: Array(repeating: "Message", count: 500).reduce("", {"\($0) \($1)"}))
     }
 
     static func parseFromQueryData(_ data : QueryDocumentSnapshot) -> CrybPostData?{

@@ -24,7 +24,7 @@ struct CrybPostDetailView: View {
             }
         }
         
-        return VStack(alignment: .leading, spacing: 25) {
+        return VStack(alignment: .leading, spacing: 15) {
             self.postBody
             self.socialEngagementView
             self.cryptoSection
@@ -44,7 +44,7 @@ struct CrybPostDetailView: View {
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            Container(width: totalWidth,ignoreSides: false, horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose) { w in
+            Container(width: totalWidth,ignoreSides: false, horizontalPadding: 15,verticalPadding: 50,onClose: self.onClose) { w in
                 self.mainBodyGen(w: w)
             }.padding(.bottom,150)
         }
@@ -82,10 +82,12 @@ extension CrybPostDetailView{
         Container(width: self.width, ignoreSides: false) { w in
             self.header(w: w)
             self.mainBody(w: w)
+            ImageView(url: self.postData.PostImage, width: w, height: 200, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundCornerMedium)
         }
         .padding(.bottom,25)
-        .frame(width: self.width, alignment: .center)
-        .background(BlurView.thinLightBlur)
+        .frame(width: self.width, alignment: .topLeading)
+        .frame(maxHeight: totalHeight * 0.75)
+        .background(mainLightBGView)
         .clipContent(clipping: .roundClipping)
     }
     
@@ -99,7 +101,8 @@ extension CrybPostDetailView{
     
     func mainBody(w:CGFloat) -> some View{
         MainText(content: self.postData.PostMessage, fontSize: 15, color: .black, fontWeight: .semibold)
-            .padding(.horizontal,10)
+            .padding(.leading)
+            .frame(width: w, alignment: .leading)
     }
     
     
@@ -111,7 +114,8 @@ extension CrybPostDetailView{
             }
             Spacer()
             if !self.postData.PricePrediction.GraphData.isEmpty{
-                self.graphChart            }
+                self.graphChart
+            }
         }.frame(width: self.width, alignment: .leading)
     
     }
