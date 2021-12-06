@@ -10,6 +10,7 @@ import SwiftUI
 enum PostCardType{
     case Tweet
     case Reddit
+    case News
 }
 
 struct PostCard: View {

@@ -54,9 +54,9 @@ extension CurrencyDetailView{
         let views:[AnyView] = [AnyView(self.priceMainInfo),AnyView(self.transactionHistoryView),AnyView(self.CurrencySummary),AnyView(self.SocialMediaMetric),AnyView(self.feedContainer),AnyView(self.newsContainer)]
         return VStack(alignment: .leading, spacing: 15){
             ForEach(Array(views.enumerated()), id: \.offset) { _view in
-                AsyncContainer(size: .init(width: totalWidth, height: .zero)) {
+//                AsyncContainer(size: .init(width: totalWidth, height: .zero)) {
                     _view.element
-                }
+//                }
             }
         }.padding(.bottom,150)
     }
@@ -106,7 +106,15 @@ extension CurrencyDetailView{
     }
     
     @ViewBuilder var transactionHistoryView:some View{
-        if self.txns.isEmpty{
+        Group{
+            if !self.txns.isEmpty{
+                MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+                TabButton(width: self.size.width, height: 50, title: "View Portfolio", textColor: .white) {
+                    withAnimation(.easeInOut) {
+                        self.showMoreSection = .txns
+                    }
+                }
+            }
             TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white) {
                 if !self.context.addTxn{
                     self.context.addTxn.toggle()
@@ -116,48 +124,45 @@ extension CurrencyDetailView{
                     self.context.selectedSymbol = sym
                 }
             }
-        }else{
             
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.price ?? 0.0, fee: 1.36, totalfee: currency.open ?? 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
-                .buttonify {
-                    withAnimation(.easeInOut) {
-                        self.showMoreSection = .txns
-                    }
-                }
         }
+        
         
     }
     
     
-    var feedView:some View{
-        Group{
-            MainText(content: "Feed", fontSize: 25, color: .white,fontWeight: .bold, style: .heading)
-            ForEach(Array(self.asset_feed[0...4].enumerated()),id:\.offset){ _data in
+    func infoViewGen(type:PostCardType) -> some View{
+        let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
+        let data = type == .News ? self.news  : self.asset_feed
+        let view = VStack(alignment: .leading, spacing: 10){
+            MainText(content: title, fontSize: 25, color: .white,fontWeight: .bold, style: .heading).padding(.vertical)
+            ForEach(Array(data[0...4].enumerated()),id:\.offset){ _data in
                 let data = _data.element
-                let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
+                if type == .News{
+                    NewsStandCard(news: data,size:.init(width: size.width, height: 200))
+                }else{
+                    let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
+                    PostCard(cardType: cardType, data: data, size: self.size, font_color: .white, const_size: false)
+                }
+
             }
             TabButton(width: size.width, title: "Load More", action: {
                 withAnimation(.easeInOut) {
-                    self.showMoreSection = .feed
+                    self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : .none
                 }
-            })
-        }
+            }).padding(.vertical)
+        }.padding(.vertical,10)
+        
+        return view
+    
+    }
+    
+    var feedView:some View{
+        self.infoViewGen(type: .Tweet)
     }
     
     var newsView:some View{
-        Group{
-            MainText(content: "News", fontSize: 25, color: .white,fontWeight: .bold)
-            ForEach(Array(self.news[0...4].enumerated()),id:\.offset) { _news in
-                let news = _news.element
-                NewsStandCard(news: news,size:.init(width: size.width, height: 150))
-            }
-            TabButton(width: size.width, title: "Load More", action: {
-                withAnimation(.easeInOut) {
-                    self.showMoreSection = .news
-                }
-            })
-        }
+        self.infoViewGen(type: .News)
     }
     
     @ViewBuilder var feedContainer:some View{

@@ -114,6 +114,8 @@
 		BCF31FA027596E4100690E04 /* CrybPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF31F9F27596E4100690E04 /* CrybPost.swift */; };
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
+		EFAC17CE275E1279000A768D /* MessariAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC17CD275E1279000A768D /* MessariAPI.swift */; };
+		EFAC17D0275EADD9000A768D /* AddCrybPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC17CF275EADD9000A768D /* AddCrybPost.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -252,6 +254,8 @@
 		D1D5D10301EC6C5F864E7770 /* Pods-CryptoNews-CryptoNewsUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNews-CryptoNewsUITests.release.xcconfig"; path = "Target Support Files/Pods-CryptoNews-CryptoNewsUITests/Pods-CryptoNews-CryptoNewsUITests.release.xcconfig"; sourceTree = "<group>"; };
 		E24C6BC071A7E63C431C2F98 /* Pods-CryptoNewsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNewsTests.release.xcconfig"; path = "Target Support Files/Pods-CryptoNewsTests/Pods-CryptoNewsTests.release.xcconfig"; sourceTree = "<group>"; };
 		E420CC55E1502BDA8A86DBFC /* Pods_CryptoNews.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CryptoNews.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EFAC17CD275E1279000A768D /* MessariAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessariAPI.swift; sourceTree = "<group>"; };
+		EFAC17CF275EADD9000A768D /* AddCrybPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCrybPost.swift; sourceTree = "<group>"; };
 		FB8C717AD3C9A440D38AF20F /* Pods-CryptoNews.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNews.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNews/Pods-CryptoNews.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -454,6 +458,7 @@
 				BC06AE5127578850006F00DE /* CrybPostData.swift */,
 				BCF31F9B2758D67000690E04 /* CrybPostDetailView.swift */,
 				BCF31F9D27596E2500690E04 /* CrybPostMainView.swift */,
+				EFAC17CF275EADD9000A768D /* AddCrybPost.swift */,
 			);
 			path = CrybPosts;
 			sourceTree = "<group>";
@@ -600,12 +605,11 @@
 		BCBC1DC926BE9C9700B87E5C /* DataManager */ = {
 			isa = PBXGroup;
 			children = (
+				BC305F0826D8209000826AB4 /* DAPI.swift */,
+				EFAC17CC275E1234000A768D /* MessariAPI */,
+				EFAC17CB275C2C2A000A768D /* DataAPI */,
 				BCE861AC273B162700F0E8C2 /* Firebase */,
 				BCC22D5D2729A3CE005E9BDB /* CoinGecko */,
-				BCBC1DCC26BEA1FD00B87E5C /* MarketAPI.swift */,
-				BC305F0826D8209000826AB4 /* DAPI.swift */,
-				BC305F0A26D820CD00826AB4 /* AssetAPI.swift */,
-				BC305F0C26D8213400826AB4 /* FeedAPI.swift */,
 				BCE861B6273C789100F0E8C2 /* DataManagerHelper.swift */,
 			);
 			path = DataManager;
@@ -726,6 +730,24 @@
 				BC2267A526DA5C830058315E /* VideoCard.swift */,
 			);
 			path = Youtube;
+			sourceTree = "<group>";
+		};
+		EFAC17CB275C2C2A000A768D /* DataAPI */ = {
+			isa = PBXGroup;
+			children = (
+				BCBC1DCC26BEA1FD00B87E5C /* MarketAPI.swift */,
+				BC305F0A26D820CD00826AB4 /* AssetAPI.swift */,
+				BC305F0C26D8213400826AB4 /* FeedAPI.swift */,
+			);
+			path = DataAPI;
+			sourceTree = "<group>";
+		};
+		EFAC17CC275E1234000A768D /* MessariAPI */ = {
+			isa = PBXGroup;
+			children = (
+				EFAC17CD275E1279000A768D /* MessariAPI.swift */,
+			);
+			path = MessariAPI;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -982,6 +1004,7 @@
 				BCE861A627354F5F00F0E8C2 /* FloatHelper.swift in Sources */,
 				BC1C614B2719CE68006AD9C8 /* AddTransactionView.swift in Sources */,
 				BCE861AE273B163400F0E8C2 /* FirebaseAuth.swift in Sources */,
+				EFAC17D0275EADD9000A768D /* AddCrybPost.swift in Sources */,
 				BCBC1DB626BE824300B87E5C /* ChartCard.swift in Sources */,
 				BCE861A4273549BC00F0E8C2 /* ProfileView.swift in Sources */,
 				BCE861AB273AE49400F0E8C2 /* LoginView.swift in Sources */,
@@ -1049,6 +1072,7 @@
 				BC645923270EFB6A00BAECBC /* CurrencyView.swift in Sources */,
 				BCBC1DA226BE7EF700B87E5C /* Basics.swift in Sources */,
 				BCF31F9C2758D67000690E04 /* CrybPostDetailView.swift in Sources */,
+				EFAC17CE275E1279000A768D /* MessariAPI.swift in Sources */,
 				BCE861B5273C714500F0E8C2 /* ProfileData.swift in Sources */,
 				BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */,
 				BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */,
