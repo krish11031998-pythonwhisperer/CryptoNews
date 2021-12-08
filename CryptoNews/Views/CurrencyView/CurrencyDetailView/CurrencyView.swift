@@ -23,7 +23,6 @@ struct CurrencyView:View{
     @StateObject var asset_feed:FeedAPI
     var asset_info:AssetAPI
     @State var showSection:CurrencyViewSection = .none
-    @StateObject var TAPI:TransactionAPI = .init()
     @StateObject var NAPI:FeedAPI
     @State var refresh:Bool = false
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
@@ -43,7 +42,6 @@ struct CurrencyView:View{
         self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
         self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
         self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
-        self._TAPI = .init(wrappedValue: .init())
     }
     
     
@@ -56,18 +54,19 @@ struct CurrencyView:View{
             self.asset_feed.getAssetInfo()
         }
         
-        if self.TAPI.transactions.isEmpty{
-            self.loadTxns()
-        }
-        
         if self.NAPI.FeedData.isEmpty{
             self.NAPI.getAssetInfo()
         }
     }
     
+    var transactions:[Transaction]{
+        guard let sym = self.currency.symbol else {return []}
+        return self.context.balanceForCurrency(asset: sym)
+    }
+    
     func loadTxns(){
-        if let uid = self.context.user.user?.uid, let sym = currency.symbol{
-            self.TAPI.loadTransactions(uuid: uid, currency: sym)
+        if let uid = self.context.user.user?.uid{
+            self.context.transactionAPI.loadTransaction(uuid: uid)
         }
     }
         
@@ -80,7 +79,6 @@ struct CurrencyView:View{
     }
     
     func getAssetInfo(){
-        self.refresh = true
         print("(DEBUG) Fetching Data for asset")
          self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
     }
@@ -134,7 +132,7 @@ struct CurrencyView:View{
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
             }
         }
-        .onPreferenceChange(LazyScrollPreference.self) { reload in
+        .onPreferenceChange(RefreshPreference.self) { reload in
             if reload{
                 self.asset_feed.getNextPage()
             }
@@ -147,7 +145,7 @@ struct CurrencyView:View{
                 NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
             }
         }
-        .onPreferenceChange(LazyScrollPreference.self) { reload in
+        .onPreferenceChange(RefreshPreference.self) { reload in
             if reload{
                 self.NAPI.getNextPage()
             }
@@ -155,9 +153,8 @@ struct CurrencyView:View{
     }
     
     var txnsForAsset:[Transaction]{
-        return self.TAPI.transactions.filter({($0.type == "buy" || $0.type == "sell")})
+        return self.transactions.filter({($0.type == "buy" || $0.type == "sell")})
     }
-    
     
     func rightSideView() -> AnyView{
         let color = self.context.user.user?.watching.contains(self.currencyHeading) ?? false ? Color.black : Color.white
@@ -174,7 +171,7 @@ struct CurrencyView:View{
 
     func innerView(w:CGFloat) -> some View{
         let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-        return CurrencyDetailView(info: $currency, size: size, asset_feed: $asset_feed.FeedData, news: $NAPI.FeedData, txns: $TAPI.transactions, showSection: $showSection, onClose: self.onClose)
+        return CurrencyDetailView(info: $currency, size: size, asset_feed: asset_feed.FeedData, news: NAPI.FeedData, txns:self.transactions, showSection: $showSection, onClose: self.onClose)
     }
     
     var currencyHeading:String{
@@ -185,8 +182,11 @@ struct CurrencyView:View{
         if self.showSection == .none{
             ScrollView(.vertical, showsIndicators: false) {
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
-                    .refreshableView(width: size.width,hasToRender:self.context.selectedCurrency != nil) { fun in
-                        self.getAssetInfo(fn: fun)
+                    .refreshableView(refreshing: $refresh,width: size.width,hasToRender:self.context.selectedCurrency != nil)
+                    .onChange(of: self.refresh) { refresh in
+                        if self.refresh{
+                            self.getAssetInfo()
+                        }
                     }
             }
         }else{
@@ -219,12 +219,16 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-        .onPreferenceChange(AddTxnUpdatePreference.self) { addTxnOpened in
-            if !addTxnOpened{
-                self.loadTxns()
-            }
-        }
     }
+}
+
+struct CurrencyViewTester:PreviewProvider{
+    static var context:ContextData = .init()
     
-    
+    static var previews: some View{
+        CurrencyView(name: "MANA")
+            .environmentObject(CurrencyViewTester.context)
+            .background(mainBGView)
+            .ignoresSafeArea()
+    }
 }

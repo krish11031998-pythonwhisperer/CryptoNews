@@ -12,14 +12,17 @@ struct CrybPostCard: View {
     @EnvironmentObject var context:ContextData
     var postData:CrybPostData
     var cardWidth:CGFloat = .zero
+    var const_h:Bool = false
     @State var width:CGFloat = totalWidth
     @State var showMore:Bool = false
     @State var showAnalysis:Bool = false
     
     
-    init(data:CrybPostData,cardWidth:CGFloat){
+    init(data:CrybPostData,cardWidth:CGFloat,const_h:Bool = false){
         self.postData = data
+        self.const_h = const_h
         self.cardWidth = cardWidth
+        
     }
     
     
@@ -40,7 +43,10 @@ struct CrybPostCard: View {
     var body: some View {
         Container(width: self.cardWidth, ignoreSides: false) { w in
             self.view(w: w)
-        }.background(Color.white.opacity(0.35).overlay(BlurView.thinLightBlur))
+        }
+        .frame(minHeight:self.const_h ? totalHeight * 0.65 : 0,maxHeight: totalHeight * 0.65, alignment: .center)
+//        .background(Color.white.opacity(0.35).overlay(BlurView.thinLightBlur))
+        .background(mainLightBGView)
         .clipContent(clipping: .roundClipping)
     }
 }
@@ -129,7 +135,7 @@ extension CrybPostCard{
     
     var footer:some View{
         let w_el = self.width * 0.5 - 5
-        return LazyVStack(alignment: .leading, spacing: 15) {
+        return VStack(alignment: .leading, spacing: 15) {
             self.cryptoSection
 //            self.cryptoScale
             LazyVGrid(columns: [.init(.adaptive(minimum: w_el, maximum: w_el), alignment: .leading)], alignment: .center, spacing: 10) {

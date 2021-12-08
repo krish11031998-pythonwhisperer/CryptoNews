@@ -17,21 +17,25 @@ struct CrybPostDetailView: View {
         self.postData = postData
     }
     
-    func mainBodyGen(w:CGFloat) -> some View{
+    var mainBodyGen:some View{
+        return LazyVStack(alignment: .leading, spacing: 10) {
+            self.postBody.frame(maxHeight: totalHeight * 0.65, alignment: .center)
+            self.socialEngagementView
+            self.cryptoSection
+            self.cryptoScale
+            self.ratingsView
+            self.backers
+        }.frame(width: self.width, alignment: .center)
+    }
+    
+    func loadView(w:CGFloat) -> some View{
         DispatchQueue.main.async {
             if self.width != w{
                 self.width = w
             }
         }
         
-        return VStack(alignment: .leading, spacing: 15) {
-            self.postBody
-            self.socialEngagementView
-            self.cryptoSection
-            self.cryptoScale
-            self.ratingsView
-            self.backers
-        }.frame(width: w, alignment: .center)
+        return ProgressView()
     }
     
     func onClose(){
@@ -45,8 +49,19 @@ struct CrybPostDetailView: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(width: totalWidth,ignoreSides: false, horizontalPadding: 15,verticalPadding: 50,onClose: self.onClose) { w in
-                self.mainBodyGen(w: w)
+                if self.width == .zero{
+                    self.loadView(w: w)
+                }else{
+                    self.postBody.frame(maxHeight: totalHeight * 0.65, alignment: .center)
+                    self.socialEngagementView
+                    self.cryptoSection
+                    self.cryptoScale
+                    self.ratingsView
+                    self.backers
+//                    self.mainBodyGen
+                }
             }.padding(.bottom,150)
+                .frame(width: self.width, alignment: .center)
         }
     }
 }
@@ -70,15 +85,15 @@ extension CrybPostDetailView{
     
     var socialEngagementView:some View{
         let buttons:[(String,String,() -> Void)] = [("heart","Like",self.likeButtonHandler),("message","Comment",self.commentButtonHandler),("square.and.arrow.up","Share",self.shareButtonHandler)]
-        return Container(width: self.width, ignoreSides: true, orientation: .horizontal) { _ in
+        return HStack(alignment: .center, spacing: 10) {
             ForEach(buttons, id:\.0) { button in
                 SystemButton(b_name: button.0, b_content: button.1, color: .white,haveBG: false, bgcolor: .white, alignment: .horizontal,borderedBG: true,action: button.2)
             }
         }
+//        .background(Color.yellow)
     }
     
     var postBody:some View{
-
         Container(width: self.width, ignoreSides: false) { w in
             self.header(w: w)
             self.mainBody(w: w)
@@ -101,7 +116,7 @@ extension CrybPostDetailView{
     
     func mainBody(w:CGFloat) -> some View{
         MainText(content: self.postData.PostMessage, fontSize: 15, color: .black, fontWeight: .semibold)
-            .padding(.leading)
+            .padding(.leading,10)
             .frame(width: w, alignment: .leading)
     }
     
@@ -136,7 +151,7 @@ extension CrybPostDetailView{
         let size = CGSize(width: self.width, height: 150)
         let cryb_prediction = self.crybPredictedData[self.indicator]
         
-        return VStack(alignment: .leading, spacing: 10) {
+        return VStack(alignment: .leading, spacing: 10){
             MainText(content: "Crybot's Prediction", fontSize: 18, color: .white, fontWeight: .semibold).padding(.bottom,10)
             MainSubHeading(heading: "Value", subHeading: cryb_prediction.ToMoney(), headingSize: 13, subHeadingSize: 15, headColor: .gray, subHeadColor: .white, alignment: .leading)
                 .frame(width: self.width, alignment: .leading)
@@ -237,7 +252,7 @@ extension CrybPostDetailView{
     }
     
     var backers:some View{
-        VStack(alignment: .leading, spacing: 10) {
+        LazyVStack(alignment: .leading, spacing: 10) {
             let more = self.postData.Stakers.count > 5
             let stakers = more ? Array(self.postData.Stakers[0...4]) : self.postData.Stakers
             MainText(content: "Backers", fontSize: 18, color: .white, fontWeight: .semibold)

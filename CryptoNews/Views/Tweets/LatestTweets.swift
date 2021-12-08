@@ -37,11 +37,10 @@ struct LatestTweets: View {
     
     
     var body: some View {
-//        AsyncContainer(size: .init(width: totalWidth, height: 0)) {
         Container(heading:self.heading,ignoreSides: true) { w in
             self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
         }.onAppear(perform: self.onAppear)
-//        }
+        
     }
 }
 

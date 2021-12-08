@@ -36,7 +36,7 @@ class TxnFormDetails:ObservableObject{
     @Published var fee:String = ""
     @Published var memo:String = ""
     @Published var uid:String  = ""
-    @Published var added_Success:Bool? = nil
+    @Published var added_Success:Bool = false
     
     init(asset:String? = nil,assetPrice:String? = nil){
         self.asset_spot_price = assetPrice ?? ""
@@ -71,7 +71,7 @@ class TxnFormDetails:ObservableObject{
         self.fee = ""
         self.memo = ""
         self.uid = ""
-        self.added_Success = nil
+        self.added_Success = false
         
     }
 }
@@ -246,12 +246,12 @@ struct AddTransactionView:View {
                 self.choosenSideView(w: totalWidth)
             }
             
-            if let state = self.txn.added_Success{
+            if self.txn.added_Success{
                 self.swipeCard(w: totalWidth, heading: "Add Transaction", buttonText: "Close") {
-                    return AnyView(MainText(content: "\(state ? "Success" : "Failed")", fontSize: 15, color: .white, fontWeight: .semibold))
+                    return AnyView(MainText(content: "\(self.txn.added_Success ? "Success" : "Failed")", fontSize: 15, color: .white, fontWeight: .semibold))
                 } action: {
                     withAnimation(.easeInOut) {
-                        self.txn.added_Success = nil
+                        self.txn.added_Success = false
                         self.resetStates()
                     }
                     
@@ -264,12 +264,7 @@ struct AddTransactionView:View {
         .onAppear(perform: self.onAppear)
         .onDisappear(perform: self.onDisappear)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
-        .onChange(of: self.txn.added_Success) { newValue in
-            if let value = newValue{
-                print("The txn is : ",value)
-            }
-        }
-        .preference(key: AddTxnUpdatePreference.self, value: self.txn.added_Success ?? false)
+        .preference(key: AddTxnUpdatePreference.self, value: self.txn.added_Success)
     }
 }
 
@@ -518,6 +513,7 @@ struct AddTxnMainView:View{
             AddTransactionView(currentAsset: asset, curr_str: self.currency)
         }.edgesIgnoringSafeArea(.top).frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
+        
     }
     
     

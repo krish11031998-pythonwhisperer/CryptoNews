@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct LazyScrollPreference:PreferenceKey{
+struct RefreshPreference:PreferenceKey{
     static var defaultValue: Bool = false
     
     static func reduce(value: inout Bool, nextValue: () -> Bool) {
@@ -15,8 +15,6 @@ struct LazyScrollPreference:PreferenceKey{
     }
     
 }
-
-
 
 struct LazyScrollView<T:View>: View {
     var data:[Any]
@@ -63,7 +61,7 @@ struct LazyScrollView<T:View>: View {
                 self.reloadNow.toggle()
             }
         }
-        .preference(key: LazyScrollPreference.self, value: self.reloadNow)
+        .preference(key: RefreshPreference.self, value: self.reloadNow)
     }
         
     var body: some View {

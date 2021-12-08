@@ -32,6 +32,11 @@ struct ContentView: View {
     
     var body: some View {
         self.contentView
+            .onPreferenceChange(AddTxnUpdatePreference.self) { added_Txn in
+                if let uid = self.context.user.user?.uid, added_Txn{
+                    self.context.transactionAPI.loadTransaction(uuid: uid)
+                }
+            }
     }
 }
 
@@ -42,11 +47,16 @@ extension ContentView{
     }
     
     @ViewBuilder var mainBody:some View{
-        TabView(selection: self.$context.tab) {
+        ZStack(alignment: .center) {
             ForEach(self.tabs, id: \.rawValue) { tab in
-                self.tabPage(page: tab).tag(tab)
+                if self.context.tab == tab{
+                    self.tabPage(page: tab).tag(tab)
+                }else{
+                    Color.clear
+                }
+                
             }
-        }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+        }
     }
     
     @ViewBuilder func tabPage(page:Tabs) -> some View{
@@ -71,6 +81,9 @@ extension ContentView{
         return self.context.addTxn || self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil
     }
     
+    var hoverViewEnabled:Bool{
+        return self.context.selectedNews != nil || (self.context.addTxn || self.context.tab == .txn) || self.context.selectedCurrency != nil || self.context.selectedPost != nil
+    }
     
     @ViewBuilder var hoverView:some View{
         if let news = self.context.selectedNews, let urlStr = news.url,let url  = URL(string: urlStr){

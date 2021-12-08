@@ -21,13 +21,18 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            self.trackedAsset
+            if self.context.trackedAssets.count > 0{
+                self.trackedAssetView
+            }
+            
+            if self.context.watchedAssets.count > 0{
+                self.watchedAssetView
+            }
+            
             CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
             CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
             CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
-//            AsyncContainer(size: .zero) {
             LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
-//            }
             self.CurrencyFeed
             Spacer(minLength: 200)
         }.zIndex(1)
@@ -43,14 +48,18 @@ struct HomePage: View {
 
 extension HomePage{
 
-    @ViewBuilder var trackedAsset:some View{
-        if self.context.selectedCurrency == nil{
-            TrackedAssetView(asset: currencies)
-        }else{
-            Color.clear.frame(width: totalWidth * 0.5, height: totalHeight * 0.4, alignment: .center)
-        }
+    @ViewBuilder var trackedAssetView:some View{
+//        if self.context.selectedCurrency == nil{
+        TrackedAssetView(asset: self.context.trackedAssets)
+//        }else{
+//            Color.clear.frame(width: totalWidth * 0.5, height: totalHeight * 0.4, alignment: .center)
+//        }
     }
     
+    
+    var watchedAssetView:some View{
+        WatchedAssets(currencies: self.context.watchedAssets)
+    }
     
     func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
         AsyncContainer(size: .zero) {
@@ -74,8 +83,7 @@ extension HomePage{
     }
     
     var CurrencyFeed:some View{
-        return
-        ForEach(self.currencies,id:\.self) {currency in
+        return ForEach(self.currencies,id:\.self) {currency in
             self.CurrencyFeedEl(currency)
                 .padding(.vertical,15)
         }

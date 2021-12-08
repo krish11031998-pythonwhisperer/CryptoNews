@@ -15,10 +15,6 @@ struct TrackedAssetView:View{
         self.asset = asset
     }
     
-    var cardSize:CGSize{
-        return .init(width: totalWidth * 0.5, height: totalHeight * 0.4)
-    }
-    
     var views:[AnyView]{
         return self.asset.compactMap({AnyView(PriceCard(currency: $0))})
     }
@@ -26,7 +22,7 @@ struct TrackedAssetView:View{
     var body:some View{
        
         Container(heading: "Tracked Assets", width: totalWidth, ignoreSides: true) { w in
-            CardSlidingView(cardSize: self.cardSize, views: self.views, leading: false)
+            CardSlidingView(cardSize: CardSize.normal, views: self.views, leading: false)
         }
     }
     

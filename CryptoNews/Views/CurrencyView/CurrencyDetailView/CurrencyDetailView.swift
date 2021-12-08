@@ -14,21 +14,20 @@ struct CurrencyDetailView: View {
     var size:CGSize = .init()
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
-    @Binding var asset_feed:[AssetNewsData]
-    @Binding var news:[AssetNewsData]
-    @Binding var txns:[Transaction]
+    var asset_feed:[AssetNewsData]
+    var news:[AssetNewsData]
+    var txns:[Transaction]
     var reloadFeed:(() -> Void)?
     var reloadAsset:(() -> Void)?
     @Binding var showMoreSection:CurrencyViewSection
     
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
-//        heading:String,
          info:Binding<AssetData>,
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
-         asset_feed:Binding<[AssetNewsData]>,
-         news:Binding<[AssetNewsData]>,
-         txns:Binding<[Transaction]>,
+         asset_feed:[AssetNewsData],
+         news:[AssetNewsData],
+         txns:[Transaction],
          showSection:Binding<CurrencyViewSection>,
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
@@ -36,10 +35,10 @@ struct CurrencyDetailView: View {
         self._currency = info
         self.onClose = onClose
         self.size = size
-        self._asset_feed = asset_feed
+        self.asset_feed = asset_feed
         self._showMoreSection = showSection
-        self._txns = txns
-        self._news = news
+        self.txns = txns
+        self.news = news
     }
     
     
@@ -52,9 +51,9 @@ extension CurrencyDetailView{
 
     var mainView:some View{
         let views:[AnyView] = [AnyView(self.priceMainInfo),AnyView(self.transactionHistoryView),AnyView(self.CurrencySummary),AnyView(self.SocialMediaMetric),AnyView(self.feedContainer),AnyView(self.newsContainer)]
-        return VStack(alignment: .leading, spacing: 15){
+        return VStack(alignment: .leading, spacing: 10){
             ForEach(Array(views.enumerated()), id: \.offset) { _view in
-//                AsyncContainer(size: .init(width: totalWidth, height: .zero)) {
+//                AsyncContainer(size: self.size) {
                     _view.element
 //                }
             }
@@ -134,7 +133,7 @@ extension CurrencyDetailView{
     func infoViewGen(type:PostCardType) -> some View{
         let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
         let data = type == .News ? self.news  : self.asset_feed
-        let view = VStack(alignment: .leading, spacing: 10){
+        let view = LazyVStack(alignment: .leading, spacing: 10){
             MainText(content: title, fontSize: 25, color: .white,fontWeight: .bold, style: .heading).padding(.vertical)
             ForEach(Array(data[0...4].enumerated()),id:\.offset){ _data in
                 let data = _data.element

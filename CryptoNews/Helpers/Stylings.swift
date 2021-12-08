@@ -22,27 +22,44 @@ struct ColoredTextField:TextFieldStyle{
         }
 }
 
+struct MessageTextField:TextFieldStyle{
+    
+    var color:Color
+    var fontSize:CGFloat
+    
+    init(color:Color = .white,fontSize:CGFloat = 20){
+        self.color = color
+        self.fontSize = fontSize
+    }
+    
+    func _body(configuration: TextField<Self._Label>) -> some View {
+            configuration
+                .font(Font.system(size: self.fontSize, weight: .semibold, design: .monospaced))
+                .foregroundColor(Color.white)
+                .background(Color.clear)
+                .clipContent(clipping: .clipped)
+                .labelsHidden()
+        }
+}
+
 
 struct RefreshableView:ViewModifier{
     
-    @State var refreshing:Bool = false
+    @Binding var refreshing:Bool
     @State var refresh_off:CGFloat = 0.0
     @State var pageRendered:Bool = false
     var hasToRender:Bool
     var width:CGFloat
-    var refreshFn:((@escaping () -> Void) -> Void)
-    
-    
-    init(width:CGFloat,hasToRender:Bool,refreshFn: @escaping (( @escaping () -> Void) -> Void)){
+
+    init(refreshing:Binding<Bool> = .constant(false),width:CGFloat,hasToRender:Bool){
+        self._refreshing = refreshing
         self.width = width
-        self.refreshFn = refreshFn
         self.hasToRender = hasToRender
     }
     
     func resetOff(){
         withAnimation(.easeInOut) {
             self.refresh_off = 0
-            self.refreshing = false
         }
     }
     
@@ -54,7 +71,6 @@ struct RefreshableView:ViewModifier{
             self.pageRendered = false
             print("DEBUG Refresh was toggled!")
         }
-        self.refreshFn(self.resetOff)
     }
     
     var refreshState:Bool{
@@ -80,19 +96,27 @@ struct RefreshableView:ViewModifier{
                 }else{
                     SystemButton(b_name: "arrow.down", b_content: "", color: .white, haveBG: false,bgcolor: .clear) {}
                 }
-           }.frame(width: width, alignment: .center))
+           }.frame(width: width, alignment: .center)
+            .onChange(of: self.refreshing) { newValue in
+               if !newValue{
+                   self.resetOff()
+               }
+           }
+        )
+                
             
         }
     }
     
     
     func body(content: Content) -> some View {
-        return VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 10) {
             self.refreshableView.padding(.bottom,50)
             content
         }
         .frame(width: width, alignment: .top)
         .offset(y: -25 + self.refresh_off)
+        .preference(key: RefreshPreference.self, value: self.refreshing)
     }
 }
 
@@ -443,25 +467,17 @@ extension View{
         self.modifier(SpringButton(withBG: withBG,handleTap: handler))
     }
     
-    func coloredTextField(color:Color,size:CGFloat = 50,width:CGFloat = 100,rightViewTxt:String? = nil) -> AnyView{
-        if let rightViewTxt = rightViewTxt {
-            return AnyView(HStack(alignment: .firstTextBaseline, spacing: 5) {
-                self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
-//                    .multilineTextAlignment(.leading)
-                    .frame(width: width, alignment: .topLeading)
-                    .truncationMode(.tail)
-                    .keyboardType(.decimalPad)
-
-                MainText(content: rightViewTxt, fontSize: 13, color: .white, fontWeight: .bold, style: .monospaced)
-            }.frame(alignment: .top))
-        }
-        return AnyView(self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
-//                        .multilineTextAlignment(.leading)
+    func coloredTextField(color:Color,size:CGFloat = 50,width:CGFloat = 100,rightViewTxt:String? = nil) -> some View{
+        AnyView(self.textFieldStyle(ColoredTextField(color: color,fontSize: size))
                         .aspectRatio(contentMode:.fit)
                         .frame(width: width, alignment: .topLeading)
                         .truncationMode(.tail)
                         .keyboardType(.numberPad)
         )
+    }
+    
+    func messageTextField(fontSize:CGFloat = 20,color:Color = .white) -> some View{
+        self.textFieldStyle(MessageTextField(color: color,fontSize: fontSize))
     }
     
     func keyboardAdaptive(isKeyBoardOn:Binding<Bool>? = nil) -> some View{
@@ -479,8 +495,11 @@ extension View{
     }
     
     
-    func refreshableView(width:CGFloat,hasToRender:Bool,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
-        self.modifier(RefreshableView(width: width,hasToRender: hasToRender, refreshFn: refreshFn))
+//    func refreshableView(width:CGFloat,hasToRender:Bool,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
+//        self.modifier(RefreshableView(width: width,hasToRender: hasToRender, refreshFn: refreshFn))
+//    }
+    func refreshableView(refreshing:Binding<Bool> = .constant(false),width:CGFloat,hasToRender:Bool) -> some View{
+        self.modifier(RefreshableView(refreshing: refreshing,width: width,hasToRender: hasToRender))
     }
     
     func systemButtonModifier(size:CGSize,color:Color,@ViewBuilder bg: () -> AnyView) -> some View{

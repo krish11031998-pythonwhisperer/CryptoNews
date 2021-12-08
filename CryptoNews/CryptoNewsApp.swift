@@ -32,9 +32,10 @@ struct CryptoNewsApp: App {
     }
     
     func onChangeUser(_ uid:String?){
-        if let _ = uid, self.loading{
+        if let uid = uid, self.loading{
             DispatchQueue.main.async {
                 self.loading = false
+                self.context.transactionAPI.loadTransaction(uuid: uid)
             }
         }
     }
@@ -63,9 +64,6 @@ struct CryptoNewsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            self.mainView
-//            NotificationViewTester()
-//            NewsSectionMain()
-        }
+            self.mainView        }
     }
 }

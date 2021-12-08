@@ -10,7 +10,7 @@ import SwiftUI
 struct CrybPostMainView: View {
     @EnvironmentObject var context:ContextData
     @StateObject var crybPostAPI:CrybPostAPI = .init()
-    @State var width:CGFloat = totalWidth
+    @State var width:CGFloat = .zero
     @State var ignoreSides:Bool = false
     
     init(width:CGFloat = .zero){
@@ -46,25 +46,35 @@ struct CrybPostMainView: View {
         print("Reload!")
     }
     
-    func mainBodyGen(w:CGFloat) -> some View{
-        DispatchQueue.main.async {
-            if self.width != w{
-                self.width = w
-            }
-        }
-        
+    var mainBodyGen:some View{
         return LazyScrollView(data: self.posts, embedScrollView: false, viewGen: self.viewGen(data:))
-            .onPreferenceChange(LazyScrollPreference.self) { reload in
+            .onPreferenceChange(RefreshPreference.self) { reload in
             if reload{
                 self.reload()
             }
         }
     }
     
+    func loadView(w:CGFloat) -> some View{
+        DispatchQueue.main.async {
+            if self.width != w{
+                self.width = w
+            }
+        }
+        
+        return ProgressView()
+    }
+    
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(heading:"CrybPosts", width: totalWidth, ignoreSides: self.ignoreSides) { w in
-                self.mainBodyGen(w: w)
+                
+                if self.width == .zero{
+                    self.loadView(w: w)
+                }else{
+                    self.mainBodyGen
+                }
+                
             }
         }.padding(.top,30)
     }

@@ -75,7 +75,7 @@ struct TransactionDetailsView: View {
                 }
             }
         }.padding(.bottom,150).frame(width: width, alignment: .topLeading)
-        .preference(key: AddTxnUpdatePreference.self, value: self.context.addTxn)
+//        .preference(key: AddTxnUpdatePreference.self, value: self.context.addTxn)
     }
 }
 

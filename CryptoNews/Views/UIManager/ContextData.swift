@@ -28,16 +28,18 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .home
+    @Published private var _tab:Tabs = .info
     @Published private var _selectedCurrency:AssetData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedSymbol:String? = nil
     @Published private var _addTxn:Bool = false
+    @Published private var _addPost:Bool = false
     @Published private var _prev_tab:Tabs = .none
     @Published var loggedIn:LoginState = .undefined
     @Published var user:User = .init()
     @Published var notification:NotificationModel = NotificationModel()
+    @Published var transactionAPI:TransactionAPI = .init()
     @Namespace var animationNamespace
     
     
@@ -90,6 +92,7 @@ class ContextData:ObservableObject{
             DispatchQueue.main.async{
                 withAnimation(.easeInOut(duration: 0.5)) {
                     self._selectedCurrency = newValue
+                    self.showTab = newValue != nil ? false : true
                 }
             }
         }
@@ -104,6 +107,7 @@ class ContextData:ObservableObject{
             DispatchQueue.main.async{
                 withAnimation(.easeInOut) {
                     self._selectedSymbol = newValue
+                    self.showTab = newValue != nil ? false : true
                 }
             }
         }
@@ -118,6 +122,7 @@ class ContextData:ObservableObject{
             DispatchQueue.main.async{
                 withAnimation(.easeInOut(duration: 0.5)) {
                     self._selectedNews = newValue
+                    self.showTab = newValue != nil ? false : true
                 }
             }
         }
@@ -132,6 +137,7 @@ class ContextData:ObservableObject{
             DispatchQueue.main.async {
                 withAnimation(.easeInOut(duration: 0.5)) {
                     self._selectedPost = newValue
+                    self.showTab = newValue != nil ? false : true
                 }
             }
         }
@@ -146,6 +152,21 @@ class ContextData:ObservableObject{
             DispatchQueue.main.async {
                 withAnimation(.easeInOut) {
                     self._addTxn = newValue
+                    self.showTab = newValue ? false : true
+                }
+            }
+        }
+    }
+    
+    var addPost:Bool{
+        get{
+            return self._addPost
+        }
+        
+        set{
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self._addPost = newValue
                 }
             }
         }
@@ -155,5 +176,34 @@ class ContextData:ObservableObject{
         if self.loggedIn != .signedIn{
             self.loggedIn = .signedIn
         }
+    }
+    
+    var currencyTxns:[String:[Transaction]]{
+        var balances:[String:[Transaction]] = [:]
+        self.transactionAPI.transactions.forEach({ txn in
+            let asset = txn.asset
+            if let _ = balances[asset]{
+                balances[asset]?.append(txn)
+            }else{
+                balances[asset] = [txn]
+            }
+        })
+        return balances
+    }
+    
+    func balanceForCurrency(asset:String) -> [Transaction]{
+        return self.currencyTxns[asset] ?? []
+    }
+    
+    func totalForCurrency(asset:String) -> Float{
+        return self.balanceForCurrency(asset: asset).reduce(0, {$0 + $1.asset_quantity * ($1.type == "sell" || $1.type == "send" ? -1 : 1)})
+    }
+    
+    var trackedAssets:[String]{
+        return self.currencyTxns.keys.sorted()
+    }
+    
+    var watchedAssets:[String]{
+        return self.user.user?.watching.compactMap({self.currencyTxns[$0] == nil ? $0 : nil}).sorted() ?? []
     }
 }
