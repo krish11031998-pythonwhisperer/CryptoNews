@@ -61,7 +61,7 @@ struct CrybPostDetailView: View {
 //                    self.mainBodyGen
                 }
             }.padding(.bottom,150)
-                .frame(width: self.width, alignment: .center)
+                .frame(width: totalWidth, alignment: .center)
         }
     }
 }
@@ -89,7 +89,7 @@ extension CrybPostDetailView{
             ForEach(buttons, id:\.0) { button in
                 SystemButton(b_name: button.0, b_content: button.1, color: .white,haveBG: false, bgcolor: .white, alignment: .horizontal,borderedBG: true,action: button.2)
             }
-        }
+        }.frame(width: width,alignment: .leading)
 //        .background(Color.yellow)
     }
     
@@ -205,7 +205,7 @@ extension CrybPostDetailView{
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
                 MainSubHeading(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
-            }
+            }.frame(width: w, alignment: .center)
             self.userPredictionMarket
             self.predictedChartwDelta
         }

@@ -21,11 +21,13 @@ struct LazyScrollView<T:View>: View {
     var embedScrollView:Bool
     var viewGen: (Any) -> T
     @State var reloadNow:Bool = false
+    var stopLoading:Bool
     var header:String?
     
-    init(header:String? = nil,data:[Any],embedScrollView:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
+    init(header:String? = nil,data:[Any],embedScrollView:Bool = false,stopLoading:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
         self.header = header
         self.data = data
+        self.stopLoading = stopLoading
         self.viewGen = viewGen
         self.embedScrollView = embedScrollView
     }
@@ -54,8 +56,11 @@ struct LazyScrollView<T:View>: View {
                 let data = _data.element
                 self.viewGen(data)
             }
-            self.reloadContainer
-                .padding(.bottom,200)
+            if !self.stopLoading{
+                self.reloadContainer
+                    .padding(.bottom,200)
+            }
+            
         }.onChange(of: self.data.count) { newCount in
             if self.reloadNow{
                 self.reloadNow.toggle()

@@ -105,7 +105,7 @@ class FirebaseAPI:CompletionHandler{
         }
     }
     
-    func uploadDataToStorage(data:Data,folder:String,completion:@escaping (String?) -> Void){
+    func uploadImageToStorage(data:Data,folder:String,completion:@escaping (String?) -> Void){
         let folderPath = "\(folder)/\(NSUUID().uuidString).jpg"
         FIRStorageManager.shared.uploadTask(data: data, path: folderPath) { (url) in
             completion(url)

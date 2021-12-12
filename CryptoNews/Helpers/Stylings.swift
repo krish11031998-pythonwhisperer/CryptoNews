@@ -26,15 +26,19 @@ struct MessageTextField:TextFieldStyle{
     
     var color:Color
     var fontSize:CGFloat
+    var width:CGFloat
+    var maxHeight:CGFloat
     
-    init(color:Color = .white,fontSize:CGFloat = 20){
+    init(color:Color = .white,fontSize:CGFloat = 20,width:CGFloat = totalWidth - 20,max_h:CGFloat = totalHeight * 0.35){
         self.color = color
         self.fontSize = fontSize
+        self.width = width
+        self.maxHeight = max_h
     }
     
     func _body(configuration: TextField<Self._Label>) -> some View {
             configuration
-                .font(Font.system(size: self.fontSize, weight: .semibold, design: .monospaced))
+                .font(Font.custom(TextStyle.normal.rawValue, size: self.fontSize))
                 .foregroundColor(Color.white)
                 .background(Color.clear)
                 .clipContent(clipping: .clipped)
@@ -153,7 +157,7 @@ struct KeyboardAdaptive:ViewModifier{
     
     func body(content: Content) -> some View {
         content
-            .padding(.bottom, keyboardHeight)
+            .padding(.bottom, keyboardHeight + 30)
             .onReceive(Publishers.keyboardHeight) { height in
                 self.keyboardHeight = height
                 if (height > 0 && !self.isKeyBoardOn) || (height == 0 && self.isKeyBoardOn){
@@ -312,9 +316,10 @@ struct ZoomInOut:ViewModifier{
         content
             .scaleEffect(scale)
             .opacity(opacity)
+            .animation(.easeInOut(duration: 0.5))
             .onAppear(perform: self.onAppear)
             .onDisappear(perform: self.onDisappear)
-            .animation(.easeInOut(duration: 0.5))
+            
     }
 }
 
@@ -323,7 +328,6 @@ struct SlideInOut:ViewModifier{
     func body(content: Content) -> some View {
         content
             .transition(.move(edge: .bottom))
-            .animation(.easeInOut)
     }
 }
 
@@ -476,8 +480,8 @@ extension View{
         )
     }
     
-    func messageTextField(fontSize:CGFloat = 20,color:Color = .white) -> some View{
-        self.textFieldStyle(MessageTextField(color: color,fontSize: fontSize))
+    func messageTextField(fontSize:CGFloat = 20,color:Color = .white,width:CGFloat = totalWidth - 20,max_h:CGFloat = totalHeight * 0.35) -> some View{
+        self.textFieldStyle(MessageTextField(color: color,fontSize: fontSize,width: width,max_h: max_h))
     }
     
     func keyboardAdaptive(isKeyBoardOn:Binding<Bool>? = nil) -> some View{
@@ -493,11 +497,7 @@ extension View{
     func basicCard(size:CGSize) -> some View{
         self.modifier(BasicCard(size: size))
     }
-    
-    
-//    func refreshableView(width:CGFloat,hasToRender:Bool,refreshFn: @escaping ((@escaping () -> Void) -> Void)) -> some View{
-//        self.modifier(RefreshableView(width: width,hasToRender: hasToRender, refreshFn: refreshFn))
-//    }
+
     func refreshableView(refreshing:Binding<Bool> = .constant(false),width:CGFloat,hasToRender:Bool) -> some View{
         self.modifier(RefreshableView(refreshing: refreshing,width: width,hasToRender: hasToRender))
     }

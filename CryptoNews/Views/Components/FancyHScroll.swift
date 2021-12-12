@@ -52,9 +52,6 @@ struct FancyHScroll<T:View>: View {
                 .scaleEffect(scaleEff(midX: midX))
                 .animation(.easeInOut)
                 .frame(width: size.width, height: size.height, alignment: .center)
-                
-                
-
         }.padding(.horizontal,15)
             .frame(width: totalWidth, height: size.height, alignment: .center)
         
@@ -90,7 +87,7 @@ struct FancyHScroll<T:View>: View {
     }
     
     func headerView(h:CGFloat) -> some View{
-        HStack(alignment: .center, spacing: 10) {
+        LazyHStack(alignment: .center, spacing: 10) {
             ForEach(Array(self.headers!.enumerated()),id:\.offset) { _cur in
                 let cur = _cur.element
                 let idx = _cur.offset

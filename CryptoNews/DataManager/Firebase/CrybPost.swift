@@ -25,8 +25,18 @@ class CrybPostAPI:FirebaseAPI,ObservableObject{
         }
     }
         
-    func uploadTransaction(post:CrybPostData,completion:((Error?) -> Void)? = nil){
-        self.uploadTransaction(data: post.decoded, completion: completion)
+    func uploadTransaction(post:CrybPostData,image:UIImage? = nil,completion:((Error?) -> Void)? = nil){
+        if let image = image?.png(){
+            self.uploadImageToStorage(data: image, folder: "images") { _img_url in
+                var postwImg:CrybPostData = post
+                if let img_url = _img_url{
+                    postwImg.PostImage = img_url
+                }
+                self.uploadTransaction(data: postwImg.decoded, completion: completion)
+            }
+        }else{
+            self.uploadTransaction(data: post.decoded, completion: completion)
+        }
     }
     
     func loadPosts(uuid:String,currency:String){

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ContentView: View {
+struct CrybseView: View {
     @EnvironmentObject var context:ContextData
     
     func closeNews(){
@@ -25,6 +25,9 @@ struct ContentView: View {
                 TabBarMain()
                     .zIndex(2)
             }
+            if self.context.bottomSwipeNotification.showNotification{
+                self.notificationView
+            }
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
@@ -37,10 +40,13 @@ struct ContentView: View {
                     self.context.transactionAPI.loadTransaction(uuid: uid)
                 }
             }
+            .onAppear {
+                self.context.addPost.toggle()
+            }
     }
 }
 
-extension ContentView{
+extension CrybseView{
     
     var tabs:[Tabs]{
         return [.home,.search,.info,.profile]
@@ -114,10 +120,33 @@ extension ContentView{
                 .zIndex(2)
         }
         
+
+        if self.context.addPost{
+            CrybPostGen()
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
+
         
     
     }
     
+    @ViewBuilder var notificationView:some View{
+        BottomSwipeCard(width: totalWidth, heading: self.context.bottomSwipeNotification.heading, buttonText: self.context.bottomSwipeNotification.buttonText) {
+            MainText(content: self.context.bottomSwipeNotification.innerText, fontSize: 15,fontWeight: .medium)
+        } action: {
+            if let action = self.context.bottomSwipeNotification.action{
+                action()
+            }else{
+                print("Nothing to do here!")
+                DispatchQueue.main.async {
+                    self.context.bottomSwipeNotification.showNotification = false
+                }
+            }
+        }
+    }
     
     func closeAsset(){
         if self.context.selectedCurrency != nil{
@@ -135,7 +164,7 @@ extension ContentView{
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
-        ContentView()
+        CrybseView()
             .environmentObject(ContextData())
     }
 }

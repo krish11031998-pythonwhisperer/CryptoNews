@@ -22,7 +22,7 @@ struct AsyncContainer<T:View>: View {
             let minY = g.frame(in: .global).minY
             
             DispatchQueue.main.async {
-                if !self.showView && minY < totalHeight * 1{
+                if !self.showView && minY < totalHeight * 1.5{
                     withAnimation(.easeInOut) {
                         self.showView.toggle()
                     }
@@ -31,7 +31,7 @@ struct AsyncContainer<T:View>: View {
             
             return AnyView(ProgressView().frame(width: totalWidth - 20, height: 25, alignment: .center))
             
-        }
+        }.frame(width: self.size.width, height: self.size.height, alignment: .center)
     }
     
     

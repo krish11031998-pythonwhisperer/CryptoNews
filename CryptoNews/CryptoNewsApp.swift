@@ -43,7 +43,7 @@ struct CryptoNewsApp: App {
     var mainView:some View{
         Group{
             if self.context.loggedIn == .signedIn{
-                ContentView().environmentObject(self.context)
+                CrybseView().environmentObject(self.context)
             }else{
                 if self.loading{
                     LoginView()
@@ -64,6 +64,7 @@ struct CryptoNewsApp: App {
     
     var body: some Scene {
         WindowGroup {
-            self.mainView        }
+            self.mainView
+        }
     }
 }

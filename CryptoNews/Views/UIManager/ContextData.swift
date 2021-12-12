@@ -39,8 +39,10 @@ class ContextData:ObservableObject{
     @Published var loggedIn:LoginState = .undefined
     @Published var user:User = .init()
     @Published var notification:NotificationModel = NotificationModel()
+    @Published var bottomSwipeNotification:NotificationData = .init()
     @Published var transactionAPI:TransactionAPI = .init()
     @Namespace var animationNamespace
+
     
     
     init(){

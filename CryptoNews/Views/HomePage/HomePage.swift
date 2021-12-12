@@ -32,8 +32,8 @@ struct HomePage: View {
             CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
             CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
             CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
-            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
-            self.CurrencyFeed
+//            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
+            CurrencyFeed()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
@@ -49,11 +49,7 @@ struct HomePage: View {
 extension HomePage{
 
     @ViewBuilder var trackedAssetView:some View{
-//        if self.context.selectedCurrency == nil{
         TrackedAssetView(asset: self.context.trackedAssets)
-//        }else{
-//            Color.clear.frame(width: totalWidth * 0.5, height: totalHeight * 0.4, alignment: .center)
-//        }
     }
     
     
@@ -73,21 +69,14 @@ extension HomePage{
     }
     
     @ViewBuilder func CurrencyFeedEl( _ currency: String) -> some View{
-        AsyncContainer(size: .zero) {
+        AsyncContainer(size: CardSize.slender) {
             Container(heading: "\(currency) Latest Feed", width: totalWidth, ignoreSides: true) { _ in
                 NewsSectionMain(currency: currency).padding(.vertical,10)
                 LatestTweets(currency: currency,type: .Influential)
             }
-            
         }
     }
     
-    var CurrencyFeed:some View{
-        return ForEach(self.currencies,id:\.self) {currency in
-            self.CurrencyFeedEl(currency)
-                .padding(.vertical,15)
-        }
-    }
 }
 
 struct HomePage_Previews: PreviewProvider {

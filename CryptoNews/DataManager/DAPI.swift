@@ -101,8 +101,8 @@ class DAPI:ObservableObject,DataParsingProtocol{
         if let data = DataCache.shared[url]{
             DispatchQueue.main.async {
                 self.loading = false
+                self.parseData(url: url, data: data)
             }
-            self.parseData(url: url, data: data)
         }else{
             URLSession.shared.dataTaskPublisher(for: url)
                 .receive(on: DispatchQueue.main)

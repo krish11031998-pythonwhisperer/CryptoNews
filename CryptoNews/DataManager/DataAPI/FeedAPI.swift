@@ -98,18 +98,18 @@ class FeedAPI:DAPI{
         do{
             let res = try decoder.decode(News.self, from: data)
             if let news = res.data {
-                DispatchQueue.main.async {
-                    withAnimation(.easeInOut) {
-                        if self.FeedData.isEmpty{
-                            self.FeedData = news
-                        }else{
-                            self.FeedData.append(contentsOf: news)
-                        }
-                        if self.loading{
-                            self.loading = false
-                        }
+//                DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    if self.FeedData.isEmpty{
+                        self.FeedData = news
+                    }else{
+                        self.FeedData.append(contentsOf: news)
+                    }
+                    if self.loading{
+                        self.loading = false
                     }
                 }
+//                }
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)
@@ -123,7 +123,6 @@ class FeedAPI:DAPI{
     func getAssetInfo(){
         if !self.loading{
             self.loading = true
-//            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
             self.getData(_url: self.tweetURL)
         }
         
@@ -134,9 +133,7 @@ class FeedAPI:DAPI{
         if !self.loading{
             self.loading = true
             self.page += 1;
-//            self.getData(_url: self.tweetURL, completion: self.parseData(data:))
             self.getData(_url: self.tweetURL)
-//            self.getDa
         }
         
     }

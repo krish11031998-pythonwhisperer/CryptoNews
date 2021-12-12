@@ -153,15 +153,34 @@ struct CrybPostData:Codable{
     private var postImg:String?
     
     
+//    init(
+//        id:UUID = UUID(),
+//        user:CrybPostUser = .init(),
+//        postMessage:String = "",
+//        likes:Int = 150,
+//        comments:Int = 20,
+//        pricePrediction:CrybPostPrediction = .init(),
+//        stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15),
+//        postImg:String? = nil
+//    ){
+//        self.id = id
+//        self.user = user
+//        self.postMessage = postMessage
+//        self.likes = likes
+//        self.comments = comments
+//        self.pricePrediction = pricePrediction
+//        self.stakers = stakers
+//        self.postImg = postImg
+//    }
     init(
         id:UUID = UUID(),
-        user:CrybPostUser = .init(),
-        postMessage:String = "",
-        likes:Int = 150,
-        comments:Int = 20,
-        pricePrediction:CrybPostPrediction = .init(),
-        stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15),
-        postImg:String? = nil
+        user:CrybPostUser,
+        postMessage:String,
+        likes:Int,
+        comments:Int,
+        pricePrediction:CrybPostPrediction,
+        stakers:Array<CrybPostBacker>,
+        postImg:String?
     ){
         self.id = id
         self.user = user
@@ -174,15 +193,38 @@ struct CrybPostData:Codable{
     }
     
     var PostImage:String{
-        return self.postImg ?? ""
+        get{
+            return self.postImg ?? ""
+        }
+        
+        
+        set{
+            if self.postImg != newValue{
+                self.postImg = newValue
+            }
+        }
     }
     
     var PostMessage:String{
-        return self.postMessage ?? "No Post Message"
+        get{
+            return self.postMessage ?? "No Post Message"
+        }
+        
+        set{
+            self.postMessage = newValue
+        }
+        
     }
     
     var User:CrybPostUser{
-        return self.user ?? .init()
+        get{
+            return self.user ?? .init()
+        }
+        
+        set{
+            self.user = newValue
+        }
+        
     }
     
     var Likes:Int{
@@ -214,7 +256,16 @@ struct CrybPostData:Codable{
     }
     
     static var test:CrybPostData{
-        return .init(postMessage: Array(repeating: "Message", count: 500).reduce("", {"\($0) \($1)"}))
+        return .init(
+            id:UUID(),
+            user:.init(),
+            postMessage:"",
+            likes:150,
+            comments:20,
+            pricePrediction:.init(),
+            stakers:.init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15),
+            postImg:nil
+        )
     }
 
     static func parseFromQueryData(_ data : QueryDocumentSnapshot) -> CrybPostData?{

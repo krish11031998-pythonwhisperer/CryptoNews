@@ -43,10 +43,13 @@ struct CardSlidingView: View {
     
     var body: some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(alignment: .center, spacing: 0){
+            LazyHStack(alignment: .center, spacing: 15){
                 ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
+                    let idx = _view.offset
                     let view = _view.element
                     zoomInOut(view: view)
+                        .padding(.leading,idx == 0 ? 15 : 0)
+//                        .padding(.trailing, idx == self.views.count - 1 ? 15 : 0)
                 }
             }
             .padding(.leading, self.leading ? halfCardWidth : 0)

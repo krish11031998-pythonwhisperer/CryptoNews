@@ -22,32 +22,37 @@ struct NewsSectionMain: View {
     }
     
     func onAppear(){
-        if self.newsFeed.FeedData.isEmpty{
-            self.newsFeed.getAssetInfo()
+        DispatchQueue.main.async {
+            if self.newsFeed.FeedData.isEmpty{
+                self.newsFeed.getAssetInfo()
+            }
         }
     }
     var cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
     
     func autoTimedCards() -> some View{
-        let data = Array(self.data[..<(self.data.count - 2)])
-        return FancyHScroll(data: data, timeLimit: 30, size: self.cardSize, scrollable: true, onTap: self.onTapHandle(_:) ,viewGen: self.autoTimeCardViewGen(_:))
+        let feedView = Array(self.data[..<(self.data.count - 2)]).map({AnyView(autoTimeCardViewGen($0))})
+        return CardSlidingView(cardSize: self.cardSize, views: feedView, leading: false)
     }
     
     
     func onTapHandle(_ idx:Int){
         if idx >= 0 && idx < self.data.count{
             let data = self.data[idx]
-//            withAnimation(.easeInOut) {
             if self.context.selectedNews?.lunar_id != data.lunar_id{
                 self.context.selectedNews = data
             }
-//            }
         }
     }
     
     @ViewBuilder func autoTimeCardViewGen(_ data:Any) -> some View{
         if let data = data as? AssetNewsData{
             NewsCard(news: data, size: self.cardSize)
+                .buttonify {
+                    if self.context.selectedNews?.lunar_id != data.lunar_id{
+                        self.context.selectedNews = data
+                    }
+                }
         }else{
             Color.clear.frame(width: totalWidth, height: 100, alignment: .center)
         }
@@ -69,19 +74,22 @@ struct NewsSectionMain: View {
     }
     
     
+    var totalFrame:CGSize{
+        return .init(width: self.cardSize.width, height: self.cardSize.height * 1.75)
+    }
+    
     var body: some View {
-        ZStack{
-            if !self.newsFeed.FeedData.isEmpty{
-                VStack(alignment: .leading, spacing: 10) {
-                    self.autoTimedCards()
-                    self.moreCards()
-                }
-                .aspectRatio(contentMode: .fill)
-                .frame(width: totalWidth, alignment: .center)
-            }else{
-                ProgressView()
+        if !self.newsFeed.FeedData.isEmpty{
+            VStack(alignment: .leading, spacing: 10) {
+                self.autoTimedCards()
+                self.moreCards()
             }
-        }.onAppear(perform: self.onAppear)
+            .aspectRatio(contentMode: .fill)
+        }else{
+            ProgressView()
+                .onAppear(perform: self.onAppear)
+                .frame(width: totalWidth, height: self.totalFrame.height, alignment: .center)
+        }
     }
 }
 

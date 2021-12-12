@@ -41,7 +41,7 @@ class FormValues:ObservableObject,Loopable{
     @Published var username:String = ""
     @Published var page:Int = 1
     @Published var confirmPwd:String = ""
-    @Published var image:UIImage = .stockImage
+    @Published var image:UIImage? = nil
     @Published var showImagePicker:Bool = false
     @Published var signIn:Bool = false
 }
@@ -121,12 +121,12 @@ struct LoginView: View {
     
     
     func profileImageView() -> some View{
-        Image(uiImage: self.formDetails.image)
-            .resizable()
-            .aspectRatio(contentMode: .fill)
-            .frame( width: totalWidth * 0.3, height: totalWidth * 0.3, alignment: .top)
-            .clipContent(clipping: .circleClipping)
-        
+        ImageView(img: self.formDetails.image, width: totalWidth * 0.3, height: totalWidth * 0.3, contentMode: .fill, alignment: .center, clipping: .circleClipping)
+//        Image(uiImage: self.formDetails.image)
+//            .resizable()
+//            .aspectRatio(contentMode: .fill)
+//            .frame( width: totalWidth * 0.3, height: totalWidth * 0.3, alignment: .top)
+//            .clipContent(clipping: .circleClipping)
     }
     
     func signUpPageGen(heading:String,fields:[String],button:String = "Sign Up",actionHandler: @escaping () -> Void, anotherButton: (() -> AnyView)? = nil) -> some View{
@@ -160,15 +160,12 @@ struct LoginView: View {
         }
         .padding()
         .frame(width: totalWidth,height: totalHeight, alignment: .center)
-//        .background(Color.red)
         .keyboardAdaptive(isKeyBoardOn: .constant(false))
     }
     
     func loggedIn(){
         if self.context.loggedIn != .signedIn{
-//            DispatchQueue.main.async {
-                self.context.loggedIn = .signedIn
-//            }
+            self.context.loggedIn = .signedIn
         }
     }
     
@@ -176,14 +173,12 @@ struct LoginView: View {
         if self.formDetails.name != "" && self.formDetails.username != ""{
             self.context.user.user?.name = self.formDetails.name
             self.context.user.user?.userName = self.formDetails.username
-            if self.formDetails.image != .stockImage, let imgData = self.formDetails.image.png(){
-                ProfileAPI.shared.uploadDataToStorage(data: imgData, folder: "images") { url in
+            if let image = self.formDetails.image, let imgData = image.png(){
+                ProfileAPI.shared.uploadImageToStorage(data: imgData, folder: "images") { url in
                     self.context.user.user?.img = url
-//                    self.context.user.createUser(completion: self.loggedIn)
                     self.context.user.createUser()
                 }
             }else{
-//                self.context.user.createUser(completion: self.loggedIn)
                 self.context.user.createUser()
             }
             

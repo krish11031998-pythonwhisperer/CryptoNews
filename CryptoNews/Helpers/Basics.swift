@@ -70,11 +70,9 @@ struct MainText: View {
                 .padding(.all,addBG ? self.padding : 0)
                 .background(addBG ? self.oppColor : .clear)
                 .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
-                
         }
         
     }
-    
     
     var oppColor:Color{
         return self.color == .black ? .white : .black
@@ -91,10 +89,8 @@ struct MainText: View {
             .fontWeight(self.fontWeight)
             .foregroundColor(self.color)
             .modifier(CustomFontModifier(addBG: addBG, oppColor: oppColor,padding: self.padding))
-            
     }
 }
-
 
 
 struct HeadingInfoText:View{
