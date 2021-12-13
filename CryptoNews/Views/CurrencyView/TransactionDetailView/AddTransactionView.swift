@@ -79,6 +79,7 @@ class TxnFormDetails:ObservableObject{
 
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
+    @StateObject var notification:NotificationData = .init()
     @Namespace var animation
     @StateObject var txn:TxnFormDetails
     @State var type:TransactionType = .buy
@@ -242,21 +243,17 @@ struct AddTransactionView:View {
             .padding(.vertical,50)
             .frame(height: totalHeight, alignment: .topLeading)
             
-            if self.showModal != .none{
-                self.choosenSideView(w: totalWidth)
-            }
-            
-            if self.txn.added_Success{
-                self.swipeCard(w: totalWidth, heading: "Add Transaction", buttonText: "Close") {
-                    return AnyView(MainText(content: "\(self.txn.added_Success ? "Success" : "Failed")", fontSize: 15, color: .white, fontWeight: .semibold))
+            if self.notification.showNotification{
+                BottomSwipeCard(heading: self.notification.heading, buttonText: self.notification.buttonText) {
+                    self.choosenSideView(w: totalWidth)
                 } action: {
-                    withAnimation(.easeInOut) {
-                        self.txn.added_Success = false
-                        self.resetStates()
+                    if self.showModal != .none{
+                        self.updateModal(type: .none)
+                    }else if self.txn.added_Success{
+                        self.txn.added_Success.toggle()
                     }
                     
                 }
-
             }
         }
         .edgesIgnoringSafeArea(.all)
@@ -265,6 +262,8 @@ struct AddTransactionView:View {
         .onDisappear(perform: self.onDisappear)
         .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
         .preference(key: AddTxnUpdatePreference.self, value: self.txn.added_Success)
+        .onChange(of: self.showModal,perform: self.toggleNotificationwModal)
+        .onChange(of: self.txn.added_Success,perform: self.toggleNotificationwTxnModal)
     }
 }
 
@@ -274,24 +273,34 @@ extension AddTransactionView{
         return self.curr_sym ?? self.coin.s ?? "Choose Currency"
     }
     
-    
-    func swipeCard(w:CGFloat,h:CGFloat = totalHeight * 0.3,heading:String = "NO Heading",buttonText:String = "Update",innerView: @escaping () -> AnyView,action: @escaping () -> Void) -> some View{
-        VStack(alignment: .leading, spacing: 10) {
-            MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold, style: .normal).padding(.bottom,20)
-            innerView().padding(.vertical,5)
-            Spacer()
-            TabButton(width: w - 20, height: 50, title: buttonText, textColor: .white,action: action).padding(.bottom,15)
+    func toggleNotificationwModal(_ newValue:ModalType){
+        if newValue != .none && !self.notification.showNotification || newValue == .none && self.notification.showNotification{
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self.notification.showNotification.toggle()
+                }
+            }
         }
-        .padding(10)
-        .frame(width: w, alignment: .topLeading)
-        .aspectRatio(contentMode: .fit)
-        .background(BlurView(style: .systemThickMaterialDark))
-        .clipContent(clipping: .roundClipping)
-        .transition(.slideInOut)
-        .zIndex(2)
     }
     
-
+    func toggleNotificationwTxnModal(_ newValue:Bool){
+        if newValue && !self.notification.showNotification{
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self.notification.heading = "Cryb Transaction"
+                    self.notification.innerText = "Transaction has been added successfully!"
+                    self.notification.showNotification.toggle()
+                }
+            }
+        }else if !newValue && self.notification.showNotification{
+            DispatchQueue.main.async {
+                withAnimation(.easeInOut) {
+                    self.notification.showNotification.toggle()
+                }
+            }
+        }
+    }
+    
     func numPadEventHandler(val:String,updateVal:((String) -> Void)? = nil){
         var valToUpdate = self.showModal == .fee ? self.txn.fee : self.showModal == .spot_price ? self.txn.asset_spot_price : self.txn.asset_quantity
         DispatchQueue.main.async {
@@ -426,39 +435,25 @@ extension AddTransactionView{
             .blobify(color: AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .date)
+                DispatchQueue.main.async {
+                    self.notification.heading = "Update Date"
+                }
             }
     }
     
     @ViewBuilder func choosenSideView(w:CGFloat) -> some View{
         if self.showModal == .spot_price{
-            self.swipeCard(w: w, h: totalHeight * 0.5, heading: "Update Spot Price") {
-                return AnyView(Group{
-                    MainText(content: "$\(self.txn.asset_spot_price)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
-                    self.numPad(w: w)
-                })
-            } action: {
-                self.updateModal(type: .none)
-            }
+            MainText(content: "$\(self.txn.asset_spot_price)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
+            self.numPad(w: w)
         }else if self.showModal == .fee{
-            self.swipeCard(w: w, h: totalHeight * 0.6,heading: "Update Fees") {
-                return AnyView(Group{
-                    MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
-                    self.numPad(w: w)
-                })
-                            
-            } action: {
-                self.updateModal(type: .none)
-            }
-            
+            MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
+            self.numPad(w: w)
+        }else if self.showModal == .date{
+            DatePicker("", selection: $date, displayedComponents: [.date,.hourAndMinute])
+                .datePickerStyle(.automatic)
+                .labelsHidden()
         }else{
-            self.swipeCard(w: w,heading: "Select Date") {
-                return AnyView(DatePicker("", selection: $date, displayedComponents: [.date,.hourAndMinute])
-                                .datePickerStyle(.automatic)
-                                .labelsHidden()
-                )
-            } action: {
-                self.updateModal(type: .none)
-            }
+            MainText(content: self.notification.innerText, fontSize: 12, color: .white, fontWeight: .semibold)
         }
     }
     
@@ -469,6 +464,9 @@ extension AddTransactionView{
             .blobify(color: spot_price == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .spot_price)
+                DispatchQueue.main.async {
+                    self.notification.heading = "Update Price"
+                }
             }
     }
 
@@ -479,6 +477,9 @@ extension AddTransactionView{
             .blobify(color: fee_str == "0" || fee_str == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .fee)
+                DispatchQueue.main.async {
+                    self.notification.heading = "Update Fee"
+                }
             }
     }
     

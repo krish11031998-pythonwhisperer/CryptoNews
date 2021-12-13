@@ -12,9 +12,14 @@ struct CrybPostGen: View {
     @State var text:String = ""
     @State var image:UIImage? = nil 
     @State var showImagePicker:Bool = false
-    @State var showKeyboard:Bool = true
-    
+    @StateObject var notification:NotificationData = .init()
+//    @State var showKeyboard:Bool = true
+    @State var keyboardHeight:CGFloat = .zero
     let staticText:String = "Enter the value !"
+    
+    init(){
+        UITextView.appearance().backgroundColor = .clear
+    }
     
     var textinTextEditor:String{
         return self.text.count == 0 ? staticText : self.text
@@ -41,10 +46,9 @@ struct CrybPostGen: View {
                 message = "CrybPost was successfully posted"
                print("The data was uploaded to teh crypPost successfully!")
             }
-            
-//            DispatchQueue.main.async {
-            self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
-//            }
+            withAnimation(.easeInOut) {
+                self.notification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
+            }
         }
         
     }
@@ -66,7 +70,28 @@ struct CrybPostGen: View {
         }
     }
     
-    var body: some View {
+    var containerHeight:CGFloat{
+        return totalHeight - self.keyboardHeight
+    }
+    
+    func doneEditting(){
+        if self.keyboardHeight != .zero{
+             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+    }
+    
+    @ViewBuilder var textField:some View{
+        MainText(content: "Post about what you think....", fontSize: 15, color: .white.opacity(0.75), fontWeight: .semibold)
+        TextEditor(text: $text)
+            .foregroundColor(Color.white)
+            .font(.custom(TextStyle.normal.rawValue, size: 15, relativeTo: .body))
+            .frame(maxHeight: totalHeight * 0.25, alignment: .leading)
+            .padding()
+            .background(BlurView.thinLightBlur.opacity(0.2).clipContent(clipping: .roundClipping))
+    }
+    
+    
+    var mainbody:some View{
         Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
             self.header
             CustomTextField(customFont: .init(previewText: staticText,fontsize: 17.5),width: w - 20)
@@ -74,12 +99,35 @@ struct CrybPostGen: View {
                 .onPreferenceChange(CustomFontPreference.self, perform: { text in
                     self.text = text
                 })
-            self.imageView(w: w)
-            self.sideButton(w: w)
-            TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
-                .keyboardAdaptive(isKeyBoardOn: .constant(false))
-        }
-        .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
+//            self.textField.frame(width: w,alignment: .leading)
+            if self.keyboardHeight == .zero{
+                self.imageView(w: w)
+                self.sideButton(w: w)
+                TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
+            }else{
+                TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting).padding(.vertical,15)
+            }
+            
+        }.animation(.easeInOut).frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
+        
+    }
+    
+    var body: some View {
+        
+        ZStack(alignment: .bottom){
+            self.mainbody
+            if self.notification.showNotification{
+                BottomSwipeCard(heading: "Add CrybPost", buttonText: "Done") {
+                    MainText(content: self.notification.innerText, fontSize: 12, color: .white, fontWeight: .semibold)
+                } action: {
+                    if self.notification.showNotification{
+                        self.notification.showNotification.toggle()
+                    }
+                }
+            }
+        }.frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
+            .padding(.top,self.keyboardHeight)
+            .keyboardAdaptiveValue(keyboardHeight: $keyboardHeight)
         .sheet(isPresented: $showImagePicker) {
             ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
         }
@@ -93,6 +141,8 @@ struct CrybPostGen: View {
                 self.context.showTab.toggle()
             }
         }
+
+
         
     }
 }

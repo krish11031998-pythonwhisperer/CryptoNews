@@ -9,6 +9,17 @@ enum Clipping:CGFloat{
 }
 
 
+class KeyboardHeightPreference:PreferenceKey{
+    
+    static var defaultValue: CGFloat = .zero
+    
+    
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = nextValue()
+    }
+}
+
+
 struct ColoredTextField:TextFieldStyle{
     var color:Color
     var fontSize:CGFloat = 25
@@ -38,9 +49,13 @@ struct MessageTextField:TextFieldStyle{
     
     func _body(configuration: TextField<Self._Label>) -> some View {
             configuration
+                .multilineTextAlignment(.leading)
+                .lineLimit(10)
                 .font(Font.custom(TextStyle.normal.rawValue, size: self.fontSize))
                 .foregroundColor(Color.white)
                 .background(Color.clear)
+                .frame(width: width, alignment: .topLeading)
+                .frame(maxHeight: maxHeight)
                 .clipContent(clipping: .clipped)
                 .labelsHidden()
         }
@@ -162,6 +177,27 @@ struct KeyboardAdaptive:ViewModifier{
                 self.keyboardHeight = height
                 if (height > 0 && !self.isKeyBoardOn) || (height == 0 && self.isKeyBoardOn){
                     self.isKeyBoardOn.toggle()
+                }
+            }
+    }
+}
+
+struct KeyboardAdaptiveValue:ViewModifier{
+    @Binding var keyboardHeight:CGFloat
+    
+    init(keyboardHeight:Binding<CGFloat>){
+        self._keyboardHeight = keyboardHeight
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .onReceive(Publishers.keyboardHeight) { height in
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut) {
+                        if self.keyboardHeight != height{
+                            self.keyboardHeight = height
+                        }
+                    }
                 }
             }
     }
@@ -486,6 +522,10 @@ extension View{
     
     func keyboardAdaptive(isKeyBoardOn:Binding<Bool>? = nil) -> some View{
         self.modifier(KeyboardAdaptive(isKeyBoardOn: isKeyBoardOn))
+    }
+    
+    func keyboardAdaptiveValue(keyboardHeight:Binding<CGFloat>) -> some View{
+        self.modifier(KeyboardAdaptiveValue(keyboardHeight: keyboardHeight))
     }
     
     func hideKeyboard() {

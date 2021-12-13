@@ -9,7 +9,6 @@ import SwiftUI
 
 struct CrybseView: View {
     @EnvironmentObject var context:ContextData
-    
     func closeNews(){
         if self.context.selectedNews != nil{
             self.context.selectedNews = nil
@@ -25,9 +24,6 @@ struct CrybseView: View {
                 TabBarMain()
                     .zIndex(2)
             }
-            if self.context.bottomSwipeNotification.showNotification{
-                self.notificationView
-            }
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
@@ -39,9 +35,6 @@ struct CrybseView: View {
                 if let uid = self.context.user.user?.uid, added_Txn{
                     self.context.transactionAPI.loadTransaction(uuid: uid)
                 }
-            }
-            .onAppear {
-                self.context.addPost.toggle()
             }
     }
 }
@@ -123,6 +116,7 @@ extension CrybseView{
 
         if self.context.addPost{
             CrybPostGen()
+                .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(mainBGView)
                 .edgesIgnoringSafeArea(.all)
@@ -131,21 +125,6 @@ extension CrybseView{
 
         
     
-    }
-    
-    @ViewBuilder var notificationView:some View{
-        BottomSwipeCard(width: totalWidth, heading: self.context.bottomSwipeNotification.heading, buttonText: self.context.bottomSwipeNotification.buttonText) {
-            MainText(content: self.context.bottomSwipeNotification.innerText, fontSize: 15,fontWeight: .medium)
-        } action: {
-            if let action = self.context.bottomSwipeNotification.action{
-                action()
-            }else{
-                print("Nothing to do here!")
-                DispatchQueue.main.async {
-                    self.context.bottomSwipeNotification.showNotification = false
-                }
-            }
-        }
     }
     
     func closeAsset(){

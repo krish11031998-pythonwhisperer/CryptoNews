@@ -27,14 +27,16 @@ struct CustomFont{
     var color:Color
     var textStyle:TextStyle
     var width:CGFloat
+    var maxHeight:CGFloat
     
     
-    init(previewText:String = "Enter Something here",textStyle:TextStyle = .normal,width:CGFloat = totalWidth,fontsize:CGFloat = 15, color:Color = .white.opacity(0.5)){
+    init(previewText:String = "Enter Something here",textStyle:TextStyle = .normal,width:CGFloat = totalWidth,maxHeight:CGFloat = totalHeight * 0.3,fontsize:CGFloat = 15, color:Color = .white.opacity(0.5)){
         self.previewText = previewText
         self.size = fontsize
         self.color = color
         self.textStyle = textStyle
         self.width = width
+        self.maxHeight = maxHeight
     }
     
     var fontName:String{
@@ -143,7 +145,6 @@ struct CustomTextFieldView:UIViewRepresentable{
     }
     
     func makeUIView(context: UIViewRepresentableContext<CustomTextFieldView>) -> UITextView {
-
         let view = UITextView(frame: .init(x: 0, y: 0, width: size.width, height: size.height))
         view.delegate = context.coordinator
         view.font = font
@@ -152,7 +153,6 @@ struct CustomTextFieldView:UIViewRepresentable{
         view.backgroundColor = .clear
         view.isScrollEnabled = false
         view.isUserInteractionEnabled = true
-        view.returnKeyType = .done
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return view
     }
@@ -165,14 +165,10 @@ struct CustomTextFieldView:UIViewRepresentable{
         }
         
         DispatchQueue.main.async {
-//            withAnimation(.easeInOut) {
-//            self.customObserver.text = textView.text
-//            if text_h <= totalHeight * 0.35{
-//                self.customObserver.height =  text_h
-//            }
-            self.customObserver.height = text_h
+            if text_h < self.customFont.maxHeight{
+                self.customObserver.height = text_h
+            }
             self.customObserver.text = textView.text
-//            }
         }
         
     }
@@ -202,6 +198,19 @@ struct CustomTextFieldView:UIViewRepresentable{
                 textView.text = self.parent.customFont.previewText
                 textView.textColor = .gray
             }
+            
+            if textView.text.contains("\n"){
+//                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+                DispatchQueue.main.async {
+                    textView.resignFirstResponder()
+                }
+            }
+            
+        }
+        
+        func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+            textField.resignFirstResponder() // Always dismiss KB upon textField 'Return'
+            return true
         }
     }
     

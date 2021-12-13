@@ -64,10 +64,19 @@ struct CrybPostMainView: View {
         
         return ProgressView()
     }
+        
+    func addNewPost() -> AnyView{
+        let view = SystemButton(b_name: "pencil.circle.fill", color: .white,haveBG: true, size: .init(width: 20, height: 20), bgcolor: .black, alignment: .vertical) {
+            if !self.context.addPost{
+                self.context.addPost.toggle()
+            }
+        }
+        return AnyView(view)
+    }
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
-            Container(heading:"CrybPosts", width: totalWidth, ignoreSides: self.ignoreSides) { w in
+            Container(heading:"CrybPosts", width: totalWidth, ignoreSides: self.ignoreSides,rightView: self.addNewPost) { w in
                 
                 if self.width == .zero{
                     self.loadView(w: w)

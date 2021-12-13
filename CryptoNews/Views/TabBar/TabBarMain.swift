@@ -20,17 +20,21 @@ struct TabBarMain: View {
     }
     
     var body: some View {
-        Container(width: totalWidth, ignoreSides: false) { w in
-            HStack(alignment: .center, spacing: 20) {
-                ForEach(self.tabs,id:\.rawValue) {tab in
-                    self.systemButtonView(tab: tab) {
-                        self.onTapHandler(tab: tab)
+        ZStack(alignment: .bottom) {
+            Color.clear
+            Container(width: totalWidth, ignoreSides: false) { w in
+                HStack(alignment: .center, spacing: 20) {
+                    ForEach(self.tabs,id:\.rawValue) {tab in
+                        self.systemButtonView(tab: tab) {
+                            self.onTapHandler(tab: tab)
+                        }
                     }
-                }
-            }.frame(width: w, alignment: .center)
-        }.padding(.vertical,25)
-            .padding(.bottom,25)
+                }.frame(width: w, alignment: .center)
+            }
+            .padding(.vertical,25)
             .background(LinearGradient(colors: [Color.clear,Color.black], startPoint: .top, endPoint: .bottom))
+        }.frame(width: totalWidth, height: totalHeight, alignment: .center)
+        
         
         
     }

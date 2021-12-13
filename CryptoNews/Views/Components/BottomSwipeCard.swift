@@ -68,32 +68,29 @@ struct BottomSwipeCard<T:View>: View {
 }
 
 struct BottomSwipeCardTester:View{
-//    @State var showCard:Bool = false
-    @StateObject var context:ContextData = .init()
+//    @StateObject var context:ContextData = .init()
+    @StateObject var notif:NotificationData = .init()
     
     func toggleShow(){
-//        DispatchQueue.main.async{
-        self.context.bottomSwipeNotification.showNotification.toggle()
-//        }
+        self.notif.showNotification.toggle()
     }
     
     var body: some View {
         ZStack(alignment: .bottom) {
             mainBGView
             SystemButton(b_name: "plus") {
-//                self.showCard.toggle()
                 DispatchQueue.main.async {
-                    self.context.bottomSwipeNotification.heading = "Test Notification"
-                    self.context.bottomSwipeNotification.buttonText = "Done"
-                    self.context.bottomSwipeNotification.showNotification = true
-                    self.context.bottomSwipeNotification.innerText = "Testing the Notification Message!"
+                    self.notif.heading = "Test Notification"
+                    self.notif.buttonText = "Done"
+                    self.notif.showNotification = true
+                    self.notif.innerText = "Testing the Notification Message!"
                 }
             }.frame(width: totalWidth, height: totalHeight, alignment: .center)
-            if self.context.bottomSwipeNotification.showNotification{
-                BottomSwipeCard(width: totalWidth, heading: self.context.bottomSwipeNotification.heading, buttonText: self.context.bottomSwipeNotification.buttonText) {
-                    MainText(content: self.context.bottomSwipeNotification.innerText, fontSize: 15,fontWeight: .medium)
+            if self.notif.showNotification{
+                BottomSwipeCard(width: totalWidth, heading: self.notif.heading, buttonText: self.notif.buttonText) {
+                    MainText(content: self.notif.innerText, fontSize: 15,fontWeight: .medium)
                 } action: {
-                    self.context.bottomSwipeNotification.action?() ?? toggleShow()
+                    self.notif.action?() ?? toggleShow()
                 }
 
                 

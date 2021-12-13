@@ -58,7 +58,7 @@ extension HomePage{
     }
     
     func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
-        AsyncContainer(size: .zero) {
+        AsyncContainer(size: CardSize.slender) {
             CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)
         }
     }
