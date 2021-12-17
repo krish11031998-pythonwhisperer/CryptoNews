@@ -30,6 +30,22 @@ class NotificationData:ObservableObject{
         self.innerText = innerText
         self.action = action
     }
+    
+    @ViewBuilder func generateView() -> some View{
+        BottomSwipeCard(width: totalWidth, heading: self.heading, buttonText: self.buttonText) {
+            MainText(content: self.innerText, fontSize: 15, color: .white, fontWeight: .semibold)
+        } action: {
+            if let action = self.action {
+                action()
+            }else{
+                DispatchQueue.main.async {
+                    withAnimation(.easeInOut) {
+                        self.showNotification.toggle()
+                    }
+                }
+            }
+        }
+    }
 }
 
 

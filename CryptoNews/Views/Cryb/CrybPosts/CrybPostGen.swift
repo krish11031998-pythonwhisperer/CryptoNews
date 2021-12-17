@@ -47,7 +47,7 @@ struct CrybPostGen: View {
                print("The data was uploaded to teh crypPost successfully!")
             }
             withAnimation(.easeInOut) {
-                self.notification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
+                self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
             }
         }
         
@@ -99,7 +99,6 @@ struct CrybPostGen: View {
                 .onPreferenceChange(CustomFontPreference.self, perform: { text in
                     self.text = text
                 })
-//            self.textField.frame(width: w,alignment: .leading)
             if self.keyboardHeight == .zero{
                 self.imageView(w: w)
                 self.sideButton(w: w)
@@ -114,18 +113,20 @@ struct CrybPostGen: View {
     
     var body: some View {
         
-        ZStack(alignment: .bottom){
+//        ZStack(alignment: .bottom){
             self.mainbody
-            if self.notification.showNotification{
-                BottomSwipeCard(heading: "Add CrybPost", buttonText: "Done") {
-                    MainText(content: self.notification.innerText, fontSize: 12, color: .white, fontWeight: .semibold)
-                } action: {
-                    if self.notification.showNotification{
-                        self.notification.showNotification.toggle()
-                    }
-                }
-            }
-        }.frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
+//        if self.context.bottomSwipeNotification.showNotification{
+//            if self.notification.showNotification{
+//                BottomSwipeCard(heading: "Add CrybPost", buttonText: "Done") {
+//                    MainText(content: self.notification.innerText, fontSize: 12, color: .white, fontWeight: .semibold)
+//                } action: {
+//                    if self.notification.showNotification{
+//                        self.notification.showNotification.toggle()
+//                    }
+//                }
+//            }
+//        }
+        .frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
             .padding(.top,self.keyboardHeight)
             .keyboardAdaptiveValue(keyboardHeight: $keyboardHeight)
         .sheet(isPresented: $showImagePicker) {

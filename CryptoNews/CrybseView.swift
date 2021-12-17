@@ -20,6 +20,9 @@ struct CrybseView: View {
             mainBGView.zIndex(0)
             self.mainBody
             self.hoverView
+            if self.context.bottomSwipeNotification.showNotification{
+                self.context.bottomSwipeNotification.generateView()
+            }
             if self.context.showTab{
                 TabBarMain()
                     .zIndex(2)

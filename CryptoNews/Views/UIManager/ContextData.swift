@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 enum Tabs:String{
     case home = "homekit"
@@ -28,7 +29,7 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .info
+    @Published private var _tab:Tabs = .home
     @Published private var _selectedCurrency:AssetData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil
@@ -43,11 +44,29 @@ class ContextData:ObservableObject{
     @Published var transactionAPI:TransactionAPI = .init()
     @Namespace var animationNamespace
 
-    
-    
+    var transactionCancellable: AnyCancellable? = nil
+    var notificationCancellable: AnyCancellable? = nil
+    var userCancellable:AnyCancellable? = nil
     init(){
         self.user.signInHandler = self.signInHandler
+        self.transactionCancellable = self.transactionAPI.objectWillChange.sink(receiveValue: { [weak self] (_) in
+            withAnimation(.easeInOut) {
+                self?.objectWillChange.send()
+            }
+        })
+        self.notificationCancellable = self.bottomSwipeNotification.objectWillChange.sink(receiveValue: { [weak self] (_)in
+            withAnimation(.easeInOut) {
+                self?.objectWillChange.send()
+            }
+        })
+        self.userCancellable = self.user.objectWillChange.sink(receiveValue: { [weak self] (_) in
+            withAnimation(.easeInOut) {
+                self?.objectWillChange.send()
+            }
+        })
     }
+    
+    
     
     
     var tab:Tabs{
