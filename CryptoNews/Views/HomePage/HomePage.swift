@@ -22,16 +22,16 @@ struct HomePage: View {
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
             if self.context.trackedAssets.count > 0{
-                self.trackedAssetView
+                TrackedAssetView(asset: self.context.trackedAssets)
             }
             
             if self.context.watchedAssets.count > 0{
-                self.watchedAssetView
+                WatchedAssets(currencies: self.context.watchedAssets)
             }
             
-            CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: true)
-            CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
-            CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
+            CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: false)
+//            CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
+//            CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
 //            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
             CurrencyFeed()
             Spacer(minLength: 200)
@@ -47,15 +47,6 @@ struct HomePage: View {
 }
 
 extension HomePage{
-
-    @ViewBuilder var trackedAssetView:some View{
-        TrackedAssetView(asset: self.context.trackedAssets)
-    }
-    
-    
-    var watchedAssetView:some View{
-        WatchedAssets(currencies: self.context.watchedAssets)
-    }
     
     func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
         AsyncContainer(size: CardSize.slender) {
@@ -67,15 +58,7 @@ extension HomePage{
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }
-    
-    @ViewBuilder func CurrencyFeedEl( _ currency: String) -> some View{
-        AsyncContainer(size: CardSize.slender) {
-            Container(heading: "\(currency) Latest Feed", width: totalWidth, ignoreSides: true) { _ in
-                NewsSectionMain(currency: currency).padding(.vertical,10)
-                LatestTweets(currency: currency,type: .Influential)
-            }
-        }
-    }
+
     
 }
 

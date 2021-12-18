@@ -32,7 +32,7 @@ struct NewsSectionMain: View {
     
     func autoTimedCards() -> some View{
         let feedView = Array(self.data[..<(self.data.count - 2)]).map({AnyView(autoTimeCardViewGen($0))})
-        return CardSlidingView(cardSize: self.cardSize, views: feedView, leading: false)
+        return CardSlidingView(cardSize: self.cardSize, views: feedView, leading: false,centralize: true )
     }
     
     

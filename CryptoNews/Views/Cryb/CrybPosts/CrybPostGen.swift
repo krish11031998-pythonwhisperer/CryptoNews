@@ -112,20 +112,8 @@ struct CrybPostGen: View {
     }
     
     var body: some View {
-        
-//        ZStack(alignment: .bottom){
-            self.mainbody
-//        if self.context.bottomSwipeNotification.showNotification{
-//            if self.notification.showNotification{
-//                BottomSwipeCard(heading: "Add CrybPost", buttonText: "Done") {
-//                    MainText(content: self.notification.innerText, fontSize: 12, color: .white, fontWeight: .semibold)
-//                } action: {
-//                    if self.notification.showNotification{
-//                        self.notification.showNotification.toggle()
-//                    }
-//                }
-//            }
-//        }
+    
+    self.mainbody
         .frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
             .padding(.top,self.keyboardHeight)
             .keyboardAdaptiveValue(keyboardHeight: $keyboardHeight)

@@ -19,6 +19,134 @@ class KeyboardHeightPreference:PreferenceKey{
     }
 }
 
+class CentralizePreference:PreferenceKey{
+    static var defaultValue: Bool = false
+    
+    static func reduce(value: inout Bool, nextValue: () -> Bool) {
+        value = nextValue()
+    }
+}
+
+
+
+struct AsyncContainerModifier:ViewModifier{
+    var g:GeometryProxy? = nil
+    var axis:Axis = .vertical
+    var size:CGSize = .zero
+    @State var showView:Bool = false
+    
+    init(g:GeometryProxy? = nil,axis:Axis = .vertical,size:CGSize = .zero){
+        self.g = g
+        self.axis = axis
+        self.size = size
+    }
+    
+    func DispatchQueueAxis(_ g:GeometryProxy){
+        
+        let minX = g.frame(in: .global).minX
+        let minY = g.frame(in: .global).minY
+        
+        
+        switch(self.axis){
+            case .horizontal:
+                DispatchQueue.main.async {
+                    if !self.showView && minX < totalWidth * 1.2{
+                        withAnimation(.easeInOut) {
+                            self.showView.toggle()
+                        }
+                    }
+                }
+            case .vertical:
+                DispatchQueue.main.async {
+                    if !self.showView && minY < totalHeight * 1.5{
+                        withAnimation(.easeInOut) {
+                            self.showView.toggle()
+                        }
+                    }
+                }
+            default:
+                break
+        }
+    }
+    
+    init(g:GeometryProxy? = nil,size:CGSize = .zero){
+        self.size = size
+        self.g = g
+    }
+
+    
+    @ViewBuilder var progressView:some View{
+        GeometryReader { g -> AnyView in
+            self.DispatchQueueAxis(g)
+            return AnyView(ProgressView().frame(width: totalWidth - 20, height: 25, alignment: .center))
+        }.frame(width: self.size.width, height: self.size.height, alignment: .center)
+    }
+    
+    func body(content: Content) -> some View {
+        if self.showView{
+            content
+        }else{
+            self.progressView
+        }
+    }
+    
+}
+
+struct SlidingZoomInOut:ViewModifier{
+    var g:GeometryProxy? = nil
+    var cardSize:CGSize
+    var centralize:Bool
+    @State var centralize_container:Bool = false
+    init(g:GeometryProxy? = nil,cardSize:CGSize,centralize:Bool){
+        self.g = g
+        self.cardSize = cardSize
+        self.centralize = centralize
+    }
+    
+    func scaleGen(g:GeometryProxy) -> CGFloat{
+        let midX = g.frame(in: .global).midX
+        let diff = abs(midX - (totalWidth * 0.5))/totalWidth
+        let diff_percent = (diff > 0.25 ? 1 : diff/0.25)
+        let scale = 1 - 0.075 * diff_percent
+        if self.centralize{
+            self.computeCenter(g: g)
+        }
+        return scale
+    }
+    
+    func computeCenter(g:GeometryProxy){
+        let midX = g.frame(in: .global).midX
+        let diff = midX - totalWidth * 0.5
+        if abs(diff) <= cardSize.width * 0.5{
+            DispatchQueue.main.async {
+                self.centralize_container = true
+            }
+        }
+    }
+    
+    @ViewBuilder func mainBody(content: Content) -> some View{
+        if let g = self.g{
+            let scale = self.scaleGen(g: g)
+            content.scaleEffect(scale)
+        }else{
+            GeometryReader{g -> AnyView in
+                let scale = self.scaleGen(g: g)
+                return AnyView(content.scaleEffect(scale))
+            }.frame(width: self.cardSize.width, height: self.cardSize.height, alignment: .center)
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        if self.centralize{
+            self.mainBody(content: content)
+                .preference(key: CentralizePreference.self, value: self.centralize_container)
+        }else{
+            self.mainBody(content: content)
+        }
+        
+    }
+    
+}
 
 struct ColoredTextField:TextFieldStyle{
     var color:Color
@@ -489,6 +617,14 @@ extension View{
     
     func zoomInOut() -> some View{
         self.modifier(ZoomInOut())
+    }
+    
+    func asyncContainer(g:GeometryProxy? = nil,axis:Axis = .vertical,size:CGSize = .zero) -> some View{
+        self.modifier(AsyncContainerModifier(g: g, axis: axis, size: size))
+    }
+    
+    func slideZoomInOut(g:GeometryProxy? = nil,cardSize:CGSize,centralize:Bool = false) -> some View{
+        self.modifier(SlidingZoomInOut(g: g,cardSize: cardSize,centralize:centralize))
     }
     
     func slideRightLeft() -> some View{

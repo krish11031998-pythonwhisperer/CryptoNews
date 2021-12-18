@@ -133,13 +133,7 @@ struct AddTransactionView:View {
             self.txn.reset()
         }
     }
-    
-    
-    func convertToAED(_ val_str:String) -> String{
-        let val = val_str.toFloat()
-        return (val * 3.6).toString()
-    }
-    
+        
     func updateTxnObject(){
         let subTotal = self.txn.asset_quantity.toFloat() * self.txn.asset_spot_price.toFloat()
         txn.fee = txn.fee == "" ? "0" : txn.fee
@@ -237,7 +231,7 @@ struct AddTransactionView:View {
                         self.numPad(w: w)
                     }
                     
-                    TabButton(width: w, height: 50, title: "Add Transaction", textColor: .white,action: self.buttonHandle)
+                    TabButton(width: w, height: 50, title: "Add Transaction", textColor: self.font_color,action: self.buttonHandle)
                 }
             }
             .padding(.vertical,50)
@@ -269,6 +263,11 @@ struct AddTransactionView:View {
 
 extension AddTransactionView{
         
+    var font_color:Color{
+        return .white
+    }
+    
+    
     var currency:String{
         return self.curr_sym ?? self.coin.s ?? "Choose Currency"
     }
@@ -328,7 +327,7 @@ extension AddTransactionView{
         let col = GridItem(.adaptive(minimum: numIconW, maximum: numIconW))
         let res = LazyVGrid(columns: [col], alignment: .center, spacing: 10) {
             ForEach(numPadSeq, id:\.self) { numVal in
-                MainText(content: numVal, fontSize: 17, color: .white, fontWeight: .semibold)
+                MainText(content: numVal, fontSize: 17, color: self.font_color, fontWeight: .semibold)
                     .frame(width: numIconW,height: height * 0.25 - 10 ,alignment: .center)
                     .buttonify(withBG: true) {
                         self.numPadEventHandler(val: numVal)
@@ -359,7 +358,7 @@ extension AddTransactionView{
                 let id = self.type == type
                 
                 
-                MainText(content: type.rawValue.capitalized, fontSize: 15, color: .white, fontWeight: .bold, style: .normal)
+                MainText(content: type.rawValue.capitalized, fontSize: 15, color: self.font_color, fontWeight: .bold, style: .normal)
                     .padding(.vertical,15)
                     .frame(width: el_width, alignment: .center)
                     .background(
@@ -411,7 +410,7 @@ extension AddTransactionView{
     
     var txnValueField:some View{
         VStack(alignment: .center, spacing: 10) {
-            let color:Color = self.txn.asset_quantity != "" ? .white : .gray
+            let color:Color = self.txn.asset_quantity != "" ? self.font_color : .gray
             let quantity:String = self.txn.asset_quantity != "" ? self.txn.asset_quantity : "0"
             HStack(alignment: .top, spacing: 5) {
                 MainText(content: quantity, fontSize: self.value_size, color: color, fontWeight: .semibold)
@@ -419,7 +418,7 @@ extension AddTransactionView{
                     .truncationMode(.tail)
                 MainText(content: self.currency == "Choose Currency" ? "XXX" : self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
             }
-            MainText(content: "\(convertToMoneyNumber(value: self.txn.asset_spot_price != "" ? self.currentAsset?.price : self.txn.asset_spot_price.toFloat())) per coin", fontSize: 13, color: .white, fontWeight: .semibold, style: .normal)
+            MainText(content: "\(convertToMoneyNumber(value: self.txn.asset_spot_price != "" ? self.currentAsset?.price : self.txn.asset_spot_price.toFloat())) per coin", fontSize: 13, color: self.font_color, fontWeight: .semibold, style: .normal)
         }.padding(.vertical,10)
         .frame(height: totalHeight * 0.15, alignment: .center)
     }
@@ -431,7 +430,7 @@ extension AddTransactionView{
         if #available(iOS 15.0, *) {
             date = self.date.formatted(date: .abbreviated, time: .shortened)
         }
-        return MainText(content: date, fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
+        return MainText(content: date, fontSize: 15, color: self.font_color, fontWeight: .semibold, style: .normal)
             .blobify(color: AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .date)
@@ -443,24 +442,24 @@ extension AddTransactionView{
     
     @ViewBuilder func choosenSideView(w:CGFloat) -> some View{
         if self.showModal == .spot_price{
-            MainText(content: "$\(self.txn.asset_spot_price)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
+            MainText(content: "$\(self.txn.asset_spot_price)", fontSize: 30, color: self.txn.fee != "0" ? self.font_color : .gray, fontWeight: .semibold)
             self.numPad(w: w)
         }else if self.showModal == .fee{
-            MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? .white : .gray, fontWeight: .semibold)
+            MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? self.font_color : .gray, fontWeight: .semibold)
             self.numPad(w: w)
         }else if self.showModal == .date{
             DatePicker("", selection: $date, displayedComponents: [.date,.hourAndMinute])
                 .datePickerStyle(.automatic)
                 .labelsHidden()
         }else{
-            MainText(content: self.notification.innerText, fontSize: 12, color: .white, fontWeight: .semibold)
+            MainText(content: self.notification.innerText, fontSize: 12, color: self.font_color, fontWeight: .semibold)
         }
     }
     
     
     var spotPriceView:some View{
         let spot_price = self.txn.asset_spot_price
-        return MainText(content: "Spot Price : $\(spot_price == "" ? "0" : spot_price)", fontSize: 15, color: .white, fontWeight: .semibold, style: .normal)
+        return MainText(content: "Spot Price : $\(spot_price == "" ? "0" : spot_price)", fontSize: 15, color: self.font_color, fontWeight: .semibold, style: .normal)
             .blobify(color: spot_price == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .spot_price)
@@ -473,7 +472,7 @@ extension AddTransactionView{
     
     var feeButton:some View{
         let fee_str = self.txn.fee
-        return MainText(content: "Fee: $\(fee_str == "" ? "0" : fee_str)", fontSize: 15,color: .white, fontWeight: .semibold)
+        return MainText(content: "Fee: $\(fee_str == "" ? "0" : fee_str)", fontSize: 15,color: self.font_color, fontWeight: .semibold)
             .blobify(color: fee_str == "0" || fee_str == "" ? AnyView(Color.clear) : AnyView(BlurView(style: .dark)))
             .buttonify {
                 self.updateModal(type: .fee)
@@ -510,7 +509,7 @@ struct AddTxnMainView:View{
     var body: some View{
         ZStack(alignment: .center) {
 //            mainBGView
-            Color.mainBGColor
+            mainBGView
             AddTransactionView(currentAsset: asset, curr_str: self.currency)
         }.edgesIgnoringSafeArea(.top).frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)

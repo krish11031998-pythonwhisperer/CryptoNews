@@ -17,7 +17,14 @@ struct WatchedAssets: View {
     
     
     var views:[AnyView]{
-        return self.currencies.map({AnyView(PriceCard(currency: $0,size: cardSize, alternativeView: true))})
+        
+        func viewGen(str:String) -> AnyView{
+            return AnyView(AsyncContainer(size: cardSize, axis: .horizontal) {
+                PriceCard(currency: str,size: cardSize, alternativeView: true)
+            })
+        }
+        
+        return self.currencies.map({viewGen(str: $0)})
     }
     
     var body: some View {

@@ -13,6 +13,12 @@ enum PostCardType{
     case News
 }
 
+enum PostCardBG{
+    case light
+    case dark
+}
+
+
 struct PostCard: View {
     @EnvironmentObject var context:ContextData
     var cardType:PostCardType
@@ -21,13 +27,25 @@ struct PostCard: View {
     var font_color:Color
     var const_size:Bool
     var isButton:Bool
-    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,font_color:Color = .white,const_size:Bool = false,isButton:Bool = true){
+    var bg:PostCardBG
+    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,bg:PostCardBG = .dark,font_color:Color? = nil,const_size:Bool = false,isButton:Bool = true){
         self.cardType = cardType
         self.data = data
         self.size = size
-        self.font_color = font_color
+        self.bg = bg
+        self.font_color = font_color ?? (bg == .dark ? Color.white : Color.black)
         self.const_size = const_size
         self.isButton = isButton
+    }
+    
+    
+    @ViewBuilder var bgView:some View{
+        if self.bg == .dark{
+            mainBGView
+        }else{
+            mainLightBGView
+        }
+        
     }
     
     var card:some View{
@@ -36,8 +54,9 @@ struct PostCard: View {
         
         let view =
         ZStack(alignment: .bottom) {
-            Color.mainBGColor.frame(width: size.width, height: size.height * 0.15, alignment: .center)
-            BlurView(style: .dark)
+            self.bgView
+//                .frame(width: size.width, height: size.height, alignment: .center)
+//            BlurView(style: .dark)
             VStack(alignment: .leading, spacing: 10) {
                 self.Header(size: .init(width: w, height: h * 0.1))
                 if self.data.link?.isImgURLStr() ?? false{
@@ -146,7 +165,7 @@ extension PostCard{
         let url = _url.first
         
         
-        return MainText(content: content, fontSize: 14, color: .white,fontWeight: .regular,style: .heading)
+        return MainText(content: content, fontSize: 14, color: self.font_color,fontWeight: .regular,style: .heading)
             .multilineTextAlignment(.leading)
             .padding(.vertical,5)
             .frame(width: w, alignment: .leading)
@@ -170,7 +189,7 @@ extension PostCard{
                     let color = sentiment > 3 ? Color.green : sentiment < 3 ? Color.red : Color.gray
                     let emoji = sentiment > 3 ? "😁" : sentiment < 3 ? "😓" : "😐"
                     HStack(alignment: .center, spacing: 2.5) {
-                        MainText(content: "\(emoji) ", fontSize: 12,color: .white)
+                        MainText(content: "\(emoji) ", fontSize: 12,color: self.font_color)
                         MainText(content: String(format: "%.1f", sentiment), fontSize: 12, color: .white)
                     }.padding(7.5)
                     .padding(.horizontal,2.5)

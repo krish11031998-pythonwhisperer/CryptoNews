@@ -35,10 +35,10 @@ extension CurrencyFeed{
                     NewsSectionMain(currency: currency).padding(.vertical,10)
                     LatestTweets(currency: currency,type: .Influential)
                 }
-            }
+            }.frame(width: totalWidth, height: totalHeight * 1.25, alignment: .center)
             
         }else{
-            Color.clear
+            Color.clear.frame(width: totalWidth, height: totalHeight * 1.25, alignment: .center)
         }
     }
 
