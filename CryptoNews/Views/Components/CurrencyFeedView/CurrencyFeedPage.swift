@@ -37,7 +37,7 @@ struct CurrencyFeedPage: View {
                 if let data = data as? AssetNewsData{
                     if self.type == .feed{
                         let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                        PostCard(cardType: cardType, data: data, size: .init(width: width, height: totalHeight * 0.3), font_color: .white, const_size: false)
+                        PostCard(cardType: cardType, data: data, size: .init(width: width, height: totalHeight * 0.3), const_size: false)
                     }else if self.type == .news{
                         NewsStandCard(news: data)
                     }

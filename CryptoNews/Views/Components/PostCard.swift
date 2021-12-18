@@ -48,6 +48,21 @@ struct PostCard: View {
         
     }
     
+    @ViewBuilder func body(w:CGFloat,h:CGFloat) -> some View{
+        if self.data.link?.isImgURLStr() ?? false{
+            ImageView(url: self.data.link, width: w, height: h * 0.8 - 40, contentMode: .fill, alignment: .center)
+                .clipShape(RoundedRectangle(cornerRadius: 15))
+                .overlay(
+                    VStack(alignment: .leading, spacing: 10){
+                        Spacer()
+                        self.Body(size: .init(width: w - 20, height: (h * 0.6) - 20))
+                    }.padding(10)
+                )
+        }else{
+            self.Body(size: .init(width: w, height: (h * 0.8) - 40))
+        }
+    }
+    
     var card:some View{
         let w = size.width - 20
         let h = size.height - 20
@@ -55,22 +70,9 @@ struct PostCard: View {
         let view =
         ZStack(alignment: .bottom) {
             self.bgView
-//                .frame(width: size.width, height: size.height, alignment: .center)
-//            BlurView(style: .dark)
             VStack(alignment: .leading, spacing: 10) {
                 self.Header(size: .init(width: w, height: h * 0.1))
-                if self.data.link?.isImgURLStr() ?? false{
-                    ImageView(url: self.data.link, width: w, height: h * 0.8 - 40, contentMode: .fill, alignment: .center)
-                        .clipShape(RoundedRectangle(cornerRadius: 15))
-                        .overlay(
-                            VStack(alignment: .leading, spacing: 10){
-                                Spacer()
-                                self.Body(size: .init(width: w - 20, height: (h * 0.6) - 20))
-                            }.padding(10)
-                        )
-                }else{
-                    self.Body(size: .init(width: w, height: (h * 0.8) - 40))
-                }
+                self.body(w: w, h: h)
                 Spacer(minLength: 0)
                 Divider().frame(width: w, alignment: .center)
                 self.Footer(data: data, size: .init(width: w, height: h * 0.1))
@@ -78,7 +80,7 @@ struct PostCard: View {
         }
         .frame(width: size.width, alignment: .center)
         .aspectRatio(contentMode: .fill)
-        .frame(minHeight: self.const_size ? size.height : 0)
+        .frame(minHeight: self.const_size ? size.height : 0,maxHeight: self.size.height)
         .clipContent(clipping: .roundClipping)
         .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 0)
         

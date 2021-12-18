@@ -141,7 +141,7 @@ extension CurrencyDetailView{
                     NewsStandCard(news: data,size:.init(width: size.width, height: 200))
                 }else{
                     let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                    PostCard(cardType: cardType, data: data, size: self.size,bg: .light, font_color: .white, const_size: false)
+                    PostCard(cardType: cardType, data: data, size: self.size,bg: .light, const_size: false)
                 }
 
             }
