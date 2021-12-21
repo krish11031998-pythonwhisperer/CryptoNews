@@ -139,7 +139,7 @@ extension PostCard{
                 ImageView(url: data.profile_image, width: h, height: h, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
                     .padding(10)
-                    .background(BlurView(style: .light).clipContent(clipping: .circleClipping))
+//                    .background(BlurView(style: .light).clipContent(clipping: .circleClipping))
                 VStack(alignment: .leading, spacing: 5) {
                     MainText(content: self.cardType == .Reddit ?  "/\(data.subreddit ?? "Subreddit")" : "@\(data.twitter_screen_name ?? "Tweet")", fontSize: 12.5,color: font_color,fontWeight: .semibold)
                     MainText(content: "\(Date(timeIntervalSince1970: .init(data.time ?? 0)).stringDate())", fontSize: 10, color: .gray, fontWeight: .regular)

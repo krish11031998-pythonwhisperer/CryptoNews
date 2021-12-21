@@ -12,13 +12,9 @@ struct CurrencyFeed: View {
     @State var currencyIdx:Int = 1
     
     var body: some View {
-//        ForEach(Array(currencies.enumerated()), id:\.offset) { _currency in
-//            self.CurrencyFeedEl(_currency.element)
-//        }
         Container(heading: "Latest Feed", width: totalWidth, ignoreSides: true) { _ in
             NewsSectionMain(currencies: self.currencies,limit: 15).padding(.vertical,10)
         }
-        
     }
 }
 

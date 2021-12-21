@@ -9,10 +9,11 @@ import Foundation
 
 
 class CoinRankCoinsAPI:CoinRankAPI{
-    @Published var coins:CoinsData = .init()
+    
+    @Published var coins:CoinsData? = nil
     var queryItems:[URLQueryItem] = []
     
-    init(timePeriod:String = "3h",symbols:[String]? = nil,uuids:[String]? = nil,tags:[String]? = nil,limit:Int? = nil){
+    init(timePeriod:String = "24h",symbols:[String]? = nil,uuids:[String]? = nil,tags:[String]? = nil,limit:Int? = nil){
         super.init()
         self.parseQueryItems(key: "timePeriod", query: timePeriod)
         self.parseQueryItems(key: "symbols", query: symbols as Any)
@@ -34,7 +35,10 @@ class CoinRankCoinsAPI:CoinRankAPI{
             return
         }
         
-        self.queryItems = finalQuery
+//        self.queryItems.append(contentsOf: finalQuery)
+
+        self.queryItems.append(contentsOf: finalQuery)
+
     }
     
     var request:URLRequest?{
@@ -44,9 +48,11 @@ class CoinRankCoinsAPI:CoinRankAPI{
     
     
     override func parseData(url: URL, data: Data) {
+        print("(DEBUG) Got CoinRank Data !")
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(CoinsData.self, from: data)
+            print("(DEBUG) Parsed CoinRank Data !")
             DispatchQueue.main.async {
                 self.coins = res
                 if self.loading{
@@ -60,6 +66,7 @@ class CoinRankCoinsAPI:CoinRankAPI{
     
     func getCoinsData(){
         guard let request = request else {return}
+//        self.getData(request: request)
         self.getData(request: request)
     }
     

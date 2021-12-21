@@ -114,6 +114,29 @@ class DAPI:ObservableObject,DataParsingProtocol{
         }
     }
     
+    func getData(request:URLRequest?){
+        if !self.loading{
+            DispatchQueue.main.async {
+                self.loading = true
+            }
+        }
+        guard let request = request, let url = request.url else {return}
+        if let data = DataCache.shared[url]{
+            DispatchQueue.main.async {
+                self.loading = false
+                self.parseData(url: url, data: data)
+            }
+        }else{
+            URLSession.shared.dataTaskPublisher(for: request)
+                .receive(on: DispatchQueue.main)
+                .tryMap(self.checkOutput(output:))
+                .sink(receiveCompletion: { _ in }, receiveValue: { data in
+                    self.parseData(url: url, data: data)
+                })
+                .store(in: &cancellable)
+        }
+    }
+    
     
     func getData(_url:URL?,completion:@escaping (Data)->Void){
         if !self.loading{

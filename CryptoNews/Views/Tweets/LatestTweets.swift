@@ -75,7 +75,7 @@ extension LatestTweets{
         if !self.tweetsAPI.FeedData.isEmpty{
             FancyHScroll(data: self.topTweets, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { data in
                 if let data = data as? AssetNewsData{
-                    PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height),bg: .light, const_size: true,isButton: true)
+                    PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height),bg: .light, const_size: true,isButton: false)
                 }else{
                     Color.clear.frame(width: size.width, height: size.height, alignment: .center)
                 }

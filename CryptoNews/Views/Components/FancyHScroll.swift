@@ -64,9 +64,7 @@ struct FancyHScroll<T:View>: View {
                 }
         }else{
             view
-                .buttonify {
-                    self.onTap?(self.SP.swiped)
-                }
+                
         }
     }
     
@@ -153,5 +151,17 @@ struct FancyHScroll<T:View>: View {
         })
         .onChange(of: self.SP.swiped, perform: self.resetTimer)
        
+    }
+}
+
+
+struct FancyScrollViewPreview:PreviewProvider{
+    
+    static var previews: some View{
+        FancyHScroll(data: Array(0...10), size: CardSize.slender,scrollable: true) { idx in
+            Container(heading: "\(idx)", width: CardSize.slender.width, ignoreSides: false, horizontalPadding: 10, verticalPadding: 10) { _ in
+                MainText(content: "\(idx)", fontSize: 15)
+            }.basicCard(size: CardSize.slender)
+        }
     }
 }

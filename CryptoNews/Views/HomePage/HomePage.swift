@@ -22,17 +22,10 @@ struct HomePage: View {
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
             if self.context.trackedAssets.count > 0{
-                TrackedAssetView(asset: self.context.trackedAssets)
+                AllAssetView(type: "tracked", currencies: self.context.trackedAssets)
             }
-            
-            if self.context.watchedAssets.count > 0{
-                WatchedAssets(currencies: self.context.watchedAssets)
-            }             
-            CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: false)
-//            CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
-//            CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
-            LatestTweets(header:"Trending Tweets",currencies:self.userFavAsset,type:.Influential,limit: 15)
-            CurrencyFeed()
+            LatestTweets(header:"Trending Tweets",currencies:self.userFavAsset,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
+            CurrencyFeed().asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             Spacer(minLength: 200)
         }.zIndex(1)
     }
