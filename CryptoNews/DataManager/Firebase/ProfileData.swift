@@ -75,7 +75,7 @@ class ProfileData:Codable,Loopable{
     }
 }
 
-class ProfileAPI:FirebaseAPI,ObservableObject{
+class ProfileAPI:FirebaseAPI{
     
     @Published var user:ProfileData? = nil
     

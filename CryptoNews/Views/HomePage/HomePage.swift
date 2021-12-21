@@ -27,12 +27,11 @@ struct HomePage: View {
             
             if self.context.watchedAssets.count > 0{
                 WatchedAssets(currencies: self.context.watchedAssets)
-            }
-            
+            }             
             CryptoMarketGen(heading: "Popular Coins", srt: "d", order: .desc, leadingPadding: false)
 //            CryptoMarketGen(heading: "Biggest Gainer", srt: "pc", order: .desc, cardSize: CardSize.small)
 //            CryptoMarketGen(heading: "Biggest Losers", srt: "pc", order: .incr, cardSize: CardSize.small)
-//            LatestTweets(header:"Trending Tweets",currency: "all",type:.Influential,limit: 10)
+            LatestTweets(header:"Trending Tweets",currencies:self.userFavAsset,type:.Influential,limit: 15)
             CurrencyFeed()
             Spacer(minLength: 200)
         }.zIndex(1)
@@ -47,6 +46,10 @@ struct HomePage: View {
 }
 
 extension HomePage{
+    
+    var userFavAsset:[String]{
+        return self.context.trackedAssets + self.context.watchedAssets
+    }
     
     func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
         AsyncContainer(size: CardSize.slender) {

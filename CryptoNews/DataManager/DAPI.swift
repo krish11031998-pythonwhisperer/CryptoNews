@@ -133,7 +133,6 @@ class DAPI:ObservableObject,DataParsingProtocol{
                 .receive(on: DispatchQueue.main)
                 .tryMap(self.checkOutput(output:))
                 .sink(receiveCompletion: { _ in }, receiveValue: { data in
-//                    self.parseData(url: url, data: data)
                     DataCache.shared[url] = data
                     completion(data)
                 })

@@ -20,7 +20,6 @@ protocol CompletionHandler{
 class FIRStorageManager:NSObject{
     
     static var shared:FIRStorageManager = FIRStorageManager()
-    
     func uploadTask(data:Data,path:String,handler:@escaping (String) -> Void){
         let storageRef = Storage.storage().reference()
         var Ref = storageRef.child(path)
@@ -48,9 +47,10 @@ class FIRStorageManager:NSObject{
     }
 }
 
-class FirebaseAPI:CompletionHandler{
+class FirebaseAPI:ObservableObject,CompletionHandler{
     
     var collection:String
+    @Published var loading:Bool = false
     
     init(collection:String){
         self.collection = collection

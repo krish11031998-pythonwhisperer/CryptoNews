@@ -28,13 +28,12 @@ struct CryptoNewsApp: App {
         ZStack(alignment: .center) {
             Color.black.opacity(0.5)
             ProgressView()
-        }
+        }.ignoresSafeArea()
     }
     
     func onChangeUser(_ uid:String?){
         if let uid = uid, self.loading{
             DispatchQueue.main.async {
-                self.loading = false
                 self.context.transactionAPI.loadTransaction(uuid: uid)
             }
         }
@@ -60,6 +59,12 @@ struct CryptoNewsApp: App {
             }
         }.onAppear(perform: self.onAppear)
         .onChange(of: self.context.user.user?.uid,perform: self.onChangeUser(_:))
+        .onChange(of: self.context.transactionAPI.loading) { load in
+            if !load && self.loading && self.context.loggedIn != .signedIn{
+                self.loading.toggle()
+                self.context.loggedIn = .signedIn
+            }
+        }
     }
     
     var body: some Scene {

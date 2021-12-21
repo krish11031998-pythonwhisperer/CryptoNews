@@ -69,7 +69,7 @@ struct PostCard: View {
         
         let view =
         ZStack(alignment: .bottom) {
-            self.bgView
+//            self.bgView
             VStack(alignment: .leading, spacing: 10) {
                 self.Header(size: .init(width: w, height: h * 0.1))
                 self.body(w: w, h: h)
@@ -79,6 +79,7 @@ struct PostCard: View {
             }.padding()
         }
         .frame(width: size.width, alignment: .center)
+        .background(self.bgView)
         .aspectRatio(contentMode: .fill)
         .frame(minHeight: self.const_size ? size.height : 0,maxHeight: self.size.height)
         .clipContent(clipping: .roundClipping)

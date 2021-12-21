@@ -19,13 +19,11 @@ extension Date{
 struct LatestTweets: View {
     @EnvironmentObject var context:ContextData
     @StateObject var tweetsAPI:FeedAPI
-    var currency:String
     let font_color:Color = .black
     var heading:String? = nil
-    init(header:String? = nil,currency:String = "all",type:FeedType = .Chronological, limit:Int = 5){
-        self.currency = currency
+    init(header:String? = nil,currencies:[String] = ["BTC","LTC","DOGE"] ,type:FeedType = .Chronological, limit:Int = 5){
         self.heading = header
-        self._tweetsAPI = .init(wrappedValue: .init(currency: currency == "all" ? ["BTC","LTC","DOGE"] : [currency], sources: ["twitter"], type: type,limit:limit))
+        self._tweetsAPI = .init(wrappedValue: .init(currency: currencies, sources: ["twitter"], type: type,limit:limit))
     }
     
     func onAppear(){
@@ -39,6 +37,12 @@ struct LatestTweets: View {
     var body: some View {
         Container(heading:self.heading,ignoreSides: true) { w in
             self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
+            if !self.tweets.isEmpty{
+                ForEach(Array(self.moreTweets.enumerated()), id:\.offset) { _tweet in
+                    PostCard(cardType: .Tweet, data: _tweet.element, size: .init(width: w, height: totalHeight * 0.4), bg: .dark, const_size: false, isButton: true)
+                }
+                .frame(width: totalWidth, alignment: .center)
+            }
         }.onAppear(perform: self.onAppear)
         
     }
@@ -59,12 +63,19 @@ extension LatestTweets{
             }
         }
     }
+    var topTweets:[AssetNewsData]{
+        return Array(self.tweets[0..<(self.tweets.count - 5)])
+    }
+    
+    var moreTweets:[AssetNewsData]{
+        return Array(self.tweets[(self.tweets.count - 5)...])
+    }
     
     @ViewBuilder func TweetsFeed(size:CGSize) -> some View{
         if !self.tweetsAPI.FeedData.isEmpty{
-            FancyHScroll(data: self.tweetsAPI.FeedData, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { data in
+            FancyHScroll(data: self.topTweets, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { data in
                 if let data = data as? AssetNewsData{
-                    PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height),bg: .light, const_size: true,isButton: false)
+                    PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height),bg: .light, const_size: true,isButton: true)
                 }else{
                     Color.clear.frame(width: size.width, height: size.height, alignment: .center)
                 }

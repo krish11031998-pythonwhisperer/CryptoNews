@@ -10,7 +10,7 @@ import FirebaseAuth
 import Firebase
 import FirebaseFirestore
 
-class CrybPostAPI:FirebaseAPI,ObservableObject{
+class CrybPostAPI:FirebaseAPI{
     @Published var posts:[CrybPostData] = []
     
     init(){

@@ -71,7 +71,6 @@ var mainBGView: some View {
         Color.black
         Color.mainBGColor.frame(width: totalWidth, height: totalHeight * 0.25)
         BlurView(style: .dark)
-        
     }
 }
 

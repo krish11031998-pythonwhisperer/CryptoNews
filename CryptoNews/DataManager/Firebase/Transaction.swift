@@ -86,8 +86,9 @@ struct Transaction:Codable{
 }
 
 
-class TransactionAPI:FirebaseAPI,ObservableObject{
+class TransactionAPI:FirebaseAPI{
     @Published var transactions:[Transaction] = []
+    
     init(){
         super.init(collection: "transactions")
     }
@@ -97,6 +98,9 @@ class TransactionAPI:FirebaseAPI,ObservableObject{
     override func parseData(data: [QueryDocumentSnapshot]) {
         DispatchQueue.main.async {
             self.transactions = data.compactMap({Transaction.parseFromQueryData($0)})
+            if !self.loading{
+                self.loading.toggle()
+            }
         }
     }
         
@@ -105,6 +109,12 @@ class TransactionAPI:FirebaseAPI,ObservableObject{
     }
     
     func loadTransactions(uuid:String,currency:String){
+        DispatchQueue.main.async {
+            if !self.loading{
+                self.loading.toggle()
+            }
+            
+        }
         self.db
             .collection("transactions")
             .whereField("uid", isEqualTo: uuid)
@@ -119,6 +129,11 @@ class TransactionAPI:FirebaseAPI,ObservableObject{
     }
     
     func loadTransaction(uuid:String? = nil){
+        DispatchQueue.main.async {
+            if !self.loading{
+                self.loading.toggle()
+            }
+        }
         if let uuid = uuid{
             self.loadData(val: uuid)
         }else{

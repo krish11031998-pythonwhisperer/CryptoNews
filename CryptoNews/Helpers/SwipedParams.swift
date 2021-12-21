@@ -80,8 +80,6 @@ class swipeParams:ObservableObject,Equatable{
                     val = value < 0 && self.swiped < self.end ? 1 : value > 0 && self.swiped > self.start ? -1 : 0
             }
             self.updateSwipe(val: val)
-        }else if abs(value) <= 5 {
-            self.onTap?(self.swiped)
         }
         
         withAnimation(.easeInOut) {
