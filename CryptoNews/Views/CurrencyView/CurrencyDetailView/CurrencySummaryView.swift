@@ -9,17 +9,17 @@ import SwiftUI
 
 
 struct CurrencySummaryView: View {
-    var currency:AssetData
+//    var currency:AssetData
+    var currency:CoinData
     var size:CGSize
     
-    init(currency:AssetData,size:CGSize){
+    init(currency:CoinData,size:CGSize){
         self.currency = currency
         self.size = size
     }
     var values:[String:String]{
-        let market_dom = convertToDecimals(value: self.currency.market_dominance)
-        return ["Market Cap":convertToMoneyNumber(value: self.currency.market_cap),"Volume 24h":convertToDecimals(value: self.currency.volume_24h),"Rank" :
-                    String(self.currency.market_cap_rank ?? 0),"Max Supply":self.currency.max_supply ?? "0","Market Dominance": "\(market_dom)%","Volume":convertToDecimals(value: self.currency.volume)]
+        return ["Market Cap":self.currency.marketCap ?? "","Volume 24h":Float(self.currency._24hVolume ?? "")?.ToDecimals() ?? "","Rank" :
+                    String(self.currency.rank ?? 0),"Max Supply":self.currency.Supply.total ?? "0","All Time High": Float(self.currency.allTimeHigh?.price ?? "")?.ToMoney() ?? ""]
     }
     
     var col_w:CGFloat{

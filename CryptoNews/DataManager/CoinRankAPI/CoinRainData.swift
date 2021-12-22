@@ -10,11 +10,36 @@ import Foundation
 
 class CoinData:Codable{
     
+    class CoinSupply:Codable{
+        var confirmed:Bool?
+        var total:String?
+        var circulating:String?
+    }
+    
+    class CoinLink:Codable{
+        var name:String?
+        var type:String?
+        var url:String?
+    }
+    
+    class CoinAllTimeHigh:Codable{
+        var price:String?
+        var timestamp:Double
+    }
+
     var uuid:String?
     var symbol:String?
     var name:String?
+    var description:String?
     var color:String?
     var iconUrl:String?
+    var websiteUrl:String?
+    var supply:CoinSupply?
+    var links:[CoinLink?]?
+    var _24hVolume:String?
+    var allTimeHigh:CoinAllTimeHigh?
+    var numberOfMarkets:Int?
+    var numberOfExchanges:Int?
     var marketCap:String?
     var price:String?
     var tier:Int?
@@ -24,6 +49,22 @@ class CoinData:Codable{
     var lowVolume:Bool?
     var coinrankingUrl:String?
     var btcPrice:String?
+    
+    var WebsiteUrl:String{
+        return self.websiteUrl ?? ""
+    }
+    
+    var Supply:CoinSupply{
+        return self.supply ?? .init()
+    }
+    
+    var Links:[CoinLink]{
+        return self.links?.compactMap({$0}) ?? []
+    }
+    
+    var Description:String{
+        return self.description ?? ""
+    }
     
     var Symbol:String{
         return self.symbol ?? "XXX"
@@ -55,6 +96,7 @@ class CoinsData:Codable{
     
     class InnerCoinsData:Codable{
         var coins:[CoinData]?
+        var coin:CoinData?
     }
     
     var data:InnerCoinsData?

@@ -15,30 +15,12 @@ class CoinRankCoinsAPI:CoinRankAPI{
     
     init(timePeriod:String = "24h",symbols:[String]? = nil,uuids:[String]? = nil,tags:[String]? = nil,limit:Int? = nil){
         super.init()
-        self.parseQueryItems(key: "timePeriod", query: timePeriod)
-        self.parseQueryItems(key: "symbols", query: symbols as Any)
-        self.parseQueryItems(key: "uuids", query: uuids as Any)
-        self.parseQueryItems(key: "tags", query: tags as Any)
-        self.parseQueryItems(key: "limit", query: limit as Any)
-    }
-    
-    
-    func parseQueryItems(key:String,query:Any){
-        var finalQuery:[URLQueryItem] = []
-        if let value = query as? String{
-            finalQuery.append(.init(name: key, value: value))
-        }else if let values = query as? [String]{
-            finalQuery = values.compactMap({.init(name: "\(key)=", value: $0)})
-        }else if let value = query as? Int{
-            finalQuery.append(.init(name: key, value: "\(value)"))
-        }else{
-            return
-        }
         
-//        self.queryItems.append(contentsOf: finalQuery)
-
-        self.queryItems.append(contentsOf: finalQuery)
-
+        self.parseQueryItems(queryItems: &queryItems,key: "timePeriod", query: timePeriod)
+        self.parseQueryItems(queryItems: &queryItems,key: "symbols", query: symbols as Any)
+        self.parseQueryItems(queryItems: &queryItems,key: "uuids", query: uuids as Any)
+        self.parseQueryItems(queryItems: &queryItems,key: "tags", query: tags as Any)
+        self.parseQueryItems(queryItems: &queryItems,key: "limit", query: limit as Any)
     }
     
     var request:URLRequest?{

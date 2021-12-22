@@ -121,13 +121,11 @@ struct PriceCard: View {
     
     var body: some View {
         self.mainBody
-//            .buttonify {
-//                DispatchQueue.main.async {
-//                    self.context.selectedCurrency = self.asset_api.data
-//                }
-//            }
-//            .onAppear(perform: self.onAppear)
-//            .onReceive(self.asset_api.$data, perform: self.parsePrices(data:))
+            .buttonify {
+                DispatchQueue.main.async {
+                    self.context.selectedCurrency = self.coin
+                }
+            }
     }
 }
 

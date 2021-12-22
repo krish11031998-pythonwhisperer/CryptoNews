@@ -26,6 +26,24 @@ class CoinRankAPI:DAPI{
         return ["x-access-token" : "coinrankinge9c275248410900dc5de5ec0cde224caa8b55cfe7bc4eb2f"]
     }
     
+    func parseQueryItems(queryItems: inout[URLQueryItem],key:String,query:Any){
+        var finalQuery:[URLQueryItem] = []
+        if let value = query as? String{
+            finalQuery.append(.init(name: key, value: value))
+        }else if let values = query as? [String]{
+            finalQuery = values.compactMap({.init(name: "\(key)=", value: $0)})
+        }else if let value = query as? Int{
+            finalQuery.append(.init(name: key, value: "\(value)"))
+        }else{
+            return
+        }
+        
+//        self.queryItems.append(contentsOf: finalQuery)
+
+        queryItems.append(contentsOf: finalQuery)
+
+    }
+    
     func requestBuilder(path:String? = nil,queries:[URLQueryItem]?) -> URLRequest?{
         var urlComp = self.baseComponent
         if let path = path {

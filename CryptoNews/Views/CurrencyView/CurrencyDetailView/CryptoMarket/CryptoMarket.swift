@@ -38,13 +38,14 @@ struct CryptoMarket: View {
     
    func ViewElement(data:CoinMarketData,idx:Int) -> AnyView{
        return AnyView(CryptoMarketCard(data: data,size: self.size, rank: idx + 1)
-            .buttonify {
-                let asset_api = AssetAPI.shared(currency: data.s ?? "BTC")
-                asset_api.getAssetInfo { data in
-                    guard let safeData = data else {return}
-                    self.context.selectedCurrency = safeData
-                }
-            })
+                      )
+//            .buttonify {
+//                let asset_api = AssetAPI.shared(currency: data.s ?? "BTC")
+//                asset_api.getAssetInfo { data in
+//                    guard let safeData = data else {return}
+//                    self.context.selectedCurrency = safeData
+//                }
+//            })
     }
     
     var body: some View {

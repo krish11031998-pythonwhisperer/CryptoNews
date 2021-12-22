@@ -34,12 +34,10 @@ extension String{
             return res_str
         }
     }
-    
+
     func snakeCase() -> String{
         let text = self
-//        let finalText = text.components(separatedBy: " ").reduce("") { (res, str) -> String in
-//            return res == "" ? str.lowercased() : res + "_" + str.lowercased()
-//        }
+
         let finalText = text.components(separatedBy: " ").reduce("") { $0 == "" ? $1.lowercased() : $0 + "_" + $1.lowercased()}
         return finalText
     }

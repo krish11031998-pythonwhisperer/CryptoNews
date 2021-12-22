@@ -84,7 +84,7 @@ extension CrybseView{
     }
     
     var hoverViewEnabled:Bool{
-        return self.context.selectedNews != nil || (self.context.addTxn || self.context.tab == .txn) || self.context.selectedCurrency != nil || self.context.selectedPost != nil
+        return self.context.selectedNews != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedCurrency != nil || self.context.selectedPost != nil
     }
     
     @ViewBuilder var hoverView:some View{
@@ -100,8 +100,17 @@ extension CrybseView{
                 .zIndex(3)
         }
         
-        if self.context.selectedCurrency != nil || self.context.selectedSymbol != nil{
-            CurrencyView(name: self.context.selectedSymbol, info: self.context.selectedCurrency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+        if self.context.selectedSymbol != nil{
+//            CurrencyView(name: self.context.selectedSymbol, info: self.context.selectedCurrency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+            CurrencyView(name: self.context.selectedSymbol, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+            .transition(.slideInOut)
+            .background(mainBGView)
+            .edgesIgnoringSafeArea(.all)
+            .zIndex(2)
+        }
+        
+        if let currency = self.context.selectedCurrency{
+            CurrencyView(info: currency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             .transition(.slideInOut)
             .background(mainBGView)
             .edgesIgnoringSafeArea(.all)

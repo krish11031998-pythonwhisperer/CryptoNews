@@ -17,8 +17,10 @@ enum CurrencyViewSection{
 
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
+//    @StateObject var coinAPI:CoinRankCoinsAPI = .init()
     var onClose:(()->Void)?
-    @State var currency:AssetData = .init()
+    @State var coinAPI:CoinRankCoinAPI
+    @State var currency:CoinData = .init()
     var size:CGSize = .init()
     @StateObject var asset_feed:FeedAPI
     var asset_info:AssetAPI
@@ -29,7 +31,7 @@ struct CurrencyView:View{
     
     init(
         name:String? = nil,
-        info:AssetData? = nil,
+        info:CoinData? = nil,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
@@ -42,20 +44,23 @@ struct CurrencyView:View{
         self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
         self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
         self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
+        self._coinAPI = .init(initialValue: .init(coin: info?.uuid ?? "", timePeriod: "24h"))
     }
     
     
     func onAppear(){
-        if self.currency.symbol == nil{
-            self.getAssetInfo()
-        }
-        
-        if self.asset_feed.FeedData.isEmpty{
-            self.asset_feed.getAssetInfo()
-        }
-        
-        if self.NAPI.FeedData.isEmpty{
-            self.NAPI.getAssetInfo()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
+            if self.coinAPI.coin == nil{
+                self.coinAPI.getCoin()
+            }
+            
+            if self.asset_feed.FeedData.isEmpty{
+                self.asset_feed.getAssetInfo()
+            }
+            
+            if self.NAPI.FeedData.isEmpty{
+                self.NAPI.getAssetInfo()
+            }
         }
     }
     
@@ -78,35 +83,20 @@ struct CurrencyView:View{
         }
     }
     
-    func getAssetInfo(){
-        print("(DEBUG) Fetching Data for asset")
-         self.asset_info.getUpdateAssetInfo(completion: self.onReceiveNewAssetInfo(asset:))
-    }
-
-    func onReceiveNewAssetInfo(asset:AssetData?){
-        guard let data = asset else {return}
+    
+    func onReceiveNewCoin(_ coin:CoinData?){
         DispatchQueue.main.async {
-            self.currency = data
-            self.refresh = false
-            print("(DEBUG): Updated the Asset Data!")
+            if let newCoin = coin{
+                self.currency.description = newCoin.description
+                self.currency.links = newCoin.links
+                self.currency.supply = newCoin.supply
+                self.currency.allTimeHigh = newCoin.allTimeHigh
+            }
+            if self.refresh{
+                self.refresh.toggle()
+            }
         }
     }
-    
-    func onReceiveNewAssetInfo(asset:AssetData?,fn:() -> Void){
-        guard let data = asset else {return}
-            self.currency = data
-            fn()
-            print("(DEBUG): Updated the Asset Data!")
-    }
-    
-    
-    func getAssetInfo(fn: @escaping () -> Void){
-        print("(DEBUG) Fetching Data for asset")
-        self.asset_info.getUpdateAssetInfo { data in
-            self.onReceiveNewAssetInfo(asset: data,fn: fn)
-        }
-    }
-    
     
     func reloadNewsFeed(idx:Int){
         if idx == self.NAPI.FeedData.count - 5{
@@ -126,7 +116,7 @@ struct CurrencyView:View{
     
     func feedView(w:CGFloat) -> some View{
         
-        LazyScrollView(data: self.asset_feed.FeedData.compactMap({$0 as Any})) { data in
+        LazyScrollView(data: self.asset_feed.FeedData.compactMap({$0 as Any}),embedScrollView: false) { data in
             if let data = data as? AssetNewsData{
                 let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                 PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
@@ -140,7 +130,7 @@ struct CurrencyView:View{
     }
     
     func newsView(w:CGFloat) -> some View{
-        LazyScrollView(data: self.NAPI.FeedData.compactMap({$0 as Any})) { data in
+        LazyScrollView(data: self.NAPI.FeedData.compactMap({$0 as Any}),embedScrollView: false) { data in
             if let news = data as? AssetNewsData{
                 NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
             }
@@ -180,12 +170,13 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
+            
             ScrollView(.vertical, showsIndicators: false) {
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
                     .refreshableView(refreshing: $refresh,width: size.width,hasToRender:self.context.selectedCurrency != nil)
                     .onChange(of: self.refresh) { refresh in
                         if self.refresh{
-                            self.getAssetInfo()
+                            self.coinAPI.refreshCoin()
                         }
                     }
             }
@@ -202,7 +193,7 @@ struct CurrencyView:View{
         }
         if self.showSection == .txns{
             HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency.symbol ?? "LTC", currencyCurrentPrice: self.currency.open ?? 0.0,width: w)
+                TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency.symbol ?? "LTC", currencyCurrentPrice: self.currency.Price,width: w)
             }
         }
         if self.showSection == .news{
@@ -219,6 +210,7 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
+        .onReceive(self.coinAPI.$coin,perform: self.onReceiveNewCoin(_:))
     }
 }
 

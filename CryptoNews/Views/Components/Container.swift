@@ -71,24 +71,19 @@ struct Container<T:View>: View {
         }
     }
     
-    var headingView: some View{
+    @ViewBuilder var headingView: some View{
         let heading = self.heading!
-        return Group{
-            HStack {
-                if let close = self.onClose{
-                    SystemButton(b_name: "xmark",action: close)
-                }
-                MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
-                Spacer()
-                if rightButton != nil{
-                    self.rightButton?()
-                }
+        HStack {
+            if let close = self.onClose{
+                SystemButton(b_name: "xmark",action: close)
             }
-            .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
-            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading).padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
- 
+            MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
+            Spacer()
+            if rightButton != nil{
+                self.rightButton?()
+            }
         }
-        
+        RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
     }
 
     @ViewBuilder var mainBody:some View{
@@ -96,7 +91,7 @@ struct Container<T:View>: View {
         if self.orientation == .vertical{
             VStack(alignment: .leading, spacing: 10) {
                 if self.heading != nil{
-                    self.headingView
+                    self.headingView.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
                 }else if self.onClose != nil{
                     self.onCloseView
                 }
@@ -105,7 +100,7 @@ struct Container<T:View>: View {
         }else if self.orientation == .horizontal{
             VStack(alignment: .leading, spacing: 10) {
                 if self.heading != nil{
-                    self.headingView
+                    self.headingView.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
                 }else if self.onClose != nil{
                     self.onCloseView
                 }

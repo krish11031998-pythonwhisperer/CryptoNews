@@ -79,6 +79,32 @@ class DAPI:ObservableObject,DataParsingProtocol{
         return uC
     }
     
+    func fetchDataRequest(url:URL? = nil,request:URLRequest? = nil,completion:((Data) -> Void)? = nil){
+        let publisher:URLSession.DataTaskPublisher
+        if let url = url {
+             publisher = URLSession.shared.dataTaskPublisher(for: url)
+        }else if let request = request{
+            publisher = URLSession.shared.dataTaskPublisher(for: request)
+        }else{
+            return
+        }
+        
+        publisher
+            .receive(on: DispatchQueue.main)
+            .tryMap(self.checkOutput(output:))
+            .sink(receiveCompletion: { _ in }, receiveValue: { data in
+                let url = request?.url ?? url ?? URL(string: "")!
+                if let safeCompletion = completion {
+                    self.CallCompletionHandler(url: url, data: data, completion: safeCompletion)
+                }else{
+                    self.parseData(url: url, data: data)
+                }
+                
+            })
+            .store(in: &cancellable)
+        
+    }
+    
     func updateInfo(_url:URL?,completion:@escaping ((Data) -> Void)){
         guard let url = _url else {return}
         URLSession.shared.dataTaskPublisher(for: url)
@@ -91,76 +117,42 @@ class DAPI:ObservableObject,DataParsingProtocol{
             .store(in: &cancellable)
     }
     
-    func getData(_url:URL?){
+    
+    func getData(_url:URL? = nil,request:URLRequest? = nil,completion:((Data) -> Void)? = nil){
         if !self.loading{
             DispatchQueue.main.async {
                 self.loading = true
             }
         }
-        guard let url = _url else {return}
-        if let data = DataCache.shared[url]{
-            DispatchQueue.main.async {
-                self.loading = false
-                self.parseData(url: url, data: data)
-            }
-        }else{
-            URLSession.shared.dataTaskPublisher(for: url)
-                .receive(on: DispatchQueue.main)
-                .tryMap(self.checkOutput(output:))
-                .sink(receiveCompletion: { _ in }, receiveValue: { data in
+        if let url = _url{
+            if let data = DataCache.shared[url]{
+                DispatchQueue.main.async {
+                    self.loading = false
                     self.parseData(url: url, data: data)
-                })
-                .store(in: &cancellable)
+                }
+            }else{
+                self.fetchDataRequest(url: url, completion: completion)
+            }
+            
+        }else if let url = request?.url{
+            if let data = DataCache.shared[url]{
+                DispatchQueue.main.async {
+                    self.loading = false
+                    self.parseData(url: url, data: data)
+                }
+            }else{
+                self.fetchDataRequest(request: request, completion: completion)
+            }
         }
     }
     
-    func getData(request:URLRequest?){
+    func refreshData(_url:URL? = nil,request:URLRequest? = nil,completion:((Data) -> Void)? = nil){
         if !self.loading{
             DispatchQueue.main.async {
                 self.loading = true
             }
         }
-        guard let request = request, let url = request.url else {return}
-        if let data = DataCache.shared[url]{
-            DispatchQueue.main.async {
-                self.loading = false
-                self.parseData(url: url, data: data)
-            }
-        }else{
-            URLSession.shared.dataTaskPublisher(for: request)
-                .receive(on: DispatchQueue.main)
-                .tryMap(self.checkOutput(output:))
-                .sink(receiveCompletion: { _ in }, receiveValue: { data in
-                    self.parseData(url: url, data: data)
-                })
-                .store(in: &cancellable)
-        }
-    }
-    
-    
-    func getData(_url:URL?,completion:@escaping (Data)->Void){
-        if !self.loading{
-            DispatchQueue.main.async {
-                self.loading = true
-            }
-        }
-        guard let url = _url else {return}
-        if let data = DataCache.shared[url]{
-            DispatchQueue.main.async {
-                self.loading = false
-            }
-            completion(data)
-        }else{
-
-            URLSession.shared.dataTaskPublisher(for: url)
-                .receive(on: DispatchQueue.main)
-                .tryMap(self.checkOutput(output:))
-                .sink(receiveCompletion: { _ in }, receiveValue: { data in
-                    DataCache.shared[url] = data
-                    completion(data)
-                })
-                .store(in: &cancellable)
-        }
+        self.fetchDataRequest(request: request, completion: completion)
     }
     
     
