@@ -6,6 +6,27 @@
 //
 
 import SwiftUI
+import UIKit
+import SVGKit
+
+struct StandardImage:ViewModifier{
+    var size:CGSize
+    var contentMode:ContentMode
+    
+    func body(content: Content) -> some View {
+        content
+            .aspectRatio(contentMode: self.contentMode)
+            .frame(width: self.size.width,height: self.size.height)
+            .imageSpring()
+    }
+}
+
+extension Image{
+    func standardImageView(size:CGSize,contentMode:ContentMode) -> some View{
+        return self.resizable().modifier(StandardImage(size: size, contentMode: contentMode))
+    }
+}
+
 struct ImageView:View{
     @State var image:UIImage?
     @StateObject var IMD:ImageDownloader = .init()
@@ -50,30 +71,49 @@ struct ImageView:View{
         return h
     }
     
+    var mainImg:UIImage?{
+        self.image ?? self.IMD.image
+    }
+    
+    
+    var imgSize:CGSize{
+        guard let mainImg = mainImg else {return .zero}
+        return .init(width: self.width, height: self.img_h(img: mainImg))
+    }
+    
+    @ViewBuilder var imgUIImageView:some View{
+        if let img = mainImg{
+            Image(uiImage: img)
+                .standardImageView(size: self.imgSize, contentMode: .fill)
+        }else{
+            Color.clear.frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
+        }
+    }
+    
+    @ViewBuilder var imgView:some View{
+        if let urlStr = self.url,let url = URL(string: urlStr),urlStr.contains("svg") {
+            SVGImage(url: url, size: self.imgSize)
+                .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
+//                .clipContent(clipping: self.clipping)
+        }else{
+            self.imgUIImageView
+        }
+    }
+    
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
-        let img =  self.image ?? self.IMD.image
-        let loading = self.image != nil ? false : self.IMD.loading
-        let h = self.img_h(img: img)
         return ZStack(alignment: .center) {
-            
             BlurView(style: .dark)
-            if let img = img{
-                Image(uiImage: img)
-                    .resizable()
-                    .aspectRatio(contentMode: self.contentMode)
-                    .frame(width: self.width,height: h)
-                    .imageSpring()
-            }
+            self.imgView
             if self.heading != nil{
-                lightbottomShadow.frame(width: self.width, height:h, alignment: .center)
-                self.overlayView(h: h)
+                lightbottomShadow.frame(width: self.width, height: self.imgSize.height, alignment: .center)
+                self.overlayView(h: self.imgSize.height)
             }
             if self.isHidden && !self.IMD.loading{
                 BlurView(style: .regular)
             }
-        }.frame(width: self.width,height: h)
+        }.frame(width: self.imgSize.width,height: self.imgSize.height)
         .onAppear {
-            if let url = self.url , self.IMD.image == nil{
+            if let url = self.url , !url.contains("svg") && self.IMD.image == nil{
                 self.IMD.getImage(url: url)
             }
         }
@@ -116,4 +156,26 @@ struct ImageView:View{
         self.imgView().clipContent(clipping: clipping)
     }
     
+}
+
+
+struct SVGImage:UIViewRepresentable{
+    
+    var url:URL
+    var size:CGSize
+    
+    init(url:URL,size:CGSize){
+        self.url  = url
+        self.size = size
+    }
+    
+    func makeUIView(context: Context) -> SVGKFastImageView {
+        let svgView = SVGKImage(contentsOf:  self.url)
+        return SVGKFastImageView(svgkImage: svgView ?? SVGKImage())
+    }
+    
+    func updateUIView(_ uiView: SVGKFastImageView, context: Context) {
+         uiView.contentMode = .scaleAspectFit
+         uiView.image.size = size
+     }
 }

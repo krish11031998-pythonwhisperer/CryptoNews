@@ -45,7 +45,8 @@ struct PriceCard: View {
         let fontColor:Color = self.alternativeView ? .black : .white
         return HStack(alignment: .center, spacing: 10){
             
-            CurrencySymbolView(url: self.coin.iconUrl, size: .small, width: size.width * 0.2)
+//            CurrencySymbolView(url: self.coin.iconUrl, size: .small, width: size.width * 0.2)
+            ImageView(url: self.coin.iconUrl, width: size.width * 0.2, height: size.width * 0.2, contentMode: .fill, alignment: .center, clipping: .circleClipping)
             Spacer()
             VStack(alignment: .trailing, spacing: 2.5) {
                 MainText(content: percentage, fontSize: 10, color: fontColor, fontWeight: .semibold)

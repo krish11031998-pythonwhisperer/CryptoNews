@@ -17,17 +17,6 @@ struct CrybPostDetailView: View {
         self.postData = postData
     }
     
-    var mainBodyGen:some View{
-        return LazyVStack(alignment: .leading, spacing: 10) {
-            self.postBody.frame(maxHeight: totalHeight * 0.65, alignment: .center)
-            self.socialEngagementView
-            self.cryptoSection
-            self.cryptoScale
-            self.ratingsView
-            self.backers
-        }.frame(width: self.width, alignment: .center)
-    }
-    
     func loadView(w:CGFloat) -> some View{
         DispatchQueue.main.async {
             if self.width != w{
@@ -57,8 +46,7 @@ struct CrybPostDetailView: View {
                     self.cryptoSection
                     self.cryptoScale
                     self.ratingsView
-                    self.backers
-//                    self.mainBodyGen
+                    self.approvalQuestions
                 }
             }.padding(.bottom,150)
                 .frame(width: totalWidth, alignment: .center)
@@ -176,6 +164,16 @@ extension CrybPostDetailView{
             .padding(.vertical,10)
     }
     
+    func lineChartAnnotations(heading:String,offsetVal:CGFloat,w:CGFloat) -> some View{
+        MainText(content: heading, fontSize: 7, color: .black,fontWeight: .semibold,addBG: true,padding: 4.5)
+            .clipContent(clipping: .circleClipping)
+            .offset(x:offsetVal,y: -5)
+    }
+    
+    func chartIndicators(heading:String,subHeading:String) -> some View{
+        MainSubHeading(heading: heading, subHeading:subHeading, headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .white, alignment: .leading)
+    }
+    
     var cryptoScale:some View{
         let w = self.width
         let view = ZStack(alignment: .topLeading) {
@@ -184,32 +182,31 @@ extension CrybPostDetailView{
                     .fill(Color.mainBGColor)
                     .frame(width: w, height: 5, alignment: .center)
                 HStack(alignment: .center, spacing: 10) {
-                    MainSubHeading(heading: "Low", subHeading: self.postData.PricePrediction.Low.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .white, alignment: .leading)
+                    self.chartIndicators(heading: "Low", subHeading: self.postData.PricePrediction.Low.ToMoney())
                     Spacer()
-                    MainSubHeading(heading: "High", subHeading: self.postData.PricePrediction.High.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .white, alignment: .trailing)
+                    self.chartIndicators(heading: "High", subHeading: self.postData.PricePrediction.High.ToMoney())
                 }
             }.frame(width: w, alignment: .center)
-            MainText(content: "C", fontSize: 7, color: .black,fontWeight: .semibold,addBG: true,padding: 4.5)
-                .clipContent(clipping: .circleClipping)
-                .offset(x: CGFloat(self.postData.PricePrediction.NormalizedPricePercent) * w,y: -5)
-            MainText(content: "O", fontSize: 7, color: .black,fontWeight: .semibold,addBG: true,padding: 4.5)
-                .clipContent(clipping: .circleClipping)
-                .offset(x: CGFloat(self.postData.PricePrediction.NormalizedPricePercent) * 0.65 * w,y: -5)
+            self.lineChartAnnotations(heading: "C", offsetVal: CGFloat(self.postData.PricePrediction.NormalizedPricePercent) * w , w: w)
+            self.lineChartAnnotations(heading: "C", offsetVal: CGFloat(self.postData.PricePrediction.NormalizedPricePercent) * 0.65 * w , w: w)
         }
         
         return VStack(alignment: .leading, spacing: 10) {
             MainText(content: "Prediction", fontSize: 18, color: .white, fontWeight: .semibold)
             view.padding(.top,15)
             HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: "O : Open Market Price", subHeading: self.postData.PricePrediction.Price.ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
-                    .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
-                MainSubHeading(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
-                    .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
-            }.frame(width: w, alignment: .center)
+                self.chartLegendBox(heading: "O : Open Market Price", subHeading: self.postData.PricePrediction.Price.ToMoney())
+                self.chartLegendBox(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney())
+            }.frame(width: w, alignment: .leading)
             self.userPredictionMarket
             self.predictedChartwDelta
         }
         
+    }
+    
+    func chartLegendBox(heading:String,subHeading:String) -> some View{
+        MainSubHeading(heading: heading, subHeading: subHeading, headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
+            .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
     }
     
     var ratingsView:some View{
@@ -232,41 +229,71 @@ extension CrybPostDetailView{
         }.padding(.top,20)
     }
 
-    
-    func backerCard(staker:CrybPostBacker) -> some View{
-        let w = self.width - 0
-        let view =  HStack(alignment: .center, spacing: 10) {
-            Group{
-                ImageView(url: staker.Img, width: w * 0.125, height: w * 0.125, contentMode: .fill, clipping: .circleClipping)
-                MainText(content: staker.UserName, fontSize: 14, color: .white, fontWeight: .semibold)
-            }
-            Spacer()
-            MainText(content: staker.StakedValue.ToDecimals(), fontSize: 15, color: .green, fontWeight: .semibold)
-        }
-        .blobify(color: .init(BlurView.regularBlur), clipping: .roundCornerMedium)
-        .buttonify {
-            print("The button was clicked !")
-        }
-        
-        return view
-    }
-    
-    var backers:some View{
-        LazyVStack(alignment: .leading, spacing: 10) {
-            let more = self.postData.Stakers.count > 5
-            let stakers = more ? Array(self.postData.Stakers[0...4]) : self.postData.Stakers
-            MainText(content: "Backers", fontSize: 18, color: .white, fontWeight: .semibold)
-            ForEach(Array(stakers.enumerated()),id:\.offset) { _staker in
-                let staker = _staker.element
-                self.backerCard(staker: staker)
-            }
-            if more{
-                TabButton(width: self.width, height: 50, title: "More →", textColor: .white) {
-                    print("Clicked on View More!")
+    func approvalQuestion(question:String,options:[String],completion:@escaping ((Any) -> Void)) -> some View{
+        Container(width: self.width, ignoreSides: false, horizontalPadding: 10, verticalPadding: 10, orientation: .vertical) { w in
+            MainText(content: question, fontSize: 17.5, color: .black, fontWeight: .semibold)
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: w * 0.5 - 10, maximum: w * 0.5 - 10), alignment: .center)], alignment: .center, spacing: 20) {
+                let but_w = w * 0.5 - 10
+                ForEach(options, id:\.self) { option in
+                    MainText(content: option, fontSize: 11, color: .white, fontWeight: .semibold)
+                        .padding()
+                        .frame(width: but_w, alignment: .center)
+                        .background(mainBGView)
+                        .clipContent(clipping: .roundCornerMedium)
+                        .buttonify {
+                            completion(option)
+                        }
                 }
             }
-        }.frame(width: self.width, alignment: .center)
+        }.frame(width: self.width, alignment: .topLeading)
+        .background(mainLightBGView)
+        .clipContent(clipping: .roundCornerMedium)
     }
+    
+    @ViewBuilder var approvalQuestions:some View{
+//        Container(heading: "Polls", width: self.width, ignoreSides: true) { w in
+        MainText(content: "Polls", fontSize: 18, color: .white, fontWeight: .semibold)
+        self.approvalQuestion(question: "Do you think the analysis is right", options: ["Yes","No"]) { option in
+            print("Clicked on option : ",option)
+        }
+//        }
+        
+    }
+    
+//    func backerCard(staker:CrybPostBacker) -> some View{
+//        let w = self.width - 0
+//        let view =  HStack(alignment: .center, spacing: 10) {
+//            Group{
+//                ImageView(url: staker.Img, width: w * 0.125, height: w * 0.125, contentMode: .fill, clipping: .circleClipping)
+//                MainText(content: staker.UserName, fontSize: 14, color: .white, fontWeight: .semibold)
+//            }
+//            Spacer()
+//            MainText(content: staker.StakedValue.ToDecimals(), fontSize: 15, color: .green, fontWeight: .semibold)
+//        }
+//        .blobify(color: .init(BlurView.regularBlur), clipping: .roundCornerMedium)
+//        .buttonify {
+//            print("The button was clicked !")
+//        }
+//
+//        return view
+//    }
+//
+//    var backers:some View{
+//        LazyVStack(alignment: .leading, spacing: 10) {
+//            let more = self.postData.Stakers.count > 5
+//            let stakers = more ? Array(self.postData.Stakers[0...4]) : self.postData.Stakers
+//            MainText(content: "Backers", fontSize: 18, color: .white, fontWeight: .semibold)
+//            ForEach(Array(stakers.enumerated()),id:\.offset) { _staker in
+//                let staker = _staker.element
+//                self.backerCard(staker: staker)
+//            }
+//            if more{
+//                TabButton(width: self.width, height: 50, title: "More →", textColor: .white) {
+//                    print("Clicked on View More!")
+//                }
+//            }
+//        }.frame(width: self.width, alignment: .center)
+//    }
 }
 
 struct CrybPostDetailView_Previews: PreviewProvider {
