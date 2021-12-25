@@ -59,6 +59,56 @@ class DAPI:ObservableObject,DataParsingProtocol{
         return data
     }
     
+    func parseQueryItems(queryItems: inout[URLQueryItem],key:String,query:Any){
+        var finalQuery:[URLQueryItem] = []
+        if let value = query as? String{
+            finalQuery.append(.init(name: key, value: value))
+        }else if let values = query as? [String]{
+            finalQuery = values.compactMap({.init(name: "\(key)=", value: $0)})
+        }else if let value = query as? Int{
+            finalQuery.append(.init(name: key, value: "\(value)"))
+        }else{
+            return
+        }
+        
+//        self.queryItems.append(contentsOf: finalQuery)
+
+        queryItems.append(contentsOf: finalQuery)
+
+    }
+    
+    func queryBuilder(queries:[String:Any]) -> [URLQueryItem]{
+        var queryItems:[URLQueryItem] = []
+        for (key,query) in queries{
+            self.parseQueryItems(queryItems: &queryItems, key: key, query: query)
+        }
+        return queryItems
+    }
+    
+    func requestBuilder(path:String? = nil,queries:[URLQueryItem]?,headers:[String:String]? = nil) -> URLRequest?{
+        var urlComp = self.baseComponent
+        if let path = path {
+            urlComp.path += "/\(path)"
+        }
+        
+        if let queries = queries {
+            urlComp.queryItems = queries
+        }
+        
+        guard let url = urlComp.url else {return nil}
+        var request = URLRequest(url: url)
+        self.addHeadersFieldstoRequest(request: &request, _headers: headers)
+        print("(DEBUG) Request => URL : \(url) with headers : \(request.allHTTPHeaderFields)")
+        return request
+    }
+    
+    func addHeadersFieldstoRequest(request: inout URLRequest,_headers:[String:String]? = nil){
+        guard let headers = _headers else {return}
+        for (key,value) in headers{
+            request.addValue(value, forHTTPHeaderField: key)
+        }
+
+    }
     
     func CallCompletionHandler(url:URL,data:Data,completion:((Data) -> Void)){
         DataCache.shared[url] = data

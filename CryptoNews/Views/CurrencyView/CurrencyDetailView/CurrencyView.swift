@@ -17,9 +17,9 @@ enum CurrencyViewSection{
 
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
-//    @StateObject var coinAPI:CoinRankCoinsAPI = .init()
     var onClose:(()->Void)?
-    @State var coinAPI:CoinRankCoinAPI
+    @StateObject var ohclvAPI:CC_OHCLV_API
+    @StateObject var coinAPI:CoinRankCoinAPI
     @State var currency:CoinData = .init()
     var size:CGSize = .init()
     @StateObject var asset_feed:FeedAPI
@@ -44,7 +44,8 @@ struct CurrencyView:View{
         self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
         self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
         self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
-        self._coinAPI = .init(initialValue: .init(coin: info?.uuid ?? "", timePeriod: "24h"))
+        self._coinAPI = .init(wrappedValue: .init(coin: info?.uuid ?? "", timePeriod: "24h"))
+        self._ohclvAPI = .init(wrappedValue: .init(fsym: info?.Symbol ?? "XXX", tsym: "USD",limit:10))
     }
     
     
@@ -52,6 +53,10 @@ struct CurrencyView:View{
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
             if self.coinAPI.coin == nil{
                 self.coinAPI.getCoin()
+            }
+            
+            if self.ohclvAPI.ohlcv == nil{
+                self.ohclvAPI.getOHLCV()
             }
             
             if self.asset_feed.FeedData.isEmpty{
@@ -161,7 +166,7 @@ struct CurrencyView:View{
 
     func innerView(w:CGFloat) -> some View{
         let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-        return CurrencyDetailView(info: $currency, size: size, asset_feed: asset_feed.FeedData, news: NAPI.FeedData, txns:self.transactions, showSection: $showSection, onClose: self.onClose)
+        return CurrencyDetailView(info: $currency,ohlcv: self.$ohclvAPI.ohlcv, size: size, asset_feed: asset_feed.FeedData, news: NAPI.FeedData, txns:self.transactions, showSection: $showSection, onClose: self.onClose)
     }
     
     var currencyHeading:String{
@@ -211,6 +216,11 @@ struct CurrencyView:View{
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
         .onReceive(self.coinAPI.$coin,perform: self.onReceiveNewCoin(_:))
+        .onReceive(self.ohclvAPI.$ohlcv) { value in
+            if value != nil{
+                print("(DEBUG) Got the OHLCV successfully !! : ",value)
+            }
+        }
     }
 }
 

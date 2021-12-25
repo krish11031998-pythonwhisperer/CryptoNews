@@ -24,7 +24,7 @@ class CoinRankCoinsAPI:CoinRankAPI{
     }
     
     var request:URLRequest?{
-        guard let request = self.requestBuilder(path: CoinRankAPIEndpoint.coins.rawValue, queries: self.queryItems) else {return nil}
+        guard let request = self.requestBuilder(path: CoinRankAPIEndpoint.coins.rawValue, queries: self.queryItems,headers: self.requestHeaders) else {return nil}
         return request
     }
     

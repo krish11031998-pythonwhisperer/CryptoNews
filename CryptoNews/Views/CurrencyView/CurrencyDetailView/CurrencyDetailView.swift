@@ -20,10 +20,12 @@ struct CurrencyDetailView: View {
     var reloadFeed:(() -> Void)?
     var reloadAsset:(() -> Void)?
     @Binding var showMoreSection:CurrencyViewSection
+    @Binding var ohclv:CryptoCoinOHLCV?
     
     var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
          info:Binding<CoinData>,
+         ohlcv:Binding<CryptoCoinOHLCV?>? = nil,
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
          asset_feed:[AssetNewsData],
          news:[AssetNewsData],
@@ -32,6 +34,7 @@ struct CurrencyDetailView: View {
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
          onClose:(() -> Void)? = nil){
+        self._ohclv = ohlcv ?? .constant(nil)
         self._currency = info
         self.onClose = onClose
         self.size = size
@@ -64,6 +67,9 @@ extension CurrencyDetailView{
     var  priceMainInfo:some View{
         VStack(alignment: .leading, spacing: 10) {
             MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+            if !self.OHLCV.isEmpty{
+                self.priceInfo
+            }
             self.curveChart.clipContent(clipping: .roundClipping)
         }
     }
@@ -175,19 +181,23 @@ extension CurrencyDetailView{
         
     }
     
-//    var priceInfo:some View{
-//        let asset = self.choosen == -1 ? self.currency : self.currency.timeSeries?[self.choosen] ?? self.currency
-//        return HStack(alignment: .top, spacing: 20){
-//            MainSubHeading(heading: "Open", subHeading: convertToMoneyNumber(value: asset.open),headingSize: 12.5,subHeadingSize: 17.5)
-//            MainSubHeading(heading: "Low", subHeading: convertToMoneyNumber(value: asset.low),headingSize: 12.5,subHeadingSize: 17.5)
-//            MainSubHeading(heading: "High", subHeading: convertToMoneyNumber(value: asset.high),headingSize: 12.5,subHeadingSize: 17.5)
-//            MainSubHeading(heading: "Close", subHeading: convertToMoneyNumber(value: asset.close),headingSize: 12.5,subHeadingSize: 17.5)
-//        }.padding(.vertical)
-//        .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
-//    }
+    var OHLCV:[CryptoCoinOHLCVPoint]{
+        return self.ohclv?.Data ?? []
+    }
+    
+    var priceInfo:some View{
+        let asset = self.choosen == -1 ? self.OHLCV.last ?? .init() : self.OHLCV[self.choosen]
+        return HStack(alignment: .top, spacing: 20){
+            MainSubHeading(heading: "Open", subHeading: convertToMoneyNumber(value: asset.open),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "Low", subHeading: convertToMoneyNumber(value: asset.low),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "High", subHeading: convertToMoneyNumber(value: asset.high),headingSize: 12.5,subHeadingSize: 17.5)
+            MainSubHeading(heading: "Close", subHeading: convertToMoneyNumber(value: asset.close),headingSize: 12.5,subHeadingSize: 17.5)
+        }.padding(.vertical)
+        .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
+    }
     
     var timeSeries:[Float]?{
-        return self.currency.Sparkline
+        return !self.OHLCV.isEmpty ? self.OHLCV.compactMap({$0.close}) : self.currency.Sparkline
     }
     
     var curveChart:some View{

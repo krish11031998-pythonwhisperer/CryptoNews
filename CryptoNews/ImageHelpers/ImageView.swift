@@ -7,7 +7,6 @@
 
 import SwiftUI
 import UIKit
-import SVGKit
 
 struct StandardImage:ViewModifier{
     var size:CGSize
@@ -91,13 +90,13 @@ struct ImageView:View{
     }
     
     @ViewBuilder var imgView:some View{
-        if let urlStr = self.url,let url = URL(string: urlStr),urlStr.contains("svg") {
-            SVGImage(url: url, size: self.imgSize)
-                .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
-//                .clipContent(clipping: self.clipping)
-        }else{
+//        if let urlStr = self.url,let url = URL(string: urlStr),urlStr.contains("svg") {
+//            SVGImage(url: url, size: self.imgSize)
+//                .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
+////                .clipContent(clipping: self.clipping)
+//        }else{
             self.imgUIImageView
-        }
+//        }
     }
     
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
@@ -156,26 +155,4 @@ struct ImageView:View{
         self.imgView().clipContent(clipping: clipping)
     }
     
-}
-
-
-struct SVGImage:UIViewRepresentable{
-    
-    var url:URL
-    var size:CGSize
-    
-    init(url:URL,size:CGSize){
-        self.url  = url
-        self.size = size
-    }
-    
-    func makeUIView(context: Context) -> SVGKFastImageView {
-        let svgView = SVGKImage(contentsOf:  self.url)
-        return SVGKFastImageView(svgkImage: svgView ?? SVGKImage())
-    }
-    
-    func updateUIView(_ uiView: SVGKFastImageView, context: Context) {
-         uiView.contentMode = .scaleAspectFit
-         uiView.image.size = size
-     }
 }
