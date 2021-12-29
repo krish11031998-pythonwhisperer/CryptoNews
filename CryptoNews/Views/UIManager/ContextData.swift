@@ -30,7 +30,6 @@ enum LoginState{
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
-//    @Published private var _selectedCurrency:AssetData? = nil\
     @Published private var _selectedCurrency:CoinData? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil

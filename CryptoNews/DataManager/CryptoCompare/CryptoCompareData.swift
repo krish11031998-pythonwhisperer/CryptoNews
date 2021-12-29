@@ -45,7 +45,7 @@ struct CryptoNewsSource:Codable{
 struct CryptoNews:Codable{
     var id:String?
     var published_on:Int?
-    var iamgeurl:String?
+    var imageurl:String?
     var title:String?
     var url:String?
     var source:String?

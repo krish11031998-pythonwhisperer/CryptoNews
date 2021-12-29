@@ -15,9 +15,6 @@ class CryptoCompareAPI:DAPI{
         uC.scheme = "https"
         uC.host = "min-api.cryptocompare.com"
         uC.path = "/data/v2"
-//        uC.queryItems = [
-//            URLQueryItem(name: "api_key", value: "aa9ce087dc9c09014e03932babd2bc75d4ac536dccdf068bc2bb4a0d99900cec")
-//        ]
         uC.queryItems = []
         return uC
     }
