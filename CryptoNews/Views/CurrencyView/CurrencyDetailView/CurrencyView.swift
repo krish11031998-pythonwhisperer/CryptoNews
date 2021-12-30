@@ -18,14 +18,15 @@ enum CurrencyViewSection{
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
-    @StateObject var ohclvAPI:CC_OHCLV_API
-    @StateObject var coinAPI:CoinRankCoinAPI
-    @State var currency:CoinData = .init()
+    @StateObject var coinAPI:CrybseCoinAPI
+//    @StateObject var ohclvAPI:CC_OHCLV_API
+//    @StateObject var coinAPI:CoinRankCoinAPI
+//    @State var currency:CoinData = .init()
     var size:CGSize = .init()
-    @StateObject var asset_feed:FeedAPI
-    var asset_info:AssetAPI
+//    @StateObject var asset_feed:FeedAPI
+//    var asset_info:AssetAPI
     @State var showSection:CurrencyViewSection = .none
-    @StateObject var NAPI:FeedAPI
+//    @StateObject var NAPI:FeedAPI
     @State var refresh:Bool = false
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
@@ -35,42 +36,43 @@ struct CurrencyView:View{
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
-        
-        if let info = info{
-            self._currency = .init(wrappedValue: info)
-        }
         self.onClose = onClose
         self.size = size
-        self._NAPI = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["news"], type: .Chronological, limit: 10))
-        self._asset_feed = .init(wrappedValue: .init(currency: [info?.symbol ?? name ?? "BTC"], sources: ["twitter","reddit"], type: .Chronological, limit: 10))
-        self.asset_info = AssetAPI.shared(currency: info?.symbol ?? name ?? "BTC")
-        self._coinAPI = .init(wrappedValue: .init(coin: info?.uuid ?? "", timePeriod: "24h"))
-        self._ohclvAPI = .init(wrappedValue: .init(fsym: info?.Symbol ?? "XXX", tsym: "USD",limit:10))
+        self._coinAPI = .init(wrappedValue: .init(coinUID: info?.uuid ?? "", fiat: "USD", crypto: info?.Symbol ?? ""))
     }
+    
     
     
     func onAppear(){
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
-            if self.coinAPI.coin == nil{
-                self.coinAPI.getCoin()
-            }
-            
-            if self.ohclvAPI.ohlcv == nil{
-                self.ohclvAPI.getOHLCV()
-            }
-            
-            if self.asset_feed.FeedData.isEmpty{
-                self.asset_feed.getAssetInfo()
-            }
-            
-            if self.NAPI.FeedData.isEmpty{
-                self.NAPI.getAssetInfo()
+            if self.coinAPI.coinData == nil{
+                self.coinAPI.getCoinData()
             }
         }
     }
     
+    var coin:CrybseCoinData?{
+        return self.coinAPI.coinData
+    }
+    
+    var coinData:CoinData?{
+        return self.coinAPI.coinData?.MetaData
+    }
+    
+    var news:Array<CryptoNews>?{
+        return self.coinAPI.coinData?.News
+    }
+    
+    var tweets:Array<AssetNewsData>?{
+        return self.coinAPI.coinData?.Tweets
+    }
+    
+    var timeSeries:Array<CryptoCoinOHLCVPoint>?{
+        return self.coinAPI.coinData?.TimeseriesData
+    }
+    
     var transactions:[Transaction]{
-        guard let sym = self.currency.symbol else {return []}
+        guard let sym = self.coin?.MetaData?.Symbol else {return []}
         return self.context.balanceForCurrency(asset: sym)
     }
     
@@ -89,62 +91,75 @@ struct CurrencyView:View{
     }
     
     
-    func onReceiveNewCoin(_ coin:CoinData?){
-        DispatchQueue.main.async {
-            if let newCoin = coin{
-                self.currency.description = newCoin.description
-                self.currency.links = newCoin.links
-                self.currency.supply = newCoin.supply
-                self.currency.allTimeHigh = newCoin.allTimeHigh
+//    func onReceiveNewCoin(_ coin:CoinData?){
+//        DispatchQueue.main.async {
+//            if let newCoin = coin{
+//                self.currency.description = newCoin.description
+//                self.currency.links = newCoin.links
+//                self.currency.supply = newCoin.supply
+//                self.currency.allTimeHigh = newCoin.allTimeHigh
+//            }
+//            if self.refresh{
+//                self.refresh.toggle()
+//            }
+//        }
+//    }
+    
+//    func reloadNewsFeed(idx:Int){
+//        if idx == self.NAPI.FeedData.count - 5{
+//            print("(DEBUG) Fetching more feedData")
+//            self.NAPI.getNextPage()
+//        }
+//    }
+    
+    
+//    func reloadAssetFeed(idx:Int){
+//        if idx == self.asset_feed.FeedData.count - 5{
+//            print("(DEBUG) Fetching more feedData")
+//            self.asset_feed.getNextPage()
+//        }
+//    }
+    
+    
+    @ViewBuilder func feedView(w:CGFloat) -> some View{
+        if let feed = self.tweets{
+            LazyScrollView(data: feed.compactMap({$0 as Any}),embedScrollView: false) { data in
+                if let data = data as? AssetNewsData{
+                    let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
+                    PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
+                }
             }
-            if self.refresh{
-                self.refresh.toggle()
+            .onPreferenceChange(RefreshPreference.self) { reload in
+//                if reload{
+//                    self.asset_feed.getNextPage()
+//                }
             }
+        }else if self.coinAPI.loading{
+            ProgressView().frame(width: w, alignment: .center)
+        }else{
+            Color.clear.frame(width: w, height: 0, alignment: .center)
         }
-    }
-    
-    func reloadNewsFeed(idx:Int){
-        if idx == self.NAPI.FeedData.count - 5{
-            print("(DEBUG) Fetching more feedData")
-            self.NAPI.getNextPage()
-        }
-    }
-    
-    
-    func reloadAssetFeed(idx:Int){
-        if idx == self.asset_feed.FeedData.count - 5{
-            print("(DEBUG) Fetching more feedData")
-            self.asset_feed.getNextPage()
-        }
-    }
-    
-    
-    func feedView(w:CGFloat) -> some View{
         
-        LazyScrollView(data: self.asset_feed.FeedData.compactMap({$0 as Any}),embedScrollView: false) { data in
-            if let data = data as? AssetNewsData{
-                let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
-            }
-        }
-        .onPreferenceChange(RefreshPreference.self) { reload in
-            if reload{
-                self.asset_feed.getNextPage()
-            }
-        }
     }
     
-    func newsView(w:CGFloat) -> some View{
-        LazyScrollView(data: self.NAPI.FeedData.compactMap({$0 as Any}),embedScrollView: false) { data in
-            if let news = data as? AssetNewsData{
-                NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
+    @ViewBuilder func newsView(w:CGFloat) -> some View{
+        if let news = self.news{
+            LazyScrollView(data: news.compactMap({$0 as Any}),embedScrollView: false) { data in
+                if let news = data as? AssetNewsData{
+                    NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
+                }
             }
-        }
-        .onPreferenceChange(RefreshPreference.self) { reload in
-            if reload{
-                self.NAPI.getNextPage()
+            .onPreferenceChange(RefreshPreference.self) { reload in
+//                if reload{
+//                    self.NAPI.getNextPage()
+//                }
             }
+        }else if self.coinAPI.loading{
+            ProgressView().frame(width: w, alignment: .center)
+        }else{
+            Color.clear.frame(width: w, height: 0, alignment: .center)
         }
+        
     }
     
     var txnsForAsset:[Transaction]{
@@ -156,7 +171,7 @@ struct CurrencyView:View{
         let bgcolor = self.context.user.user?.watching.contains(self.currencyHeading) ?? false ? Color.white : Color.black
         return AnyView(HStack(alignment: .center, spacing: 10) {
             SystemButton(b_name: "heart", color: color , haveBG: true, size: .init(width: 10, height: 10), bgcolor: bgcolor, alignment: .vertical) {
-                if let sym = self.currency.symbol, let included = self.context.user.user?.watching.contains(sym), !included{
+                if let sym = self.coinData?.Symbol, let included = self.context.user.user?.watching.contains(sym), !included{
                     self.context.user.user?.watching.append(sym)
                     self.context.user.updateUser()
                 }
@@ -166,11 +181,11 @@ struct CurrencyView:View{
 
     func innerView(w:CGFloat) -> some View{
         let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-        return CurrencyDetailView(info: $currency,ohlcv: self.$ohclvAPI.ohlcv, size: size, asset_feed: asset_feed.FeedData, news: NAPI.FeedData, txns:self.transactions, showSection: $showSection, onClose: self.onClose)
+        return CurrencyDetailView(coinData: $coinAPI.coinData,txns: self.transactions, size: .init(width: w, height: totalHeight * 0.3), showSection: $showSection, onClose: self.onClose)
     }
     
     var currencyHeading:String{
-        return "\(currency.symbol ?? "BTC")"
+        return "\(coinData?.symbol ?? "BTC")"
     }
     
     @ViewBuilder var mainView:some View{
@@ -180,9 +195,9 @@ struct CurrencyView:View{
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
                     .refreshableView(refreshing: $refresh,width: size.width,hasToRender:self.context.selectedCurrency != nil)
                     .onChange(of: self.refresh) { refresh in
-                        if self.refresh{
-                            self.coinAPI.refreshCoin()
-                        }
+//                        if self.refresh{
+//                            self.coinAPI.refreshCoin()
+//                        }
                     }
             }
         }else{
@@ -198,7 +213,7 @@ struct CurrencyView:View{
         }
         if self.showSection == .txns{
             HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                TransactionDetailsView(txns: self.txnsForAsset,currency:self.currency.symbol ?? "LTC", currencyCurrentPrice: self.currency.Price,width: w)
+                TransactionDetailsView(txns: self.txnsForAsset,currency:self.coinData?.Symbol ?? "LTC", currencyCurrentPrice: self.coinData?.Price ?? 0,width: w)
             }
         }
         if self.showSection == .news{
@@ -210,17 +225,15 @@ struct CurrencyView:View{
     
     var body:some View{
         ZStack(alignment: .topLeading) {
-            self.mainView
+            if self.coinAPI.coinData != nil{
+                self.mainView
+            }else if self.coinAPI.loading{
+                ProgressView().frame(width: totalWidth, alignment: .center)
+            }
             self.diff_Views
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
-        .onReceive(self.coinAPI.$coin,perform: self.onReceiveNewCoin(_:))
-        .onReceive(self.ohclvAPI.$ohlcv) { value in
-            if value != nil{
-                print("(DEBUG) Got the OHLCV successfully !! : ",value)
-            }
-        }
     }
 }
 

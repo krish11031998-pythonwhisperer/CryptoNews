@@ -122,11 +122,6 @@ struct LoginView: View {
     
     func profileImageView() -> some View{
         ImageView(img: self.formDetails.image, width: totalWidth * 0.3, height: totalWidth * 0.3, contentMode: .fill, alignment: .center, clipping: .circleClipping)
-//        Image(uiImage: self.formDetails.image)
-//            .resizable()
-//            .aspectRatio(contentMode: .fill)
-//            .frame( width: totalWidth * 0.3, height: totalWidth * 0.3, alignment: .top)
-//            .clipContent(clipping: .circleClipping)
     }
     
     func signUpPageGen(heading:String,fields:[String],button:String = "Sign Up",actionHandler: @escaping () -> Void, anotherButton: (() -> AnyView)? = nil) -> some View{

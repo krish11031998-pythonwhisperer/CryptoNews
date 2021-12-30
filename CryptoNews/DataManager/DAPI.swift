@@ -52,7 +52,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
     
     func checkOutput(output: URLSession.DataTaskPublisher.Output) throws -> Data{
         let (data,response) = output
-        if let resp = response as? HTTPURLResponse, resp.statusCode > 200 && resp.statusCode < 300 {
+        if let resp = response as? HTTPURLResponse, resp.statusCode > 400 && resp.statusCode < 500 {
             print("statusCode : \(resp.statusCode)")
             throw URLError(.badServerResponse)
         }

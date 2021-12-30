@@ -9,18 +9,24 @@ import SwiftUI
 
 struct NewsStandCard: View {
     @EnvironmentObject var context:ContextData
-    var news:AssetNewsData
+//    var news:AssetNewsData
+    var news:Any
     var size:CGSize
-    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth - 20, height: 250)){
+//    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth - 20, height: 250)){
+//        self.news = news
+//        self.size = size
+//    }
+    init(news:Any,size:CGSize = .init(width: totalWidth - 20, height: 250)){
         self.news = news
         self.size = size
     }
+
     
     @ViewBuilder var mainText:some View{
-        if self.size.height >= CardSize.small.height{
-            MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
-        }else{
-            MainSubHeading(heading: self.news.publisher ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+        if let data = self.news as? AssetNewsData{
+            MainSubHeading(heading: data.publisher ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+        }else if let data = self.news as? CryptoNews{
+            MainSubHeading(heading: data.source_info?.name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
                 .lineLimit(2)
         }
     }
@@ -30,13 +36,23 @@ struct NewsStandCard: View {
             self.mainText
                 .frame(maxHeight: h - 20, alignment: .center)
             Spacer()
-            ImageView(url: self.news.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+            if let data = self.news as? AssetNewsData{
+                ImageView(url: data.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+            }else if let data = self.news as? CryptoNews{
+                ImageView(url: data.imageurl,width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+            }
+            
         }
     }
     
     func footer(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .center, spacing: 5) {
-            MainText(content: self.news.date.stringDate(), fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+            if let data = self.news as? AssetNewsData{
+                MainText(content: data.date.stringDate(), fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+            }else if let data = self.news as? CryptoNews{
+                MainText(content: "\(data.published_on)",fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+            }
+            
             Spacer()
             SystemButton(b_name: "circle.grid.2x2", color: .white) {
                 print("Hi")
@@ -67,7 +83,9 @@ struct NewsStandCard: View {
     var body: some View {
         Button {
             withAnimation(.easeInOut) {
-                self.context.selectedNews = news
+                if let news = self.news as? AssetNewsData{
+                    self.context.selectedNews = news
+                }
             }
         } label: {
             self.mainBody

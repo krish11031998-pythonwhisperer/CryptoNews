@@ -10,45 +10,39 @@ import SwiftUI
 struct CurrencyDetailView: View {
     @EnvironmentObject var context:ContextData
     var onClose:(() -> Void)?
-    @Binding var currency:CoinData
     var size:CGSize = .init()
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
-    var asset_feed:[AssetNewsData]
-    var news:[AssetNewsData]
-    var txns:[Transaction]
     var reloadFeed:(() -> Void)?
     var reloadAsset:(() -> Void)?
     @Binding var showMoreSection:CurrencyViewSection
-    @Binding var ohclv:CryptoCoinOHLCV?
-    
-    var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    @Binding var coinData:CrybseCoinData?
+    var txns:[Transaction]
+//    var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
-         info:Binding<CoinData>,
-         ohlcv:Binding<CryptoCoinOHLCV?>? = nil,
+        coinData:Binding<CrybseCoinData?>,
+        txns:[Transaction],
          size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
-         asset_feed:[AssetNewsData],
-         news:[AssetNewsData],
-         txns:[Transaction],
          showSection:Binding<CurrencyViewSection>,
          reloadAsset:(() -> Void)? = nil,
          reloadFeed:(() -> Void)? = nil,
-         onClose:(() -> Void)? = nil){
-        self._ohclv = ohlcv ?? .constant(nil)
-        self._currency = info
+         onClose:(() -> Void)? = nil)
+    {
+             
+        self._coinData = coinData
+        self.txns = txns
         self.onClose = onClose
         self.size = size
-        self.asset_feed = asset_feed
         self._showMoreSection = showSection
-        self.txns = txns
-        self.news = news
+        self.reloadFeed = reloadFeed
+        self.reloadAsset = reloadAsset
     }
     
     
     var body:some View{
         self.mainView
             .onAppear {
-                print("(DEBUG) The Coin Data : ",self.currency.Name)
+                print("(DEBUG) The Coin Data : ",self.coinData?.MetaData?.Name ?? "XXX")
             }
     }
 }
@@ -74,6 +68,14 @@ extension CurrencyDetailView{
         }
     }
     
+    var news:[CryptoNews]{
+        return self.coinData?.News ?? []
+    }
+    
+    var tweets:[AssetNewsData]{
+        return self.coinData?.Tweets ?? []
+    }
+    
     var coinTotal:Float{
         return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.asset_quantity})
     }
@@ -88,14 +90,14 @@ extension CurrencyDetailView{
     
     var CurrencySummary:some View{
         ChartCard(header: "Statistics", size: self.size) { w, h in
-            CurrencySummaryView(currency: currency, size: .init(width: w, height: h))
+            CurrencySummaryView(currency: self.coinData?.MetaData ?? .init(), size: .init(width: w, height: h))
         }
     }
     
     
     @ViewBuilder var transactionHistoryView:some View{
         if !self.txns.isEmpty{
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.currency.Price, fee: 1.36, totalfee: 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.coinData?.MetaData?.Price ?? 0, fee: 1.36, totalfee: 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
             TabButton(width: self.size.width, height: 50, title: "View Portfolio", textColor: .white) {
                 withAnimation(.easeInOut) {
                     self.showMoreSection = .txns
@@ -106,44 +108,53 @@ extension CurrencyDetailView{
             if !self.context.addTxn{
                 self.context.addTxn.toggle()
             }
-            if let sym = self.currency.symbol,self.context.selectedSymbol != sym{
+            if let sym = self.coinData?.MetaData?.Symbol,self.context.selectedSymbol != sym{
                 self.context.selectedSymbol = sym
             }
         }
     }
     
-    var infoSection:some View{
-        Container(heading: "About", width: self.size.width, ignoreSides: false, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
-            MainText(content:"What is \(self.currency.Symbol)", fontSize: 17.5, color: .white, fontWeight: .semibold)
-                .frame(width: w, alignment: .leading)
-            ForEach(self.currency.Description.split(separator: "\n"), id:\.self) { text in
-                if text.contains("<p>") && text.contains("</p>") {
-                    MainText(content: text.replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: ""), fontSize: 15, color: .white, fontWeight: .regular)
-                        .frame(width: w, alignment: .leading)
-                }else{
-                    MainText(content: text.replacingOccurrences(of: "<h3>", with: "").replacingOccurrences(of: "</h3>", with: ""), fontSize: 17.5, color: .white, fontWeight: .semibold)
-                        .frame(width: w, alignment: .leading)
+    @ViewBuilder var infoSection:some View{
+        if let coinMetaData = self.coinData?.MetaData{
+            Container(heading: "About", width: self.size.width, ignoreSides: false, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+                MainText(content:"What is \(coinMetaData.Symbol)", fontSize: 17.5, color: .white, fontWeight: .semibold)
+                    .frame(width: w, alignment: .leading)
+                ForEach(coinMetaData.Description.split(separator: "\n"), id:\.self) { text in
+                    if text.contains("<p>") && text.contains("</p>") {
+                        MainText(content: text.replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: ""), fontSize: 15, color: .white, fontWeight: .regular)
+                            .frame(width: w, alignment: .leading)
+                    }else{
+                        MainText(content: text.replacingOccurrences(of: "<h3>", with: "").replacingOccurrences(of: "</h3>", with: ""), fontSize: 17.5, color: .white, fontWeight: .semibold)
+                            .frame(width: w, alignment: .leading)
+                    }
                 }
-            }
-        }.background(BlurView(style: .dark))
-        .clipContent(clipping: .roundClipping)
+            }.background(BlurView(style: .dark))
+            .clipContent(clipping: .roundClipping)
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+       
     }
     
     
-    @ViewBuilder func infoViewGen(type:PostCardType) -> some View{
+    @ViewBuilder func cardBuilder(data:Any) -> some View{
+        if let news = data as? CryptoNews{
+            NewsStandCard(news: news,size:.init(width: size.width, height: 200))
+        }else if let post = data as? AssetNewsData{
+            PostCard(cardType: .Tweet, data: post, size: self.size,bg: .light, const_size: false)
+        }else{
+            Color.clear.frame(width:.zero, height: .zero, alignment: .center)
+        }
+    }
+    
+    func infoViewGen(type:PostCardType) -> some View{
         let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
-        let data = type == .News ? self.news  : self.asset_feed
+        let data:[Any] = type == .News ? self.news : self.tweets
         let view = VStack(alignment: .leading, spacing: 10){
             MainText(content: title, fontSize: 25, color: .white,fontWeight: .bold, style: .heading).padding(.vertical)
-            ForEach(Array(data[0...4].enumerated()),id:\.offset){ _data in
+            ForEach(Array(data[0...4].enumerated()),id:\.offset) { _data in
                 let data = _data.element
-                if type == .News{
-                    NewsStandCard(news: data,size:.init(width: size.width, height: 200))
-                }else{
-                    let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                    PostCard(cardType: cardType, data: data, size: self.size,bg: .light, const_size: false)
-                }
-
+                self.cardBuilder(data: data)
             }
             TabButton(width: size.width, title: "Load More", action: {
                 withAnimation(.easeInOut) {
@@ -151,8 +162,7 @@ extension CurrencyDetailView{
                 }
             }).padding(.vertical)
         }
-        view
-    
+        return view
     }
     
     var feedView:some View{
@@ -164,7 +174,7 @@ extension CurrencyDetailView{
     }
     
     @ViewBuilder var feedContainer:some View{
-        if self.asset_feed.isEmpty{
+        if self.tweets.isEmpty{
             ProgressView()
         }else if self.news.count >= 5{
             self.feedView
@@ -182,7 +192,7 @@ extension CurrencyDetailView{
     }
     
     var OHLCV:[CryptoCoinOHLCVPoint]{
-        return self.ohclv?.Data ?? []
+        return self.coinData?.TimeseriesData ?? []
     }
     
     var priceInfo:some View{
@@ -196,15 +206,12 @@ extension CurrencyDetailView{
         .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
     }
     
-    var timeSeries:[Float]?{
-        return !self.OHLCV.isEmpty ? self.OHLCV.compactMap({$0.close}) : self.currency.Sparkline
-    }
-    
     var curveChart:some View{
-        ZStack(alignment: .center){
-            if let tS = self.timeSeries{
-                CurveChart(data: tS,choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
-                    
+//        let data = Array(self.OHLCV[(self.OHLCV.count - 60)...]).compactMap({$0.close})
+        let data = self.OHLCV.compactMap({$0.close})
+        return ZStack(alignment: .center){
+            if !data.isEmpty{
+                CurveChart(data: data,choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
             }else{
                 MainText(content: "NO Time Series Data", fontSize: 20, color: .white, fontWeight: .bold)
             }
@@ -213,11 +220,11 @@ extension CurrencyDetailView{
     
     
     var price:Float{
-        guard let tS = self.timeSeries else {return 0.0}
-        if self.choosen > 0 && self.choosen < tS.count{
-            return tS[self.choosen]
+//        guard let tS = self.OHLCV else {return 0.0}
+        if self.choosen > 0 && self.choosen < self.OHLCV.count{
+            return self.OHLCV[self.choosen].close ?? 0
         }else{
-            return self.currency.Price
+            return self.coinData?.MetaData?.Price ?? 0
         }
     }
     
@@ -228,74 +235,9 @@ extension CurrencyDetailView{
         }
     }
     
-//    var sentiment_percent:Float{
-//        guard let avg_sent = self.currency.average_sentiment_calc_24h_previous else{return 0}
-//        return (avg_sent/5.0) * 100
-//    }
-//
-//
-//    var sentitment_Ts:[Float]{
-//        return self.currency.timeSeries?.compactMap({$0.average_sentiment}) ?? []
-//    }
-    
-    
-//    var sentiment_set:[Float]{
-//        var set_senti:Array<Float> = []
-//        self.sentitment_Ts.forEach { senti in
-//            if let last = set_senti.last{
-//                if last != senti{
-//                    set_senti.append(senti)
-//                }
-//            }else{
-//                set_senti.append(senti)
-//            }
-//        }
-//        return set_senti
-//    }
-//
-//    func find_sentiment(sentiment:Float) -> String{
-//        var sentiment_sent:String;
-//        if sentiment < 3.0 && sentiment > 2.0{
-//            sentiment_sent = "Bearish 😞"
-//        }else if sentiment <= 2.0{
-//            sentiment_sent = "Very Bearish 📉"
-//        }else if sentiment > 3.0 && sentiment <= 4.0{
-//            sentiment_sent = "Bullish ☺️"
-//        }else if sentiment > 4.0{
-//            sentiment_sent = "Very Bullish 📈"
-//        }else{
-//            sentiment_sent = "Normal"
-//        }
-//        return sentiment_sent
-//    }
-    
-//    var Avg_Sentiment:some View{
-//        ChartCard(header: "Sentiment Time Series", size: .init(width: self.size.width, height: self.size.height)) { w, h in
-//            let sentiment = self.choosen_sent >= 0 && self.choosen_sent < self.sentiment_set.count - 1 ? self.sentiment_set[self.choosen_sent] : self.currency.average_sentiment ?? 3.0
-//            let curve_sentiment = self.sentiment_set
-////            return
-//                VStack(alignment: .leading, spacing: 10){
-//                    MainText(content: self.find_sentiment(sentiment: sentiment), fontSize: 13, color: .white).padding(.leading,5)
-//
-//                    CurveChart(data: curve_sentiment,choosen: $choosen_sent, interactions: true, size: .init(width: w, height: h * 0.75), bg: .clear, chartShade: true)
-//                }.frame(width: w, height: h, alignment: .leading)
-//
-//        }
-//    }
-//
-//    var social_media_metrics_values:[String:Float]{
-//        return ["Average Sentiment":(self.currency.average_sentiment ?? 0)/5,"Correlation Rank":(self.currency.correlation_rank ?? 0)/5,"Social Impact Score":(self.currency.social_impact_score ?? 0)/5,"Price Score":(self.currency.price_score ?? 0)/5]
-//    }
-    
     func social_media_size ( _ w:CGFloat, _ h:CGFloat) -> CGSize{
         var min = min(w,h)
         min -= min == 0 ? 0 : 35
         return CGSize(width: min , height: min)
     }
-    
-//    var SocialMedia_Metrics:some View{
-//        ChartCard(header: "Social Media Metrics", size: .init(width: self.size.width, height: self.size.height)) { w, h  in
-//            DiamondChart(size: self.social_media_size(w, h), percent: self.social_media_metrics_values).zIndex(1)
-//        }
-//    }
 }
