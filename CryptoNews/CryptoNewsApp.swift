@@ -18,7 +18,7 @@ struct CryptoNewsApp: App {
     }
     
     func onAppear(){
-        if let uid = UserDefaults.standard.value(forKey: "eID") as? String{
+        if let uid = UserDefaults.standard.value(forKey: "eID") as? String,!self.loading{
             self.loading.toggle()
             self.context.user.signInUser_w_firUserUid(val: uid)
         }
@@ -58,13 +58,18 @@ struct CryptoNewsApp: App {
                 }
             }
         }.onAppear(perform: self.onAppear)
-        .onChange(of: self.context.user.user?.uid,perform: self.onChangeUser(_:))
-        .onChange(of: self.context.transactionAPI.loading) { load in
-            if !load && self.loading && self.context.loggedIn != .signedIn{
-                self.loading.toggle()
-                self.context.loggedIn = .signedIn
+            .onChange(of: self.context.user.user?.uid) { uid in
+                if uid != nil &&  self.loading{
+                    self.loading.toggle()
+                }
             }
-        }
+//        .onChange(of: self.context.user.user?.uid,perform: self.onChangeUser(_:))
+//        .onChange(of: self.context.transactionAPI.loading) { load in
+//            if !load && self.loading && self.context.loggedIn != .signedIn{
+//                self.loading.toggle()
+//                self.context.loggedIn = .signedIn
+//            }
+//        }
     }
     
     var body: some Scene {

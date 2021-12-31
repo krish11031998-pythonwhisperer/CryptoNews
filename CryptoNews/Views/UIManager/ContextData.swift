@@ -30,7 +30,7 @@ enum LoginState{
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
-    @Published private var _selectedCurrency:CoinData? = nil
+    @Published private var _selectedCurrency:CrybseCoin? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedSymbol:String? = nil
@@ -104,7 +104,7 @@ class ContextData:ObservableObject{
     }
     
     
-    var selectedCurrency:CoinData?{
+    var selectedCurrency:CrybseCoin?{
         get{
             return self._selectedCurrency
         }

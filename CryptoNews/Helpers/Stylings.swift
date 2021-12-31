@@ -27,7 +27,13 @@ class CentralizePreference:PreferenceKey{
     }
 }
 
-
+func setWithAnimation(animation:Animation = .easeInOut,completion:@escaping () -> Void){
+    DispatchQueue.main.async {
+        withAnimation(animation) {
+            completion()
+        }
+    }
+}
 
 struct AsyncContainerModifier:ViewModifier{
     var g:GeometryProxy? = nil

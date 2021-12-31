@@ -10,10 +10,10 @@ import SwiftUI
 struct AssetViewBuilder: View {
     var type:String
     var alternative:Bool
-    var coins:[CoinData]
+    var coins:[CrybseAssetCoin]
     var size:CGSize
     
-    init(type:String,size:CGSize = CardSize.normal,coins:[CoinData],alternative:Bool){
+    init(type:String,size:CGSize = CardSize.normal,coins:[CrybseAssetCoin],alternative:Bool){
         self.type = type
         self.coins = coins
         self.alternative = alternative

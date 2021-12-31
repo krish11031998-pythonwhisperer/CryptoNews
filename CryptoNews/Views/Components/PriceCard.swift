@@ -11,14 +11,14 @@ struct PriceCard: View {
 //    @StateObject var asset_api:AssetAPI
 //    @State var prices:[AssetData] = []
 //    @State var selected:Int = -1
-    var coin:CoinData
+    var coinAsset:CrybseAssetCoin
     @EnvironmentObject var context:ContextData
     var size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.4)
     let font_color:Color
     var alternativeView:Bool
 
-    init(coin:CoinData,size:CGSize? = nil,font_color:Color = .white,alternativeView:Bool = false){
-        self.coin = coin
+    init(coin:CrybseAssetCoin,size:CGSize? = nil,font_color:Color = .white,alternativeView:Bool = false){
+        self.coinAsset = coin
         if let safeSize = size{
             self.size = safeSize
         }
@@ -26,6 +26,9 @@ struct PriceCard: View {
         self.alternativeView = alternativeView
     }
     
+    var coin:CrybseCoin{
+        return self.coinAsset.coinData ?? .init()
+    }
     
     var prices:[Float]{
         self.coin.Sparkline
@@ -45,7 +48,7 @@ struct PriceCard: View {
         let fontColor:Color = self.alternativeView ? .black : .white
         return HStack(alignment: .center, spacing: 10){
             
-//            CurrencySymbolView(url: self.coin.iconUrl, size: .small, width: size.width * 0.2)
+            CurrencySymbolView(currency: self.coin.Symbol, size: .small, width: size.width * 0.2)
             ImageView(url: self.coin.iconUrl, width: size.width * 0.2, height: size.width * 0.2, contentMode: .fill, alignment: .center, clipping: .circleClipping)
             Spacer()
             VStack(alignment: .trailing, spacing: 2.5) {
@@ -68,7 +71,7 @@ struct PriceCard: View {
     }
     
     func footerView(w:CGFloat,h:CGFloat) -> some View{
-        let currencyTotalPrice = self.context.totalForCurrency(asset: self.coin.Symbol) * (self.coin.Price)
+        let currencyTotalPrice = (self.coinAsset.value ?? 0) * (self.coin.Price)
         let view = LazyVStack(alignment: .leading, spacing: 3.5) {
             MainText(content: "Balance", fontSize: 10,color: .black,fontWeight: .semibold)
             MainText(content: currencyTotalPrice.ToMoney(),fontSize: 20, color: .black, fontWeight: .bold)

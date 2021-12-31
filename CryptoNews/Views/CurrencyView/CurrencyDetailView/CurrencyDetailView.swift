@@ -207,7 +207,6 @@ extension CurrencyDetailView{
     }
     
     var curveChart:some View{
-//        let data = Array(self.OHLCV[(self.OHLCV.count - 60)...]).compactMap({$0.close})
         let data = self.OHLCV.compactMap({$0.close})
         return ZStack(alignment: .center){
             if !data.isEmpty{

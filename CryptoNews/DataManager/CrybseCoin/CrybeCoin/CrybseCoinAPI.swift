@@ -8,7 +8,7 @@
 import Foundation
 
 
-class CrybseCoinAPI:DAPI{
+class CrybseCoinAPI:CrybseAPI{
     
     @Published var coinData:CrybseCoinData? = nil
     
@@ -24,9 +24,7 @@ class CrybseCoinAPI:DAPI{
     
     
     var url:URL?{
-        var uC = URLComponents()
-        uC.scheme = "https"
-        uC.host = "crybse.herokuapp.com"
+        var uC = self.baseComponent
         uC.path = "/coinData"
         uC.queryItems = [
             URLQueryItem(name: "coinUID", value: coinUID),
@@ -38,7 +36,7 @@ class CrybseCoinAPI:DAPI{
     
     override func parseData(url: URL, data: Data) {
         DataCache.shared[url] = data
-        DispatchQueue.main.async {
+        setWithAnimation {
             if let data = CrybseCoinData.parseCoinDataFromData(data: data){
                 self.coinData = data
             }

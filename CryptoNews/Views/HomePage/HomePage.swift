@@ -21,9 +21,12 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            if self.context.trackedAssets.count > 0{
-                AllAssetView(type: "tracked", currencies: self.context.trackedAssets)
+//            if self.context.trackedAssets.count > 0{
+            if let uid = self.context.user.user?.uid, let currencies = self.context.user.user?.watching{
+                AllAssetView(uid:uid, currencies: currencies)
             }
+           
+//            }
             LatestTweets(header:"Trending Tweets",currencies:self.userFavAsset,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             CurrencyFeed().asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             Spacer(minLength: 200)

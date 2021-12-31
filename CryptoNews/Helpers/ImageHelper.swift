@@ -307,13 +307,13 @@ class ImageDownloader:ObservableObject{
     
     func publishImage(url:String,safeImage:UIImage){
         if self.mode == "single"{
-            DispatchQueue.main.async {
+            setWithAnimation(animation: .linear){
                 self.image = safeImage
                 self.loading = false
             }
         }else if self.mode == "multiple"{
 //            self.b_images[url] = safeImage
-            DispatchQueue.main.async {
+            setWithAnimation(animation: .linear){
                 self.images[url] = safeImage
             }
         }

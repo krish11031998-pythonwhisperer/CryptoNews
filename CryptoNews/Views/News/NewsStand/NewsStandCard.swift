@@ -40,6 +40,8 @@ struct NewsStandCard: View {
                 ImageView(url: data.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
             }else if let data = self.news as? CryptoNews{
                 ImageView(url: data.imageurl,width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+            }else{
+                ImageView(width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
             }
             
         }

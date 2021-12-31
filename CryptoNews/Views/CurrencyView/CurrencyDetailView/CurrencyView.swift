@@ -32,7 +32,7 @@ struct CurrencyView:View{
     
     init(
         name:String? = nil,
-        info:CoinData? = nil,
+        info:CrybseCoin? = nil,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
@@ -44,9 +44,11 @@ struct CurrencyView:View{
     
     
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(1000)) {
-            if self.coinAPI.coinData == nil{
-                self.coinAPI.getCoinData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+            withAnimation(.easeInOut) {
+                if self.coinAPI.coinData == nil{
+                    self.coinAPI.getCoinData()
+                }
             }
         }
     }
@@ -144,10 +146,8 @@ struct CurrencyView:View{
     
     @ViewBuilder func newsView(w:CGFloat) -> some View{
         if let news = self.news{
-            LazyScrollView(data: news.compactMap({$0 as Any}),embedScrollView: false) { data in
-                if let news = data as? AssetNewsData{
-                    NewsStandCard(news: news,size: .init(width: w, height: CardSize.slender.height * 0.5))
-                }
+            LazyScrollView(data: news,embedScrollView: false) { data in
+                NewsStandCard(news: data,size: .init(width: w, height: CardSize.slender.height * 0.5))
             }
             .onPreferenceChange(RefreshPreference.self) { reload in
 //                if reload{
@@ -233,6 +233,8 @@ struct CurrencyView:View{
             self.diff_Views
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
+//        .transition(.slideInOut)
+//        .animation(.easeInOut)
         .onAppear(perform: self.onAppear)
     }
 }

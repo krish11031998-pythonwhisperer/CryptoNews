@@ -115,17 +115,23 @@ class TransactionAPI:FirebaseAPI{
             }
             
         }
-        self.db
-            .collection("transactions")
-            .whereField("uid", isEqualTo: uuid)
-            .whereField("asset", isEqualTo: currency)
-            .getDocuments { qss, err in
-                if let docs = qss?.documents{
-                    self.parseData(data: docs)
-                }else if let err = err{
-                    print("Error : ",err.localizedDescription)
+        if !self.transactions.isEmpty{
+            self.transactions.filter({$0.asset == currency})
+        }else{
+            self.db
+                .collection("transactions")
+                .whereField("uid", isEqualTo: uuid)
+                .whereField("asset", isEqualTo: currency)
+                .getDocuments { qss, err in
+                    if let docs = qss?.documents{
+                        self.parseData(data: docs)
+                    }else if let err = err{
+                        print("Error : ",err.localizedDescription)
+                    }
                 }
-            }
+        }
+        
+       
     }
     
     func loadTransaction(uuid:String? = nil){

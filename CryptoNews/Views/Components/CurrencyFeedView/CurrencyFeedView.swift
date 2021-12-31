@@ -48,12 +48,12 @@ extension CurrencyFeedView{
                 ForEach(Array(self.currency_data.enumerated()),id:\.offset) { _data in
                     let data = _data.element
                     let curr = data.s ?? "NOC"
-                    VStack(alignment: .center, spacing: 5) {
+                    LazyVStack(alignment: .center, spacing: 5) {
                         CurrencySymbolView(currency: data.s ?? "BTC", size: .medium, width: 30)
                         MainText(content: curr, fontSize: 12, color: .white, fontWeight: .regular, style: .normal)
                     }.padding(10)
-                        .aspectRatio(contentMode:.fit)
-                        .background(self.bg(condition: curr == currency))
+                    .aspectRatio(contentMode: .fill)
+                    .background(self.bg(condition: curr == currency))
                     .clipContent(clipping: .roundClipping)
                     .buttonify {
                         DispatchQueue.main.async {
