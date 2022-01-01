@@ -11,13 +11,13 @@ struct PriceCard: View {
 //    @StateObject var asset_api:AssetAPI
 //    @State var prices:[AssetData] = []
 //    @State var selected:Int = -1
-    var coinAsset:CrybseAssetCoin
+    var coinAsset:CrybseAsset
     @EnvironmentObject var context:ContextData
     var size:CGSize = .init(width: totalWidth * 0.5, height: totalHeight * 0.4)
     let font_color:Color
     var alternativeView:Bool
 
-    init(coin:CrybseAssetCoin,size:CGSize? = nil,font_color:Color = .white,alternativeView:Bool = false){
+    init(coin:CrybseAsset,size:CGSize? = nil,font_color:Color = .white,alternativeView:Bool = false){
         self.coinAsset = coin
         if let safeSize = size{
             self.size = safeSize
@@ -31,7 +31,7 @@ struct PriceCard: View {
     }
     
     var prices:[Float]{
-        self.coin.Sparkline
+        self.coin.Sparkline ?? []
     }
     
     func headingSize(w:CGFloat,h:CGFloat) -> some View{
@@ -71,7 +71,7 @@ struct PriceCard: View {
     }
     
     func footerView(w:CGFloat,h:CGFloat) -> some View{
-        let currencyTotalPrice = (self.coinAsset.value ?? 0) * (self.coin.Price)
+        let currencyTotalPrice = (self.coinAsset.value ?? 0.0)
         let view = LazyVStack(alignment: .leading, spacing: 3.5) {
             MainText(content: "Balance", fontSize: 10,color: .black,fontWeight: .semibold)
             MainText(content: currencyTotalPrice.ToMoney(),fontSize: 20, color: .black, fontWeight: .bold)
@@ -127,7 +127,7 @@ struct PriceCard: View {
         self.mainBody
             .buttonify {
                 DispatchQueue.main.async {
-                    self.context.selectedCurrency = self.coin
+                    self.context.selectedCurrency = self.coinAsset
                 }
             }
     }

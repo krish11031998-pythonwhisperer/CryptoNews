@@ -16,21 +16,18 @@ struct CurrencyDetailView: View {
     var reloadFeed:(() -> Void)?
     var reloadAsset:(() -> Void)?
     @Binding var showMoreSection:CurrencyViewSection
-    @Binding var coinData:CrybseCoinData?
-    var txns:[Transaction]
+    @Binding var assetData:CrybseAsset?
 //    var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
-        coinData:Binding<CrybseCoinData?>,
-        txns:[Transaction],
-         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
-         showSection:Binding<CurrencyViewSection>,
-         reloadAsset:(() -> Void)? = nil,
-         reloadFeed:(() -> Void)? = nil,
-         onClose:(() -> Void)? = nil)
+        assetData:Binding<CrybseAsset?>,
+        size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
+        showSection:Binding<CurrencyViewSection>,
+        reloadAsset:(() -> Void)? = nil,
+        reloadFeed:(() -> Void)? = nil,
+        onClose:(() -> Void)? = nil)
     {
              
-        self._coinData = coinData
-        self.txns = txns
+        self._assetData = assetData
         self.onClose = onClose
         self.size = size
         self._showMoreSection = showSection
@@ -42,7 +39,7 @@ struct CurrencyDetailView: View {
     var body:some View{
         self.mainView
             .onAppear {
-                print("(DEBUG) The Coin Data : ",self.coinData?.MetaData?.Name ?? "XXX")
+                print("(DEBUG) The Coin Data : ",self.assetData?.currency ?? "XXX")
             }
     }
 }
@@ -58,6 +55,10 @@ extension CurrencyDetailView{
         self.newsContainer
     }
     
+    var socialData:CrybseCoinSocialData?{
+        return self.assetData?.coin
+    }
+    
     var  priceMainInfo:some View{
         VStack(alignment: .leading, spacing: 10) {
             MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
@@ -69,35 +70,44 @@ extension CurrencyDetailView{
     }
     
     var news:[CryptoNews]{
-        return self.coinData?.News ?? []
+        return self.socialData?.News ?? []
     }
     
     var tweets:[AssetNewsData]{
-        return self.coinData?.Tweets ?? []
+        return self.socialData?.Tweets ?? []
+    }
+    
+    var txns:[Transaction]{
+        return self.assetData?.txns ?? []
     }
     
     var coinTotal:Float{
-        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.asset_quantity})
+        return self.assetData?.coinTotal ?? 0
     }
 
     var valueTotal:Float{
-        return self.txns.reduce(0, {$0 + ($1.type == "sell" ? -1 : 1) * $1.total_inclusive_price})
+        return self.assetData?.value ?? 0
     }
+    
+    var profit:Float{
+        return self.assetData?.Profit ?? 0
+    }
+    
 
     var txnForAssetPortfolioData:[PortfolioData]{
-        return self.txns.compactMap({$0.parseToPortfolioData()})
+        return self.txns.compactMap({$0.parseToPortfolioData()}) ?? []
     }
     
     var CurrencySummary:some View{
         ChartCard(header: "Statistics", size: self.size) { w, h in
-            CurrencySummaryView(currency: self.coinData?.MetaData ?? .init(), size: .init(width: w, height: h))
+            CurrencySummaryView(currency: self.socialData?.MetaData ?? .init(), size: .init(width: w, height: h))
         }
     }
     
     
     @ViewBuilder var transactionHistoryView:some View{
         if !self.txns.isEmpty{
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,current_val: self.coinData?.MetaData?.Price ?? 0, fee: 1.36, totalfee: 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,profit: self.profit, fee: 1.36, totalfee: 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
             TabButton(width: self.size.width, height: 50, title: "View Portfolio", textColor: .white) {
                 withAnimation(.easeInOut) {
                     self.showMoreSection = .txns
@@ -108,14 +118,14 @@ extension CurrencyDetailView{
             if !self.context.addTxn{
                 self.context.addTxn.toggle()
             }
-            if let sym = self.coinData?.MetaData?.Symbol,self.context.selectedSymbol != sym{
+            if let sym = self.assetData?.Currency,self.context.selectedSymbol != sym{
                 self.context.selectedSymbol = sym
             }
         }
     }
     
     @ViewBuilder var infoSection:some View{
-        if let coinMetaData = self.coinData?.MetaData{
+        if let coinMetaData = self.socialData?.MetaData{
             Container(heading: "About", width: self.size.width, ignoreSides: false, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
                 MainText(content:"What is \(coinMetaData.Symbol)", fontSize: 17.5, color: .white, fontWeight: .semibold)
                     .frame(width: w, alignment: .leading)
@@ -149,10 +159,11 @@ extension CurrencyDetailView{
     
     func infoViewGen(type:PostCardType) -> some View{
         let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
-        let data:[Any] = type == .News ? self.news : self.tweets
+        var data:[Any] = type == .News ? self.news : self.tweets
+        data = data.count < 5 ? data : Array(data[0...4])
         let view = VStack(alignment: .leading, spacing: 10){
             MainText(content: title, fontSize: 25, color: .white,fontWeight: .bold, style: .heading).padding(.vertical)
-            ForEach(Array(data[0...4].enumerated()),id:\.offset) { _data in
+            ForEach(Array(data.enumerated()),id:\.offset) { _data in
                 let data = _data.element
                 self.cardBuilder(data: data)
             }
@@ -192,7 +203,7 @@ extension CurrencyDetailView{
     }
     
     var OHLCV:[CryptoCoinOHLCVPoint]{
-        return self.coinData?.TimeseriesData ?? []
+        return self.socialData?.TimeseriesData ?? []
     }
     
     var priceInfo:some View{
@@ -223,7 +234,7 @@ extension CurrencyDetailView{
         if self.choosen > 0 && self.choosen < self.OHLCV.count{
             return self.OHLCV[self.choosen].close ?? 0
         }else{
-            return self.coinData?.MetaData?.Price ?? 0
+            return self.socialData?.MetaData?.Price ?? 0
         }
     }
     

@@ -313,7 +313,8 @@ class ImageDownloader:ObservableObject{
             }
         }else if self.mode == "multiple"{
 //            self.b_images[url] = safeImage
-            setWithAnimation(animation: .linear){
+//            setWithAnimation(animation: .linear){
+            DispatchQueue.main.async {
                 self.images[url] = safeImage
             }
         }

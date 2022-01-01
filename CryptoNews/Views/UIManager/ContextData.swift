@@ -30,7 +30,7 @@ enum LoginState{
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
-    @Published private var _selectedCurrency:CrybseCoin? = nil
+    @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedSymbol:String? = nil
@@ -104,17 +104,15 @@ class ContextData:ObservableObject{
     }
     
     
-    var selectedCurrency:CrybseCoin?{
+    var selectedCurrency:CrybseAsset?{
         get{
             return self._selectedCurrency
         }
         
         set{
-            DispatchQueue.main.async{
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    self._selectedCurrency = newValue
-                    self.showTab = newValue != nil ? false : true
-                }
+            setWithAnimation {
+                self._selectedCurrency = newValue
+                self.showTab = newValue != nil ? false : true
             }
         }
     }

@@ -10,15 +10,15 @@ import SwiftUI
 
 struct CurrencySummaryView: View {
 //    var currency:AssetData
-    var currency:CoinData
+    var currency:CrybseCoin
     var size:CGSize
     
-    init(currency:CoinData,size:CGSize){
+    init(currency:CrybseCoin,size:CGSize){
         self.currency = currency
         self.size = size
     }
     var values:[String:String]{
-        return ["Market Cap":self.currency.marketCap ?? "","Volume 24h":Float(self.currency._24hVolume ?? "")?.ToDecimals() ?? "","Rank" :
+        return ["Market Cap":"\(self.currency.marketCap)","Volume 24h":self.currency._24hVolume?.ToDecimals() ?? "","Rank" :
                     String(self.currency.rank ?? 0),"Max Supply":self.currency.Supply.total ?? "0","All Time High": Float(self.currency.allTimeHigh?.price ?? "")?.ToMoney() ?? ""]
     }
     

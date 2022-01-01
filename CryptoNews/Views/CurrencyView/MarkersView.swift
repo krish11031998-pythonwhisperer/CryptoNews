@@ -12,7 +12,8 @@ struct PortfolioData{
     var type:String?
     var crypto_coins:Double
     var value_usd:Float
-    var current_val:Float
+//    var current_val:Float
+    var profit:Float
     var fee:Float
     var totalfee:Float
     var totalBuys:Int?
@@ -32,9 +33,7 @@ struct MarkerMainView:View{
     
     var headerValues:[String:Float]{
         let val_bought = self.data.value_usd
-        let val_now = Float(self.data.crypto_coins) * self.data.current_val
-        let profit = val_now - val_bought
-        return ["Value (now)":val_now,"Profit":profit,"Percent": (profit/val_bought) * 100]
+        return ["Value (now)":self.data.value_usd,"Profit":self.data.profit,"Percent": (self.data.profit/self.data.value_usd) * 100]
     }
     
     func percentChangeView(value:Float) -> some View{

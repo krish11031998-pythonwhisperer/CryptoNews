@@ -10,7 +10,7 @@ import Foundation
 
 class CrybseCoinAPI:CrybseAPI{
     
-    @Published var coinData:CrybseCoinData? = nil
+    @Published var coinData:CrybseCoinSocialData? = nil
     
     var coinUID:String = ""
     var fiat:String = ""
@@ -36,8 +36,9 @@ class CrybseCoinAPI:CrybseAPI{
     
     override func parseData(url: URL, data: Data) {
         DataCache.shared[url] = data
+        print("(DEBUG) coinData url : ",url.absoluteString)
         setWithAnimation {
-            if let data = CrybseCoinData.parseCoinDataFromData(data: data){
+            if let data = CrybseCoinSocialData.parseCoinDataFromData(data: data){
                 self.coinData = data
             }
             

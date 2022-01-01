@@ -26,7 +26,7 @@ class CrybseCoinsAPI:CrybseAPI{
     
     var url:URL?{
         var uC =  self.baseComponent
-        uC.path = "/trackedAssets"
+        uC.path = "/getAssets"
         uC.queryItems = [
             URLQueryItem(name: "currency", value: self.symbolsQuery),
             URLQueryItem(name: "uid", value: self.uid)
@@ -36,6 +36,7 @@ class CrybseCoinsAPI:CrybseAPI{
     
     override func parseData(url: URL, data: Data) {
         DataCache.shared[url] = data
+        print("(DEBUG) Assets url : ",url.absoluteString)
         setWithAnimation {
             if let coin = CrybseAssets.parseAssetsFromData(data: data){
                 self.coinsData = coin

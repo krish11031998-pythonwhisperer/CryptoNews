@@ -26,7 +26,7 @@ struct AllAssetView: View {
         
     }
 
-    func coins(type:String) -> [CrybseAssetCoin]{
+    func coins(type:String) -> [CrybseAsset]{
         if type == "tracked"{
             return self.crybseAssetsAPI.coinsData?.tracked ?? []
         }else{

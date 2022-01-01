@@ -31,13 +31,13 @@ struct CryptoNewsApp: App {
         }.ignoresSafeArea()
     }
     
-    func onChangeUser(_ uid:String?){
-        if let uid = uid, self.loading{
-            DispatchQueue.main.async {
-                self.context.transactionAPI.loadTransaction(uuid: uid)
-            }
-        }
-    }
+//    func onChangeUser(_ uid:String?){
+//        if let uid = uid, self.loading{
+//            DispatchQueue.main.async {
+//                self.context.transactionAPI.loadTransaction(uuid: uid)
+//            }
+//        }
+//    }
     
     var mainView:some View{
         Group{

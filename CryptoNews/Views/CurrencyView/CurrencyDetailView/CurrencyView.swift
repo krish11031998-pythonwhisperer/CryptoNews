@@ -19,12 +19,8 @@ struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
     @StateObject var coinAPI:CrybseCoinAPI
-//    @StateObject var ohclvAPI:CC_OHCLV_API
-//    @StateObject var coinAPI:CoinRankCoinAPI
-//    @State var currency:CoinData = .init()
+    @State var assetData:CrybseAsset?
     var size:CGSize = .init()
-//    @StateObject var asset_feed:FeedAPI
-//    var asset_info:AssetAPI
     @State var showSection:CurrencyViewSection = .none
 //    @StateObject var NAPI:FeedAPI
     @State var refresh:Bool = false
@@ -32,19 +28,20 @@ struct CurrencyView:View{
     
     init(
         name:String? = nil,
-        info:CrybseCoin? = nil,
+        info:CrybseAsset? = nil,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
+        self._assetData = .init(initialValue: info)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(coinUID: info?.uuid ?? "", fiat: "USD", crypto: info?.Symbol ?? ""))
+        self._coinAPI = .init(wrappedValue: .init(coinUID: info?.coinData?.uuid ?? "", fiat: "USD", crypto: info?.coinData?.Symbol ?? ""))
     }
     
     
     
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
             withAnimation(.easeInOut) {
                 if self.coinAPI.coinData == nil{
                     self.coinAPI.getCoinData()
@@ -53,29 +50,17 @@ struct CurrencyView:View{
         }
     }
     
-    var coin:CrybseCoinData?{
-        return self.coinAPI.coinData
-    }
     
-    var coinData:CoinData?{
-        return self.coinAPI.coinData?.MetaData
-    }
-    
-    var news:Array<CryptoNews>?{
-        return self.coinAPI.coinData?.News
-    }
-    
-    var tweets:Array<AssetNewsData>?{
-        return self.coinAPI.coinData?.Tweets
-    }
-    
-    var timeSeries:Array<CryptoCoinOHLCVPoint>?{
-        return self.coinAPI.coinData?.TimeseriesData
+    func onReceiveCoinData(coinData: CrybseCoinSocialData?){
+        guard let coinData = coinData else {
+            return
+        }
+        self.assetData?.coin = coinData
     }
     
     var transactions:[Transaction]{
-        guard let sym = self.coin?.MetaData?.Symbol else {return []}
-        return self.context.balanceForCurrency(asset: sym)
+        guard let txns = self.assetData?.txns else {return []}
+        return txns
     }
     
     func loadTxns(){
@@ -93,34 +78,13 @@ struct CurrencyView:View{
     }
     
     
-//    func onReceiveNewCoin(_ coin:CoinData?){
-//        DispatchQueue.main.async {
-//            if let newCoin = coin{
-//                self.currency.description = newCoin.description
-//                self.currency.links = newCoin.links
-//                self.currency.supply = newCoin.supply
-//                self.currency.allTimeHigh = newCoin.allTimeHigh
-//            }
-//            if self.refresh{
-//                self.refresh.toggle()
-//            }
-//        }
-//    }
+    var tweets:[AssetNewsData]?{
+        return self.coinAPI.coinData?.Tweets
+    }
     
-//    func reloadNewsFeed(idx:Int){
-//        if idx == self.NAPI.FeedData.count - 5{
-//            print("(DEBUG) Fetching more feedData")
-//            self.NAPI.getNextPage()
-//        }
-//    }
-    
-    
-//    func reloadAssetFeed(idx:Int){
-//        if idx == self.asset_feed.FeedData.count - 5{
-//            print("(DEBUG) Fetching more feedData")
-//            self.asset_feed.getNextPage()
-//        }
-//    }
+    var news:[CryptoNews]?{
+        return self.coinAPI.coinData?.News
+    }
     
     
     @ViewBuilder func feedView(w:CGFloat) -> some View{
@@ -171,7 +135,7 @@ struct CurrencyView:View{
         let bgcolor = self.context.user.user?.watching.contains(self.currencyHeading) ?? false ? Color.white : Color.black
         return AnyView(HStack(alignment: .center, spacing: 10) {
             SystemButton(b_name: "heart", color: color , haveBG: true, size: .init(width: 10, height: 10), bgcolor: bgcolor, alignment: .vertical) {
-                if let sym = self.coinData?.Symbol, let included = self.context.user.user?.watching.contains(sym), !included{
+                if let sym = self.assetData?.currency, let included = self.context.user.user?.watching.contains(sym), !included{
                     self.context.user.user?.watching.append(sym)
                     self.context.user.updateUser()
                 }
@@ -181,24 +145,19 @@ struct CurrencyView:View{
 
     func innerView(w:CGFloat) -> some View{
         let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-        return CurrencyDetailView(coinData: $coinAPI.coinData,txns: self.transactions, size: .init(width: w, height: totalHeight * 0.3), showSection: $showSection, onClose: self.onClose)
+        return CurrencyDetailView(assetData: $assetData, size: .init(width: w, height: totalHeight * 0.3), showSection: $showSection, onClose: self.onClose)
     }
     
     var currencyHeading:String{
-        return "\(coinData?.symbol ?? "BTC")"
+        return "\(assetData?.currency ?? "BTC")"
     }
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-            
             ScrollView(.vertical, showsIndicators: false) {
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
                     .refreshableView(refreshing: $refresh,width: size.width,hasToRender:self.context.selectedCurrency != nil)
-                    .onChange(of: self.refresh) { refresh in
-//                        if self.refresh{
-//                            self.coinAPI.refreshCoin()
-//                        }
-                    }
+                    .onChange(of: self.refresh) { refresh in}
             }
         }else{
             ProgressView()
@@ -213,7 +172,7 @@ struct CurrencyView:View{
         }
         if self.showSection == .txns{
             HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                TransactionDetailsView(txns: self.txnsForAsset,currency:self.coinData?.Symbol ?? "LTC", currencyCurrentPrice: self.coinData?.Price ?? 0,width: w)
+                TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData?.currency ?? "LTC", currencyCurrentPrice: self.assetData?.coinData?.Price ?? 0,width: w)
             }
         }
         if self.showSection == .news{
@@ -225,7 +184,7 @@ struct CurrencyView:View{
     
     var body:some View{
         ZStack(alignment: .topLeading) {
-            if self.coinAPI.coinData != nil{
+            if self.assetData?.coin != nil{
                 self.mainView
             }else if self.coinAPI.loading{
                 ProgressView().frame(width: totalWidth, alignment: .center)
@@ -236,6 +195,9 @@ struct CurrencyView:View{
 //        .transition(.slideInOut)
 //        .animation(.easeInOut)
         .onAppear(perform: self.onAppear)
+        .onReceive(self.coinAPI.$coinData) {coinData in
+            self.onReceiveCoinData(coinData: coinData)
+        }
     }
 }
 
