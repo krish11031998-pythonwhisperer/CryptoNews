@@ -41,7 +41,7 @@ struct CurrencyView:View{
     
     
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(250)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
             withAnimation(.easeInOut) {
                 if self.coinAPI.coinData == nil{
                     self.coinAPI.getCoinData()
@@ -192,8 +192,6 @@ struct CurrencyView:View{
             self.diff_Views
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
-//        .transition(.slideInOut)
-//        .animation(.easeInOut)
         .onAppear(perform: self.onAppear)
         .onReceive(self.coinAPI.$coinData) {coinData in
             self.onReceiveCoinData(coinData: coinData)

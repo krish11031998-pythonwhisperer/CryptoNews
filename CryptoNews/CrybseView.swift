@@ -101,7 +101,6 @@ extension CrybseView{
         }
         
         if self.context.selectedSymbol != nil{
-//            CurrencyView(name: self.context.selectedSymbol, info: self.context.selectedCurrency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             CurrencyView(name: self.context.selectedSymbol, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             .transition(.slideInOut)
             .background(mainBGView)

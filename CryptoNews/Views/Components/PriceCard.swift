@@ -126,9 +126,9 @@ struct PriceCard: View {
     var body: some View {
         self.mainBody
             .buttonify {
-                DispatchQueue.main.async {
+//                DispatchQueue.main.async {
                     self.context.selectedCurrency = self.coinAsset
-                }
+//                }
             }
     }
 }

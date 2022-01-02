@@ -48,19 +48,23 @@ extension CurrencyFeedView{
                 ForEach(Array(self.currency_data.enumerated()),id:\.offset) { _data in
                     let data = _data.element
                     let curr = data.s ?? "NOC"
-                    LazyVStack(alignment: .center, spacing: 5) {
-                        CurrencySymbolView(currency: data.s ?? "BTC", size: .medium, width: 30)
-                        MainText(content: curr, fontSize: 12, color: .white, fontWeight: .regular, style: .normal)
-                    }.padding(10)
-                    .aspectRatio(contentMode: .fill)
-                    .background(self.bg(condition: curr == currency))
-                    .clipContent(clipping: .roundClipping)
-                    .buttonify {
-                        DispatchQueue.main.async {
-                            self.currency = curr
-                        }
-                    }
+                    self.currencyButton(curr: curr)
                 }
+            }
+        }
+    }
+    
+    func currencyButton(curr:String) -> some View{
+        VStack(alignment: .center, spacing: 5) {
+            CurrencySymbolView(currency: curr, size: .medium, width: 30)
+            MainText(content: curr, fontSize: 12, color: .white, fontWeight: .regular, style: .normal)
+        }.padding(10)
+        .frame(width: 60, height: 70, alignment: .center)
+        .background(self.bg(condition: curr == currency))
+        .clipContent(clipping: .roundClipping)
+        .buttonify {
+            DispatchQueue.main.async {
+                self.currency = curr
             }
         }
     }
@@ -76,8 +80,3 @@ extension CurrencyFeedView{
     
 }
 
-//struct CurrencyFeedView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        CurrencyFeedView()
-//    }
-//}

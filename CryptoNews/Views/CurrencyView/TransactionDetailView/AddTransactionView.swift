@@ -25,66 +25,14 @@ class AddTxnUpdatePreference:PreferenceKey{
     
 }
 
-class TxnFormDetails:ObservableObject{
-    @Published var time:String = ""
-    @Published var type:String  = ""
-    @Published var asset:String  = ""
-    @Published var asset_quantity:String  = ""
-    @Published var asset_spot_price:String = ""
-    @Published var subtotal:String = ""
-    @Published var total_inclusive_price:String = ""
-    @Published var fee:String = ""
-    @Published var memo:String = ""
-    @Published var uid:String  = ""
-    @Published var added_Success:Bool = false
-    
-    init(asset:String? = nil,assetPrice:String? = nil){
-        self.asset_spot_price = assetPrice ?? ""
-        self.asset = asset ?? ""
-    }
-    
-    static var empty:TxnFormDetails = .init()
-    
-    func parseToTransaction() -> Transaction{
-        return .init(time: self.time, type: self.type, asset: self.asset, asset_quantity: self.asset_quantity.toFloat(), asset_spot_price: self.asset_spot_price.toFloat(), subtotal: self.subtotal.toFloat(), total_inclusive_price: self.total_inclusive_price.toFloat(), fee: self.fee.toFloat(), memo: self.memo, uid: self.uid)
-    }
-    
-    func updateTxnDetails(_ value:String,_ type:ModalType){
-        if type == .fee{
-            self.fee = value
-        }else if type == .spot_price{
-            self.asset_spot_price = value
-        }else{
-            self.asset_quantity = value
-        }
-    }
-    
-    func reset(){
-        self.time = ""
-        self.type = ""
-        self.asset = ""
-        self.asset_spot_price = ""
-        self.asset_quantity = ""
-        self.asset = ""
-        self.subtotal = ""
-        self.total_inclusive_price = ""
-        self.fee = ""
-        self.memo = ""
-        self.uid = ""
-        self.added_Success = false
-        
-    }
-}
-
-
 struct AddTransactionView:View {
     @EnvironmentObject var context:ContextData
     @StateObject var notification:NotificationData = .init()
     @Namespace var animation
     @StateObject var txn:TxnFormDetails
-    @State var type:TransactionType = .buy
-    @State var entryType = "coin"
-    @State var date:Date = Date()
+//    @State var type:TransactionType = .buy
+//    @State var entryType = "coin"
+//    @State var date:Date = Date()
     @State var showModal:ModalType = .none
     @State var coin:CoinMarketData = .init()
     @State var curr_sym:String? = nil
@@ -134,24 +82,6 @@ struct AddTransactionView:View {
         }
     }
         
-    func updateTxnObject(){
-        let subTotal = self.txn.asset_quantity.toFloat() * self.txn.asset_spot_price.toFloat()
-        txn.fee = txn.fee == "" ? "0" : txn.fee
-        txn.asset_spot_price = txn.asset_spot_price == "" ? "0" : txn.asset_spot_price
-        txn.asset = self.currency
-        
-        if #available(iOS 15.0, *){
-            txn.time = self.date.ISO8601Format()
-        }else {
-            txn.time = self.date.stringDate()
-        }
-        txn.subtotal = subTotal.toString()
-        txn.total_inclusive_price = (subTotal + txn.fee.toFloat()).toString()
-        txn.type = self.type.rawValue
-        txn.memo = "You \(type == .receive ? "received" : type == .buy ? "bought" : type == .sell ? "sold" : "sent") \(self.currency)"
-        txn.uid = self.context.user.user?.uid ?? ""
-    }
-    
     func updateTxnAdditionState(state:Bool){
         DispatchQueue.main.async {
             withAnimation(.easeInOut) {
@@ -161,14 +91,14 @@ struct AddTransactionView:View {
     }
     
     func buttonHandle(){
-        self.updateTxnObject()
-        print("This is txn! : ",txn.parseToTransaction())
-        TransactionAPI.shared.uploadTransaction(txn: txn.parseToTransaction()) { err in
-            if let err_msg = err?.localizedDescription {
-                print("error : ",err_msg)
-                self.updateTxnAdditionState(state: false)
-            }else{
-                self.updateTxnAdditionState(state: true)
+        guard let uid = self.context.user.user?.uid else {return}
+        self.txn.uid = uid
+        CrybseTransactionAPI.shared.postTxn(txn: self.txn) { data in
+            if let res = data as? RequestData{
+                if let err = res.data{
+                    print("(DEBUG) Err while trying to post the txn onto Firebase : ",err)
+                }
+                self.updateTxnAdditionState(state: res.success)
             }
         }
     }
@@ -178,12 +108,10 @@ struct AddTransactionView:View {
         let aapi = AssetAPI.shared(currency: sym)
         aapi.getAssetInfo { data in
             guard let data = data else {return}
-            DispatchQueue.main.async {
-                withAnimation(.easeInOut) {
-                    self.currentAsset = data
-                }
+            withAnimation(.easeInOut) {
+                self.currentAsset = data
+                self.txn.asset_spot_price = "\(data.price ?? 0)"
             }
-            
         }
     }
     
@@ -222,6 +150,10 @@ struct AddTransactionView:View {
                                 if self.coin != newValue{
                                     self.coin = newValue
                                 }
+                                if let symbol = newValue.s, self.txn.asset != symbol{
+                                    self.txn.asset = symbol
+                                }
+                                
                             }
                     }
                     self.txnValueField.frame(width: w, alignment: .center)
@@ -245,6 +177,7 @@ struct AddTransactionView:View {
                         self.updateModal(type: .none)
                     }else if self.txn.added_Success{
                         self.txn.added_Success.toggle()
+                        self.txn.reset()
                     }
                     
                 }
@@ -304,7 +237,7 @@ extension AddTransactionView{
         var valToUpdate = self.showModal == .fee ? self.txn.fee : self.showModal == .spot_price ? self.txn.asset_spot_price : self.txn.asset_quantity
         DispatchQueue.main.async {
             if val != "Del"{
-                if valToUpdate == ""{
+                if valToUpdate == "" || valToUpdate == "0"{
                     valToUpdate = val
                 }else{
                     valToUpdate += val
@@ -355,7 +288,7 @@ extension AddTransactionView{
         return HStack(alignment: .center, spacing: 5) {
             ForEach(Array(self.types.enumerated()), id: \.offset) {_type in
                 let type = _type.element
-                let id = self.type == type
+                let id = self.txn.type == type
                 
                 
                 MainText(content: type.rawValue.capitalized, fontSize: 15, color: self.font_color, fontWeight: .bold, style: .normal)
@@ -375,8 +308,8 @@ extension AddTransactionView{
                         })
                     .buttonify {
                         withAnimation(.easeInOut) {
-                            if self.type != type{
-                                self.type = type
+                            if self.txn.type != type{
+                                self.txn.type = type
                             }
                         }
                     }
@@ -426,9 +359,9 @@ extension AddTransactionView{
     
     
     var dateField:some View{
-        var date = self.date.stringDate()
+        var date = self.txn.date.stringDate()
         if #available(iOS 15.0, *) {
-            date = self.date.formatted(date: .abbreviated, time: .shortened)
+            date = self.txn.date.formatted(date: .abbreviated, time: .shortened)
         }
         return MainText(content: date, fontSize: 15, color: self.font_color, fontWeight: .semibold, style: .normal)
             .blobify(color: AnyView(BlurView(style: .dark)))
@@ -448,7 +381,7 @@ extension AddTransactionView{
             MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? self.font_color : .gray, fontWeight: .semibold)
             self.numPad(w: w)
         }else if self.showModal == .date{
-            DatePicker("", selection: $date, displayedComponents: [.date,.hourAndMinute])
+            DatePicker("", selection: $txn.date, displayedComponents: [.date,.hourAndMinute])
                 .datePickerStyle(.automatic)
                 .labelsHidden()
         }else{

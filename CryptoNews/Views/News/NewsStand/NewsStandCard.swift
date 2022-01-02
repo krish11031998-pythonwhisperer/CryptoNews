@@ -34,7 +34,7 @@ struct NewsStandCard: View {
     func mainBody(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .top, spacing: 10) {
             self.mainText
-                .frame(maxHeight: h - 20, alignment: .center)
+                .frame(height: h - 20, alignment: .topLeading)
             Spacer()
             if let data = self.news as? AssetNewsData{
                 ImageView(url: data.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)

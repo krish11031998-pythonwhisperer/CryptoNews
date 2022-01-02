@@ -12,7 +12,6 @@ protocol DataParsingProtocol{
     func parseData(url:URL,data:Data)
 }
 
-
 protocol DataDictCache{
     subscript(_ url:URL) -> Data? {get set}
 }
@@ -40,13 +39,27 @@ struct DataCache:DataDictCache{
     }
 }
 
+struct RequestData:Codable{
+    var data:String?
+    var success:Bool
+}
 
 class DAPI:ObservableObject,DataParsingProtocol{
     func parseData(url: URL, data: Data) {
-        DataCache.shared[url] = data
+        let decoder = JSONDecoder()
+        do{
+            let res = try decoder.decode(RequestData.self, from: data)
+            DispatchQueue.main.async {
+                self.success = res.success
+            }
+        }catch{
+            print("(DEBUG) Error while trying to parse teh Request Data from the data : ",error.localizedDescription)
+        }
+        
+//        DataCache.shared[url] = data
     }
     
-    
+    @Published var success:Bool? = nil
     @Published var loading:Bool = false
     var cancellable = Set<AnyCancellable>()
     
@@ -129,7 +142,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
         return uC
     }
     
-    func fetchDataRequest(url:URL? = nil,request:URLRequest? = nil,completion:((Data) -> Void)? = nil){
+    func performDataRequest(url:URL? = nil,request:URLRequest? = nil,completion:((Data) -> Void)? = nil){
         let publisher:URLSession.DataTaskPublisher
         if let url = url {
              publisher = URLSession.shared.dataTaskPublisher(for: url)
@@ -138,12 +151,15 @@ class DAPI:ObservableObject,DataParsingProtocol{
         }else{
             return
         }
-        
+                
         publisher
             .receive(on: DispatchQueue.main)
             .tryMap(self.checkOutput(output:))
             .sink(receiveCompletion: { _ in }, receiveValue: { data in
                 let url = request?.url ?? url ?? URL(string: "")!
+                if request?.httpMethod == "GET"{
+                    DataCache.shared[url] = data
+                }
                 if let safeCompletion = completion {
                     self.CallCompletionHandler(url: url, data: data, completion: safeCompletion)
                 }else{
@@ -181,7 +197,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
                     self.parseData(url: url, data: data)
                 }
             }else{
-                self.fetchDataRequest(url: url, completion: completion)
+                self.performDataRequest(url: url, completion: completion)
             }
             
         }else if let url = request?.url{
@@ -191,7 +207,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
                     self.parseData(url: url, data: data)
                 }
             }else{
-                self.fetchDataRequest(request: request, completion: completion)
+                self.performDataRequest(request: request, completion: completion)
             }
         }
     }
@@ -202,8 +218,35 @@ class DAPI:ObservableObject,DataParsingProtocol{
                 self.loading = true
             }
         }
-        self.fetchDataRequest(request: request, completion: completion)
+        self.performDataRequest(request: request, completion: completion)
     }
     
+// MARK: - Posting Data
+    
+    func PostData(url:URL? = nil,request req:URLRequest? = nil,completion:((Any) -> Void)? = nil){
+        var request:URLRequest
+        
+        if let safeRequest = req{
+            request = safeRequest
+        }else if let safeURL = url{
+            request = URLRequest(url: safeURL)
+            request.httpMethod = "POST"
+        }else{
+            print("(DEBUG) You have provided not URL OR Request")
+            return
+        }
+        
+        self.performDataRequest(request: request) { data in
+//            guard let safeURL = request.url else {return}
+//            self.parseData(url: safeURL, data: data)
+            let decoder = JSONDecoder()
+            do{
+                let res = try decoder.decode(RequestData.self, from: data)
+                completion?(res)
+            }catch{
+                print("(DEBUG) Error while trying to parse the RequestData! : ",error.localizedDescription)
+            }
+        }
+    }
     
 }

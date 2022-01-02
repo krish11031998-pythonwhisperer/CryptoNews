@@ -31,13 +31,6 @@ struct CryptoNewsApp: App {
         }.ignoresSafeArea()
     }
     
-//    func onChangeUser(_ uid:String?){
-//        if let uid = uid, self.loading{
-//            DispatchQueue.main.async {
-//                self.context.transactionAPI.loadTransaction(uuid: uid)
-//            }
-//        }
-//    }
     
     var mainView:some View{
         Group{
@@ -63,13 +56,6 @@ struct CryptoNewsApp: App {
                     self.loading.toggle()
                 }
             }
-//        .onChange(of: self.context.user.user?.uid,perform: self.onChangeUser(_:))
-//        .onChange(of: self.context.transactionAPI.loading) { load in
-//            if !load && self.loading && self.context.loggedIn != .signedIn{
-//                self.loading.toggle()
-//                self.context.loggedIn = .signedIn
-//            }
-//        }
     }
     
     var body: some Scene {

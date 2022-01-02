@@ -93,7 +93,7 @@ class FeedAPI:DAPI{
     }
     
     override func parseData(url:URL,data:Data){
-        DataCache.shared[url] = data
+//        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(News.self, from: data)

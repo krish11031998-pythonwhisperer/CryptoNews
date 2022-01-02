@@ -62,47 +62,14 @@ struct NewsCard: View {
         .padding(.horizontal,2.5)
         .frame(width: w,height: h, alignment: alignment)
         .clipContent(clipping: .clipped)
-//        .onTapGesture {
-//            handler?()
-//        }
     }
-    
-//    func iteratingButton(w:CGFloat,h:CGFloat) -> some View{
-//        HStack(alignment: .center, spacing: 0) {
-//            self.buttonArea(w: w * 0.25,h: h,alignment: .leading,innerView: {
-//                AnyView(SystemButton(b_name: "chevron.left") {})
-//            }) {
-//                withAnimation(.easeInOut) {
-//                    self.tapHandler?(-1)
-//                }
-//            }
-//            self.buttonArea(w: w * 0.5,h: h,innerView: {
-//                AnyView(Color.clear.opacity(0.5))
-//            }){
-//                withAnimation(.easeInOut) {
-//                    self.tapHandler?(0)
-//                }
-//            }
-//            self.buttonArea(w: w * 0.25,h: h,alignment: .trailing,innerView: {
-//                AnyView(SystemButton(b_name: "chevron.right") {})
-//            }){
-//                withAnimation(.easeInOut) {
-//                    self.tapHandler?(1)
-//                }
-//            }
-//        }
-//        .frame(width: w, height: h, alignment: .center)
-//    }
-    
+
     @ViewBuilder var mainBody:some View{
         if self.size.height < totalHeight * 0.4{
             let h = size.height
             let w = size.width
             ZStack(alignment: .bottom) {
                 ImageView(url: self.news.thumbnail,width: w, height: h, contentMode: .fill, alignment: .center)
-//                if let _ = self.tapHandler{
-//                    self.iteratingButton(w: w, h: h)
-//                }
                 self.newsView(size: .init(width: w, height: h * 0.5))
                     .background(Color.darkGradColor.opacity(0.5).frame(height: h * 0.5))
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
@@ -113,9 +80,6 @@ struct NewsCard: View {
                 VStack(alignment: .leading, spacing: 5) {
                     ZStack(alignment: .center) {
                         ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
-//                        if let _ = self.tapHandler{
-//                            self.iteratingButton(w: size.width, h: img_h)
-//                        }
                     }.frame(width: size.width, height: img_h, alignment: .center)
                     self.newsView(size: .init(width: size.width, height: news_h))
                 }.frame(width: size.width, height: size.height, alignment: .topLeading)

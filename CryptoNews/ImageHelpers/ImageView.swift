@@ -85,18 +85,14 @@ struct ImageView:View{
             Image(uiImage: img)
                 .standardImageView(size: self.imgSize, contentMode: .fill)
         }else{
-            Color.clear.frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
+            mainBGView
+                .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
+                .clipContent(clipping: .circleClipping)
         }
     }
     
     @ViewBuilder var imgView:some View{
-//        if let urlStr = self.url,let url = URL(string: urlStr),urlStr.contains("svg") {
-//            SVGImage(url: url, size: self.imgSize)
-//                .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
-////                .clipContent(clipping: self.clipping)
-//        }else{
-            self.imgUIImageView
-//        }
+        self.imgUIImageView
     }
     
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
