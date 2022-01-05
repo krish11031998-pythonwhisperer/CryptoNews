@@ -35,7 +35,7 @@ class CrybseAssets:Codable{
     }
 }
 
-class CrybseAsset:Codable{
+class CrybseAsset:tCodable{
     var currency:String?
     var txns:[Transaction]?
     var coinData:CrybseCoin?

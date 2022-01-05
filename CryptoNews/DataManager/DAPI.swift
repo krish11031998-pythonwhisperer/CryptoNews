@@ -124,7 +124,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
     }
     
     func CallCompletionHandler(url:URL,data:Data,completion:((Data) -> Void)){
-        DataCache.shared[url] = data
+//        DataCache.shared[url] = data
         completion(data)
         DispatchQueue.main.async {
             self.loading = false
@@ -155,15 +155,15 @@ class DAPI:ObservableObject,DataParsingProtocol{
         publisher
             .receive(on: DispatchQueue.main)
             .tryMap(self.checkOutput(output:))
-            .sink(receiveCompletion: { _ in }, receiveValue: { data in
+            .sink(receiveCompletion: { _ in }, receiveValue: { [weak self] data in
                 let url = request?.url ?? url ?? URL(string: "")!
                 if request?.httpMethod == "GET"{
                     DataCache.shared[url] = data
                 }
                 if let safeCompletion = completion {
-                    self.CallCompletionHandler(url: url, data: data, completion: safeCompletion)
+                    self?.CallCompletionHandler(url: url, data: data, completion: safeCompletion)
                 }else{
-                    self.parseData(url: url, data: data)
+                    self?.parseData(url: url, data: data)
                 }
                 
             })
@@ -218,7 +218,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
                 self.loading = true
             }
         }
-        self.performDataRequest(request: request, completion: completion)
+        self.performDataRequest(url:_url,request: request, completion: completion)
     }
     
 // MARK: - Posting Data

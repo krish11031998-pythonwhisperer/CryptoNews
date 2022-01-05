@@ -34,7 +34,8 @@ struct AddTransactionView:View {
 //    @State var entryType = "coin"
 //    @State var date:Date = Date()
     @State var showModal:ModalType = .none
-    @State var coin:CoinMarketData = .init()
+//    @State var coin:CoinMarketData = .init()
+    @State var coin:CrybseCoinPrice? = nil
     @State var curr_sym:String? = nil
     @State var currentAsset: AssetData?
     
@@ -103,22 +104,29 @@ struct AddTransactionView:View {
         }
     }
     
-    func fetchAssetData(sym:String?){
-        guard let sym = sym else {return}
-        let aapi = AssetAPI.shared(currency: sym)
-        aapi.getAssetInfo { data in
-            guard let data = data else {return}
-            withAnimation(.easeInOut) {
-                self.currentAsset = data
-                self.txn.asset_spot_price = "\(data.price ?? 0)"
-            }
-        }
-    }
-    
+//    func fetchAssetData(sym:String?){
+//        guard let sym = sym else {return}
+//        let aapi = AssetAPI.shared(currency: sym)
+//        aapi.getAssetInfo { data in
+//            guard let data = data else {return}
+//            withAnimation(.easeInOut) {
+//                self.currentAsset = data
+//                self.txn.asset_spot_price = "\(data.price ?? 0)"
+//            }
+//        }
+//    }
+//
     func onAppear(){
         if let curr = self.curr_sym , self.currentAsset == nil{
-            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(1)) {
-                self.fetchAssetData(sym: curr)
+            DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(500)) {
+                withAnimation(.easeInOut){
+                    CrybsePriceAPI.shared.getPrice(curr: curr) { coin in
+                        self.coin = coin
+                        self.coin?.Currency = curr
+                        self.txn.asset_spot_price = convertToDecimals(value: coin?.USD)
+                        self.txn.asset = curr
+                    }
+                }
             }
         }
 
@@ -144,22 +152,24 @@ struct AddTransactionView:View {
         ZStack(alignment:.bottom){
             Container(heading: self.currency, width: totalWidth,onClose: self.onClose) { w in
                 VStack(alignment: .leading, spacing: 20) {
-                    if self.currentAsset == nil{
+                    if self.coin == nil{
                         CurrencyCardView(width: w)
                             .onPreferenceChange(CurrencySelectorPreference.self) { newValue in
-                                if self.coin != newValue{
-                                    self.coin = newValue
+                                setWithAnimation {
+                                    if self.coin != newValue{
+                                        self.coin = newValue
+                                        self.txn.asset_spot_price = convertToDecimals(value: newValue?.USD)
+                                    }
+                                    if let symbol = newValue?.Currency, self.txn.asset != symbol{
+                                        self.txn.asset = symbol
+                                    }
                                 }
-                                if let symbol = newValue.s, self.txn.asset != symbol{
-                                    self.txn.asset = symbol
-                                }
-                                
                             }
                     }
                     self.txnValueField.frame(width: w, alignment: .center)
                     self.transactionType(w:w)
                     self.detailButtons
-                    if self.currentAsset != nil{
+                    if self.coin != nil{
                         self.numPad(w: w)
                     }
                     
@@ -179,7 +189,6 @@ struct AddTransactionView:View {
                         self.txn.added_Success.toggle()
                         self.txn.reset()
                     }
-                    
                 }
             }
         }
@@ -187,7 +196,6 @@ struct AddTransactionView:View {
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
         .onDisappear(perform: self.onDisappear)
-        .onChange(of: self.coin.s, perform: self.fetchAssetData(sym:))
         .preference(key: AddTxnUpdatePreference.self, value: self.txn.added_Success)
         .onChange(of: self.showModal,perform: self.toggleNotificationwModal)
         .onChange(of: self.txn.added_Success,perform: self.toggleNotificationwTxnModal)
@@ -202,7 +210,7 @@ extension AddTransactionView{
     
     
     var currency:String{
-        return self.curr_sym ?? self.coin.s ?? "Choose Currency"
+        return self.curr_sym ?? self.coin?.Currency ?? "Choose Currency"
     }
     
     func toggleNotificationwModal(_ newValue:ModalType){
@@ -351,7 +359,7 @@ extension AddTransactionView{
                     .truncationMode(.tail)
                 MainText(content: self.currency == "Choose Currency" ? "XXX" : self.currency, fontSize: 13, color: .gray, fontWeight: .bold)
             }
-            MainText(content: "\(convertToMoneyNumber(value: self.txn.asset_spot_price != "" ? self.currentAsset?.price : self.txn.asset_spot_price.toFloat())) per coin", fontSize: 13, color: self.font_color, fontWeight: .semibold, style: .normal)
+            MainText(content: "\(convertToMoneyNumber(value: self.txn.asset_spot_price != "" ? self.coin?.Price : self.txn.asset_spot_price.toFloat())) per coin", fontSize: 13, color: self.font_color, fontWeight: .semibold, style: .normal)
         }.padding(.vertical,10)
         .frame(height: totalHeight * 0.15, alignment: .center)
     }
@@ -374,11 +382,10 @@ extension AddTransactionView{
     }
     
     @ViewBuilder func choosenSideView(w:CGFloat) -> some View{
-        if self.showModal == .spot_price{
-            MainText(content: "$\(self.txn.asset_spot_price)", fontSize: 30, color: self.txn.fee != "0" ? self.font_color : .gray, fontWeight: .semibold)
-            self.numPad(w: w)
-        }else if self.showModal == .fee{
-            MainText(content: "$\(self.txn.fee)", fontSize: 30, color: self.txn.fee != "0" ? self.font_color : .gray, fontWeight: .semibold)
+        if self.showModal == .spot_price || self.showModal == .fee{
+            let val = self.showModal == .spot_price ? self.txn.asset_spot_price : self.txn.fee
+            let color = val != "0" ? self.font_color : .gray
+            MainText(content: "$\(val)", fontSize: 30, color: color, fontWeight: .semibold)
             self.numPad(w: w)
         }else if self.showModal == .date{
             DatePicker("", selection: $txn.date, displayedComponents: [.date,.hourAndMinute])

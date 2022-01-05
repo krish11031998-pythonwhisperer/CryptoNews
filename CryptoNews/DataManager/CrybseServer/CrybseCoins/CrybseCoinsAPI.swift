@@ -35,7 +35,6 @@ class CrybseCoinsAPI:CrybseAPI{
     }
     
     override func parseData(url: URL, data: Data) {
-//        DataCache.shared[url] = data
         print("(DEBUG) Assets url : ",url.absoluteString)
         setWithAnimation {
             if let coin = CrybseAssets.parseAssetsFromData(data: data){

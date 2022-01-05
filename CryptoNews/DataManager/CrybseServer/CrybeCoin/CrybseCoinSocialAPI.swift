@@ -8,7 +8,7 @@
 import Foundation
 
 
-class CrybseCoinAPI:CrybseAPI{
+class CrybseCoinSocialAPI:CrybseAPI{
     
     @Published var coinData:CrybseCoinSocialData? = nil
     

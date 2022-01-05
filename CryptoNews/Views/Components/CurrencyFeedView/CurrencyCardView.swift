@@ -9,9 +9,9 @@ import SwiftUI
 
 class CurrencySelectorPreference:PreferenceKey{
     
-    static var defaultValue:CoinMarketData = .init()
+    static var defaultValue:CrybseCoinPrice? = nil
     
-    static func reduce(value: inout CoinMarketData, nextValue: () -> CoinMarketData) {
+    static func reduce(value: inout CrybseCoinPrice?, nextValue: () -> CrybseCoinPrice?) {
         value = nextValue()
     }
     
@@ -73,10 +73,11 @@ struct CurrencyCard:View{
 
 struct CurrencyCardView: View {
     @StateObject var MAPI:MarketAPI
-//    @Binding var currency:CoinMarketData
+//    @Binding var currency:CoinMarketData/Users/krish_venkat/Downloads/My App.swift
     var width:CGFloat
     var large:Bool
     @State var currency:CoinMarketData = .init()
+    @State var price:CrybseCoinPrice? = nil
 
     init(width:CGFloat = totalWidth,large:Bool = false){
         self._MAPI = .init(wrappedValue: .init(sort: "d", limit: 100, order: .desc))
@@ -93,7 +94,8 @@ struct CurrencyCardView: View {
             }
             
         }.onAppear(perform: self.onAppear)
-            .preference(key: CurrencySelectorPreference.self, value: self.currency)
+            .onChange(of: self.currency.s, perform: self.getPriceforChoosenCurrency(sym:))
+            .preference(key: CurrencySelectorPreference.self, value: self.price)
     }
 }
 
@@ -141,6 +143,15 @@ extension CurrencyCardView{
     func onAppear(){
         if self.MAPI.data.isEmpty{
             self.MAPI.getMarketData()
+        }    }
+    
+    func getPriceforChoosenCurrency(sym:String?){
+        guard let sym = sym else {return}
+        CrybsePriceAPI.shared.getPrice(curr: sym) { price in
+            if let price = price {
+                self.price = price
+                self.price?.Currency = sym
+            }
         }
     }
 

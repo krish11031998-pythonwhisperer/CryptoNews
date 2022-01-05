@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 import SwiftUI
 
 enum CurrencyViewSection{
@@ -18,12 +19,12 @@ enum CurrencyViewSection{
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
-    @StateObject var coinAPI:CrybseCoinAPI
+    @StateObject var coinAPI:CrybseCoinSocialAPI
     @State var assetData:CrybseAsset?
     var size:CGSize = .init()
     @State var showSection:CurrencyViewSection = .none
-//    @StateObject var NAPI:FeedAPI
     @State var refresh:Bool = false
+    @State var timeCounter:Int = 0
     let timer = Timer.publish(every: 5, on: .main, in: .common).autoconnect()
     
     init(
@@ -182,6 +183,32 @@ struct CurrencyView:View{
         }
     }
     
+    func onReceiveTimer(){
+        if self.timeCounter < 60{
+            self.timeCounter += 5
+        }else if self.timeCounter >= 60 && !CrybseTimeseriesPriceAPI.shared.loading{
+            if let sym = self.assetData?.Currency{
+                CrybseTimeseriesPriceAPI.shared.getPrice(currency: sym, limit: 1) { data in
+                    if let cryptoData = CrybseTimeseriesPriceAPI.parseData(data: data){
+//                        setWithAnimation {
+                            self.assetData?.coin?.TimeseriesData?.append(contentsOf: cryptoData)
+//                        }
+//                        if CrybseTimeseriesPriceAPI.shared.loading{
+//                            CrybseTimeseriesPriceAPI.shared.loading.toggle()
+//                        }
+//                        self.timeCounter = 0
+                    }
+                    DispatchQueue.main.async {
+                        if CrybseTimeseriesPriceAPI.shared.loading{
+                            CrybseTimeseriesPriceAPI.shared.loading.toggle()
+                        }
+                        self.timeCounter = 0
+                    }
+                }
+            }
+        }
+    }
+    
     var body:some View{
         ZStack(alignment: .topLeading) {
             if self.assetData?.coin != nil{
@@ -193,8 +220,14 @@ struct CurrencyView:View{
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
+        .onReceive(self.timer, perform: { _ in
+            self.onReceiveTimer()
+        })
         .onReceive(self.coinAPI.$coinData) {coinData in
             self.onReceiveCoinData(coinData: coinData)
+        }
+        .onDisappear {
+            self.timer.upstream.connect().cancel()
         }
     }
 }

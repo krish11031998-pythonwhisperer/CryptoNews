@@ -17,4 +17,10 @@ class CrybseAPI:DAPI{
         return uC
     }
     
+    
+    func setPath(uc:URLComponents? = nil,path:String) -> URLComponents{
+        var finalUC = uc ?? self.baseComponent
+        finalUC.path = path
+        return finalUC
+    }
 }
