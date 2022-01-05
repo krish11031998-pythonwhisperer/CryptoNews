@@ -34,9 +34,6 @@ struct TabBarMain: View {
             .padding(.vertical,25)
             .background(LinearGradient(colors: [Color.clear,Color.black], startPoint: .top, endPoint: .bottom))
         }.frame(width: totalWidth, height: totalHeight, alignment: .center)
-        
-        
-        
     }
     
 }

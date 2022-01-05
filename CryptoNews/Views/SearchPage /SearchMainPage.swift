@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SearchMainPage: View {
+    @EnvironmentObject var context:ContextData
     @State var searchStr:String = ""
     @State var keyboardIsOn:Bool = false
     
@@ -43,7 +44,7 @@ struct SearchMainPage: View {
             
         }
         
-        .frame(width: totalWidth, height: totalHeight, alignment: .center)
+        .frame(width: totalWidth, alignment: .center)
         
         
         

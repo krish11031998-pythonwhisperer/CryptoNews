@@ -113,6 +113,7 @@
 		EF1CC5CC277F47050010D9CA /* CrybseCoinsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CC5CB277F47050010D9CA /* CrybseCoinsAPI.swift */; };
 		EF1CC5CE277F471F0010D9CA /* CrybseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CC5CD277F471F0010D9CA /* CrybseAPI.swift */; };
 		EF1D5C432784ED2B003718BA /* CrybseTimelinePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1D5C422784ED2B003718BA /* CrybseTimelinePrice.swift */; };
+		EF42CC9D2785F7B600DE27E1 /* CustomTabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CC9C2785F7B600DE27E1 /* CustomTabBar.swift */; };
 		EF458980278250730078FB0E /* CrybsePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF45897F278250730078FB0E /* CrybsePrice.swift */; };
 		EF6C4E502781C65A00AF54C8 /* CrybseTransactionAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C4E4F2781C65A00AF54C8 /* CrybseTransactionAPI.swift */; };
 		EF6C4E522781C81400AF54C8 /* TransactionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C4E512781C81400AF54C8 /* TransactionData.swift */; };
@@ -273,6 +274,7 @@
 		EF1CC5CB277F47050010D9CA /* CrybseCoinsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinsAPI.swift; sourceTree = "<group>"; };
 		EF1CC5CD277F471F0010D9CA /* CrybseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseAPI.swift; sourceTree = "<group>"; };
 		EF1D5C422784ED2B003718BA /* CrybseTimelinePrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseTimelinePrice.swift; sourceTree = "<group>"; };
+		EF42CC9C2785F7B600DE27E1 /* CustomTabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBar.swift; sourceTree = "<group>"; };
 		EF45897F278250730078FB0E /* CrybsePrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrice.swift; sourceTree = "<group>"; };
 		EF6C4E4F2781C65A00AF54C8 /* CrybseTransactionAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseTransactionAPI.swift; sourceTree = "<group>"; };
 		EF6C4E512781C81400AF54C8 /* TransactionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionData.swift; sourceTree = "<group>"; };
@@ -451,6 +453,7 @@
 		BCB7835026C180F7009D5822 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				EF42CC9B2785F7A000DE27E1 /* CustomTabBar */,
 				EFF6BFDF276C64E800FFC973 /* BottomSwipeCard.swift */,
 				BC27E4EB2725FFDA00E47CA2 /* CurrencyFeedView */,
 				BCBC1DBD26BE826300B87E5C /* PriceCard.swift */,
@@ -529,6 +532,7 @@
 		BCBC1D7426BE7D7400B87E5C /* CryptoNews */ = {
 			isa = PBXGroup;
 			children = (
+				EF42CC9F2785FFAC00DE27E1 /* ViewModifiers */,
 				BC6459262711C79100BAECBC /* Fonts */,
 				BCBC1DD626BF424000B87E5C /* ImageHelpers */,
 				BCBC1DC926BE9C9700B87E5C /* DataManager */,
@@ -775,6 +779,21 @@
 				EF1CC5CB277F47050010D9CA /* CrybseCoinsAPI.swift */,
 			);
 			path = CrybseCoins;
+			sourceTree = "<group>";
+		};
+		EF42CC9B2785F7A000DE27E1 /* CustomTabBar */ = {
+			isa = PBXGroup;
+			children = (
+				EF42CC9C2785F7B600DE27E1 /* CustomTabBar.swift */,
+			);
+			path = CustomTabBar;
+			sourceTree = "<group>";
+		};
+		EF42CC9F2785FFAC00DE27E1 /* ViewModifiers */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModifiers;
 			sourceTree = "<group>";
 		};
 		EF45897E2782505E0078FB0E /* CrybseCoinPrice */ = {
@@ -1195,6 +1214,7 @@
 				EFF195B5277CED7A0081368F /* CrybseCoinSocialAPI.swift in Sources */,
 				BC645923270EFB6A00BAECBC /* CurrencyView.swift in Sources */,
 				BCBC1DA226BE7EF700B87E5C /* Basics.swift in Sources */,
+				EF42CC9D2785F7B600DE27E1 /* CustomTabBar.swift in Sources */,
 				BCF31F9C2758D67000690E04 /* CrybPostDetailView.swift in Sources */,
 				EFF195BC277CF0A30081368F /* CryptoCompareData.swift in Sources */,
 				BCE861B5273C714500F0E8C2 /* ProfileData.swift in Sources */,

@@ -85,9 +85,8 @@ struct Container<T:View>: View {
         }
         RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
     }
-
-    @ViewBuilder var mainBody:some View{
     
+    @ViewBuilder var mainBodyWElements:some View{
         if self.orientation == .vertical{
             VStack(alignment: .leading, spacing: 10) {
                 if self.heading != nil{
@@ -111,11 +110,28 @@ struct Container<T:View>: View {
         }
     }
     
-    var body: some View {
+    @ViewBuilder var mainBody:some View{
+        if self.orientation == .vertical{
+            self.innerView(self.innerWidth).padding(.top,10)
+        }else if self.orientation == .horizontal{
+            HStack(alignment: .center, spacing: 10) {
+                self.innerView(self.innerWidth).padding(.top,10)
+            }
+        }
+    }
 
-        self.mainBody
-            .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
-            .padding(.vertical,self.paddingSize.height)
-            .frame(width: self.width, alignment: .leading)
+    
+    var body: some View {
+        if self.heading != nil || self.onClose != nil{
+            self.mainBodyWElements
+                .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
+                    .padding(.vertical,self.paddingSize.height)
+                    .frame(width: self.width, alignment: .leading)
+        }else{
+            self.mainBody
+                .padding(.horizontal, self.ignoreSides ? 0 : self.paddingSize.width)
+                    .padding(.vertical,self.paddingSize.height)
+                    .frame(width: self.width, alignment: .leading)
+        }
     }
 }

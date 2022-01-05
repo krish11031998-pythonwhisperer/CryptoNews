@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct SlideTabView: View {
+    @EnvironmentObject var context:ContextData
     var view:[AnyView]
     @State var page:Int = 0
     init(view: @escaping () -> [AnyView]){
@@ -26,7 +27,7 @@ struct SlideTabView: View {
             }
         }
         .tabViewStyle(.page(indexDisplayMode: .never))
-        .frame(width: totalWidth, height: totalHeight, alignment: .top)
+        .frame(width: totalWidth, alignment: .top)
         
         
             

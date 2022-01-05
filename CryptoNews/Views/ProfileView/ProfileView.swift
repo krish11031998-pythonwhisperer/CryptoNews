@@ -94,7 +94,7 @@ extension ProfileView{
     var barData:[BarElement]{
         let arr = Array(repeating: Int(1), count: 7).map({_ in Float.random(in: 0...100)})
         let sum = arr.reduce(0, {$0 + $1})
-        print("arr : \(arr) and sum : \(sum)")
+//        print("arr : \(arr) and sum : \(sum)")
         return arr.map({BarElement(data: $0, axis_key: "", key: "", info_data: sum)})
         
     }

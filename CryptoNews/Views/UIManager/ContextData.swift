@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import Combine
 
-enum Tabs:String{
+enum Tabs:String,Hashable{
     case home = "homekit"
     case info = "eyeglasses"
     case feed = "TwitterIcon"
@@ -19,6 +19,15 @@ enum Tabs:String{
     case search = "magnifyingglass"
     case profile = "person.fill"
     case none = ""
+}
+
+struct TabBarItem:Hashable{
+    static func == (lhs: TabBarItem, rhs: TabBarItem) -> Bool {
+        return lhs.name == rhs.name && lhs.tab == rhs.tab
+    }
+    
+   var name:String = ""
+   var tab:String = ""
 }
 
 enum LoginState{

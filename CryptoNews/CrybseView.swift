@@ -49,34 +49,30 @@ extension CrybseView{
     }
     
     @ViewBuilder var mainBody:some View{
-        ZStack(alignment: .center) {
+        TabView(selection: $context.tab){
             ForEach(self.tabs, id: \.rawValue) { tab in
-                if self.context.tab == tab{
                     self.tabPage(page: tab).tag(tab)
-                }else{
-                    Color.clear
-                }
-                
+                    .background(mainBGView)
+                    .ignoresSafeArea()
+                    
             }
+        }
+        .onAppear {
+            UITabBar.appearance().isHidden = true
+            UITabBar.appearance().barTintColor = .clear
         }
     }
     
     @ViewBuilder func tabPage(page:Tabs) -> some View{
         switch(page){
-            case .home: self.homeView
-            case .search: SearchMainPage()
+            case .home: HomePage().environmentObject(self.context)
+            case .search: SearchMainPage().environmentObject(self.context)
             case .info: SlideTabView {
                 return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
-            }
-            case .profile: ProfileView()
+            }.environmentObject(self.context)
+        case .profile: ProfileView().environmentObject(self.context)
             default: Color.clear
         }
-    }
-    
-    
-    @ViewBuilder var homeView:some View{
-        HomePage()
-            .environmentObject(self.context)
     }
     
     var hoverViewIsOn:Bool{
