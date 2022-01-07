@@ -67,18 +67,149 @@ struct CustomTextField:View{
     }
 }
 
-struct CustomTextFieldPreviews:PreviewProvider{
+
+struct StylizedTextEditorTextPreferenceKey:PreferenceKey{
+    static var defaultValue : String = ""
     
+    static func reduce(value: inout String, nextValue: () -> String) {
+        value = nextValue()
+    }
+}
+
+class TextLimiter:ObservableObject{
+    
+    @Published var _text = "Enter Value"
+    @Published var hadReachedLimit:Bool = false
+    var limit:Int
+
+    init(limit:Int = 350){
+        self.limit = limit
+    }
+        
+    var text:String {
+        
+        get{
+            return self._text
+        }
+        
+        set {
+            if !self.hadReachedLimit{
+                if newValue.count > self.limit{
+                    self.hadReachedLimit = true
+                }else{
+                    self._text = newValue
+                }
+            }else if self.hadReachedLimit && newValue.count < self.limit{
+                if newValue.contains("Enter Value"){
+                    _ = newValue.replacingOccurrences(of: "Enter Value", with: "")
+                }
+                self._text = newValue
+            }
+        }
+    }
+    
+    var font:Font{
+        if let uiFont = UIFont(name: TextStyle.normal.rawValue, size: 15){
+            return Font(uiFont)
+        }else{
+            return .body
+        }
+    }
+    
+    var fontColor:Color{
+        if self.text == "Enter Value"{
+            return .white.opacity(0.75)
+        }else{
+            return .white
+        }
+    }
+    
+    var count:Int{
+        if self.text == "Enter Value"{
+            return self.limit
+        }else{
+            return self.limit - self.text.count
+        }
+        
+    }
+    
+    var percent:Float{
+        return Float(self.count)/Float(self.limit)
+    }
+    
+    var countColor:Color{
+        if percent >= 0.75{
+            return .green
+        }else if percent < 0.75 && percent >= 0.5{
+            return .yellow
+        }else if percent < 0.5 && percent >= 0{
+            return .pink
+        }
+        
+        return .clear
+    }
+ 
+    
+    
+}
+
+struct StlyizedTextEditor:View{
+    @StateObject var textObj:TextLimiter
+    var width:CGFloat
+    init(limit:Int = 350,width:CGFloat = totalWidth - 20){
+        self._textObj = .init(wrappedValue: .init(limit: limit))
+        self.width = width
+        UITextView.appearance().backgroundColor = .clear
+    }
+    
+
+    
+    func textEditorView(w:CGFloat) -> some View{
+        TextEditor(text: self.$textObj.text)
+            .font(self.textObj.font)
+            .foregroundColor(self.textObj.fontColor)
+            .frame(width: w, alignment: .topLeading)
+            .frame(maxHeight: totalHeight * 0.35, alignment: .center)
+            .aspectRatio(contentMode: .fit)
+            .onTapGesture {
+                if self.textObj.text == "Enter Value"{
+                    self.textObj.text = ""
+                }
+            }
+        
+    }
+    
+    func countBar(w:CGFloat) -> some View{
+        ZStack(alignment: .leading) {
+            BlurView.thinLightBlur.frame(width: w, height: 4, alignment: .leading)
+            self.textObj.countColor.frame(width: w * CGFloat(1 - self.textObj.percent), height: 4, alignment: .leading)
+        }.frame(width: w, height : 4, alignment: .leading)
+            .clipContent(clipping: .roundClipping)
+    }
+    
+    var body: some View{
+        Container(width:self.width,horizontalPadding: 10,verticalPadding: 5) { w in
+            self.textEditorView(w: w)
+            self.countBar(w: w)
+            MainText(content: "\(self.textObj.count)", fontSize: 15, color: self.textObj.countColor, fontWeight: .bold)
+                .frame(width: w, alignment: .leading)
+        }
+        .frame(width: self.width)
+        .clipContent(clipping: .roundClipping)
+        .preference(key: StylizedTextEditorTextPreferenceKey.self, value: self.textObj.text)
+    }
+}
+
+struct CustomTextFieldPreviews:PreviewProvider{
+    @State static var text:String = "Enter something here !"
     static var previews: some View{
         ZStack(alignment: .top) {
-            Color.mainBGColor
-            CustomTextField()
-                .background(Color.blue)
-                .clipContent(clipping: .clipped)
-                .padding(.top,50)
+            Color.mainBGColor.ignoresSafeArea()
+            StlyizedTextEditor().padding(.top,100)
         }
+        
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
-        .ignoresSafeArea()
+        
         
     }
     
@@ -151,7 +282,7 @@ struct CustomTextFieldView:UIViewRepresentable{
         view.text = self.customFont.previewText
         view.textColor = UIColor(self.customFont.color)
         view.backgroundColor = .clear
-        view.isScrollEnabled = false
+        view.isScrollEnabled = true
         view.isUserInteractionEnabled = true
         view.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         return view

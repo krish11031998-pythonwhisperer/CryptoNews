@@ -46,7 +46,7 @@ struct CrybPostGen: View {
                 message = "CrybPost was successfully posted"
                print("The data was uploaded to teh crypPost successfully!")
             }
-            withAnimation(.easeInOut) {
+            setWithAnimation {
                 self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
             }
         }
@@ -63,10 +63,11 @@ struct CrybPostGen: View {
     }
     
     @ViewBuilder func imageView(w:CGFloat) -> some View{
+        let h = totalHeight * 0.175
         if let image = self.image{
-            ImageView(img: image, width: w, height: totalHeight * 0.25, contentMode: .fill, alignment: .center, clipping: .roundClipping)
+            ImageView(img: image, width: w, height: h, contentMode: .fill, alignment: .center, clipping: .roundClipping)
         }else{
-            Spacer(minLength: 0)
+            Color.clear.frame(width: w, height: h, alignment: .center).clipContent(clipping: .roundClipping)
         }
     }
     
@@ -90,24 +91,34 @@ struct CrybPostGen: View {
             .background(BlurView.thinLightBlur.opacity(0.2).clipContent(clipping: .roundClipping))
     }
     
+    var topGenView:some View{
+        Container(width: totalWidth) { w in
+            self.header
+            StlyizedTextEditor(limit:350,width: w)
+        }.frame(width: totalWidth, height: totalHeight, alignment: .bottom)
+    }
     
     var mainbody:some View{
         Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
             self.header
-            CustomTextField(customFont: .init(previewText: staticText,fontsize: 17.5),width: w - 20)
-                .fixedSize(horizontal: false, vertical: true)
-                .onPreferenceChange(CustomFontPreference.self, perform: { text in
-                    self.text = text
-                })
+            StlyizedTextEditor(limit:350,width: w)
+                .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newText in
+                    if self.text != newText{
+                        self.text = newText
+                    }
+                }
             if self.keyboardHeight == .zero{
                 self.imageView(w: w)
                 self.sideButton(w: w)
+                TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
+                    print("Click on Add Poll")
+                }.padding(.bottom,5)
                 TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
             }else{
                 TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting).padding(.vertical,15)
             }
             
-        }.animation(.easeInOut).frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
+        }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
         
     }
     
@@ -117,9 +128,9 @@ struct CrybPostGen: View {
         .frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
             .padding(.top,self.keyboardHeight)
             .keyboardAdaptiveValue(keyboardHeight: $keyboardHeight)
-        .sheet(isPresented: $showImagePicker) {
-            ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
-        }
+            .sheet(isPresented: $showImagePicker) {
+                ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
+            }
         .onAppear {
             if self.context.showTab{
                 self.context.showTab.toggle()
