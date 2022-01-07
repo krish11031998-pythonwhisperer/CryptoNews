@@ -37,8 +37,9 @@ struct AllAssetView: View {
 
 
     @ViewBuilder var mainBody:some View{
-        AssetViewBuilder(type: "tracked", coins: self.coins(type: "tracked"), alternative: false)
-        AssetViewBuilder(type: "watching", size:CardSize.medium, coins: self.coins(type: "watching"), alternative: true)
+//        AssetViewBuilder(type: "tracked", coins: self.coins(type: "tracked"), alternative: false)
+        PortfolioMain(assets: self.coins(type: "tracked")).environmentObject(self.context)
+        AssetViewBuilder(type: "watching", size:CardSize.medium, coins: self.coins(type: "watching"), alternative: false)
     }
     
     var body: some View {

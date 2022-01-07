@@ -83,23 +83,34 @@ struct PriceCard: View {
     }
     
     var bgColor:some View{
-        VStack(alignment: .leading, spacing: 0) {
-            Color.mainBGColor.frame(width: size.width, height: size.height * 0.8, alignment: .center)
-            Color.white.frame(width: size.width, height: size.height * 0.2, alignment: .center)
+        let headerHeight = (self.coinAsset.Value != 0 ? 0.8 : 1) * size.height - 10
+        let footerHeight = (self.coinAsset.Value != 0 ? 0.2 : 0) * size.height
+        return VStack(alignment: .leading, spacing: 0) {
+            Color.mainBGColor.frame(width: size.width, height: headerHeight, alignment: .center)
+            if self.coinAsset.value != 0{
+                Color.white.frame(width: size.width, height: footerHeight, alignment: .center)
+            }
+            
         }
     }
     
     var mainView:some View{
         let w = size.width - 30
         let h = size.height - 30
-        
-        return LazyVStack(alignment: .leading, spacing: 10) {
-            self.topView(w: w, h: h * 0.8)
-            self.footerView(w: w, h: h * 0.2)
+        let headerHeight = (self.coinAsset.Value != 0 ? 0.8 : 1) * h - 10
+        let footerHeight = (self.coinAsset.Value != 0 ? 0.2 : 0) * h
+        return LazyVStack(alignment: .leading, spacing: 0) {
+            self.topView(w: w, h: headerHeight)
+                .background(Color.mainBGColor.frame(width: size.width,height: size.height, alignment: .center))
+            if self.coinAsset.Value != 0{
+                self.footerView(w: w, h: footerHeight)
+                    .background(Color.white.frame(width: size.width,height: size.height, alignment: .center))
+            }
+            
         }
         .padding()
         .frame(width: size.width, height: size.height, alignment: .center)
-        .background(bgColor)
+//        .background(bgColor)
         .clipContent(clipping: .roundClipping)
         
     }

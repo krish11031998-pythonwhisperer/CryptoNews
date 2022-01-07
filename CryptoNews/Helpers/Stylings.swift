@@ -359,29 +359,6 @@ struct SystemButtonModifier:ViewModifier{
     }
 }
 
-struct SpringButton:ViewModifier{
-    var withBG:Bool
-    var handleTap:(() -> Void)
-    
-    init(withBG:Bool = false,handleTap: @escaping () -> Void){
-        self.withBG = withBG
-        self.handleTap = handleTap
-    }
-    
-    func body(content: Content) -> some View {
-        Button {
-            DispatchQueue.main.async {
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    self.handleTap()
-                }
-            }
-        } label: {
-            content
-                .contentShape(Rectangle())
-        }.springButton(withBG: withBG)
-    }
-}
-
 struct Blob:ViewModifier{
     var color:AnyView
     var clipping:Clipping
@@ -562,31 +539,6 @@ struct TabButton:View{
 }
 
 
-struct ButtonModifier:ButtonStyle{
-    
-    var withBG:Bool = false
-    
-    init(withBG:Bool = false){
-        self.withBG = withBG
-    }
-    
-    
-    func makeBody(configuration: Configuration) -> some View {
-        if self.withBG{
-            configuration.label
-                .scaleEffect(configuration.isPressed ? 0.9 : 1)
-                .opacity(configuration.isPressed ? 0.9 : 1)
-                .background((self.withBG ? AnyView(BlurView.thinDarkBlur) : AnyView(Color.clear)).opacity(configuration.isPressed ? 1 : 0))
-                .clipContent(clipping: self.withBG ? .circleClipping : .clipped)
-        }else{
-            configuration.label
-                .scaleEffect(configuration.isPressed ? 0.9 : 1)
-                .opacity(configuration.isPressed ? 0.9 : 1)
-        }
-    }
-}
-
-
 extension AnyTransition{
     
     static var slideInOut:AnyTransition{
@@ -605,10 +557,6 @@ extension AnyTransition{
 
 
 extension View{
-    func springButton(withBG:Bool = false) -> some View{
-        self.buttonStyle(ButtonModifier(withBG: withBG))
-    }
-    
     func clipContent(clipping:Clipping = .clipped) -> some View{
         self.modifier(ContentClipping(clipping: clipping))
     }
@@ -643,10 +591,6 @@ extension View{
     
     func blobify(color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
         self.modifier(Blob(color: color,clipping: clipping))
-    }
-    
-    func buttonify(withBG:Bool = false,handler:@escaping () -> Void) -> some View{
-        self.modifier(SpringButton(withBG: withBG,handleTap: handler))
     }
     
     func coloredTextField(color:Color,size:CGFloat = 50,width:CGFloat = 100,rightViewTxt:String? = nil) -> some View{
@@ -736,7 +680,6 @@ struct Wave:Shape{
         path.move(to: .zero)
         path.addLine(to: .init(x: rect.maxX, y: rect.minY))
         path.addLine(to: .init(x: rect.maxX, y: rect.maxY))
-//        path.addCurve(to: .init(x: rect.minX, y: rect.maxY), control1: .init(x: rect.maxX * 0.75, y: maxH * (1 - offset)), control2: .init(x: rect.maxX * 0.25, y: maxH * (1 + offset)))
         path.addCurve(to: .init(x: rect.minX, y: rect.maxY), control1: .init(x: rect.maxX * 0.75, y: c1H ), control2: .init(x: rect.maxX * 0.25, y: c2H))
         path.addLine(to: .init(x: rect.minX, y: rect.minY))
         return path

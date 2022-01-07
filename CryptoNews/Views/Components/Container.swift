@@ -10,6 +10,9 @@ struct Container<T:View>: View {
     var innerView:(CGFloat) -> T
     var rightButton:(() -> AnyView)? = nil
     var heading:String?
+    var headingDivider:Bool
+    var headingColor:Color
+    var headingSize:CGFloat
     var onClose:(() -> Void)? = nil
     var width:CGFloat
     var ignoreSides:Bool
@@ -18,6 +21,9 @@ struct Container<T:View>: View {
     var paddingSize:CGSize = .zero
     init(
         heading:String? = nil,
+        headingColor:Color = .white,
+        headingDivider:Bool = true,
+        headingSize:CGFloat = 30,
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
         horizontalPadding:CGFloat = 15,
@@ -27,6 +33,9 @@ struct Container<T:View>: View {
         @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
         self.heading = heading
+        self.headingColor = headingColor
+        self.headingDivider = headingDivider
+        self.headingSize = headingSize
         self.innerView = innerView
         self.onClose = onClose
         self.width = width
@@ -39,6 +48,9 @@ struct Container<T:View>: View {
     
     init(
         heading:String? = nil,
+        headingColor:Color = .white,
+        headingDivider:Bool = true,
+        headingSize:CGFloat = 30,
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
         horizontalPadding:CGFloat = 15,
@@ -49,6 +61,9 @@ struct Container<T:View>: View {
         @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
         self.heading = heading
+        self.headingColor = headingColor
+        self.headingDivider = headingDivider
+        self.headingSize = headingSize
         self.innerView = innerView
         self.onClose = onClose
         self.width = width
@@ -77,13 +92,15 @@ struct Container<T:View>: View {
             if let close = self.onClose{
                 SystemButton(b_name: "xmark",action: close)
             }
-            MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
+            MainText(content: heading, fontSize: self.headingSize, color: self.headingColor, fontWeight: .semibold,style: .heading)
             Spacer()
             if rightButton != nil{
                 self.rightButton?()
             }
         }
-        RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
+        if self.headingDivider{
+            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
+        }
     }
     
     @ViewBuilder var mainBodyWElements:some View{
@@ -111,13 +128,16 @@ struct Container<T:View>: View {
     }
     
     @ViewBuilder var mainBody:some View{
-        if self.orientation == .vertical{
-            self.innerView(self.innerWidth).padding(.top,10)
-        }else if self.orientation == .horizontal{
-            HStack(alignment: .center, spacing: 10) {
+        VStack(alignment: .center, spacing: 15) {
+            if self.orientation == .vertical{
                 self.innerView(self.innerWidth).padding(.top,10)
+            }else if self.orientation == .horizontal{
+                HStack(alignment: .center, spacing: 10) {
+                    self.innerView(self.innerWidth).padding(.top,10)
+                }
             }
         }
+        
     }
 
     

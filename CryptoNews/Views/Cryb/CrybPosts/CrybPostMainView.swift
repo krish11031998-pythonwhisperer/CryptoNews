@@ -83,8 +83,7 @@ struct CrybPostMainView: View {
                 }else{
                     self.mainBodyGen
                 }
-                
-            }
+            }.onAppear(perform: self.onAppear)
         }.padding(.top,30)
     }
 }

@@ -152,26 +152,6 @@ struct CrybPostData:Codable{
     private var stakers:[CrybPostBacker]?
     private var postImg:String?
     
-    
-//    init(
-//        id:UUID = UUID(),
-//        user:CrybPostUser = .init(),
-//        postMessage:String = "",
-//        likes:Int = 150,
-//        comments:Int = 20,
-//        pricePrediction:CrybPostPrediction = .init(),
-//        stakers:Array<CrybPostBacker> = .init(repeating: .init(userName: "TestStaker", stakedVal: Float.random(in: 10...1500)), count: 15),
-//        postImg:String? = nil
-//    ){
-//        self.id = id
-//        self.user = user
-//        self.postMessage = postMessage
-//        self.likes = likes
-//        self.comments = comments
-//        self.pricePrediction = pricePrediction
-//        self.stakers = stakers
-//        self.postImg = postImg
-//    }
     init(
         id:UUID = UUID(),
         user:CrybPostUser,

@@ -1,7 +1,7 @@
 import SwiftUI
 
 enum TextStyle:String{
-    case heading = "Avenir Next Medium"
+    case heading = "Avenir"
 //    case normal = "NixieOne-Regular"
 //    case normal = "Cochin"
     case normal = "Avenir Next"
