@@ -114,10 +114,16 @@ extension CrybseView{
         
         if let post = self.context.selectedPost{
             CrybPostDetailView(postData: post)
+                .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(mainBGView)
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
+//            CrybPostDetailView(postData: post)
+//                .transition(.slideInOut)
+//                .background(mainBGView)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
         }
         
 

@@ -223,7 +223,7 @@ class DAPI:ObservableObject,DataParsingProtocol{
     
 // MARK: - Posting Data
     
-    func PostData(url:URL? = nil,request req:URLRequest? = nil,completion:((Any) -> Void)? = nil){
+    func PostData(url:URL? = nil,request req:URLRequest? = nil,parseFunc:((Data) -> Void)? = nil,completion:((Any) -> Void)? = nil){
         var request:URLRequest
         
         if let safeRequest = req{
@@ -236,15 +236,17 @@ class DAPI:ObservableObject,DataParsingProtocol{
             return
         }
         
-        self.performDataRequest(request: request) { data in
-//            guard let safeURL = request.url else {return}
-//            self.parseData(url: safeURL, data: data)
-            let decoder = JSONDecoder()
-            do{
-                let res = try decoder.decode(RequestData.self, from: data)
-                completion?(res)
-            }catch{
-                print("(DEBUG) Error while trying to parse the RequestData! : ",error.localizedDescription)
+        if let safeParseFunc = parseFunc{
+            self.performDataRequest(request: request,completion:safeParseFunc)
+        }else{
+            self.performDataRequest(request: request) { data in
+                let decoder = JSONDecoder()
+                do{
+                    let res = try decoder.decode(RequestData.self, from: data)
+                    completion?(res)
+                }catch{
+                    print("(DEBUG) Error while trying to parse the RequestData! : ",error.localizedDescription)
+                }
             }
         }
     }
