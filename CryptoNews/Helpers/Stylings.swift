@@ -369,7 +369,7 @@ struct Blob:ViewModifier{
             .background(color)
             .clipContent(clipping: self.clipping)
             .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
-            .padding(.vertical,10)
+            .padding(.vertical,1.25)
             
             
     }

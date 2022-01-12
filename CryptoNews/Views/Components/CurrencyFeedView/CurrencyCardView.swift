@@ -40,18 +40,18 @@ struct CurrencyViewButtonModifier:ViewModifier{
 
 
 struct CurrencyCard:View{
-    var coin:CoinMarketData
+    var coin:CrybseCoin
     var large:Bool
     var onTap:() -> Void
     
-    init(coin:CoinMarketData,large:Bool = false,onTap:@escaping () -> Void){
+    init(coin:CrybseCoin,large:Bool = false,onTap:@escaping () -> Void){
         self.coin = coin
         self.large = large
         self.onTap = onTap
     }
     
     var sym:String{
-        return self.coin.s ?? ""
+        return self.coin.Symbol
     }
     
     var width:CGFloat{
@@ -72,15 +72,14 @@ struct CurrencyCard:View{
 
 
 struct CurrencyCardView: View {
-    @StateObject var MAPI:MarketAPI
-//    @Binding var currency:CoinMarketData/Users/krish_venkat/Downloads/My App.swift
+    @StateObject var CoinsAPI:CrybseCoinsAPI
     var width:CGFloat
     var large:Bool
-    @State var currency:CoinMarketData = .init()
+    @State var currency:CrybseCoin = .init()
     @State var price:CrybseCoinPrice? = nil
 
     init(width:CGFloat = totalWidth,large:Bool = false){
-        self._MAPI = .init(wrappedValue: .init(sort: "d", limit: 100, order: .desc))
+        self._CoinsAPI = .init(wrappedValue: .init())
         self.large = large
         self.width = width
     }
@@ -94,7 +93,7 @@ struct CurrencyCardView: View {
             }
             
         }.onAppear(perform: self.onAppear)
-            .onChange(of: self.currency.s, perform: self.getPriceforChoosenCurrency(sym:))
+            .onChange(of: self.currency.Symbol, perform: self.getPriceforChoosenCurrency(sym:))
             .preference(key: CurrencySelectorPreference.self, value: self.price)
     }
 }
@@ -105,8 +104,8 @@ struct CurrencyCardView: View {
 
 extension CurrencyCardView{
     
-    var currency_data: [CoinMarketData]{
-        return  self.MAPI.data
+    var currency_data: [CrybseCoin]{
+        return  self.CoinsAPI.coins
     }
     
     
@@ -141,9 +140,10 @@ extension CurrencyCardView{
     
     
     func onAppear(){
-        if self.MAPI.data.isEmpty{
-            self.MAPI.getMarketData()
-        }    }
+        if self.CoinsAPI.coins.isEmpty{
+            self.CoinsAPI.getCoins()
+        }
+    }
     
     func getPriceforChoosenCurrency(sym:String?){
         guard let sym = sym else {return}

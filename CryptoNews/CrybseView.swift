@@ -119,11 +119,6 @@ extension CrybseView{
                 .background(mainBGView)
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
-//            CrybPostDetailView(postData: post)
-//                .transition(.slideInOut)
-//                .background(mainBGView)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
         }
         
 

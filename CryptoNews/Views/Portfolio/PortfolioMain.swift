@@ -31,7 +31,7 @@ struct PortfolioMain: View {
 
 
 struct PortfolioAssetPreview:View{
-    @StateObject var crybseAssetsAPI:CrybseCoinsAPI
+    @StateObject var crybseAssetsAPI:CrybseAssetsAPI
     init(currencies: [String] = ["LTC","XRP","DOT"],uid:String){
         self._crybseAssetsAPI = .init(wrappedValue: .init(symbols:currencies,uid: uid))
     }

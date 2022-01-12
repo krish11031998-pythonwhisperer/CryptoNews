@@ -26,7 +26,7 @@ class CrybseCoinSocialAPI:CrybseAPI{
     
     var url:URL?{
         var uC = self.baseComponent
-        uC.path = "/coinData"
+        uC.path = "/coin/data"
         uC.queryItems = [
             URLQueryItem(name: "coinUID", value: coinUID),
             URLQueryItem(name: "fiat", value: fiat),
@@ -51,7 +51,7 @@ class CrybseCoinSocialAPI:CrybseAPI{
     
     func getCoinData(coinUID:String,fiat:String,crypto:String,completion:((Data) -> Void)?){
         var uC = self.baseComponent
-        uC.path = "/coinData"
+        uC.path = "/coin/data"
         uC.queryItems = [
             URLQueryItem(name: "coinUID", value: coinUID),
             URLQueryItem(name: "fiat", value: fiat),

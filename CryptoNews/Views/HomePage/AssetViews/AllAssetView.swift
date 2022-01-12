@@ -10,7 +10,7 @@ import SwiftUI
 struct AllAssetView: View {
     
 //    @StateObject var coinRankAPI:CoinRankCoinsAPI
-    @StateObject var crybseAssetsAPI:CrybseCoinsAPI
+    @StateObject var crybseAssetsAPI:CrybseAssetsAPI
     @EnvironmentObject var context:ContextData
 
     

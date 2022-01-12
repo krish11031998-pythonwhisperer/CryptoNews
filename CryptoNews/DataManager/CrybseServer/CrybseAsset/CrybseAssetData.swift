@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-class CrybseCoinsResponse: Codable{
+class CrybseAssetsResponse: Codable{
     var data:CrybseAssets?
     var success:Bool
 }
@@ -22,7 +22,7 @@ class CrybseAssets:Codable{
         var coinData:CrybseAssets? = nil
         let decoder = JSONDecoder()
         do{
-            let res = try decoder.decode(CrybseCoinsResponse.self, from: data)
+            let res = try decoder.decode(CrybseAssetsResponse.self, from: data)
             if let data = res.data, res.success{
                 coinData = data
             }else{
@@ -96,6 +96,10 @@ class CrybseAsset:ObservableObject,Codable{
     
     var Profit:Float{
         return self.profit ?? 0
+    }
+    
+    var LatestPriceTime:Int{
+        return self.coin?.TimeseriesData?.last?.time ?? 0
     }
     
 //    var Coin:CrybseCoinSocialData{

@@ -284,8 +284,9 @@ extension CurrencyDetailView{
             setWithAnimation {
 //            withAnimation(.easeInOut){
                 if let safeTimeseries = CrybseTimeseriesPriceAPI.parseData(data: data){
-                    if let latestTime = self.assetData.coin?.TimeseriesData?.last?.time, let latest = safeTimeseries.last, let latestPrice = latest.close{
-                        self.assetData.coin?.TimeseriesData?.append(latest)
+                    let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.time! >= self.assetData.LatestPriceTime + 60 ? $0 : nil : nil})
+                    if let latestPrice = latestPrices.last?.close{
+                        self.assetData.coin?.TimeseriesData?.append(contentsOf: latestPrices)
                         let newValue = self.coinTotal * latestPrice
                         print("(DEBUG) NewValue : ",newValue)
                         self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)

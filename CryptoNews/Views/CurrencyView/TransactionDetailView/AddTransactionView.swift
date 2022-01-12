@@ -30,9 +30,6 @@ struct AddTransactionView:View {
     @StateObject var notification:NotificationData = .init()
     @Namespace var animation
     @StateObject var txn:TxnFormDetails
-//    @State var type:TransactionType = .buy
-//    @State var entryType = "coin"
-//    @State var date:Date = Date()
     @State var showModal:ModalType = .none
 //    @State var coin:CoinMarketData = .init()
     @State var coin:CrybseCoinPrice? = nil
@@ -104,18 +101,6 @@ struct AddTransactionView:View {
         }
     }
     
-//    func fetchAssetData(sym:String?){
-//        guard let sym = sym else {return}
-//        let aapi = AssetAPI.shared(currency: sym)
-//        aapi.getAssetInfo { data in
-//            guard let data = data else {return}
-//            withAnimation(.easeInOut) {
-//                self.currentAsset = data
-//                self.txn.asset_spot_price = "\(data.price ?? 0)"
-//            }
-//        }
-//    }
-//
     func onAppear(){
         if let curr = self.curr_sym , self.currentAsset == nil{
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(500)) {
