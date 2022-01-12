@@ -7,39 +7,53 @@
 
 import SwiftUI
 
+struct ShowSectionPreferenceKey:PreferenceKey{
+    static var defaultValue: CurrencyViewSection = .none
+    
+    static func reduce(value: inout CurrencyViewSection, nextValue: () -> CurrencyViewSection) {
+        value = nextValue()
+    }
+}
+
 struct CurrencyDetailView: View {
     @EnvironmentObject var context:ContextData
-    var onClose:(() -> Void)?
+    @State var showMoreSection:CurrencyViewSection = .none
+    @ObservedObject var assetData: CrybseAsset
     var size:CGSize = .init()
+    @State var refresh:Bool = false
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
-    var reloadFeed:(() -> Void)?
-    var reloadAsset:(() -> Void)?
-    @Binding var showMoreSection:CurrencyViewSection
-    @Binding var assetData:CrybseAsset?
-//    var timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     init(
-        assetData:Binding<CrybseAsset?>,
-        size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
-        showSection:Binding<CurrencyViewSection>,
-        reloadAsset:(() -> Void)? = nil,
-        reloadFeed:(() -> Void)? = nil,
-        onClose:(() -> Void)? = nil)
+        assetData:CrybseAsset,
+        size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3)
+    )
     {
              
-        self._assetData = assetData
-        self.onClose = onClose
+        self.assetData = assetData
         self.size = size
-        self._showMoreSection = showSection
-        self.reloadFeed = reloadFeed
-        self.reloadAsset = reloadAsset
     }
     
     
     var body:some View{
         self.mainView
+            .preference(key: ShowSectionPreferenceKey.self, value: self.showMoreSection)
             .onAppear {
-                print("(DEBUG) The Coin Data : ",self.assetData?.currency ?? "XXX")
+                print("(DEBUG) The Coin Data : ",self.assetData.currency ?? "XXX")
+            }
+            .onReceive(self.timer) { _ in
+                if !self.refresh{
+                    self.refresh.toggle()
+                }
+            }
+            .onDisappear {
+                self.timer.upstream.connect().cancel()
+            }
+            .onChange(of: self.refresh) { newValue in
+                if self.refresh{
+                    self.refreshPrices()
+                }
+                print("(DEBUG) refresh : ",self.refresh)
             }
     }
 }
@@ -55,8 +69,9 @@ extension CurrencyDetailView{
         self.newsContainer
     }
     
+
     var socialData:CrybseCoinSocialData?{
-        return self.assetData?.coin
+        return self.assetData.coin
     }
     
     var  priceMainInfo:some View{
@@ -69,33 +84,32 @@ extension CurrencyDetailView{
         }
     }
     
-    var news:[CryptoNews]{
+    var News:[CryptoNews]{
         return self.socialData?.News ?? []
     }
     
-    var tweets:[AssetNewsData]{
+    var Tweets:[AssetNewsData]{
         return self.socialData?.Tweets ?? []
     }
     
     var txns:[Transaction]{
-        return self.assetData?.txns ?? []
+        return self.assetData.txns ?? []
     }
     
     var coinTotal:Float{
-        return self.assetData?.coinTotal ?? 0
+        return self.assetData.coinTotal ?? 0
     }
 
     var valueTotal:Float{
-        return self.assetData?.value ?? 0
+        return self.assetData.value ?? 0
     }
     
     var profit:Float{
-        return self.assetData?.Profit ?? 0
+        return self.assetData.Profit ?? 0
     }
     
-
     var txnForAssetPortfolioData:[PortfolioData]{
-        return self.txns.compactMap({$0.parseToPortfolioData()}) ?? []
+        return self.txns.compactMap({$0.parseToPortfolioData()})
     }
     
     var CurrencySummary:some View{
@@ -118,8 +132,8 @@ extension CurrencyDetailView{
             if !self.context.addTxn{
                 self.context.addTxn.toggle()
             }
-            if let sym = self.assetData?.Currency,self.context.selectedSymbol != sym{
-                self.context.selectedSymbol = sym
+            if self.context.selectedSymbol != self.assetData.Currency{
+                self.context.selectedSymbol = self.assetData.Currency
             }
         }
     }
@@ -159,7 +173,7 @@ extension CurrencyDetailView{
     
     func infoViewGen(type:PostCardType) -> some View{
         let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
-        var data:[Any] = type == .News ? self.news : self.tweets
+        var data:[Any] = type == .News ? self.News : self.Tweets
         data = data.count < 5 ? data : Array(data[0...4])
         let view = VStack(alignment: .leading, spacing: 10){
             MainText(content: title, fontSize: 25, color: .white,fontWeight: .bold, style: .heading).padding(.vertical)
@@ -185,25 +199,29 @@ extension CurrencyDetailView{
     }
     
     @ViewBuilder var feedContainer:some View{
-        if self.tweets.isEmpty{
+        if self.Tweets.isEmpty{
             ProgressView()
-        }else if self.news.count >= 5{
+        }else if self.Tweets.count >= 5{
             self.feedView
         }
         
     }
     
     @ViewBuilder var newsContainer:some View{
-        if self.news.isEmpty{
+        if self.News.isEmpty{
             ProgressView()
-        }else if self.news.count >= 5{
+        }else if self.News.count >= 5{
             self.newsView
         }
         
     }
     
     var OHLCV:[CryptoCoinOHLCVPoint]{
-        return self.socialData?.TimeseriesData ?? []
+        guard let timeSeries = self.socialData?.TimeseriesData else {return []}
+        return timeSeries.count >= 10 ? Array(timeSeries[(timeSeries.count - 10)...]) : timeSeries
+//
+//        guard let safePrice = prices else {return []}
+//        return safePrice.count >= 100 ? Array(safePrice[(safePrice.count - 100)...]) : safePrice
     }
     
     var priceInfo:some View{
@@ -218,10 +236,9 @@ extension CurrencyDetailView{
     }
     
     var curveChart:some View{
-        let data = self.OHLCV.compactMap({$0.close})
         return ZStack(alignment: .center){
-            if !data.isEmpty{
-                CurveChart(data: data,choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
+            if !self.OHLCV.isEmpty{
+                CurveChart(data: OHLCV.compactMap({$0.close}),choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
             }else{
                 MainText(content: "NO Time Series Data", fontSize: 20, color: .white, fontWeight: .bold)
             }
@@ -233,6 +250,8 @@ extension CurrencyDetailView{
 //        guard let tS = self.OHLCV else {return 0.0}
         if self.choosen > 0 && self.choosen < self.OHLCV.count{
             return self.OHLCV[self.choosen].close ?? 0
+        }else if let latestPrice = self.OHLCV.last?.close{
+            return latestPrice
         }else{
             return self.socialData?.MetaData?.Price ?? 0
         }
@@ -242,6 +261,23 @@ extension CurrencyDetailView{
         return VStack(alignment: .leading, spacing: 10){
             MainText(content: heading, fontSize: heading_size, color: .white, fontWeight: .semibold)
             MainText(content: info, fontSize: info_size, color: .white, fontWeight: .regular)
+        }
+    }
+    
+    func refreshPrices(){
+        CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency,limit: 1,fiat: "USD") { data in
+//            withAnimation(.easeInOut){
+            if let safeTimeseries = CrybseTimeseriesPriceAPI.parseData(data: data){
+                if let latestTime = self.assetData.coin?.TimeseriesData?.last?.time{
+                    for dataPt in safeTimeseries{
+                        if dataPt.time == latestTime + 60{
+                            self.assetData.coin?.TimeseriesData?.append(dataPt)
+                        }
+                    }
+                }
+                self.refresh.toggle()
+            }
+//            }
         }
     }
     
