@@ -20,10 +20,11 @@ struct CurrencyDetailView: View {
     @State var showMoreSection:CurrencyViewSection = .none
     @ObservedObject var assetData: CrybseAsset
     var size:CGSize = .init()
+    @State var timeCounter:Int = 0
     @State var refresh:Bool = false
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
-    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     init(
         assetData:CrybseAsset,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3)
@@ -42,9 +43,14 @@ struct CurrencyDetailView: View {
                 print("(DEBUG) The Coin Data : ",self.assetData.currency ?? "XXX")
             }
             .onReceive(self.timer) { _ in
-                if !self.refresh{
-                    self.refresh.toggle()
+                setWithAnimation {
+                    if self.timeCounter < 60{
+                        self.timeCounter += 1
+                    }else if !self.refresh{
+                        self.refresh.toggle()
+                    }
                 }
+                
             }
             .onDisappear {
                 self.timer.upstream.connect().cancel()
@@ -74,9 +80,23 @@ extension CurrencyDetailView{
         return self.assetData.coin
     }
     
+    var loadingPriceView:some View{
+        let percent = (1 - Float(self.timeCounter)/Float(60)) * Float(100)
+        
+        return HStack(alignment: .center, spacing: 10) {
+            MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+            Spacer()
+            if self.refresh{
+                ProgressView().frame(width: 30, height: 30, alignment: .center)
+            }else{
+                CircleChart(percent: percent, size: .init(width: 20, height: 20), widthFactor: 0.125)
+            }
+        }.frame(width: self.size.width, alignment: .center)
+    }
+    
     var  priceMainInfo:some View{
         VStack(alignment: .leading, spacing: 10) {
-            MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+            self.loadingPriceView
             if !self.OHLCV.isEmpty{
                 self.priceInfo
             }
@@ -219,9 +239,6 @@ extension CurrencyDetailView{
     var OHLCV:[CryptoCoinOHLCVPoint]{
         guard let timeSeries = self.socialData?.TimeseriesData else {return []}
         return timeSeries.count >= 10 ? Array(timeSeries[(timeSeries.count - 10)...]) : timeSeries
-//
-//        guard let safePrice = prices else {return []}
-//        return safePrice.count >= 100 ? Array(safePrice[(safePrice.count - 100)...]) : safePrice
     }
     
     var priceInfo:some View{
@@ -247,7 +264,6 @@ extension CurrencyDetailView{
     
     
     var price:Float{
-//        guard let tS = self.OHLCV else {return 0.0}
         if self.choosen > 0 && self.choosen < self.OHLCV.count{
             return self.OHLCV[self.choosen].close ?? 0
         }else if let latestPrice = self.OHLCV.last?.close{
@@ -266,18 +282,19 @@ extension CurrencyDetailView{
     
     func refreshPrices(){
         CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency,limit: 1,fiat: "USD") { data in
-//            withAnimation(.easeInOut){
-            if let safeTimeseries = CrybseTimeseriesPriceAPI.parseData(data: data){
-                if let latestTime = self.assetData.coin?.TimeseriesData?.last?.time{
-                    for dataPt in safeTimeseries{
-                        if dataPt.time == latestTime + 60{
-                            self.assetData.coin?.TimeseriesData?.append(dataPt)
+            setWithAnimation {
+                if let safeTimeseries = CrybseTimeseriesPriceAPI.parseData(data: data){
+                    if let latestTime = self.assetData.coin?.TimeseriesData?.last?.time{
+                        for dataPt in safeTimeseries{
+                            if dataPt.time == latestTime + 60{
+                                self.assetData.coin?.TimeseriesData?.append(dataPt)
+                            }
                         }
                     }
+                    self.refresh.toggle()
+                    self.timeCounter = 0
                 }
-                self.refresh.toggle()
             }
-//            }
         }
     }
     

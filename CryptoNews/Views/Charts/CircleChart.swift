@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct CircleChart: View {
-    @State var percent:Float = 0
-    var Percent:Float
+    var percent:Float
     var header:String?
     var size:CGSize
     var increase:Bool
@@ -17,19 +16,14 @@ struct CircleChart: View {
     var widthFactor:CGFloat
     
     init(percent:Float,header:String? = nil,size:CGSize = .init(width: totalWidth * 0.45, height: 300),widthFactor:CGFloat = 0.075,infoView:AnyView? = nil){
-        self.Percent = percent
+        self.percent = percent
         self.header = header
         self.size = size
         self.increase = true
         self.infoView = infoView
         self.widthFactor = widthFactor
     }
-    
-    func onAppear(){
-        withAnimation(.easeInOut(duration: 0.5)) {
-            self.percent = Percent
-        }
-    }
+
     
     var percentObj:(CGFloat,Color){
         let percent = CGFloat(self.percent/100)
@@ -64,7 +58,6 @@ struct CircleChart: View {
                 self.CircleChart(w: self.size.width, h: self.size.height)
             }
         }
-            .onAppear(perform: self.onAppear)
     }
 }
 
