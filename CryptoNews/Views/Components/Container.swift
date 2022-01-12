@@ -128,7 +128,7 @@ struct Container<T:View>: View {
     }
     
     @ViewBuilder var mainBody:some View{
-        VStack(alignment: .center, spacing: 15) {
+        VStack(alignment: .center, spacing: 10) {
             if self.orientation == .vertical{
                 self.innerView(self.innerWidth).padding(.top,10)
             }else if self.orientation == .horizontal{

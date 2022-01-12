@@ -35,16 +35,30 @@ struct CrybPostGen: View {
         var postdata:CrybPostData = .test
         postdata.User = .init(uid: uid, userName: username)
         postdata.PostMessage =  self.text
-        CrybPostAPI.shared.uploadTransaction(post: postdata , image: self.image) { err in
-            var heading:String = "Error"
-            var message:String = "No Message"
-            if let err = err{
-                message = err.localizedDescription
-                print("Trouble uploading the crybPost data : ",err.localizedDescription)
+//        CrybPostAPI.shared.uploadTransaction(post: postdata , image: self.image) { err in
+//            var heading:String = "Error"
+//            var message:String = "No Message"
+//            if let err = err{
+//                message = err.localizedDescription
+//                print("Trouble uploading the crybPost data : ",err.localizedDescription)
+//            }else{
+//                heading = "Successfully Add CrybPost"
+//                message = "CrybPost was successfully posted"
+//               print("The data was uploaded to teh crypPost successfully!")
+//            }
+//            setWithAnimation {
+//                self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
+//            }
+//        }
+        CrybsePostAPI.shared.uploadPost(post: postdata, image: self.image) { status in
+            var heading = ""
+            var message = ""
+            if status{
+                heading = "Upload Successful"
+                message = "Your CrybsePost was uploaded successfully !"
             }else{
-                heading = "Successfully Add CrybPost"
-                message = "CrybPost was successfully posted"
-               print("The data was uploaded to teh crypPost successfully!")
+                heading = "Upload Unsuccessful"
+                message = "Your CrybsePost was not uploaded successfully !"
             }
             setWithAnimation {
                 self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
@@ -91,17 +105,10 @@ struct CrybPostGen: View {
             .background(BlurView.thinLightBlur.opacity(0.2).clipContent(clipping: .roundClipping))
     }
     
-    var topGenView:some View{
-        Container(width: totalWidth) { w in
-            self.header
-            StlyizedTextEditor(limit:350,width: w)
-        }.frame(width: totalWidth, height: totalHeight, alignment: .bottom)
-    }
-    
     var mainbody:some View{
         Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
             self.header
-            StlyizedTextEditor(limit:350,width: w)
+            StylizedTextEditor(limit:350,width: w)
                 .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newText in
                     if self.text != newText{
                         self.text = newText

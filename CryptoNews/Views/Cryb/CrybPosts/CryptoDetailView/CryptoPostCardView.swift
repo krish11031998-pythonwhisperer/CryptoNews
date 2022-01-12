@@ -20,7 +20,7 @@ struct CryptoPostCardView: View {
         Container(width: self.width, ignoreSides: false) { w in
             self.header(w: w)
             self.mainBody(w: w)
-            ImageView(url: self.postData.PostImage, width: w, height: 200, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundCornerMedium)
+            ImageView(url: self.postData.ImageURL, width: w, height: 200, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundCornerMedium)
         }
         .padding(.bottom,25)
         .frame(width: self.width, alignment: .topLeading)

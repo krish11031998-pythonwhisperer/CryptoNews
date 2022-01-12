@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class CrybseCoinsResponse: Codable{
     var data:CrybseAssets?
@@ -35,14 +36,47 @@ class CrybseAssets:Codable{
     }
 }
 
-class CrybseAsset:Codable{
-    var currency:String?
-    var txns:[Transaction]?
-    var coinData:CrybseCoin?
-    var value:Float?
-    var profit:Float?
-    var coinTotal:Float?
-    var coin:CrybseCoinSocialData?
+class CrybseAsset:ObservableObject,Codable{
+    @Published var currency:String?
+    @Published var txns:[Transaction]?
+    @Published var coinData:CrybseCoin?
+    @Published var value:Float?
+    @Published var profit:Float?
+    @Published var coinTotal:Float?
+    @Published var coin:CrybseCoinSocialData?
+    
+
+    enum CodingKeys:CodingKey{
+        case currency
+        case txns
+        case coinData
+        case value
+        case profit
+        case coinTotal
+        case coin
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        value = try container.decode(Float?.self, forKey: .value)
+        profit = try container.decode(Float?.self, forKey: .profit)
+        coinTotal = try container.decode(Float?.self, forKey: .coinTotal)
+        currency = try container.decode(String?.self, forKey: .currency)
+        txns = try container.decode(Array<Transaction>?.self, forKey: .txns)
+        coinData = try container.decode(CrybseCoin?.self, forKey: .coinData)
+//        coin = try container.decode(CrybseCoinSocialData?.self, forKey: .coin)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(value, forKey: .value)
+        try container.encode(profit, forKey: .profit)
+        try container.encode(coinTotal, forKey: .coinTotal)
+        try container.encode(currency, forKey: .currency)
+        try container.encode(txns, forKey: .txns)
+        try container.encode(coinData, forKey: .coinData)
+        try container.encode(coin, forKey: .coin)
+    }
     
     var Currency : String {
         return self.currency ?? ""
@@ -64,6 +98,9 @@ class CrybseAsset:Codable{
         return self.profit ?? 0
     }
     
+//    var Coin:CrybseCoinSocialData{
+//        return self.coin ?? .init()
+//    }
     
 }
 

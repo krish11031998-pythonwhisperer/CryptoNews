@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CrybPostMainView: View {
     @EnvironmentObject var context:ContextData
-    @StateObject var crybPostAPI:CrybPostAPI = .init()
+    @StateObject var crybPostAPI:CrybsePostAPI = .init()
     @State var width:CGFloat = .zero
     @State var ignoreSides:Bool = false
     
@@ -20,17 +20,24 @@ struct CrybPostMainView: View {
     }
     
     func onAppear(){
-        if self.crybPostAPI.posts.isEmpty{
-            self.crybPostAPI.loadPost()
+        if self.crybPostAPI.posts == nil{
+            self.crybPostAPI.getPosts()
         }
-        
+//        if self.crybPostAPI.posts.isEmpty{
+//            self.crybPostAPI.loadPost()
+//        }
+//
         if self.width == .zero && self.ignoreSides{
             self.ignoreSides.toggle()
         }
     }
     
     var posts:[CrybPostData]{
-        return self.crybPostAPI.posts.isEmpty ? Array(repeating: CrybPostData.test, count: 10) : self.crybPostAPI.posts
+        if let posts = self.crybPostAPI.posts{
+            return posts.isEmpty ? Array(repeating: CrybPostData.test, count: 10) : posts
+        }
+        return Array(repeating: CrybPostData.test, count: 10)
+        
     }
     
     

@@ -22,6 +22,7 @@ class CrybseCoinSocialAPI:CrybseAPI{
         self.crypto = crypto
     }
     
+    static var shared:CrybseCoinSocialAPI = .init(coinUID: "", fiat: "", crypto: "")
     
     var url:URL?{
         var uC = self.baseComponent
@@ -46,6 +47,19 @@ class CrybseCoinSocialAPI:CrybseAPI{
                 self.loading.toggle()
             }
         }
+    }
+    
+    func getCoinData(coinUID:String,fiat:String,crypto:String,completion:((Data) -> Void)?){
+        var uC = self.baseComponent
+        uC.path = "/coinData"
+        uC.queryItems = [
+            URLQueryItem(name: "coinUID", value: coinUID),
+            URLQueryItem(name: "fiat", value: fiat),
+            URLQueryItem(name: "crypto", value: crypto)
+        ]
+        guard let url = uC.url else  {return}
+        self.getData(_url: url, completion: completion)
+        
     }
     
     func getCoinData(){

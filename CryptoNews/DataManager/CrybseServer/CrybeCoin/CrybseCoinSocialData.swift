@@ -11,15 +11,47 @@ import Foundation
 class CrybseCoinSocialDataResponse:Codable{
     var data:CrybseCoinSocialData?
     var success:Bool
+    
+    init(data:CrybseCoinSocialData? = nil,success:Bool = false){
+        self.data = data
+        self.success = success
+    }
+    
 }
 
 
-class CrybseCoinSocialData:Codable{
-    var Tweets: Array<AssetNewsData>?
-    var MetaData:CrybseCoin?
-    var TimeseriesData:Array<CryptoCoinOHLCVPoint>?
-    var News:Array<CryptoNews>?
+class CrybseCoinSocialData:ObservableObject,Codable{
+    @Published var Tweets: Array<AssetNewsData>?
+    @Published var MetaData:CrybseCoin?
+    @Published var TimeseriesData:Array<CryptoCoinOHLCVPoint>?
+    @Published var News:Array<CryptoNews>?
     
+    enum CodingKeys:CodingKey{
+        case Tweets
+        case MetaData
+        case TimeseriesData
+        case News
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        Tweets = try container.decode(Array<AssetNewsData>?.self, forKey: .Tweets)
+        MetaData = try container.decode(CrybseCoin?.self, forKey: .MetaData)
+        TimeseriesData = try container.decode(Array<CryptoCoinOHLCVPoint>?.self, forKey: .TimeseriesData)
+        News = try container.decode(Array<CryptoNews>?.self, forKey: .News)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(Tweets, forKey: .Tweets)
+        try container.encode(MetaData, forKey: .MetaData)
+        try container.encode(TimeseriesData, forKey: .TimeseriesData)
+        try container.encode(News, forKey: .News)
+    }
+    
+    var TimeSeriesData:[CryptoCoinOHLCVPoint]{
+        self.TimeseriesData ?? []
+    }
     
     static func parseCoinDataFromData(data:Data) -> CrybseCoinSocialData?{
         var coinData:CrybseCoinSocialData? = nil

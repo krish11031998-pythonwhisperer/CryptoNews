@@ -93,6 +93,11 @@ class CrybseTimeseriesPriceAPI:CrybseAPI{
         self.getData(_url: url)
     }
     
+    func refreshTimseriesPrice(){
+        guard let url = self.url else {return}
+        self.refreshData(_url: url)
+    }
+    
     func getPrice(currency:String,start:Int? = nil,end:Int? = nil,limit:Int = 10,fiat:String = "USD",completion: @escaping (Data) -> Void){
         self.currency = currency
         self.start = start

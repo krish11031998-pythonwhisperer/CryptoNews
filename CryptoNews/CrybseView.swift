@@ -95,14 +95,14 @@ extension CrybseView{
                 .transition(.slideInOut)
                 .zIndex(3)
         }
-        
-        if self.context.selectedSymbol != nil{
-            CurrencyView(name: self.context.selectedSymbol, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-            .transition(.slideInOut)
-            .background(mainBGView)
-            .edgesIgnoringSafeArea(.all)
-            .zIndex(2)
-        }
+//        
+//        if self.context.selectedSymbol != nil{
+//            CurrencyView(name: self.context.selectedSymbol, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+//            .transition(.slideInOut)
+//            .background(mainBGView)
+//            .edgesIgnoringSafeArea(.all)
+//            .zIndex(2)
+//        }
         
         if let currency = self.context.selectedCurrency{
             CurrencyView(info: currency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
@@ -114,10 +114,16 @@ extension CrybseView{
         
         if let post = self.context.selectedPost{
             CrybPostDetailView(postData: post)
+                .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(mainBGView)
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
+//            CrybPostDetailView(postData: post)
+//                .transition(.slideInOut)
+//                .background(mainBGView)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
         }
         
 
