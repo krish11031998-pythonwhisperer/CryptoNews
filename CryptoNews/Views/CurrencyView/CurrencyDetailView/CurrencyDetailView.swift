@@ -59,7 +59,6 @@ struct CurrencyDetailView: View {
                 if self.refresh{
                     self.refreshPrices()
                 }
-                print("(DEBUG) refresh : ",self.refresh)
             }
     }
 }
@@ -89,7 +88,7 @@ extension CurrencyDetailView{
             if self.refresh{
                 ProgressView().frame(width: 30, height: 30, alignment: .center)
             }else{
-                CircleChart(percent: percent, size: .init(width: 20, height: 20), widthFactor: 0.125)
+                CircleChart(percent: percent, size: .init(width: 20, height: 20), widthFactor: 0.15)
             }
         }.frame(width: self.size.width, alignment: .center)
     }
@@ -121,11 +120,11 @@ extension CurrencyDetailView{
     }
 
     var valueTotal:Float{
-        return self.assetData.value ?? 0
+        return self.coinTotal * self.price
     }
     
     var profit:Float{
-        return self.assetData.Profit ?? 0
+        return self.assetData.Profit
     }
     
     var txnForAssetPortfolioData:[PortfolioData]{
@@ -283,17 +282,21 @@ extension CurrencyDetailView{
     func refreshPrices(){
         CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency,limit: 1,fiat: "USD") { data in
             setWithAnimation {
+//            withAnimation(.easeInOut){
                 if let safeTimeseries = CrybseTimeseriesPriceAPI.parseData(data: data){
-                    if let latestTime = self.assetData.coin?.TimeseriesData?.last?.time{
-                        for dataPt in safeTimeseries{
-                            if dataPt.time == latestTime + 60{
-                                self.assetData.coin?.TimeseriesData?.append(dataPt)
-                            }
-                        }
+                    if let latestTime = self.assetData.coin?.TimeseriesData?.last?.time, let latest = safeTimeseries.last, let latestPrice = latest.close{
+                        self.assetData.coin?.TimeseriesData?.append(latest)
+                        let newValue = self.coinTotal * latestPrice
+                        print("(DEBUG) NewValue : ",newValue)
+                        self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)
+                        self.assetData.value = newValue
                     }
-                    self.refresh.toggle()
-                    self.timeCounter = 0
                 }
+            }
+            
+            setWithAnimation {
+                self.refresh.toggle()
+                self.timeCounter = 0
             }
         }
     }
