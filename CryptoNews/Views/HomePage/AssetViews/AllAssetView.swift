@@ -34,11 +34,20 @@ struct AllAssetView: View {
         }
         
     }
+    
+    func portfolioCardViews(w:CGFloat) -> [AnyView]{
+        return self.coins(type: "tracked").sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset: $0, w: w * 0.65))})
+    }
+    
+    var portfolioViews:some View{
+        Container(heading: "Portfolio", headingColor: .white,ignoreSides: true) { inner_w in
+            CardSlidingView(cardSize: .init(width: inner_w * 0.65, height: totalHeight * 0.45), views: self.portfolioCardViews(w: inner_w),leading: true,centralize: true)
+        }
+    }
 
 
     @ViewBuilder var mainBody:some View{
-//        AssetViewBuilder(type: "tracked", coins: self.coins(type: "tracked"), alternative: false)
-        PortfolioMain(assets: self.coins(type: "tracked")).environmentObject(self.context)
+        self.portfolioViews
         AssetViewBuilder(type: "watching", size:CardSize.medium, coins: self.coins(type: "watching"), alternative: false)
     }
     
@@ -48,10 +57,3 @@ struct AllAssetView: View {
     }
 }
 
-
-
-//struct AllAssetView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        AllAssetView()
-//    }
-//}

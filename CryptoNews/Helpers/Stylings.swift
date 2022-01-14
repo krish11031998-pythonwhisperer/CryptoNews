@@ -488,8 +488,9 @@ struct MainSubHeading:View{
     var subHeadingFont:TextStyle
     var headColor:Color
     var subHeadColor:Color
-    var alignment:HorizontalAlignment
-    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal,headColor:Color = .gray,subHeadColor:Color = .white,alignment:HorizontalAlignment = .leading){
+    var alignment:Alignment
+    var orientation:Axis
+    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal,headColor:Color = .gray,subHeadColor:Color = .white,orientation:Axis = .vertical,alignment:Alignment = .leading){
         self.heading = heading
         self.subHeading = subHeading
         self.headingSize = headingSize
@@ -498,15 +499,25 @@ struct MainSubHeading:View{
         self.subHeadingFont = subHeadingFont
         self.headColor = headColor
         self.subHeadColor = subHeadColor
+        self.orientation = orientation
         self.alignment = alignment
     }
-    
+        
     var body: some View{
-        VStack(alignment: alignment, spacing: 5) {
-            MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
-                .lineLimit(1)
-            MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
-                .fixedSize(horizontal: false, vertical: true)
+        if self.orientation == .vertical{
+            VStack(alignment: self.alignment.horizontal, spacing: 5) {
+                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
+                    .lineLimit(1)
+                MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+        }else if self.orientation == .horizontal{
+            HStack(alignment: self.alignment.vertical, spacing: 5) {
+                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
+                    .lineLimit(1)
+                MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
         }
     }
     
@@ -517,17 +528,26 @@ struct TabButton:View{
     var size:CGSize
     var title:String
     var color:Color
+    var fontSize:CGFloat
     var action:() -> Void
+    var flexible:Bool
     
-    init(width:CGFloat = totalWidth - 40, height:CGFloat = 50,title:String = "Button",textColor:Color = .white,action:@escaping () -> Void){
+    init(width:CGFloat = totalWidth - 40, height:CGFloat = 50,title:String = "Button",fontSize:CGFloat = 15,textColor:Color = .white,flexible:Bool = false,action:@escaping () -> Void){
         self.size = .init(width: width, height: height)
         self.title = title
         self.color = textColor
+        self.fontSize = fontSize
+        self.flexible = flexible
         self.action = action
     }
     
+    var flexibleView:some View{
+        MainText(content: self.title, fontSize: self.fontSize, color: self.color, fontWeight: .semibold)
+            .blobify(color: AnyView(BlurView.thinDarkBlur), clipping: .roundCornerMedium)
+            .buttonify(handler: self.action)
+    }
     
-    var body: some View{
+    var nonFlexibleView:some View{
         ZStack(alignment: .center) {
             Color.clear
             MainText(content: self.title, fontSize: 15, color: self.color, fontWeight: .semibold)
@@ -535,6 +555,14 @@ struct TabButton:View{
         .blobify(color: AnyView(BlurView.thinDarkBlur), clipping: .roundCornerMedium)
         .frame(width: size.width, height: size.height, alignment: .center)
         .buttonify(handler: self.action)
+    }
+    
+    var body: some View{
+        if self.flexible{
+            self.flexibleView
+        }else{
+            self.nonFlexibleView
+        }
     }
     
 }

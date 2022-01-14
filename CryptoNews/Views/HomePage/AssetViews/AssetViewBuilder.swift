@@ -26,6 +26,9 @@ struct AssetViewBuilder: View {
     }
     
     var views:[AnyView]{
+//        if self.alternative{
+//            self.coins.compactMap({PortfolioCard(asset: <#T##CrybseAsset#>)})
+//        }
         self.coins.compactMap({AnyView(PriceCard(coin: $0,size: self.size,alternativeView: self.alternative))})
     }
 

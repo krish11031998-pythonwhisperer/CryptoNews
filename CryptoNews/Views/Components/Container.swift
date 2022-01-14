@@ -99,22 +99,27 @@ struct Container<T:View>: View {
             }
         }
         if self.headingDivider{
-            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue).fill(Color.mainBGColor).frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
+            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue)
+                .fill(Color.mainBGColor)
+                .frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
+            
         }
     }
     
     @ViewBuilder var mainBodyWElements:some View{
         if self.orientation == .vertical{
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .center, spacing: 10) {
                 if self.heading != nil{
-                    self.headingView.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
+                    self.headingView
+//                        .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
+                        .frame(width:self.innerWidth,alignment: .leading)
                 }else if self.onClose != nil{
                     self.onCloseView
                 }
                 self.innerView(self.innerWidth).padding(.top,10)
             }
         }else if self.orientation == .horizontal{
-            VStack(alignment: .leading, spacing: 10) {
+            VStack(alignment: .center, spacing: 10) {
                 if self.heading != nil{
                     self.headingView.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
                 }else if self.onClose != nil{
@@ -130,10 +135,10 @@ struct Container<T:View>: View {
     @ViewBuilder var mainBody:some View{
         VStack(alignment: .center, spacing: 10) {
             if self.orientation == .vertical{
-                self.innerView(self.innerWidth).padding(.top,10)
+                self.innerView(self.innerWidth)
             }else if self.orientation == .horizontal{
                 HStack(alignment: .center, spacing: 10) {
-                    self.innerView(self.innerWidth).padding(.top,10)
+                    self.innerView(self.innerWidth)
                 }
             }
         }

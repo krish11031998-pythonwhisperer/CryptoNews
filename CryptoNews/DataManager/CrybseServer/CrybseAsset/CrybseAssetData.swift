@@ -102,6 +102,22 @@ class CrybseAsset:ObservableObject,Codable{
         return self.coin?.TimeseriesData?.last?.time ?? 0
     }
     
+    
+    var CoinTotal:Float{
+        return self.coinTotal ?? 0
+    }
+    
+    var Change:Float{
+        return self.coinData?.Change ?? 0.0
+    }
+    
+    var Rank:Int{
+        return self.coinData?.rank ?? 0
+    }
+    
+    var MarketCap:Float{
+        return self.coinData?.marketCap ?? 0.0
+    }
 //    var Coin:CrybseCoinSocialData{
 //        return self.coin ?? .init()
 //    }
@@ -188,6 +204,5 @@ class CrybseCoin: Codable{
     var Change:Float{
         return self.change ?? 0.0
     }
-    
     
 }

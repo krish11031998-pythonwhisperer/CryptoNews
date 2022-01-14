@@ -18,6 +18,7 @@ struct ShowSectionPreferenceKey:PreferenceKey{
 struct CurrencyDetailView: View {
     @EnvironmentObject var context:ContextData
     @State var showMoreSection:CurrencyViewSection = .none
+    @StateObject var timeSeriesAPI:CrybseTimeseriesPriceAPI
     @ObservedObject var assetData: CrybseAsset
     var size:CGSize = .init()
     @State var timeCounter:Int = 0
@@ -32,6 +33,7 @@ struct CurrencyDetailView: View {
     {
              
         self.assetData = assetData
+        self._timeSeriesAPI = .init(wrappedValue: .init(currency: assetData.currency, limit: 1, fiat: "USD"))
         self.size = size
     }
     
@@ -43,23 +45,23 @@ struct CurrencyDetailView: View {
                 print("(DEBUG) The Coin Data : ",self.assetData.currency ?? "XXX")
             }
             .onReceive(self.timer) { _ in
-                setWithAnimation {
-                    if self.timeCounter < 60{
+                if self.timeCounter < 60{
+                    setWithAnimation {
                         self.timeCounter += 1
-                    }else if !self.refresh{
-                        self.refresh.toggle()
                     }
+                }else if !self.timeSeriesAPI.loading{
+                    self.timeSeriesAPI.refreshTimseriesPrice()
                 }
-                
             }
             .onDisappear {
                 self.timer.upstream.connect().cancel()
             }
-            .onChange(of: self.refresh) { newValue in
-                if self.refresh{
-                    self.refreshPrices()
-                }
-            }
+            .onReceive(self.timeSeriesAPI.$timeseriesData, perform: self.onReceiveNewTimeseriesData(timeSeries:))
+//            .onChange(of: self.refresh) { newValue in
+//                if self.refresh{
+//                    self.refreshPrices()
+//                }
+//            }
     }
 }
 
@@ -85,7 +87,7 @@ extension CurrencyDetailView{
         return HStack(alignment: .center, spacing: 10) {
             MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
             Spacer()
-            if self.refresh{
+            if self.timeSeriesAPI.loading{
                 ProgressView().frame(width: 30, height: 30, alignment: .center)
             }else{
                 CircleChart(percent: percent, size: .init(width: 20, height: 20), widthFactor: 0.15)
@@ -279,26 +281,20 @@ extension CurrencyDetailView{
         }
     }
     
-    func refreshPrices(){
-        CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency,limit: 1,fiat: "USD") { data in
-            setWithAnimation {
-//            withAnimation(.easeInOut){
-                if let safeTimeseries = CrybseTimeseriesPriceAPI.parseData(data: data){
-                    let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.time! >= self.assetData.LatestPriceTime + 60 ? $0 : nil : nil})
-                    if let latestPrice = latestPrices.last?.close{
-                        self.assetData.coin?.TimeseriesData?.append(contentsOf: latestPrices)
-                        let newValue = self.coinTotal * latestPrice
-                        print("(DEBUG) NewValue : ",newValue)
-                        self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)
-                        self.assetData.value = newValue
-                    }
+    func onReceiveNewTimeseriesData(timeSeries:Array<CryptoCoinOHLCVPoint>?){
+        guard let safeTimeseries = timeSeries else {return}
+        setWithAnimation {
+            let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.time! >= self.assetData.LatestPriceTime + 60 ? $0 : nil : nil})
+            for count in 0..<latestPrices.count{
+                let latestPrice = latestPrices[count]
+                self.assetData.coin?.TimeseriesData?.append(latestPrice)
+                if let latestClosePrice = latestPrice.close,count == (latestPrices.count - 1){
+                    let newValue = self.coinTotal * latestClosePrice
+                    self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)
+                    self.assetData.value = newValue
                 }
             }
-            
-            setWithAnimation {
-                self.refresh.toggle()
-                self.timeCounter = 0
-            }
+            self.timeCounter = 0
         }
     }
     

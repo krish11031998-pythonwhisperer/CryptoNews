@@ -31,7 +31,6 @@ struct AddTransactionView:View {
     @Namespace var animation
     @StateObject var txn:TxnFormDetails
     @State var showModal:ModalType = .none
-//    @State var coin:CoinMarketData = .init()
     @State var coin:CrybseCoinPrice? = nil
     @State var curr_sym:String? = nil
     @State var currentAsset: AssetData?

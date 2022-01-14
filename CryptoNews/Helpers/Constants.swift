@@ -130,19 +130,23 @@ func convertToDecimals(value:Float?) -> String{
 }
 
 func convertToMoneyNumber(value:Float?) -> String{
-    guard let value = value else {return "$0"}
+    guard let _value = value else {return "$0"}
+    let value = abs(_value)
+    var result:String = ""
     let decimal = value.truncatingRemainder(dividingBy: 1) != 0 ? "%.2f" : "%.0f"
     if value > 1000 && value < 1000000{
-        return "$\(String(format: decimal, value/1000))k"
+        result = "$\(String(format: decimal, value/1000))k"
     }else if value > 1000000 && value < 1000000000{
-        return "$\(String(format: decimal,value/1000000))M"
-    }else if value > 1000000000 && value < 1000000000000{
-        return "$\(String(format: decimal,value/1000000000))B"
-    }else if value >= 1000000000000{
-        return "$\(String(format: decimal,value/1000000000000))T"
+        result =  "$\(String(format: decimal,value/1000000))M"
+    }else if value > 1000000000 && value < 999999995904{
+        result =  "$\(String(format: decimal,value/1000000000))B"
+    }else if value >= 999999995904{
+        result =  "$\(String(format: decimal,value/1000000000000))T"
     }else{
-        return "$\(String(format: decimal,value))"
+        result =  "$\(String(format: decimal,value))"
     }
+    
+    return _value < 0 ? "- "+result : result
 }
 
 

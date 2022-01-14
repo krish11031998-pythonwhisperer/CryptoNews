@@ -25,7 +25,6 @@ struct PortfolioAsset: View {
     }
     
     func curveChartView(inner_w:CGFloat) -> some View{
-//        if self.asset.CoinData.Sparkline
         CurveChart(data: self.asset.CoinData.Sparkline, interactions: false, size: .init(width: inner_w, height: 95),bg: .clear,chartShade: false)
     }
     
@@ -40,6 +39,7 @@ struct PortfolioAsset: View {
         Container(width:self.width,ignoreSides:false,horizontalPadding: 7.5,verticalPadding: 5) { inner_w in
             HStack(alignment: .center, spacing: 10) {
                 self.infoView(inner_w: inner_w * 0.45 - 10)
+                
 //                Spacer()
                 self.curveChartView(inner_w: inner_w * 0.55)
             }.frame(width: inner_w, alignment: .topLeading)
