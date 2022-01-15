@@ -34,9 +34,11 @@ struct TransactionDetailsView: View {
             self.SummaryView
             Container(heading: "Transaction History", headingColor: .white, headingDivider: false, headingSize: 20, width: self.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0) { _ in
                 self.TxnTypesView
-                ForEach(Array(self.selectedTransaction.enumerated()),id:\.offset) { _txn in
-                    let txn = _txn.element
-                    SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
+                VStack(alignment: .center, spacing: 7.5) {
+                    ForEach(Array(self.selectedTransaction.enumerated()),id:\.offset) { _txn in
+                        let txn = _txn.element
+                        SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
+                    }
                 }
             }.padding(.top,10)
             TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
@@ -60,11 +62,11 @@ extension TransactionDetailsView{
         }
     }
     
-    var SummaryHeadingView:some View{
+    func SummaryHeadingView(w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
             CurrencySymbolView(currency: self.currency, size: .medium, width: 50)
             MainText(content: "\(self.currency)", fontSize: 35, color: .white, fontWeight: .medium, style: .normal)
-        }.frame(width: width, alignment: .leading)
+        }.frame(width: w, alignment: .leading)
     }
     
     @ViewBuilder func AssetSummaryVal(key:String) -> some View{
@@ -77,22 +79,14 @@ extension TransactionDetailsView{
         }
     }
     
-    func AssetSummaryInfo(w:CGFloat) -> some View{
-        InfoGrid(info: self.AssetHeadKeys, width: w, viewPopulator: self.AssetSummaryVal(key:))
-    }
-    
     var SummaryView:some View{
-        VStack(alignment: .leading, spacing: 10){
-            let w = width - 30
-            
-            self.SummaryHeadingView
-            MainSubHeading(heading: "Coin(s)", subHeading: "\(convertToDecimals(value: self.totalCoins))", headingSize: 13, subHeadingSize: 36, headingFont: .normal, subHeadingFont: .normal,alignment: .center)
+        Container(width: self.width,ignoreSides: true) { w in
+            self.SummaryHeadingView(w: w)
+                .padding(.horizontal,15)
+            MainSubHeading(heading: "Coin(s)", subHeading: "\(convertToDecimals(value: self.totalCoins))", headingSize: 15, subHeadingSize: 36, headingFont: .normal, subHeadingFont: .normal,alignment: .center)
                 .frame(width: w, alignment: .center)
-            self.AssetSummaryInfo(w: w)
-        }.padding(15)
-        .frame(width: width, alignment: .leading)
-        .background(Color.mainBGColor.overlay(BlurView(style: .systemChromeMaterialDark)))
-        .clipContent(clipping: .roundClipping)
+            InfoGrid(info: self.AssetHeadKeys, width: w, viewPopulator: self.AssetSummaryVal(key:))
+        }.basicCard(size: .zero)
     }
     
     var TxnTypesView:some View{

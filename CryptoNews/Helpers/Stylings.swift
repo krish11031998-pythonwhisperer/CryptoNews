@@ -395,20 +395,16 @@ struct ContentClipping:ViewModifier{
 struct BasicCard:ViewModifier{
     var size:CGSize
     func body(content: Content) -> some View {
-        if self.size.height != 0{
+        if self.size != .zero{
             content
-                .padding()
                 .frame(width: self.size.width, height: self.size.height, alignment: .center)
-                .background(BlurView(style: .systemThinMaterialDark))
-                .cornerRadius(20)
+                .background(BlurView.thinDarkBlur)
+                .clipContent(clipping: .roundClipping)
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         }else{
             content
-                .padding()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: self.size.width, alignment: .center)
-                .background(BlurView(style: .systemThinMaterialDark))
-                .cornerRadius(20)
+                .background(BlurView.thinDarkBlur)
+                .clipContent(clipping: .roundClipping)
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         }
     }

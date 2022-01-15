@@ -23,9 +23,9 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             if let uid = self.context.user.user?.uid, let currencies = self.context.user.user?.watching{
                 AllAssetView(uid:uid, currencies: currencies)
-                LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
+//                LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             }
-            CurrencyFeed().asyncContainer(size: .init(width: totalWidth, height: totalHeight))
+//            CurrencyFeed().asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             Spacer(minLength: 200)
         }.zIndex(1)
     }

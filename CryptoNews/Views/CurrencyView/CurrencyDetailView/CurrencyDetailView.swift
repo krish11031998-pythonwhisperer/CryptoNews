@@ -44,24 +44,11 @@ struct CurrencyDetailView: View {
             .onAppear {
                 print("(DEBUG) The Coin Data : ",self.assetData.currency ?? "XXX")
             }
-            .onReceive(self.timer) { _ in
-                if self.timeCounter < 60{
-                    setWithAnimation {
-                        self.timeCounter += 1
-                    }
-                }else if !self.timeSeriesAPI.loading{
-                    self.timeSeriesAPI.refreshTimseriesPrice()
-                }
-            }
+            .onReceive(self.timer, perform: self.OnReceiveTimer)
             .onDisappear {
                 self.timer.upstream.connect().cancel()
             }
             .onReceive(self.timeSeriesAPI.$timeseriesData, perform: self.onReceiveNewTimeseriesData(timeSeries:))
-//            .onChange(of: self.refresh) { newValue in
-//                if self.refresh{
-//                    self.refreshPrices()
-//                }
-//            }
     }
 }
 
@@ -79,6 +66,16 @@ extension CurrencyDetailView{
 
     var socialData:CrybseCoinSocialData?{
         return self.assetData.coin
+    }
+    
+    func OnReceiveTimer(_ time:Date){
+        if self.timeCounter < 60{
+            setWithAnimation {
+                self.timeCounter += 1
+            }
+        }else if !self.timeSeriesAPI.loading{
+            self.timeSeriesAPI.refreshTimseriesPrice()
+        }
     }
     
     var loadingPriceView:some View{
@@ -134,34 +131,48 @@ extension CurrencyDetailView{
     }
     
     var CurrencySummary:some View{
-        ChartCard(header: "Statistics", size: self.size) { w, h in
-            CurrencySummaryView(currency: self.socialData?.MetaData ?? .init(), size: .init(width: w, height: h))
+        Container(heading: "Statistics", width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+            if let coinMetaData = self.socialData?.MetaData{
+                CurrencySummaryView(currency: coinMetaData, size: .init(width: w, height: self.size.height))
+            }else{
+                Color.clear.frame(width: w, height: self.size.height - 15, alignment: .center)
+            }
+        }
+        .basicCard(size: .zero)
+    }
+    
+    
+    func handleAddTxn(){
+        if !self.context.addTxn{
+            self.context.addTxn.toggle()
+        }
+        if self.context.selectedSymbol != self.assetData.Currency{
+            self.context.selectedSymbol = self.assetData.Currency
         }
     }
     
+    func viewPortfolio(){
+        withAnimation(.easeInOut) {
+            self.showMoreSection = .txns
+        }
+    }
     
     @ViewBuilder var transactionHistoryView:some View{
         if !self.txns.isEmpty{
             MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,profit: self.profit, fee: 1.36, totalfee: 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
-            TabButton(width: self.size.width, height: 50, title: "View Portfolio", textColor: .white) {
-                withAnimation(.easeInOut) {
-                    self.showMoreSection = .txns
-                }
-            }
+            HStack(alignment: .center, spacing: 10) {
+                TabButton(width: self.size.width * 0.5 - 5, height: 50, title: "View Portfolio", textColor: .white,action: self.viewPortfolio)
+                TabButton(width: self.size.width * 0.5 - 5, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
+            }.frame(width: self.size.width, alignment: .center)
+        }else{
+            TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
         }
-        TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white) {
-            if !self.context.addTxn{
-                self.context.addTxn.toggle()
-            }
-            if self.context.selectedSymbol != self.assetData.Currency{
-                self.context.selectedSymbol = self.assetData.Currency
-            }
-        }
+        
     }
     
     @ViewBuilder var infoSection:some View{
         if let coinMetaData = self.socialData?.MetaData{
-            Container(heading: "About", width: self.size.width, ignoreSides: false, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+            Container(heading: "About", width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
                 MainText(content:"What is \(coinMetaData.Symbol)", fontSize: 17.5, color: .white, fontWeight: .semibold)
                     .frame(width: w, alignment: .leading)
                 ForEach(coinMetaData.Description.split(separator: "\n"), id:\.self) { text in
@@ -173,8 +184,8 @@ extension CurrencyDetailView{
                             .frame(width: w, alignment: .leading)
                     }
                 }
-            }.background(BlurView(style: .dark))
-            .clipContent(clipping: .roundClipping)
+            }
+            .basicCard(size: .zero)
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
