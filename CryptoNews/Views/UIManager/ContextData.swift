@@ -50,7 +50,6 @@ class ContextData:ObservableObject{
     @Published var user:User = .init()
     @Published var notification:NotificationModel = NotificationModel()
     @Published var bottomSwipeNotification:NotificationData = .init()
-    @Published var transactionAPI:TransactionAPI = .init()
     @Namespace var animationNamespace
 
     var transactionCancellable: AnyCancellable? = nil
@@ -58,11 +57,6 @@ class ContextData:ObservableObject{
     var userCancellable:AnyCancellable? = nil
     init(){
         self.user.signInHandler = self.signInHandler
-        self.transactionCancellable = self.transactionAPI.objectWillChange.sink(receiveValue: { [weak self] (_) in
-            withAnimation(.easeInOut) {
-                self?.objectWillChange.send()
-            }
-        })
         self.notificationCancellable = self.bottomSwipeNotification.objectWillChange.sink(receiveValue: { [weak self] (_)in
             withAnimation(.easeInOut) {
                 self?.objectWillChange.send()
@@ -204,34 +198,5 @@ class ContextData:ObservableObject{
         if self.loggedIn != .signedIn{
             self.loggedIn = .signedIn
         }
-    }
-    
-    var currencyTxns:[String:[Transaction]]{
-        var balances:[String:[Transaction]] = [:]
-        self.transactionAPI.transactions.forEach({ txn in
-            let asset = txn.asset
-            if let _ = balances[asset]{
-                balances[asset]?.append(txn)
-            }else{
-                balances[asset] = [txn]
-            }
-        })
-        return balances
-    }
-    
-    func balanceForCurrency(asset:String) -> [Transaction]{
-        return self.currencyTxns[asset] ?? []
-    }
-    
-    func totalForCurrency(asset:String) -> Float{
-        return self.balanceForCurrency(asset: asset).reduce(0, {$0 + $1.asset_quantity * ($1.type == "sell" || $1.type == "send" ? -1 : 1)})
-    }
-    
-    var trackedAssets:[String]{
-        return self.currencyTxns.keys.sorted()
-    }
-    
-    var watchedAssets:[String]{
-        return self.user.user?.watching.compactMap({self.currencyTxns[$0] == nil ? $0 : nil}).sorted() ?? []
     }
 }

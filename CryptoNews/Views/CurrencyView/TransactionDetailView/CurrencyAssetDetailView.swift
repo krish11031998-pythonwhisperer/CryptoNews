@@ -149,28 +149,28 @@ extension TransactionDetailsView{
     
 }
 
-struct CurrencyDetailTester:View{
-    @StateObject var TAPI:TransactionAPI = .init()
-    
-    func onAppear(){
-        self.TAPI.loadTransaction()
-    }
-    
-    var body: some View{
-        Container(heading: "Transactions", width: totalWidth) { w in
-            TransactionDetailsView(txns: self.TAPI.transactions.filter({$0.asset == "litecoin"}),currency: "LTC",currencyCurrentPrice: 500,width: w)
-        }.onAppear(perform: self.onAppear)
-            .padding(.top,50)
-    }
-}
-
-struct CurrencyAssetDetailView_Previews: PreviewProvider {
-    static var previews: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            CurrencyDetailTester()
-
-        }
-        .background(Color.mainBGColor)
-        .edgesIgnoringSafeArea(.all)
-    }
-}
+//struct CurrencyDetailTester:View{
+//    @StateObject var TAPI:TransactionAPI = .init()
+//    
+//    func onAppear(){
+//        self.TAPI.loadTransaction()
+//    }
+//    
+//    var body: some View{
+//        Container(heading: "Transactions", width: totalWidth) { w in
+//            TransactionDetailsView(txns: self.TAPI.transactions.filter({$0.asset == "litecoin"}),currency: "LTC",currencyCurrentPrice: 500,width: w)
+//        }.onAppear(perform: self.onAppear)
+//            .padding(.top,50)
+//    }
+//}
+//
+//struct CurrencyAssetDetailView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        ScrollView(.vertical, showsIndicators: false) {
+//            CurrencyDetailTester()
+//
+//        }
+//        .background(Color.mainBGColor)
+//        .edgesIgnoringSafeArea(.all)
+//    }
+//}

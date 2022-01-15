@@ -23,8 +23,8 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             if let uid = self.context.user.user?.uid, let currencies = self.context.user.user?.watching{
                 AllAssetView(uid:uid, currencies: currencies)
+                LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             }
-            LatestTweets(header:"Trending Tweets",currencies:self.userFavAsset,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             CurrencyFeed().asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             Spacer(minLength: 200)
         }.zIndex(1)
@@ -39,11 +39,6 @@ struct HomePage: View {
 }
 
 extension HomePage{
-    
-    var userFavAsset:[String]{
-        return self.context.trackedAssets + self.context.watchedAssets
-    }
-    
     func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
         AsyncContainer(size: CardSize.slender) {
             CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)

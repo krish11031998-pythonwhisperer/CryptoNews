@@ -66,11 +66,11 @@ struct CurrencyView:View{
         return txns
     }
     
-    func loadTxns(){
-        if let uid = self.context.user.user?.uid{
-            self.context.transactionAPI.loadTransaction(uuid: uid)
-        }
-    }
+//    func loadTxns(){
+//        if let uid = self.context.user.user?.uid{
+//            self.context.transactionAPI.loadTransaction(uuid: uid)
+//        }
+//    }
         
     func onCloseSection(){
         if self.showSection != .none{

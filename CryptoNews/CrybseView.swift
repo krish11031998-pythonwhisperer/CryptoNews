@@ -34,11 +34,6 @@ struct CrybseView: View {
     
     var body: some View {
         self.contentView
-            .onPreferenceChange(AddTxnUpdatePreference.self) { added_Txn in
-                if let uid = self.context.user.user?.uid, added_Txn{
-                    self.context.transactionAPI.loadTransaction(uuid: uid)
-                }
-            }
     }
 }
 
