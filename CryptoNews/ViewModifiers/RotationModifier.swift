@@ -17,7 +17,7 @@ struct FlipRotation:ViewModifier{
     func body(content: Content) -> some View {
         content
             .rotation3DEffect(.degrees(rotationAngle), axis: (x: 0.5,y:0.0,z:0.0))
-            .animation(.spring(response: 1, dampingFraction: 0.75, blendDuration: 0.125))
+            .animation(.spring(response: 0.75, dampingFraction: 0.75, blendDuration: 0.125))
     }
 }
 

@@ -7,6 +7,22 @@
 
 import Foundation
 
+class CrybseTransactionPostRepsonse:Codable{
+    var data:Transaction?
+    var success:Bool
+    
+    static func parseTransactonResponseFromData(data:Data) -> CrybseTransactionPostRepsonse?{
+        var res: CrybseTransactionPostRepsonse? = nil
+        let decoder = JSONDecoder()
+        do{
+            res = try decoder.decode(CrybseTransactionPostRepsonse.self, from: data)
+        }catch{
+            print("(ERROR) Error while trying to parse the CrybseTransactionResponse : ",error.localizedDescription)
+        }
+        return res
+    }
+}
+
 class CrybseTransactionAPI:CrybseAPI{
     @Published var transactions:[Transaction] = []
     
@@ -57,7 +73,11 @@ class CrybseTransactionAPI:CrybseAPI{
     
     func postTxn(txn:TxnFormDetails,completion:((Any) -> Void)? = nil){
         guard let url = self.URLBuilder(path: "/postTxns", queries: ["time":txn.date.stringDate(),"type":txn.type.rawValue,"asset":txn.asset,"asset_quantity":txn.asset_quantity,"asset_spot_price":txn.asset_spot_price,"fee":txn.fee,"uid":txn.uid]) else {return}
-        self.PostData(url: url, completion: completion)
+        self.PostData(url: url,parseFunc: { data in
+            if let resp = CrybseTransactionPostRepsonse.parseTransactonResponseFromData(data: data){
+                completion?(resp)
+            }
+        })
     }
     
     

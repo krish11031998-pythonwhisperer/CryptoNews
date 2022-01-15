@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct TransactionDetailsView: View {
+    @Namespace var animation
     var transactions:[Transaction]
     var currency:String
     var currencyCurrentPrice:Float
+    @State var txnType:String = "all"
     @EnvironmentObject var context:ContextData
     @Binding var close:Bool
     var width:CGFloat
@@ -23,6 +25,40 @@ struct TransactionDetailsView: View {
         self.currencyCurrentPrice = currencyCurrentPrice
     }
     
+    var selectedTransaction:[Transaction]{
+        return self.txnType != "all" ? self.transactions.filter({$0.type == self.txnType}) : self.transactions
+    }
+
+    var body: some View {
+        LazyVStack(alignment: .leading, spacing: 10) {
+            self.SummaryView
+            Container(heading: "Transaction History", headingColor: .white, headingDivider: false, headingSize: 20, width: self.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0) { _ in
+                self.TxnTypesView
+                ForEach(Array(self.selectedTransaction.enumerated()),id:\.offset) { _txn in
+                    let txn = _txn.element
+                    SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
+                }
+            }.padding(.top,10)
+            TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
+                if !self.context.addTxn{
+                    self.context.addTxn.toggle()
+                }
+                if self.context.selectedSymbol != self.currency{
+                    self.context.selectedSymbol = self.currency
+                }
+            }
+        }.padding(.bottom,150).frame(width: width, alignment: .topLeading)
+//        .preference(key: AddTxnUpdatePreference.self, value: self.context.addTxn)
+    }
+}
+
+
+extension TransactionDetailsView{
+    func onClose(){
+        withAnimation(.easeInOut) {
+            self.close.toggle()
+        }
+    }
     
     var SummaryHeadingView:some View{
         HStack(alignment: .center, spacing: 10) {
@@ -59,32 +95,28 @@ struct TransactionDetailsView: View {
         .clipContent(clipping: .roundClipping)
     }
     
-    var body: some View {
-        LazyVStack(alignment: .leading, spacing: 10) {
-            self.SummaryView
-            ForEach(Array(self.transactions.enumerated()),id:\.offset) { _txn in
-                let txn = _txn.element
-                SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
-            }
-            TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
-                if !self.context.addTxn{
-                    self.context.addTxn.toggle()
+    var TxnTypesView:some View{
+        let type = ["all","buy","sell","send","recieve"]
+        return HStack(alignment: .center, spacing: 10) {
+            ForEach(Array(type.enumerated()), id:\.offset){ _type in
+                let type = _type.element                
+                VStack(alignment: .center, spacing: 2.5) {
+                    MainText(content: type.capitalized, fontSize: 15, color: .white, fontWeight: .semibold)
+                    if self.txnType == type{
+                        RoundedRectangle(cornerRadius: 20).fill(Color.mainBGColor).frame(height: 5, alignment: .center)
+                            .matchedGeometryEffect(id: "highlight", in: self.animation)
+                    }else{
+                        RoundedRectangle(cornerRadius: 20).fill(Color.clear).frame(height: 5, alignment: .center)
+                    }
                 }
-                if self.context.selectedSymbol != self.currency{
-                    self.context.selectedSymbol = self.currency
+                .buttonify {
+                    if self.txnType != type{
+                        self.txnType = type
+                    }
                 }
+                
             }
-        }.padding(.bottom,150).frame(width: width, alignment: .topLeading)
-//        .preference(key: AddTxnUpdatePreference.self, value: self.context.addTxn)
-    }
-}
-
-
-extension TransactionDetailsView{
-    func onClose(){
-        withAnimation(.easeInOut) {
-            self.close.toggle()
-        }
+        }.padding(.vertical,10).frame(width: self.width, alignment: .topLeading)
     }
     
     var totalBoughtValue:Float{

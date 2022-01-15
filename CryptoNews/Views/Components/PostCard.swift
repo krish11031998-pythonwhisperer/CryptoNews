@@ -68,16 +68,16 @@ struct PostCard: View {
         let h = size.height - 20
         
         let view =
-        ZStack(alignment: .bottom) {
+//        ZStack(alignment: .bottom) {
 //            self.bgView
-            VStack(alignment: .leading, spacing: 10) {
-                self.Header(size: .init(width: w, height: h * 0.1))
-                self.body(w: w, h: h)
-                Spacer(minLength: 0)
-                Divider().frame(width: w, alignment: .center)
-                self.Footer(data: data, size: .init(width: w, height: h * 0.1))
-            }.padding()
-        }
+        VStack(alignment: .leading, spacing: 10) {
+            self.Header(size: .init(width: w, height: h * 0.1))
+            self.body(w: w, h: h)
+            Spacer(minLength: 0)
+            Divider().frame(width: w, alignment: .center)
+            self.Footer(data: data, size: .init(width: w, height: h * 0.1))
+        }.padding()
+//        }
         .frame(width: size.width, alignment: .center)
         .background(self.bgView)
         .aspectRatio(contentMode: .fill)

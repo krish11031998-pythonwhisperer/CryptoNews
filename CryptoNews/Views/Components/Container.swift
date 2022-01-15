@@ -106,25 +106,25 @@ struct Container<T:View>: View {
         }
     }
     
+    @ViewBuilder var headerView:some View{
+        if self.heading != nil{
+            self.headingView
+        }else if self.onClose != nil{
+            self.onCloseView
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+    
     @ViewBuilder var mainBodyWElements:some View{
         if self.orientation == .vertical{
             VStack(alignment: .center, spacing: 10) {
-                if self.heading != nil{
-                    self.headingView
-//                        .padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
-                        .frame(width:self.innerWidth,alignment: .leading)
-                }else if self.onClose != nil{
-                    self.onCloseView
-                }
+                self.headerView.frame(width:self.innerWidth,alignment: .leading)
                 self.innerView(self.innerWidth).padding(.top,10)
             }
         }else if self.orientation == .horizontal{
             VStack(alignment: .center, spacing: 10) {
-                if self.heading != nil{
-                    self.headingView.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : 0)
-                }else if self.onClose != nil{
-                    self.onCloseView
-                }
+                self.headerView.frame(width:self.innerWidth,alignment: .leading)
                 HStack(alignment: .center, spacing: 10) {
                     self.innerView(self.innerWidth).padding(.top,10)
                 }

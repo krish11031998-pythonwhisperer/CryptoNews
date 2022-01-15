@@ -91,7 +91,7 @@ struct AddTransactionView:View {
         guard let uid = self.context.user.user?.uid else {return}
         self.txn.uid = uid
         CrybseTransactionAPI.shared.postTxn(txn: self.txn) { data in
-            if let res = data as? RequestData{
+            if let res = data as? CrybseTransactionPostRepsonse{
                 if let err = res.data{
                     print("(DEBUG) Err while trying to post the txn onto Firebase : ",err)
                 }

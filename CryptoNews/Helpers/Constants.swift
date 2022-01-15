@@ -69,7 +69,7 @@ extension Color{
 var mainBGView: some View {
     ZStack(alignment: .top){
         Color.black
-        Color.mainBGColor.frame(width: totalWidth, height: totalHeight * 0.25)
+        Color.mainBGColor.frame(width: totalWidth, height: 50)
         BlurView(style: .dark)
     }
 }
