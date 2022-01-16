@@ -25,12 +25,19 @@ struct CurrencyFeedView: View {
         self.reload = reload
     }
     
-    
+    func handleCurrencyChange(_ newCurrency:CrybseCoinPrice?){
+        if let sym = newCurrency?.Currency{
+            setWithAnimation {
+                self.currency = sym
+            }
+        }
+    }
     
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(heading: self.heading, width: totalWidth) { w in
-                self.CurrencyView(w: w)
+                CurrencyCardView(width: w)
+                    .onPreferenceChange(CurrencySelectorPreference.self, perform: self.handleCurrencyChange(_:))
                 CurrencyFeedPage(w: w, symbol: currency, data: self.currency_feed_data, type: self.type, reload: self.reload)
                     .padding(.top,10)
             }
@@ -41,35 +48,6 @@ struct CurrencyFeedView: View {
 
 
 extension CurrencyFeedView{
-    
-    func CurrencyView(w:CGFloat) -> some View{
-        ScrollView(.horizontal, showsIndicators: false) {
-            LazyHStack(alignment: .center, spacing: 7.5) {
-                ForEach(Array(self.currency_data.enumerated()),id:\.offset) { _data in
-                    let data = _data.element
-                    let curr = data.s ?? "NOC"
-                    self.currencyButton(curr: curr)
-                }
-            }
-        }
-    }
-    
-    func currencyButton(curr:String) -> some View{
-        VStack(alignment: .center, spacing: 5) {
-            CurrencySymbolView(currency: curr, size: .medium, width: 30)
-            MainText(content: curr, fontSize: 12, color: .white, fontWeight: .regular, style: .normal)
-        }.padding(10)
-        .frame(width: 60, height: 70, alignment: .center)
-        .background(self.bg(condition: curr == currency))
-        .clipContent(clipping: .roundClipping)
-        .buttonify {
-            DispatchQueue.main.async {
-                self.currency = curr
-            }
-        }
-    }
-    
-    
     @ViewBuilder func bg(condition:Bool) -> some View{
         if condition{
             Color.mainBGColor.opacity(0.5)

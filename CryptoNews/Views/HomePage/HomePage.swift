@@ -22,7 +22,7 @@ struct HomePage: View {
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
 
-            if let uid = self.context.user.user?.uid{
+            if let _ = self.context.user.user?.uid{
                 AllAssetView()
                 LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15)
                     .asyncContainer(size: .init(width: totalWidth, height: totalHeight))

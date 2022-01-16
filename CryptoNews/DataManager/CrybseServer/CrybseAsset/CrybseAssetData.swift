@@ -19,6 +19,25 @@ class CrybseAssets:ObservableObject,Codable{
     @Published var tracked:[String]?
     @Published var watching:[String]?
 
+    var Tracked:[String]{
+        get{
+            return self.tracked ?? []
+        }
+        
+        set{
+            self.tracked = newValue
+        }
+    }
+    
+    var Watching:[String]{
+        get{
+            return self.watching ?? []
+        }
+        
+        set{
+            self.watching = newValue
+        }
+    }
     
     var trackedAssets:[CrybseAsset]{
         return self.tracked?.compactMap({self.assets?[$0] ?? nil}) ?? []
@@ -62,6 +81,25 @@ class CrybseAssets:ObservableObject,Codable{
         }
         
         return coinData
+    }
+    
+    func updateAsset(sym:String,txn:Transaction){
+        let asset = self.assets?[sym] ?? .init(currency: sym)
+        asset.Txns.append(txn)
+        asset.Value += txn.subtotal
+        asset.CoinTotal += txn.asset_quantity
+        if let price = asset.coinData?.Price{
+            asset.Profit += Float((txn.asset_quantity * price - txn.subtotal)/txn.subtotal)/Float(asset.Txns.count)
+        }
+        self.assets?[sym] = asset
+        if let _ = self.assets?[sym]{
+            if !self.Tracked.contains(sym) && self.Watching.contains(sym){
+                self.Watching.removeAll(where: {$0 == sym})
+                self.Tracked.append(sym)
+            }
+        }else{
+            self.Tracked.append(sym)
+        }
     }
 }
 
@@ -115,7 +153,13 @@ class CrybseAsset:ObservableObject,Codable{
     }
     
     var Txns:[Transaction]{
-        return self.txns ?? []
+        get{
+            return self.txns ?? []
+        }
+        
+        set{
+            self.txns = newValue
+        }
     }
     
     var CoinData:CrybseCoin{
@@ -123,11 +167,24 @@ class CrybseAsset:ObservableObject,Codable{
     }
     
     var Value:Float{
-        return self.value ?? 0
+        get{
+            return self.value ?? 0
+        }
+        
+        set{
+            self.value = newValue
+        }
+        
     }
     
     var Profit:Float{
-        return self.profit ?? 0
+        get{
+            return self.profit ?? 0
+        }
+        
+        set{
+            self.profit = newValue
+        }
     }
     
     var LatestPriceTime:Int{
@@ -136,7 +193,14 @@ class CrybseAsset:ObservableObject,Codable{
     
     
     var CoinTotal:Float{
-        return self.coinTotal ?? 0
+        get{
+            return self.coinTotal ?? 0
+        }
+        
+        set{
+            self.coinTotal = newValue
+        }
+        
     }
     
     var Change:Float{

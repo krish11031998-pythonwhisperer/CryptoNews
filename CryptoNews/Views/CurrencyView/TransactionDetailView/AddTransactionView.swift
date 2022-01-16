@@ -12,6 +12,7 @@ enum ModalType{
     case fee
     case date
     case spot_price
+    case txnNotification
     case none
 }
 
@@ -72,30 +73,19 @@ struct AddTransactionView:View {
             }
         }
     }
-    
-    func resetStates(){
-        DispatchQueue.main.async {
-            self.txn.reset()
-        }
-    }
-        
-    func updateTxnAdditionState(state:Bool){
-        DispatchQueue.main.async {
-            withAnimation(.easeInOut) {
-                self.txn.added_Success = state
-            }
-        }
-    }
-    
-    func buttonHandle(){
+            
+    func handleAddTxn(){
         guard let uid = self.context.user.user?.uid else {return}
         self.txn.uid = uid
         CrybseTransactionAPI.shared.postTxn(txn: self.txn) { data in
             if let res = data as? CrybseTransactionPostRepsonse{
-                if let err = res.data{
+                if let err = res.err{
                     print("(DEBUG) Err while trying to post the txn onto Firebase : ",err)
                 }
-                self.updateTxnAdditionState(state: res.success)
+                if let txn = res.data{
+                    self.context.userAssets?.updateAsset(sym: self.currency, txn: txn)
+                }
+                self.toggleNotificationwTxnModal(res.success)
             }
         }
     }
@@ -132,23 +122,31 @@ struct AddTransactionView:View {
         }
     }
     
+    func updateTxns(txn:Transaction) {
+        if let _ = self.context.userAssets?.assets?[txn.asset]{
+            self.context.userAssets?.assets?[txn.asset]?.txns?.append(txn)
+        }
+    }
+    
+    func handleCurrencyUpdate(_ newCurrency:CrybseCoinPrice?){
+        setWithAnimation {
+            if self.coin != newCurrency{
+                self.coin = newCurrency
+                self.txn.asset_spot_price = "\(newCurrency?.USD ?? 0.0)"
+            }
+            if let symbol = newCurrency?.Currency, self.txn.asset != symbol{
+                self.txn.asset = symbol
+            }
+        }
+    }
+    
     var body: some View {
         ZStack(alignment:.bottom){
             Container(heading: self.currency, width: totalWidth,onClose: self.onClose) { w in
                 VStack(alignment: .leading, spacing: 20) {
                     if self.coin == nil{
                         CurrencyCardView(width: w)
-                            .onPreferenceChange(CurrencySelectorPreference.self) { newValue in
-                                setWithAnimation {
-                                    if self.coin != newValue{
-                                        self.coin = newValue
-                                        self.txn.asset_spot_price = convertToDecimals(value: newValue?.USD)
-                                    }
-                                    if let symbol = newValue?.Currency, self.txn.asset != symbol{
-                                        self.txn.asset = symbol
-                                    }
-                                }
-                            }
+                            .onPreferenceChange(CurrencySelectorPreference.self,perform: self.handleCurrencyUpdate(_:))
                     }
                     self.txnValueField.frame(width: w, alignment: .center)
                     self.transactionType(w:w)
@@ -157,7 +155,7 @@ struct AddTransactionView:View {
                         self.numPad(w: w)
                     }
                     
-                    TabButton(width: w, height: 50, title: "Add Transaction", textColor: self.font_color,action: self.buttonHandle)
+                    TabButton(width: w, height: 50, title: "Add Transaction", textColor: self.font_color,action: self.handleAddTxn)
                 }
             }
             .padding(.vertical,50)
@@ -169,9 +167,6 @@ struct AddTransactionView:View {
                 } action: {
                     if self.showModal != .none{
                         self.updateModal(type: .none)
-                    }else if self.txn.added_Success{
-                        self.txn.added_Success.toggle()
-                        self.txn.reset()
                     }
                 }
             }
@@ -209,20 +204,17 @@ extension AddTransactionView{
     
     func toggleNotificationwTxnModal(_ newValue:Bool){
         if newValue && !self.notification.showNotification{
-            DispatchQueue.main.async {
-                withAnimation(.easeInOut) {
-                    self.notification.heading = "Cryb Transaction"
-                    self.notification.innerText = "Transaction has been added successfully!"
-                    self.notification.showNotification.toggle()
-                }
+            setWithAnimation {
+                self.notification.heading = "Cryb Transaction"
+                self.notification.innerText = "Transaction has been added successfully!"
             }
-        }else if !newValue && self.notification.showNotification{
-            DispatchQueue.main.async {
-                withAnimation(.easeInOut) {
-                    self.notification.showNotification.toggle()
-                }
+        }else if !newValue && !self.notification.showNotification{
+            setWithAnimation {
+                self.notification.heading = "Cryb Transaction"
+                self.notification.innerText = "Transaction was not added successfully!"
             }
         }
+        self.updateModal(type: .txnNotification)
     }
     
     func numPadEventHandler(val:String,updateVal:((String) -> Void)? = nil){
@@ -230,7 +222,11 @@ extension AddTransactionView{
         DispatchQueue.main.async {
             if val != "Del"{
                 if valToUpdate == "" || valToUpdate == "0"{
-                    valToUpdate = val
+                    if val == "."{
+                        valToUpdate = "0."
+                    }else{
+                        valToUpdate = val
+                    }
                 }else{
                     valToUpdate += val
                 }
@@ -316,6 +312,11 @@ extension AddTransactionView{
         withAnimation(.easeInOut) {
             if self.showModal != type{
                 self.showModal = type
+            }
+            
+            if type == .txnNotification{
+                self.txn.reset()
+                self.coin = nil
             }
         }
     }
@@ -432,7 +433,6 @@ struct AddTxnMainView:View{
     
     var body: some View{
         ZStack(alignment: .center) {
-//            mainBGView
             mainBGView
             AddTransactionView(currentAsset: asset, curr_str: self.currency)
         }.edgesIgnoringSafeArea(.top).frame(width: totalWidth, height: totalHeight, alignment: .center)

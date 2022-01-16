@@ -92,7 +92,6 @@ extension CrybseView{
         }
         
         if let currency = self.context.selectedCurrency{
-//            CurrencyView(info: currency, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             CurrencyView(name: currency.Currency,coin_uid: currency.coinData?.uuid ?? "", size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             .transition(.slideInOut)
             .background(mainBGView)

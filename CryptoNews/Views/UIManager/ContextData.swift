@@ -57,6 +57,7 @@ class ContextData:ObservableObject{
     var notificationCancellable: AnyCancellable? = nil
     var assetCancellable:AnyCancellable? = nil
     var userCancellable:AnyCancellable? = nil
+    
     init(){
         self.user.signInHandler = self.signInHandler
         self.notificationCancellable = self.bottomSwipeNotification.objectWillChange.sink(receiveValue: { [weak self] (_)in
@@ -207,7 +208,7 @@ class ContextData:ObservableObject{
             self.loggedIn = .signedIn
         }
     }
-    
+        
 //    func retrieveAsset(sym:String) -> CrybseAsset?{
 //        var res:CrybseAsset? = nil
 //        var assets = self.userAssets?.watching

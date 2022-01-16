@@ -10,6 +10,7 @@ import Foundation
 class CrybseTransactionPostRepsonse:Codable{
     var data:Transaction?
     var success:Bool
+    var err: String?
     
     static func parseTransactonResponseFromData(data:Data) -> CrybseTransactionPostRepsonse?{
         var res: CrybseTransactionPostRepsonse? = nil
