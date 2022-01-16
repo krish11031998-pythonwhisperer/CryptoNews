@@ -155,7 +155,7 @@ struct PortfolioCardTester:View{
     }
     
     var firstCurr:CrybseAsset?{
-        return self.coin.coinsData?.tracked?.filter({$0.currency == self.curr}).first ?? self.coin.coinsData?.watching?.filter({$0.currency == self.curr}).first
+        return self.coin.coinsData?.trackedAssets.filter({$0.currency == self.curr}).first ?? self.coin.coinsData?.watchingAssets.filter({$0.currency == self.curr}).first
     }
     
     var body: some View{

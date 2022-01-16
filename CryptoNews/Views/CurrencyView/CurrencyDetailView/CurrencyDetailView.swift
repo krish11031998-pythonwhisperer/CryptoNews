@@ -159,7 +159,7 @@ extension CurrencyDetailView{
     
     @ViewBuilder var transactionHistoryView:some View{
         if !self.txns.isEmpty{
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,profit: self.profit, fee: 1.36, totalfee: 0.0, totalBuys: 1,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,profit: self.profit, fee: 1.36, totalfee: 0.0, totalBuys: 1,currentPrice: self.price,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
             HStack(alignment: .center, spacing: 10) {
                 TabButton(width: self.size.width * 0.5 - 5, height: 50, title: "View Portfolio", textColor: .white,action: self.viewPortfolio)
                 TabButton(width: self.size.width * 0.5 - 5, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)

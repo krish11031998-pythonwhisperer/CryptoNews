@@ -76,7 +76,7 @@ struct Transaction:Codable{
     
     func parseToPortfolioData() -> PortfolioData{
         var value_now = self.asset_quantity * self.asset_spot_price
-        return .init(type:self.type,crypto_coins: Double(self.asset_quantity), value_usd: value_now,profit: value_now - self.subtotal, fee: self.fee, totalfee: self.total_inclusive_price)
+        return .init(type:self.type,crypto_coins: Double(self.asset_quantity), value_usd: value_now,profit: value_now - self.subtotal, fee: self.fee,totalfee: self.total_inclusive_price, currentPrice: 0)
     }
     
 }

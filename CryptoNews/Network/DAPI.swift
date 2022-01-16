@@ -190,25 +190,15 @@ class DAPI:ObservableObject,DataParsingProtocol{
                 self.loading = true
             }
         }
-        if let url = _url{
-            if let data = DataCache.shared[url]{
-                DispatchQueue.main.async {
-                    self.loading = false
-                    self.parseData(url: url, data: data)
-                }
-            }else{
-                self.performDataRequest(url: url, completion: completion)
+        
+        let finalURL = request?.url ?? _url ?? .none
+        if let safeURL = finalURL,let data = DataCache.shared[safeURL]{
+            DispatchQueue.main.async {
+                self.loading = false
+                self.parseData(url: safeURL, data: data)
             }
-            
-        }else if let url = request?.url{
-            if let data = DataCache.shared[url]{
-                DispatchQueue.main.async {
-                    self.loading = false
-                    self.parseData(url: url, data: data)
-                }
-            }else{
-                self.performDataRequest(request: request, completion: completion)
-            }
+        }else{
+            self.performDataRequest(url:_url,request: request, completion: completion)
         }
     }
     

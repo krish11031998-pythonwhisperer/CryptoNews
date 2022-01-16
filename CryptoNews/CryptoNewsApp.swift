@@ -34,7 +34,7 @@ struct CryptoNewsApp: App {
     
     var mainView:some View{
         Group{
-            if self.context.loggedIn == .signedIn{
+            if self.context.loggedIn == .signedIn && !self.loading{
                 CrybseView().environmentObject(self.context)
             }else{
                 if self.loading{
@@ -50,12 +50,19 @@ struct CryptoNewsApp: App {
                         .environmentObject(self.context)
                 }
             }
-        }.onAppear(perform: self.onAppear)
-            .onChange(of: self.context.user.user?.uid) { uid in
-                if uid != nil &&  self.loading{
+        }
+        .onAppear(perform: self.onAppear)
+        .onReceive(self.context.user.$user, perform: { user in
+            guard let uid = user?.uid, let currencies = user?.watching else {return}
+            CrybseAssetsAPI.shared.getAssets(symbols: currencies, uid: uid) { asset in
+                setWithAnimation {
+                    if let safeAsset = asset{
+                        self.context.userAssets = safeAsset
+                    }
                     self.loading.toggle()
                 }
             }
+        })
     }
     
     var body: some Scene {

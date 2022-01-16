@@ -46,7 +46,7 @@ struct PortfolioAssetPreview:View{
         
         ZStack(alignment:.center){
             mainBGView.ignoresSafeArea()
-            if let assets = self.crybseAssetsAPI.coinsData?.tracked{
+            if let assets = self.crybseAssetsAPI.coinsData?.trackedAssets{
                 Container(horizontalPadding: 7.5){ w in
                     PortfolioMain(assets: assets, width: w)
                 }

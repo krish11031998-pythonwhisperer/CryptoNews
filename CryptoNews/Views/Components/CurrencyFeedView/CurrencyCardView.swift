@@ -111,7 +111,7 @@ extension CurrencyCardView{
     
     func Horizontal_CurrencyView(w:CGFloat) -> some View{
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(alignment: .center, spacing: 7.5) {
+            LazyHStack(alignment: .center, spacing: 7.5) {
                 ForEach(Array(self.currency_data.enumerated()),id:\.offset) { _data in
                     let data = _data.element
                     CurrencyCard(coin: data) {
@@ -121,7 +121,7 @@ extension CurrencyCardView{
                     }
                 }
             }
-        }
+        }.frame(height: 75, alignment: .center)
     }
     
     

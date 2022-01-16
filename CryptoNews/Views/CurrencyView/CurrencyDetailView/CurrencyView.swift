@@ -19,38 +19,45 @@ struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     var onClose:(()->Void)?
     @StateObject var coinAPI:CrybseCoinSocialAPI
-    @StateObject var assetData:CrybseAsset
+    var assetSymbol:String
     var size:CGSize = .init()
+    @State var loading:Bool = false
     @State var showSection:CurrencyViewSection = .none
     @State var refresh:Bool = false
     @State var firstCall:Bool = true
-//    let timer = Timer.publish(every: 60, on: .main, in: .common).autoconnect()
     
     init(
         name:String? = nil,
-        info:CrybseAsset,
+        coin_uid:String,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
-        self._assetData = .init(wrappedValue: info)
+        self.assetSymbol = name ?? ""
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(coinUID: info.coinData?.uuid ?? "", fiat: "USD", crypto: info.coinData?.Symbol ?? ""))
+        self._coinAPI = .init(wrappedValue: .init(coinUID: coin_uid, fiat: "USD", crypto: name ?? ""))
     }
     
     
     
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(0)) {
             withAnimation(.easeInOut) {
-                if self.coinAPI.coinData == nil{
+                if self.assetData.coin == nil{
                     self.coinAPI.getCoinData()
+                    self.loading.toggle()
                 }
             }
         }
     }
     
-
+    var assetData:CrybseAsset{
+        if let asset = self.context.userAssets?.assets?[self.assetSymbol] {
+            return asset
+        }else{
+            return .init(currency: self.assetSymbol)
+        }
+    }
     
     func onReceiveCoinData(_ coinData: CrybseCoinSocialData?){
         guard let coinData = coinData else {
@@ -58,6 +65,7 @@ struct CurrencyView:View{
         }
         setWithAnimation {
             self.assetData.coin = coinData
+            self.loading.toggle()
         }
     }
     
@@ -182,7 +190,7 @@ struct CurrencyView:View{
         }
     }
     
-    func onDisapper(){
+    func onDisappear(){
         guard let safeURL = self.coinAPI.url,let originalCoinData = self.coinAPI.coinData,let coinData = self.assetData.coin else {return}
         let coinResponse = CrybseCoinSocialDataResponse(data: coinData, success: true)
         let encoder = JSONEncoder()
@@ -197,9 +205,9 @@ struct CurrencyView:View{
     
     var body:some View{
         ZStack(alignment: .topLeading) {
-            if self.assetData.coin != nil{
+            if !self.loading {
                 self.mainView
-            }else if self.coinAPI.loading{
+            }else{
                 ProgressView().frame(width: totalWidth, alignment: .center)
             }
             self.diff_Views
@@ -207,17 +215,7 @@ struct CurrencyView:View{
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)
         .onReceive(self.coinAPI.$coinData, perform: self.onReceiveCoinData(_:))
-        .onDisappear(perform: self.onDisapper)
+        .onDisappear(perform: self.onDisappear)
     }
 }
 
-//struct CurrencyViewTester:PreviewProvider{
-//    static var context:ContextData = .init()
-//
-//    static var previews: some View{
-//        CurrencyView(name: "MANA")
-//            .environmentObject(CurrencyViewTester.context)
-//            .background(mainBGView)
-//            .ignoresSafeArea()
-//    }
-//}

@@ -14,9 +14,38 @@ class CrybseAssetsResponse: Codable{
 }
 
 
-class CrybseAssets:Codable{
-    var tracked:[CrybseAsset]?
-    var watching:[CrybseAsset]?
+class CrybseAssets:ObservableObject,Codable{
+    @Published var assets:[String:CrybseAsset]?
+    @Published var tracked:[String]?
+    @Published var watching:[String]?
+
+    
+    var trackedAssets:[CrybseAsset]{
+        return self.tracked?.compactMap({self.assets?[$0] ?? nil}) ?? []
+    }
+    
+    var watchingAssets:[CrybseAsset]{
+        return self.watching?.compactMap({self.assets?[$0] ?? nil}) ?? []
+    }
+    
+    enum CodingKeys:CodingKey{
+        case assets
+        case tracked
+        case watching
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        assets = try container.decode([String:CrybseAsset]?.self, forKey: .assets)
+        tracked = try container.decode([String]?.self, forKey: .tracked)
+        watching = try container.decode([String]?.self, forKey: .watching)
+    }
+
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(tracked, forKey: .tracked)
+        try container.encode(watching, forKey: .watching)
+    }
     
     static func parseAssetsFromData(data:Data) -> CrybseAssets?{
         var coinData:CrybseAssets? = nil
@@ -45,7 +74,10 @@ class CrybseAsset:ObservableObject,Codable{
     @Published var coinTotal:Float?
     @Published var coin:CrybseCoinSocialData?
     
-
+    init(currency:String?){
+        self.currency = currency
+    }
+    
     enum CodingKeys:CodingKey{
         case currency
         case txns

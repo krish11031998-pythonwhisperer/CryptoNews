@@ -14,8 +14,9 @@ class CrybseAssetsAPI:CrybseAPI{
     var symbols:[String]
     var uid:String
     
+    static var shared:CrybseAssetsAPI = .init()
     
-    init(symbols:[String]?,uid:String?){
+    init(symbols:[String]? = nil,uid:String? = nil){
         self.symbols = symbols ?? []
         self.uid = uid ?? ""
     }
@@ -23,6 +24,7 @@ class CrybseAssetsAPI:CrybseAPI{
     var symbolsQuery:String?{
         self.symbols.reduce("", {$0 != "" ? "\($0),\($1)":"\($1)"})
     }
+    
     
     var url:URL?{
         var uC =  self.baseComponent
@@ -53,8 +55,17 @@ class CrybseAssetsAPI:CrybseAPI{
             print("(DEBUG) the url is not right here : ",url?.absoluteString ?? "")
             return
         }
-        
+        print("(DEBUG) Getting asset Data : ",self.url?.absoluteString)
         self.getData(_url: url)
+    }
+    
+    func getAssets(symbols:[String],uid:String,completion: @escaping (CrybseAssets?) -> Void){
+        self.symbols = symbols
+        self.uid = uid
+        guard let url = self.url else {return}
+        self.getData(_url: url) { data in
+            completion(CrybseAssets.parseAssetsFromData(data: data))
+        }
     }
     
 }

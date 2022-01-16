@@ -85,20 +85,17 @@ struct ImageView:View{
             Image(uiImage: img)
                 .standardImageView(size: self.imgSize, contentMode: .fill)
         }else{
-            mainBGView
+//            mainBGView
+            BlurView(style: .dark)
                 .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
                 .clipContent(clipping: .circleClipping)
         }
     }
-    
-    @ViewBuilder var imgView:some View{
-        self.imgUIImageView
-    }
-    
+
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
         return ZStack(alignment: .center) {
             BlurView(style: .dark)
-            self.imgView
+            self.imgUIImageView
             if self.heading != nil{
                 lightbottomShadow.frame(width: self.width, height: self.imgSize.height, alignment: .center)
                 self.overlayView(h: self.imgSize.height)

@@ -21,11 +21,14 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            if let uid = self.context.user.user?.uid, let currencies = self.context.user.user?.watching{
-                AllAssetView(uid:uid, currencies: currencies)
-//                LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15).asyncContainer(size: .init(width: totalWidth, height: totalHeight))
+
+            if let uid = self.context.user.user?.uid{
+                AllAssetView()
+                LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15)
+                    .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             }
-//            CurrencyFeed().asyncContainer(size: .init(width: totalWidth, height: totalHeight))
+            CurrencyFeed()
+                .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             Spacer(minLength: 200)
         }.zIndex(1)
     }

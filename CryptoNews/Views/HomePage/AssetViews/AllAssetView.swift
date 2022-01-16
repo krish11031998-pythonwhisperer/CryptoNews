@@ -8,29 +8,22 @@
 import SwiftUI
 
 struct AllAssetView: View {
-    
-//    @StateObject var coinRankAPI:CoinRankCoinsAPI
-    @StateObject var crybseAssetsAPI:CrybseAssetsAPI
     @EnvironmentObject var context:ContextData
 
-    
-    init(uid:String,currencies:[String]){
-        self._crybseAssetsAPI = .init(wrappedValue: .init(symbols: currencies, uid: uid))
-    }
-    
-    func onAppear(){
-        
-        if self.crybseAssetsAPI.coinsData == nil{
-            self.crybseAssetsAPI.getAssets()
+
+    func onReceive(_ coinData:CrybseAssets?){
+        if let safeCoinData = coinData{
+            setWithAnimation {
+                self.context.userAssets = safeCoinData
+            }
         }
-        
     }
 
     func coins(type:String) -> [CrybseAsset]{
         if type == "tracked"{
-            return self.crybseAssetsAPI.coinsData?.tracked ?? []
+            return self.context.userAssets?.trackedAssets ?? []
         }else{
-            return self.crybseAssetsAPI.coinsData?.watching ?? []
+            return self.context.userAssets?.watchingAssets ?? []
         }
         
     }
@@ -53,7 +46,6 @@ struct AllAssetView: View {
     
     var body: some View {
         self.mainBody
-        .onAppear(perform: self.onAppear)
     }
 }
 

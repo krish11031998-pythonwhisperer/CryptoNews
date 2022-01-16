@@ -17,6 +17,7 @@ struct PortfolioData{
     var fee:Float
     var totalfee:Float
     var totalBuys:Int?
+    var currentPrice:Float
     var txns:[PortfolioData]?
 }
 
@@ -36,16 +37,19 @@ struct MarkerMainView:View{
         return ["Value (now)":self.data.value_usd,"Profit":self.data.profit,"Percent": (self.data.profit/self.data.value_usd) * 100]
     }
     
-    func percentChangeView(value:Float) -> some View{
+    func percentChangeView(value:Float,type:String = "large") -> some View{
         let img = value > 0 ? "arrowtriangle.up.fill" : "arrowtriangle.down.fill"
         let color = value > 0 ? Color.green : value < 0 ? Color.red : Color.clear
+        let imgSize:CGFloat = type == "large" ? 15 : 10
+        let textSize:CGFloat = type == "large" ? 12 : 9
+        let padding:CGFloat = type == "large" ? 15 : 7.5
         let view = HStack(alignment: .center) {
             Image(systemName: img)
                 .resizable()
-                .frame(width: 15, height: 15, alignment: .center)
+                .frame(width: imgSize, height: imgSize, alignment: .center)
                 .foregroundColor(.white)
-            MainText(content: convertToDecimals(value: value) + "%", fontSize: 12, color: .white, fontWeight: .bold,style: .monospaced)
-        }.padding()
+            MainText(content: convertToDecimals(value: value) + "%", fontSize: textSize, color: .white, fontWeight: .bold,style: .monospaced)
+        }.padding(padding)
         .background(color)
         .clipContent(clipping: .roundClipping)
         
@@ -79,13 +83,17 @@ struct MarkerMainView:View{
     }
     
     func transactionHistoryCard(txn:PortfolioData,size:CGSize) -> some View{
-        let percent:Float = -(txn.value_usd - data.totalfee)/data.totalfee
-        return VStack(alignment: .leading, spacing: 5){
-            HStack(alignment: .bottom, spacing: 10){
+        let percent:Float =  (Float(txn.crypto_coins) * self.data.currentPrice - txn.totalfee)/txn.totalfee
+        let color:Color = percent < 0 ? .red : .green
+        return VStack(alignment: .leading, spacing: 2.5){
+            HStack(alignment: .center, spacing: 10){
                 MainSubHeading(heading: txn.type?.capitalized  ?? "Coins", subHeading: convertToDecimals(value: Float(txn.crypto_coins)), headingSize: 12, subHeadingSize: 15)
-                MainText(content: convertToDecimals(value: percent * 100), fontSize: 12,color: percent < 0 ? .red : .green)
+                Spacer()
+                
             }
-            MainSubHeading(heading: "Value", subHeading: convertToMoneyNumber(value: txn.totalfee), headingSize: 12, subHeadingSize: 15)
+            MainSubHeading(heading: "Value", subHeading: convertToMoneyNumber(value: txn.value_usd), headingSize: 12, subHeadingSize: 15)
+            self.percentChangeView(value: percent * 100,type: "small").padding(.vertical,5)
+            
         }.padding()
         .frame(width: size.width, height: size.height, alignment: .topLeading)
         .background(BlurView(style: .systemThinMaterialDark))
@@ -97,7 +105,6 @@ struct MarkerMainView:View{
             LazyHStack(alignment: .top, spacing: 10){
                 ForEach(Array((self.data.txns ?? []).enumerated()), id:\.offset) { _data in
                     let data = _data.element
-//                    let idx = _data.offset
                     self.transactionHistoryCard(txn: data, size: .init(width: size.width * 0.45, height: size.height))
                 }
             }

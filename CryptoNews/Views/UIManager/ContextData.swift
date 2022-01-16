@@ -48,12 +48,14 @@ class ContextData:ObservableObject{
     @Published private var _prev_tab:Tabs = .none
     @Published var loggedIn:LoginState = .undefined
     @Published var user:User = .init()
+    @Published var userAssets:CrybseAssets?
     @Published var notification:NotificationModel = NotificationModel()
     @Published var bottomSwipeNotification:NotificationData = .init()
     @Namespace var animationNamespace
 
     var transactionCancellable: AnyCancellable? = nil
     var notificationCancellable: AnyCancellable? = nil
+    var assetCancellable:AnyCancellable? = nil
     var userCancellable:AnyCancellable? = nil
     init(){
         self.user.signInHandler = self.signInHandler
@@ -64,6 +66,12 @@ class ContextData:ObservableObject{
         })
         self.userCancellable = self.user.objectWillChange.sink(receiveValue: { [weak self] (_) in
             withAnimation(.easeInOut) {
+                self?.objectWillChange.send()
+            }
+        })
+        
+        self.assetCancellable = self.userAssets?.objectWillChange.sink(receiveValue : {[weak self] (_) in
+            withAnimation(.easeInOut){
                 self?.objectWillChange.send()
             }
         })
@@ -199,4 +207,28 @@ class ContextData:ObservableObject{
             self.loggedIn = .signedIn
         }
     }
+    
+//    func retrieveAsset(sym:String) -> CrybseAsset?{
+//        var res:CrybseAsset? = nil
+//        var assets = self.userAssets?.watching
+//        assets?.append(contentsOf: self.userAssets?.tracked ?? [])
+//        var count = 0
+//        var found = false
+//
+//        if let safeAssets = assets{
+//            while(count < safeAssets.count && !found){
+//                if safeAssets[count].coinData?.Symbol == sym{
+//                    res = safeAssets[count]
+//                    found = true
+//                }
+//                count+=1
+//            }
+//        }
+//
+//        return res
+//
+//    }
+    
+    
+    
 }
