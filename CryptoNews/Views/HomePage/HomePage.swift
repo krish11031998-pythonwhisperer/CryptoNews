@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HomePage: View {
     @EnvironmentObject var context:ContextData
+    
     var activeCurrency:Bool{
         return self.context.selectedCurrency != nil
     }
@@ -21,9 +22,9 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-
             if let _ = self.context.user.user?.uid{
                 AllAssetView()
+                    .environmentObject(self.context)
                 LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15)
                     .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             }

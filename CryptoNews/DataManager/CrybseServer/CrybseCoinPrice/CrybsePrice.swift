@@ -21,27 +21,40 @@ class CrybseCoinPrice:Codable,Equatable{
 }
 
 class CrybseCoinPriceResponse:Codable{
-    var data:CrybseCoinPrice?
+    var data:[String:[CryptoCoinOHLCVPoint]]?
     var success:Bool
+    var err:String?
+    
 }
 
 
 class CrybsePriceAPI:CrybseAPI{
     
-    @Published var priceData:CrybseCoinPrice? = nil
+    enum Mode{
+        case single
+        case multiple
+    }
     
-    var coin:String
+    @Published var singlePriceData:CryptoCoinOHLCVPoint? = nil
+    @Published var multiPriceData:[String:[CryptoCoinOHLCVPoint]]? = nil
+    var mode:CrybsePriceAPI.Mode
+    var coin:String? = nil
+    var coins:[String]? = nil
     
-    init(coin:String? = nil){
-        self.coin = coin ?? ""
+    init(coin:String? = nil,coins:[String]? = nil,mode:CrybsePriceAPI.Mode = .single){
+        self.coin = coin
+        self.coins = coins
+        self.mode = mode
     }
     
     static var shared:CrybsePriceAPI = .init()
     
     var url:URL?{
-        var uC = self.setPath(uc: self.baseComponent, path: "/price")
+        let currencies = self.mode == .single ? self.coin : self.coins?.reduce("", {$0 == "" ? $1 : "\($0),\($1)"})
+        guard let currencies = currencies else {return nil}
+        var uC = self.setPath(uc: self.baseComponent, path: "/ohlcv/latestOHLCVCoinPrices")
         uC.queryItems = [
-            URLQueryItem(name: "coin", value: self.coin)
+            URLQueryItem(name: "currencies", value: self.coin)
         ]
         return uC.url
     }
@@ -49,13 +62,19 @@ class CrybsePriceAPI:CrybseAPI{
     override func parseData(url: URL, data: Data) {
         if let data = self.parsePriceData(url: url, data: data){
             setWithAnimation {
-                self.priceData = data
+                if self.mode == .single{
+                    if let coin = self.coin, let price = data[coin]?.last{
+                        self.singlePriceData = price
+                    }
+                }else if self.mode == .multiple{
+                    self.multiPriceData = data
+                }
             }
         }
     }
     
-    func parsePriceData(url:URL,data:Data) -> CrybseCoinPrice?{
-        var result:CrybseCoinPrice?
+    func parsePriceData(url:URL,data:Data) -> [String:[CryptoCoinOHLCVPoint]]?{
+        var result:[String:[CryptoCoinOHLCVPoint]]?
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(CrybseCoinPriceResponse.self, from: data)
@@ -73,13 +92,27 @@ class CrybsePriceAPI:CrybseAPI{
         self.getData(_url: url)
     }
     
-    func getPrice(curr:String,completion:@escaping ((CrybseCoinPrice?) -> Void)){
-        var url_Components = self.setPath(uc: self.baseComponent, path: "/price")
-        url_Components.queryItems = [URLQueryItem(name: "coin", value: curr)]
+    func getSinglePrice(curr:String,completion:@escaping ((CryptoCoinOHLCVPoint?) -> Void)){
+        var url_Components = self.setPath(uc: self.baseComponent, path: "/ohlcv/latestOHLCVCoinPrices")
+        url_Components.queryItems = [URLQueryItem(name: "currencies", value: curr)]
         guard let url = url_Components.url else {return}
         print("(DEBUG) price URL : ",url)
         self.getData(_url: url) { data in
-            completion(self.parsePriceData(url: url, data: data))
+            if let data = self.parsePriceData(url: url, data: data),let lastPrice = data[curr]?.last{
+                completion(lastPrice)
+            }
+        }
+    }
+    
+    func getMultiplePrice(curr:[String],completion:@escaping ([String:[CryptoCoinOHLCVPoint]]?) -> Void){
+        var url_Components = self.setPath(uc: self.baseComponent, path: "/ohlcv/latestOHLCVCoinPrices")
+        url_Components.queryItems = [URLQueryItem(name: "currencies", value: curr.reduce("", {$0 == "" ? $1 : "\($0 + "," + $1)"}))]
+        guard let url = url_Components.url else {return}
+        print("(DEBUG) price URL : ",url)
+        self.getData(_url: url) { data in
+            if let prices = self.parsePriceData(url: url, data: data){
+                completion(prices)
+            }
         }
     }
 }

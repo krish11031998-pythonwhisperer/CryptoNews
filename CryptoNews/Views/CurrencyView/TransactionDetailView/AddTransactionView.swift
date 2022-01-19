@@ -83,7 +83,7 @@ struct AddTransactionView:View {
                     print("(DEBUG) Err while trying to post the txn onto Firebase : ",err)
                 }
                 if let txn = res.data{
-                    self.context.userAssets?.updateAsset(sym: self.currency, txn: txn)
+                    self.context.userAssets.updateAsset(sym: self.currency, txn: txn)
                 }
                 self.toggleNotificationwTxnModal(res.success)
             }
@@ -94,10 +94,10 @@ struct AddTransactionView:View {
         if let curr = self.curr_sym , self.currentAsset == nil{
             DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(500)) {
                 withAnimation(.easeInOut){
-                    CrybsePriceAPI.shared.getPrice(curr: curr) { coin in
-                        self.coin = coin
+                    CrybsePriceAPI.shared.getSinglePrice(curr: curr) { coin in
                         self.coin?.Currency = curr
-                        self.txn.asset_spot_price = convertToDecimals(value: coin?.USD)
+                        self.coin?.USD = coin?.close
+                        self.txn.asset_spot_price = convertToDecimals(value: coin?.close)
                         self.txn.asset = curr
                     }
                 }
@@ -123,8 +123,8 @@ struct AddTransactionView:View {
     }
     
     func updateTxns(txn:Transaction) {
-        if let _ = self.context.userAssets?.assets?[txn.asset]{
-            self.context.userAssets?.assets?[txn.asset]?.txns?.append(txn)
+        if let _ = self.context.userAssets.assets?[txn.asset]{
+            self.context.userAssets.assets?[txn.asset]?.txns?.append(txn)
         }
     }
     

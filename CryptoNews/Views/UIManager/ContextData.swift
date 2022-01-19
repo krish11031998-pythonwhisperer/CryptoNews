@@ -47,8 +47,8 @@ class ContextData:ObservableObject{
     @Published private var _addPost:Bool = false
     @Published private var _prev_tab:Tabs = .none
     @Published var loggedIn:LoginState = .undefined
-    @Published var user:User = .init()
-    @Published var userAssets:CrybseAssets?
+    @Published private var _user:User = .init()
+    @Published private var _userAssets:CrybseAssets = .init()
     @Published var notification:NotificationModel = NotificationModel()
     @Published var bottomSwipeNotification:NotificationData = .init()
     @Namespace var animationNamespace
@@ -57,6 +57,7 @@ class ContextData:ObservableObject{
     var notificationCancellable: AnyCancellable? = nil
     var assetCancellable:AnyCancellable? = nil
     var userCancellable:AnyCancellable? = nil
+    var coinDataCancellable:AnyCancellable? = nil
     
     init(){
         self.user.signInHandler = self.signInHandler
@@ -65,22 +66,23 @@ class ContextData:ObservableObject{
                 self?.objectWillChange.send()
             }
         })
-        self.userCancellable = self.user.objectWillChange.sink(receiveValue: { [weak self] (_) in
+        self.userCancellable = self._user.objectWillChange.sink(receiveValue: { [weak self] (_) in
             withAnimation(.easeInOut) {
                 self?.objectWillChange.send()
             }
         })
         
-        self.assetCancellable = self.userAssets?.objectWillChange.sink(receiveValue : {[weak self] (_) in
+        self.assetCancellable = self._userAssets.objectWillChange.sink(receiveValue : {[weak self] (_) in
             withAnimation(.easeInOut){
                 self?.objectWillChange.send()
             }
         })
+        
     }
-    
-    
-    
-    
+}
+
+
+extension ContextData{
     var tab:Tabs{
         get{
             return self._tab
@@ -203,33 +205,35 @@ class ContextData:ObservableObject{
         }
     }
     
+    var userAssets:CrybseAssets{
+        get{
+            return self._userAssets
+        }
+        
+        set{
+            setWithAnimation {
+                self._userAssets = newValue
+            }
+        }
+    }
+    
+    
+    var user:User{
+        get{
+            return self._user
+        }
+        
+        set{
+            setWithAnimation {
+                self._user = newValue
+            }
+        }
+    }
+    
     func signInHandler(){
         if self.loggedIn != .signedIn{
             self.loggedIn = .signedIn
         }
     }
-        
-//    func retrieveAsset(sym:String) -> CrybseAsset?{
-//        var res:CrybseAsset? = nil
-//        var assets = self.userAssets?.watching
-//        assets?.append(contentsOf: self.userAssets?.tracked ?? [])
-//        var count = 0
-//        var found = false
-//
-//        if let safeAssets = assets{
-//            while(count < safeAssets.count && !found){
-//                if safeAssets[count].coinData?.Symbol == sym{
-//                    res = safeAssets[count]
-//                    found = true
-//                }
-//                count+=1
-//            }
-//        }
-//
-//        return res
-//
-//    }
-    
-    
     
 }

@@ -13,17 +13,18 @@ import FirebaseAuth
 struct CryptoNewsApp: App {
     @StateObject var context: ContextData = .init()
     @State var loading:Bool = false
+    var timer = Timer.TimerPublisher(interval: 60, runLoop: .main, mode: .common).autoconnect()
     init(){
         FirebaseApp.configure()
     }
     
-    func onAppear(){
+   func onAppear(){
         if let uid = UserDefaults.standard.value(forKey: "eID") as? String,!self.loading{
             self.loading.toggle()
             self.context.user.signInUser_w_firUserUid(val: uid)
         }
     }
-    
+        
     var loadingView:some View{
         ZStack(alignment: .center) {
             Color.black.opacity(0.5)
@@ -31,11 +32,23 @@ struct CryptoNewsApp: App {
         }.ignoresSafeArea()
     }
     
+    func fetchAssets(_ user:ProfileData?){
+        guard let uid = user?.uid, let currencies = user?.watching else {return}
+        CrybseAssetsAPI.shared.getAssets(symbols: currencies, uid: uid) { asset in
+            setWithAnimation {
+                if let safeAsset = asset{
+                    self.context.userAssets = safeAsset
+                }
+                self.loading.toggle()
+            }
+        }
+    }
+    
     
     var mainView:some View{
         Group{
             if self.context.loggedIn == .signedIn && !self.loading{
-                CrybseView().environmentObject(self.context)
+                CrybseView()
             }else{
                 if self.loading{
                     LoginView()
@@ -52,22 +65,13 @@ struct CryptoNewsApp: App {
             }
         }
         .onAppear(perform: self.onAppear)
-        .onReceive(self.context.user.$user, perform: { user in
-            guard let uid = user?.uid, let currencies = user?.watching else {return}
-            CrybseAssetsAPI.shared.getAssets(symbols: currencies, uid: uid) { asset in
-                setWithAnimation {
-                    if let safeAsset = asset{
-                        self.context.userAssets = safeAsset
-                    }
-                    self.loading.toggle()
-                }
-            }
-        })
+        .onReceive(self.context.user.$user, perform: self.fetchAssets(_:))
     }
     
     var body: some Scene {
         WindowGroup {
             self.mainView
+                .environmentObject(self.context)
         }
     }
 }

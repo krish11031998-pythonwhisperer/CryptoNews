@@ -6,30 +6,23 @@
 //
 
 import SwiftUI
+import Combine
 
 struct AllAssetView: View {
     @EnvironmentObject var context:ContextData
-
-
-    func onReceive(_ coinData:CrybseAssets?){
-        if let safeCoinData = coinData{
-            setWithAnimation {
-                self.context.userAssets = safeCoinData
-            }
-        }
-    }
-
-    func coins(type:String) -> [CrybseAsset]{
+    var userAssetCancelable:AnyCancellable? = nil
+    
+    func coins(type:String) -> [CrybseAsset]?{
         if type == "tracked"{
-            return self.context.userAssets?.trackedAssets ?? []
+            return self.context.userAssets.trackedAssets
         }else{
-            return self.context.userAssets?.watchingAssets ?? []
+            return self.context.userAssets.watchingAssets
         }
         
     }
     
     func portfolioCardViews(w:CGFloat) -> [AnyView]{
-        return self.coins(type: "tracked").sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset: $0, w: w * 0.65))})
+        return self.coins(type: "tracked")?.sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset:$0, w: w * 0.65))}) ?? []
     }
     
     var portfolioViews:some View{
@@ -41,7 +34,7 @@ struct AllAssetView: View {
 
     @ViewBuilder var mainBody:some View{
         self.portfolioViews
-        AssetViewBuilder(type: "watching", size:CardSize.medium, coins: self.coins(type: "watching"), alternative: false)
+        AssetViewBuilder(type: "watching", size:CardSize.medium, coins: self.coins(type: "watching") ?? [], alternative: false)
     }
     
     var body: some View {

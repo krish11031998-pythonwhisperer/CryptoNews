@@ -9,10 +9,10 @@ import SwiftUI
 
 struct PortfolioCard: View {
     @EnvironmentObject var context:ContextData
-    var asset:CrybseAsset
+    @ObservedObject var asset:CrybseAsset
+    @State var price:Float = .zero
     @State var switchView:Bool = false
     var w:CGFloat
-    
     
     init(asset:CrybseAsset,w:CGFloat = .zero){
         self.asset = asset
@@ -32,7 +32,6 @@ struct PortfolioCard: View {
                     .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 0)
             }
         }.frame(width: w, alignment: .center)
-//            .background(Color.red)
     }
     
     var coinStats:[String:String]{
@@ -58,7 +57,11 @@ struct PortfolioCard: View {
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.coinData?.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .black, orientation: .vertical, alignment: .topLeading)
+            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .black, orientation: .vertical, alignment: .topLeading)
+//            HighlightView(value: self.asset.coinData?.Price, baseColor: .black, fontSize: 15) {
+//                return .blue
+//            }
+//            HighlightView(value: self.$price, baseColor: .black, fontSize: 18)
             Spacer()
             MainText(content: "Rank #\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
                 .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
@@ -140,9 +143,20 @@ struct PortfolioCard: View {
             self.assetHeaderInfo(w: w)
             self.dynamicInnerView(w: w)
         }
+//        .onReceive(self.asset.coinData!.$price) { newPrice in
+//            print("(DEBUG) NewPrice : ",newPrice)
+//            print("(DEBUG) Old Price : ",self.asset.coinData!.price)
+//            if let safePrice = newPrice{
+//                setWithAnimation {
+//                    self.price = safePrice
+//                }
+//            }
+////            self.price = newPrice
+//        }
         .frame(width: w, alignment: .center)
         .background(mainLightBGView.overlay(BlurView.thinLightBlur.opacity(0.25)))
         .clipContent(clipping: .roundClipping)
+        
     }
 }
 

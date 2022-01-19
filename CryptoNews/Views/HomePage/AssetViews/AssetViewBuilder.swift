@@ -25,10 +25,7 @@ struct AssetViewBuilder: View {
         self.type == "tracked" ? "Tracked Assets" : "Watched Assets"
     }
     
-    var views:[AnyView]{
-//        if self.alternative{
-//            self.coins.compactMap({PortfolioCard(asset: <#T##CrybseAsset#>)})
-//        }
+    var views:[AnyView]{    
         self.coins.compactMap({AnyView(PriceCard(coin: $0,size: self.size,alternativeView: self.alternative))})
     }
 

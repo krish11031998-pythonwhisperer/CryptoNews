@@ -118,6 +118,7 @@
 		EF42CCB427873DB800DE27E1 /* CrybseRatingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCB327873DB800DE27E1 /* CrybseRatingView.swift */; };
 		EF42CCB627873F2E00DE27E1 /* CrybseApprovedQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCB527873F2E00DE27E1 /* CrybseApprovedQuestion.swift */; };
 		EF458980278250730078FB0E /* CrybsePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF45897F278250730078FB0E /* CrybsePrice.swift */; };
+		EF4F39F1279853F00040688E /* HighlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4F39F0279853F00040688E /* HighlightView.swift */; };
 		EF5F4569278E6310008EC5EB /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4566278E6310008EC5EB /* MultipartFormData.swift */; };
 		EF5F456A278E6310008EC5EB /* DataManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4567278E6310008EC5EB /* DataManagerHelper.swift */; };
 		EF5F456B278E6310008EC5EB /* DAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4568278E6310008EC5EB /* DAPI.swift */; };
@@ -131,6 +132,7 @@
 		EF6C4E522781C81400AF54C8 /* TransactionData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6C4E512781C81400AF54C8 /* TransactionData.swift */; };
 		EFAB19CB2792C4FB00AABDC8 /* CrybseNewsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */; };
 		EFAB19CD2792C54600AABDC8 /* CrybseCoinOHLCV.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */; };
+		EFAB19CF27952CDF00AABDC8 /* CrybsePrices.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */; };
 		EFAC17D0275EADD9000A768D /* AddCrybPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC17CF275EADD9000A768D /* AddCrybPost.swift */; };
 		EFC9A28E2771B122005CDEFC /* AllAssetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC9A28D2771B122005CDEFC /* AllAssetView.swift */; };
 		EFC9A2902771BA9A005CDEFC /* AssetViewBuilder.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC9A28F2771BA9A005CDEFC /* AssetViewBuilder.swift */; };
@@ -291,6 +293,7 @@
 		EF42CCB327873DB800DE27E1 /* CrybseRatingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseRatingView.swift; sourceTree = "<group>"; };
 		EF42CCB527873F2E00DE27E1 /* CrybseApprovedQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseApprovedQuestion.swift; sourceTree = "<group>"; };
 		EF45897F278250730078FB0E /* CrybsePrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrice.swift; sourceTree = "<group>"; };
+		EF4F39F0279853F00040688E /* HighlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightView.swift; sourceTree = "<group>"; };
 		EF5F4566278E6310008EC5EB /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
 		EF5F4567278E6310008EC5EB /* DataManagerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManagerHelper.swift; sourceTree = "<group>"; };
 		EF5F4568278E6310008EC5EB /* DAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAPI.swift; sourceTree = "<group>"; };
@@ -304,6 +307,7 @@
 		EF6C4E512781C81400AF54C8 /* TransactionData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionData.swift; sourceTree = "<group>"; };
 		EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsData.swift; sourceTree = "<group>"; };
 		EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinOHLCV.swift; sourceTree = "<group>"; };
+		EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrices.swift; sourceTree = "<group>"; };
 		EFAC17CF275EADD9000A768D /* AddCrybPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCrybPost.swift; sourceTree = "<group>"; };
 		EFC9A28D2771B122005CDEFC /* AllAssetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAssetView.swift; sourceTree = "<group>"; };
 		EFC9A28F2771BA9A005CDEFC /* AssetViewBuilder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetViewBuilder.swift; sourceTree = "<group>"; };
@@ -497,6 +501,7 @@
 				BCE861A72735534500F0E8C2 /* InfoGrid.swift */,
 				BCE861C0274817E000F0E8C2 /* TestFile.swift */,
 				BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */,
+				EF4F39F0279853F00040688E /* HighlightView.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -609,8 +614,8 @@
 				BCE861A2273549AB00F0E8C2 /* ProfileView */,
 				BCE8619F2732CFBB00F0E8C2 /* SearchPage  */,
 				BCBCACCC2705171100E76436 /* UIManager */,
-				BCF98BA326D980FB00C45562 /* Youtube */,
 				BCB2978A26D57371005E2289 /* CurrencyView */,
+				BCF98BA326D980FB00C45562 /* Youtube */,
 				BCB7835A26C31855009D5822 /* Reddit */,
 				BCB7835026C180F7009D5822 /* Components */,
 				BCB7834F26C180E5009D5822 /* Tweets */,
@@ -841,6 +846,7 @@
 			children = (
 				EF45897F278250730078FB0E /* CrybsePrice.swift */,
 				EF1D5C422784ED2B003718BA /* CrybseTimelinePrice.swift */,
+				EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */,
 			);
 			path = CrybseCoinPrice;
 			sourceTree = "<group>";
@@ -1238,6 +1244,7 @@
 				BCBC1DCD26BEA1FD00B87E5C /* MarketAPI.swift in Sources */,
 				BCBC1DA726BE7FE200B87E5C /* HomePage.swift in Sources */,
 				BCC22D64272DC09A005E9BDB /* SlideTabView.swift in Sources */,
+				EF4F39F1279853F00040688E /* HighlightView.swift in Sources */,
 				EF42CCAC2787381E00DE27E1 /* CryptoPostCardView.swift in Sources */,
 				EF42CCA627863DF500DE27E1 /* PortfolioAsset.swift in Sources */,
 				EF6BA08E2790D8E4000DA7D2 /* PortfolioCard.swift in Sources */,
@@ -1312,6 +1319,7 @@
 				BC10D9D526F5CAE7007ADE34 /* BarChart.swift in Sources */,
 				BCB7835C26C31865009D5822 /* LatestRedditView.swift in Sources */,
 				EFF195BE277CF0A30081368F /* NewsAPI.swift in Sources */,
+				EFAB19CF27952CDF00AABDC8 /* CrybsePrices.swift in Sources */,
 				BCBCACCB2705132100E76436 /* WebModelView.swift in Sources */,
 				BCBC1DB326BE824300B87E5C /* WeekBarChart.swift in Sources */,
 				BCBC1DB526BE824300B87E5C /* LineChart.swift in Sources */,

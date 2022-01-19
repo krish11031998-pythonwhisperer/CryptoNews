@@ -10,10 +10,10 @@ import SwiftUI
 
 struct CurrencySummaryView: View {
 //    var currency:AssetData
-    var currency:CrybseCoin
+    var currency:CrybseSocialCoin
     var size:CGSize
     
-    init(currency:CrybseCoin,size:CGSize){
+    init(currency:CrybseSocialCoin,size:CGSize){
         self.currency = currency
         self.size = size
     }

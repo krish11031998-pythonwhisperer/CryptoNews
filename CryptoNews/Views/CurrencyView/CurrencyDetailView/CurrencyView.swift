@@ -52,7 +52,7 @@ struct CurrencyView:View{
     }
     
     var assetData:CrybseAsset{
-        if let asset = self.context.userAssets?.assets?[self.assetSymbol] {
+        if let asset = self.context.userAssets.assets?[self.assetSymbol] {
             return asset
         }else{
             return .init(currency: self.assetSymbol)

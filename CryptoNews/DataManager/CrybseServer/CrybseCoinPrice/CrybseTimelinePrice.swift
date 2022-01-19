@@ -46,7 +46,7 @@ class CrybseTimeseriesPriceAPI:CrybseAPI{
     }
     
     var url:URL?{
-        var uC = self.setPath(path:"/getHistoricalData")
+        var uC = self.setPath(path:"/ohlcv/latestOHLCV")
         uC.queryItems = self.params
         return uC.url
     }

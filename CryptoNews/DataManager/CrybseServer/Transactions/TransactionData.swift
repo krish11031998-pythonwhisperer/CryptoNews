@@ -119,10 +119,10 @@ class TxnFormDetails:ObservableObject{
         self.time = ""
         self.type = .none
         self.asset = ""
-        self.asset_spot_price = ""
+        self.asset_spot_price = "0"
         self.asset_quantity = ""
         self.asset = ""
-        self.fee = ""
+        self.fee = "0"
         self.uid = ""
         self.added_Success = false
         self.date = Date()

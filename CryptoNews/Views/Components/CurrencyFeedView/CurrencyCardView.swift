@@ -147,10 +147,12 @@ extension CurrencyCardView{
     
     func getPriceforChoosenCurrency(sym:String?){
         guard let sym = sym else {return}
-        CrybsePriceAPI.shared.getPrice(curr: sym) { price in
+        CrybsePriceAPI.shared.getSinglePrice(curr: sym) { price in
             if let price = price {
-                self.price = price
-                self.price?.Currency = sym
+                let newPrice = CrybseCoinPrice()
+                newPrice.USD = price.close
+                newPrice.Currency = sym
+                self.price = newPrice
             }
         }
     }

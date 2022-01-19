@@ -9,6 +9,8 @@ import SwiftUI
 
 struct CrybseView: View {
     @EnvironmentObject var context:ContextData
+    var timer = Timer.TimerPublisher(interval: 60, runLoop: .main, mode: .common).autoconnect()
+    
     func closeNews(){
         if self.context.selectedNews != nil{
             self.context.selectedNews = nil
@@ -34,6 +36,9 @@ struct CrybseView: View {
     
     var body: some View {
         self.contentView
+            .onReceive(self.timer) { _ in
+                self.context.userAssets.updateAssetPrices()
+            }
     }
 }
 

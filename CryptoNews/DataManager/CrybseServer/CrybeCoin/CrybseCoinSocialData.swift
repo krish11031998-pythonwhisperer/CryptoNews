@@ -6,7 +6,8 @@
 //
 
 import Foundation
-
+import Combine
+import SwiftUI
 // MARK: - CrybseCoinData
 class CrybseCoinSocialDataResponse:Codable{
     var data:CrybseCoinSocialData?
@@ -22,9 +23,19 @@ class CrybseCoinSocialDataResponse:Codable{
 
 class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var Tweets: Array<AssetNewsData>?
-    @Published var MetaData:CrybseCoin?
+    @Published var MetaData:CrybseSocialCoin?
     @Published var TimeseriesData:Array<CryptoCoinOHLCVPoint>?
     @Published var News:Array<CryptoNews>?
+    
+    var cancellable:AnyCancellable? = nil
+    
+    init(){
+        self.cancellable = self.MetaData?.objectWillChange.sink(receiveValue: { _ in
+            withAnimation(.easeInOut) {
+                self.objectWillChange.send()
+            }
+        })
+    }
     
     enum CodingKeys:CodingKey{
         case Tweets
@@ -36,7 +47,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         Tweets = try container.decode(Array<AssetNewsData>?.self, forKey: .Tweets)
-        MetaData = try container.decode(CrybseCoin?.self, forKey: .MetaData)
+        MetaData = try container.decode(CrybseSocialCoin?.self, forKey: .MetaData)
         TimeseriesData = try container.decode(Array<CryptoCoinOHLCVPoint>?.self, forKey: .TimeseriesData)
         News = try container.decode(Array<CryptoNews>?.self, forKey: .News)
     }
