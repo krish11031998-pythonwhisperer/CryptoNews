@@ -9,8 +9,6 @@ import SwiftUI
 
 struct CrybseView: View {
     @EnvironmentObject var context:ContextData
-    var timer = Timer.TimerPublisher(interval: 60, runLoop: .main, mode: .common).autoconnect()
-    
     func closeNews(){
         if self.context.selectedNews != nil{
             self.context.selectedNews = nil
@@ -36,9 +34,6 @@ struct CrybseView: View {
     
     var body: some View {
         self.contentView
-            .onReceive(self.timer) { _ in
-                self.context.userAssets.updateAssetPrices()
-            }
     }
 }
 
@@ -96,8 +91,8 @@ extension CrybseView{
                 .zIndex(3)
         }
         
-        if let currency = self.context.selectedCurrency{
-            CurrencyView(name: currency.Currency,coin_uid: currency.coinData?.uuid ?? "", size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+        if let asset = self.context.selectedCurrency{
+            CurrencyView(asset:asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             .transition(.slideInOut)
             .background(mainBGView)
             .edgesIgnoringSafeArea(.all)

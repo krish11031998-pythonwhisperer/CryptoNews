@@ -26,30 +26,38 @@ class CrybseTransactionPostRepsonse:Codable{
 
 class CrybseTransactionAPI:CrybseAPI{
     @Published var transactions:[Transaction] = []
-    
     var baseTransactionUrl:URLComponents{
         var uC = self.baseComponent
         uC.path = "/transactions"
         return uC
     }
+
     
     static var shared : CrybseTransactionAPI = .init()
     
     override func parseData(url: URL, data: Data) {
+        if let safeTxns = self.parseTxnsFromData(data: data){
+            setWithAnimation {
+                self.transactions = safeTxns
+                if self.loading{
+                    self.loading.toggle()
+                }
+            }
+        }
+    }
+    
+    func parseTxnsFromData(data:Data) -> [Transaction]?{
         let decoder = JSONDecoder()
+        var result:[Transaction]? = nil
         do{
             let res = try decoder.decode(TransactionResponse.self, from: data)
             if let txns = res.data, res.success{
-                setWithAnimation {
-                    self.transactions = txns
-                    if self.loading{
-                        self.loading.toggle()
-                    }
-                }
+                result = txns
             }
         }catch{
             print("(DEBUG) There was an error while trying to parse the txns ! : ",error.localizedDescription)
         }
+        return result
     }
     
     
@@ -66,10 +74,16 @@ class CrybseTransactionAPI:CrybseAPI{
         return uC.url
         
     }
-    
-    func getTxns(uid:String,currencies:[String]){
+        
+    func getTxns(uid:String,currencies:[String],completion:(([Transaction]?) -> Void)? = nil){
         guard let url = self.URLBuilder(path: "/getTxns", queries: ["uid":uid,"currency":currencies.joined(separator: ",")]) else {return}
-        self.getData(_url: url)
+        if let safeCompletion = completion{
+            self.getData(_url: url) { data in
+                safeCompletion(self.parseTxnsFromData(data: data))
+            }
+        }else{
+            self.getData(_url: url)
+        }
     }
     
     func postTxn(txn:TxnFormDetails,completion:((Any) -> Void)? = nil){

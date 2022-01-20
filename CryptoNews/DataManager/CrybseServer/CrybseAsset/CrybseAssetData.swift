@@ -120,7 +120,16 @@ class CrybseAssets:ObservableObject,Codable{
     }
 }
 
-class CrybseAsset:ObservableObject,Codable{
+class CrybseAsset:ObservableObject,Codable,Equatable{
+    static func == (lhs: CrybseAsset, rhs: CrybseAsset) -> Bool {
+        let currencyCondition = lhs.Currency == rhs.Currency
+        let txnCondition = lhs.txns?.count == rhs.txns?.count
+        let coinDataCondition = lhs.coinData?.Price == rhs.coinData?.Price
+        let coinCondition = lhs.coin?.TimeseriesData?.last?.time == rhs.coin?.TimeseriesData?.last?.time
+        
+        return currencyCondition || txnCondition || coinCondition || coinDataCondition
+    }
+    
     @Published var currency:String?
     @Published var txns:[Transaction]?
     @Published var coinData:CrybseCoin?
@@ -188,6 +197,7 @@ class CrybseAsset:ObservableObject,Codable{
         }
         
     }
+        
     
     var Currency : String {
         return self.currency ?? ""

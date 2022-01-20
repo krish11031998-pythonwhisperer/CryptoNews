@@ -10,15 +10,35 @@ import Combine
 
 struct AllAssetView: View {
     @EnvironmentObject var context:ContextData
-    var userAssetCancelable:AnyCancellable? = nil
+    @StateObject var assetAPI:CrybseAssetsAPI = .init(symbols: nil, uid: nil)
+    var timer = Timer.TimerPublisher(interval: 30, runLoop: .main, mode: .common).autoconnect()
+    
+    func onAppear(){
+        guard let uid = self.context.user.user?.uid , let currencies = self.context.user.user?.watching, self.assetAPI.coinsData == nil else {return}
+        self.assetAPI.uid = uid
+        self.assetAPI.symbols = currencies
+        self.assetAPI.getAssets()
+        
+    }
     
     func coins(type:String) -> [CrybseAsset]?{
         if type == "tracked"{
-            return self.context.userAssets.trackedAssets
+            return self.assetAPI.coinsData?.trackedAssets ?? []
         }else{
-            return self.context.userAssets.watchingAssets
+            return self.assetAPI.coinsData?.watchingAssets ?? []
         }
         
+    }
+    
+    func updateAssetPrices(){
+        CrybsePriceAPI.shared.getMultiplePrice(curr: self.assetAPI.symbols) { assetPriceValue in
+            guard let safeAssetPrice = assetPriceValue else {return}
+            for (currency,timePrice) in safeAssetPrice{
+                if let _ = self.assetAPI.coinsData?.assets?[currency],let latestPrice = timePrice.last?.close{
+                    self.assetAPI.coinsData?.assets?[currency]?.Price = latestPrice
+                }
+            }
+        }
     }
     
     func portfolioCardViews(w:CGFloat) -> [AnyView]{
@@ -39,6 +59,10 @@ struct AllAssetView: View {
     
     var body: some View {
         self.mainBody
+            .onAppear(perform: self.onAppear)
+            .onReceive(self.timer) { _ in
+                self.updateAssetPrices()
+            }
     }
 }
 

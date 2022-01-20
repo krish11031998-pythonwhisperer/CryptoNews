@@ -58,10 +58,6 @@ struct PortfolioCard: View {
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
             MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .black, orientation: .vertical, alignment: .topLeading)
-//            HighlightView(value: self.asset.coinData?.Price, baseColor: .black, fontSize: 15) {
-//                return .blue
-//            }
-//            HighlightView(value: self.$price, baseColor: .black, fontSize: 18)
             Spacer()
             MainText(content: "Rank #\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
                 .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
@@ -137,25 +133,31 @@ struct PortfolioCard: View {
         
     }
     
+    func updateAsset(_ newAsset:CrybseAsset) {
+        guard let selectedAsset = self.context.selectedCurrency, selectedAsset.Currency == self.asset.Currency && self.asset.Currency == newAsset.Currency else {return}
+        if self.asset.Price != selectedAsset.Price{
+            self.asset.Price = selectedAsset.Price
+        }
+        
+        if self.asset.Profit != selectedAsset.Profit{
+            self.asset.Profit = selectedAsset.Profit
+        }
+        
+        if self.asset.Value != selectedAsset.Value{
+            self.asset.Value = selectedAsset.Value
+        }
+    }
+    
     
     var body: some View {
         Container(width: w, horizontalPadding: 7.5, verticalPadding: 15, orientation: .vertical) { w in
             self.assetHeaderInfo(w: w)
             self.dynamicInnerView(w: w)
         }
-//        .onReceive(self.asset.coinData!.$price) { newPrice in
-//            print("(DEBUG) NewPrice : ",newPrice)
-//            print("(DEBUG) Old Price : ",self.asset.coinData!.price)
-//            if let safePrice = newPrice{
-//                setWithAnimation {
-//                    self.price = safePrice
-//                }
-//            }
-////            self.price = newPrice
-//        }
         .frame(width: w, alignment: .center)
         .background(mainLightBGView.overlay(BlurView.thinLightBlur.opacity(0.25)))
         .clipContent(clipping: .roundClipping)
+        .onPreferenceChange(AssetPreferenceKey.self,perform: self.updateAsset(_:))
         
     }
 }
@@ -185,6 +187,7 @@ struct PortfolioCardTester:View{
             .onAppear {
                 self.coin.getAssets()
             }
+            
         
     }
 }

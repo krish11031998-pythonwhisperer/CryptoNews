@@ -303,6 +303,7 @@ extension CurrencyDetailView{
                     let newValue = self.coinTotal * latestClosePrice
                     self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)
                     self.assetData.value = newValue
+                    self.assetData.Price = latestClosePrice
                 }
             }
             self.timeCounter = 0

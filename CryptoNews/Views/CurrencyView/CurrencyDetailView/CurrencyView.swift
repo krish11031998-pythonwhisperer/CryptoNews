@@ -9,6 +9,15 @@ import Foundation
 import Combine
 import SwiftUI
 
+struct AssetPreferenceKey:PreferenceKey{
+    static var defaultValue: CrybseAsset = .init(currency: nil)
+    
+    
+    static func reduce(value: inout CrybseAsset, nextValue: () -> CrybseAsset) {
+        value = nextValue()
+    }
+}
+
 enum CurrencyViewSection{
     case news
     case txns
@@ -17,45 +26,37 @@ enum CurrencyViewSection{
 }
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
+    @StateObject var assetData:CrybseAsset
     var onClose:(()->Void)?
     @StateObject var coinAPI:CrybseCoinSocialAPI
-    var assetSymbol:String
     var size:CGSize = .init()
     @State var loading:Bool = false
     @State var showSection:CurrencyViewSection = .none
     @State var refresh:Bool = false
-    @State var firstCall:Bool = true
     
     init(
-        name:String? = nil,
-        coin_uid:String,
+        asset:CrybseAsset,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.3),
         onClose:(() -> Void)? = nil
     ){
-        self.assetSymbol = name ?? ""
+        self._assetData = .init(wrappedValue: asset)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(coinUID: coin_uid, fiat: "USD", crypto: name ?? ""))
+        self._coinAPI = .init(wrappedValue: .init(coinUID: asset.coinData?.uuid ?? "", fiat: "USD", crypto: asset.Currency))
     }
     
     
     
     func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(0)) {
-            withAnimation(.easeInOut) {
-                if self.assetData.coin == nil{
-                    self.coinAPI.getCoinData()
-                    self.loading.toggle()
+        if self.assetData.coin == nil{
+            self.coinAPI.getCoinData()
+            self.loading.toggle()
+        }else if let _ = self.assetData.coin?.TimeseriesData{
+            CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency) { data in
+                if let timeData = CrybseTimeseriesPriceAPI.parseData(data: data){
+                    self.assetData.coin?.TimeseriesData = timeData
                 }
             }
-        }
-    }
-    
-    var assetData:CrybseAsset{
-        if let asset = self.context.userAssets.assets?[self.assetSymbol] {
-            return asset
-        }else{
-            return .init(currency: self.assetSymbol)
         }
     }
     
@@ -70,8 +71,9 @@ struct CurrencyView:View{
     }
     
     var transactions:[Transaction]{
-        guard let txns = self.assetData.txns else {return []}
-        return txns
+//        guard let txns = self.assetData.txns else {return []}
+//        return txns
+        return self.context.transaction.filter({$0.asset == self.assetData.Currency})
     }
 
         
@@ -216,6 +218,7 @@ struct CurrencyView:View{
         .onAppear(perform: self.onAppear)
         .onReceive(self.coinAPI.$coinData, perform: self.onReceiveCoinData(_:))
         .onDisappear(perform: self.onDisappear)
+        .preference(key: AssetPreferenceKey.self, value: self.assetData)
     }
 }
 

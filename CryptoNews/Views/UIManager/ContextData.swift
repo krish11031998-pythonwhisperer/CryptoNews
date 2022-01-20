@@ -48,16 +48,13 @@ class ContextData:ObservableObject{
     @Published private var _prev_tab:Tabs = .none
     @Published var loggedIn:LoginState = .undefined
     @Published private var _user:User = .init()
-    @Published private var _userAssets:CrybseAssets = .init()
+    @Published private var _transactions:[Transaction] = []
     @Published var notification:NotificationModel = NotificationModel()
     @Published var bottomSwipeNotification:NotificationData = .init()
     @Namespace var animationNamespace
 
-    var transactionCancellable: AnyCancellable? = nil
     var notificationCancellable: AnyCancellable? = nil
-    var assetCancellable:AnyCancellable? = nil
     var userCancellable:AnyCancellable? = nil
-    var coinDataCancellable:AnyCancellable? = nil
     
     init(){
         self.user.signInHandler = self.signInHandler
@@ -68,12 +65,6 @@ class ContextData:ObservableObject{
         })
         self.userCancellable = self._user.objectWillChange.sink(receiveValue: { [weak self] (_) in
             withAnimation(.easeInOut) {
-                self?.objectWillChange.send()
-            }
-        })
-        
-        self.assetCancellable = self._userAssets.objectWillChange.sink(receiveValue : {[weak self] (_) in
-            withAnimation(.easeInOut){
                 self?.objectWillChange.send()
             }
         })
@@ -205,14 +196,14 @@ extension ContextData{
         }
     }
     
-    var userAssets:CrybseAssets{
+    var transaction:[Transaction]{
         get{
-            return self._userAssets
+            return self._transactions
         }
         
         set{
             setWithAnimation {
-                self._userAssets = newValue
+                self._transactions = newValue
             }
         }
     }

@@ -83,7 +83,7 @@ struct AddTransactionView:View {
                     print("(DEBUG) Err while trying to post the txn onto Firebase : ",err)
                 }
                 if let txn = res.data{
-                    self.context.userAssets.updateAsset(sym: self.currency, txn: txn)
+                    self.context.transaction.append(txn)
                 }
                 self.toggleNotificationwTxnModal(res.success)
             }
@@ -122,11 +122,6 @@ struct AddTransactionView:View {
         }
     }
     
-    func updateTxns(txn:Transaction) {
-        if let _ = self.context.userAssets.assets?[txn.asset]{
-            self.context.userAssets.assets?[txn.asset]?.txns?.append(txn)
-        }
-    }
     
     func handleCurrencyUpdate(_ newCurrency:CrybseCoinPrice?){
         setWithAnimation {
