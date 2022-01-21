@@ -32,15 +32,28 @@ struct CryptoNewsApp: App {
         }.ignoresSafeArea()
     }
     
-    func fetchTxns(_ user:ProfileData?){
+//    func fetchTxns(_ user:ProfileData?){
+//        guard let uid = user?.uid, let currencies = user?.watching else {return}
+//        CrybseTransactionAPI.shared.getTxns(uid: uid, currencies: currencies) { txns in
+//            guard let safeTxns = txns else {return}
+//            setWithAnimation {
+//                self.context.transaction = safeTxns
+//                if self.loading{
+//                    self.loading.toggle()
+//                }
+//            }
+//        }
+//    }
+    
+    func fetchAssets(_ user:ProfileData?){
         guard let uid = user?.uid, let currencies = user?.watching else {return}
-        CrybseTransactionAPI.shared.getTxns(uid: uid, currencies: currencies) { txns in
-            guard let safeTxns = txns else {return}
-            setWithAnimation {
-                self.context.transaction = safeTxns
-                if self.loading{
-                    self.loading.toggle()
-                }
+        CrybseAssetsAPI.shared.getAssets(symbols: currencies, uid: uid) { assets in
+            if let safeAssets = assets{
+                self.context.userAssets = safeAssets
+            }
+            
+            if self.loading{
+                self.loading.toggle()
             }
         }
     }
@@ -66,7 +79,8 @@ struct CryptoNewsApp: App {
             }
         }
         .onAppear(perform: self.onAppear)
-        .onReceive(self.context.user.$user, perform: self.fetchTxns(_:))
+//        .onReceive(self.context.user.$user, perform: self.fetchTxns(_:))
+        .onReceive(self.context.user.$user, perform: self.fetchAssets(_:))
     }
     
     var body: some Scene {

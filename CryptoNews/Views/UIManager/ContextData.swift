@@ -48,7 +48,8 @@ class ContextData:ObservableObject{
     @Published private var _prev_tab:Tabs = .none
     @Published var loggedIn:LoginState = .undefined
     @Published private var _user:User = .init()
-    @Published private var _transactions:[Transaction] = []
+//    @Published private var _transactions:[Transaction] = []
+    @Published private var _userassets:CrybseAssets = .init()
     @Published var notification:NotificationModel = NotificationModel()
     @Published var bottomSwipeNotification:NotificationData = .init()
     @Namespace var animationNamespace
@@ -196,14 +197,14 @@ extension ContextData{
         }
     }
     
-    var transaction:[Transaction]{
+    var userAssets:CrybseAssets{
         get{
-            return self._transactions
+            return self._userassets
         }
         
         set{
             setWithAnimation {
-                self._transactions = newValue
+                self._userassets = newValue
             }
         }
     }
@@ -217,6 +218,25 @@ extension ContextData{
         set{
             setWithAnimation {
                 self._user = newValue
+            }
+        }
+    }
+    
+    var Currencies:[String]{
+        get{
+            return self.user.user?.watching ?? []
+        }
+    }
+    
+    func AddNewTxn(txn:Transaction){
+        let currency = txn.asset
+        if let _ = self.userAssets.assets?[currency]{
+            self.userAssets.assets?[currency]?.txns?.append(txn)
+        }else{
+            CrybseAssetsAPI.shared.getAssets(symbols: [currency], uid: txn.uid) { assets in
+                guard let safeAsset = assets?.assets?[currency] else {return}
+                safeAsset.txns = [txn]
+                self.userAssets.assets?[currency] = safeAsset
             }
         }
     }

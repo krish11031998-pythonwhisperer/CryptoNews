@@ -8,7 +8,11 @@
 import SwiftUI
 
 struct HighlightView: View {
-    @Binding var value:Float
+    @Binding var value:Float {
+        willSet{
+            self.updatePrice(newPrice: newValue)
+        }
+    }
     @State var color:Color = .black
     var baseColor:Color
     var fontSize:CGFloat
@@ -18,20 +22,26 @@ struct HighlightView: View {
         self.baseColor = baseColor
         self.fontSize = fontSize
     }
+    
+    func updatePrice(newPrice:Float){
+        setWithAnimation {
+            if value < newPrice{
+                self.color = .green
+            }else if value > newPrice{
+                self.color = .red
+            }
+        }
+    }
 
     var body: some View {
         MainText(content: (self.value ?? 0).ToMoney(), fontSize: self.fontSize, color: self.color, fontWeight: .semibold)
-            .onChange(of: self.value) { newPrice in
-//                guard let prevValue = self.value, let safeNewPrice = newPrice else {return}
-//                if prevValue < safeNewPrice{
-//                    self.color = .green
-//                }else if prevValue > safeNewPrice{
-//                    self.color = .red
-//                }
-                if self.value < newPrice{
-                    self.color = .green
-                }else if self.value > newPrice{
-                    self.color = .red
+            .onChange(of: self.color) { newColor in
+                if newColor != .black{
+                    DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                        withAnimation(.easeInOut){
+                            self.color = .black
+                        }
+                    }
                 }
             }
     }

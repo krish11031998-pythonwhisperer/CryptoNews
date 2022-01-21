@@ -12,10 +12,15 @@ struct PortfolioCard: View {
     @ObservedObject var asset:CrybseAsset
     @State var price:Float = .zero
     @State var switchView:Bool = false
+    @State var priceColor:Color = .black
     var w:CGFloat
     
     init(asset:CrybseAsset,w:CGFloat = .zero){
         self.asset = asset
+        if let safePrice = asset.Price{
+            self._price = .init(wrappedValue: safePrice)
+        }
+        
         self.w = w
     }
     
@@ -57,7 +62,12 @@ struct PortfolioCard: View {
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .black, orientation: .vertical, alignment: .topLeading)
+            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: self.priceColor, orientation: .vertical, alignment: .topLeading)
+//            VStack(alignment: .leading, spacing: 5) {
+//                MainText(content: self.asset.Change.ToDecimals()+"%", fontSize: 13, color: self.asset.Change > 0 ? .green : .red, fontWeight: .semibold)
+//                HighlightView(value: $price, baseColor: .black, fontSize: 18)
+//            }
+//
             Spacer()
             MainText(content: "Rank #\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
                 .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
@@ -102,6 +112,27 @@ struct PortfolioCard: View {
         }
     }
     
+    func updatePrice(_ newPrice:Float?){
+        guard let safeAssetPrice = self.asset.Price, let safeNewPrice = newPrice else {return}
+        setWithAnimation {
+            if safeAssetPrice > safeNewPrice{
+                self.priceColor = .red
+            }else if safeAssetPrice <= safeNewPrice{
+                self.priceColor = .green
+            }
+        }
+    }
+    
+    
+    func resetPriceColor(_ color:Color){
+        if color != .black{
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)) {
+                withAnimation(.easeInOut){
+                    self.priceColor = .black
+                }
+            }
+        }
+    }
     
     func dynamicInnerView(w:CGFloat) -> some View{
         
@@ -158,6 +189,12 @@ struct PortfolioCard: View {
         .background(mainLightBGView.overlay(BlurView.thinLightBlur.opacity(0.25)))
         .clipContent(clipping: .roundClipping)
         .onPreferenceChange(AssetPreferenceKey.self,perform: self.updateAsset(_:))
+//        .onReceive(self.asset.coinData!.$price, perform: { newPrice in
+//            guard let safeNewPrice = newPrice,self.price != safeNewPrice else {return}
+//            self.price = safeNewPrice
+//        })
+        .onReceive(self.asset.coinData!.$price, perform: self.updatePrice(_:))
+        .onChange(of: self.priceColor, perform: self.resetPriceColor(_:))
         
     }
 }
@@ -188,7 +225,6 @@ struct PortfolioCardTester:View{
                 self.coin.getAssets()
             }
             
-        
     }
 }
 

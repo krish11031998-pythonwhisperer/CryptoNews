@@ -83,7 +83,7 @@ struct AddTransactionView:View {
                     print("(DEBUG) Err while trying to post the txn onto Firebase : ",err)
                 }
                 if let txn = res.data{
-                    self.context.transaction.append(txn)
+                    self.context.AddNewTxn(txn: txn)
                 }
                 self.toggleNotificationwTxnModal(res.success)
             }

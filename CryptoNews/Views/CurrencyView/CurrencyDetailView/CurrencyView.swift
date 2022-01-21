@@ -54,7 +54,9 @@ struct CurrencyView:View{
         }else if let _ = self.assetData.coin?.TimeseriesData{
             CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency) { data in
                 if let timeData = CrybseTimeseriesPriceAPI.parseData(data: data){
-                    self.assetData.coin?.TimeseriesData = timeData
+                    setWithAnimation {
+                        self.assetData.coin?.TimeseriesData = timeData
+                    }
                 }
             }
         }
@@ -71,9 +73,8 @@ struct CurrencyView:View{
     }
     
     var transactions:[Transaction]{
-//        guard let txns = self.assetData.txns else {return []}
-//        return txns
-        return self.context.transaction.filter({$0.asset == self.assetData.Currency})
+        guard let txns = self.assetData.txns else {return []}
+        return txns
     }
 
         
