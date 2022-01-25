@@ -368,10 +368,8 @@ struct Blob:ViewModifier{
             .padding(.vertical,10)
             .background(color)
             .clipContent(clipping: self.clipping)
-            .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue).stroke(Color.mainBGColor, lineWidth: 2))
-            .padding(.vertical,1.25)
-            
-            
+            .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue)
+            .stroke(Color.mainBGColor, lineWidth: 2))
     }
 }
 
@@ -394,16 +392,23 @@ struct ContentClipping:ViewModifier{
 
 struct BasicCard:ViewModifier{
     var size:CGSize
+    var background:AnyView
+    
+    init(size:CGSize,background:AnyView = AnyView(BlurView.thinDarkBlur)){
+        self.size = size
+        self.background = background
+    }
+    
     func body(content: Content) -> some View {
         if self.size != .zero{
             content
                 .frame(width: self.size.width, height: self.size.height, alignment: .center)
-                .background(BlurView.thinDarkBlur)
+                .background(self.background)
                 .clipContent(clipping: .roundClipping)
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         }else{
             content
-                .background(BlurView.thinDarkBlur)
+                .background(self.background)
                 .clipContent(clipping: .roundClipping)
                 .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
         }
@@ -645,8 +650,8 @@ extension View{
     }
     
     
-    func basicCard(size:CGSize) -> some View{
-        self.modifier(BasicCard(size: size))
+    func basicCard(size:CGSize,background:AnyView = AnyView(BlurView.thinDarkBlur)) -> some View{
+        self.modifier(BasicCard(size: size,background: background))
     }
 
     func refreshableView(refreshing:Binding<Bool> = .constant(false),width:CGFloat,hasToRender:Bool) -> some View{

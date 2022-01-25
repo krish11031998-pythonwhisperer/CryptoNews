@@ -34,7 +34,7 @@ struct MarkerMainView:View{
     
     var headerValues:[String:Float]{
         let val_bought = self.data.value_usd
-        return ["Value (now)":self.data.value_usd,"Profit":self.data.profit,"Percent": (self.data.profit/self.data.value_usd) * 100]
+        return ["Coin(s)":Float(self.data.crypto_coins),"Value (now)":self.data.value_usd,"Profit":self.data.profit,"Percent": (self.data.profit/self.data.value_usd) * 100]
     }
     
     func percentChangeView(value:Float,type:String = "large") -> some View{
@@ -112,7 +112,7 @@ struct MarkerMainView:View{
     }
     
     var body:some View{
-        Container(heading: "Assets", headingColor: .white, width: self.size.width, horizontalPadding: 15, verticalPadding: 15) { w in
+        Container(heading: "Assets", headingColor: .white,headingSize: 20, width: self.size.width, horizontalPadding: 15, verticalPadding: 15) { w in
             let h = self.size.height - 20
 //            VStack(alignment: .leading, spacing: 20){
             self.Header(size: .init(width: w, height: h * 0.2))

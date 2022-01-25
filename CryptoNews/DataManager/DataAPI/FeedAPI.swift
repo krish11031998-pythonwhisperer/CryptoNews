@@ -13,6 +13,9 @@ class News:Codable{
 }
 
 class AssetNewsData:Identifiable,Codable{
+    
+    init(){}
+    
     var lunar_id:Float?
     var time:Float?
     var name:String?
@@ -43,6 +46,15 @@ class AssetNewsData:Identifiable,Codable{
         let epochTime = TimeInterval(time)
         let date = Date(timeIntervalSince1970: epochTime)
         return date
+    }
+    
+    static func parseAssetNewsDatafromCryptoNews(news:CryptoNews) -> AssetNewsData{
+        var res:AssetNewsData = .init()
+        res.title = news.title
+        res.image = news.imageurl
+        res.body = news.body
+        res.url = news.url
+        return res
     }
 }
 

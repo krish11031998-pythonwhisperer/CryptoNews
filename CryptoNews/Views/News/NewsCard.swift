@@ -45,12 +45,12 @@ struct NewsCard: View {
             return VStack(alignment: .leading, spacing: 5) {
                 MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: linelimit <= 0 ? 13 : 16, headingFont: .normal, subHeadingFont: .normal).fixedSize(horizontal: false, vertical: true)
                     .lineLimit(linelimit)
-                    .frame(width: w,height: text_h,alignment: .topLeading)
+//                    .frame(width: w,height: text_h,alignment: .topLeading)
                 self.footer(w: w, h: 50)
                     .padding(.bottom,5)
             }.padding(.horizontal,10)
             .padding(.vertical,5)
-            .frame(width: size.width, height: size.height, alignment: .topLeading)
+            .frame(width: size.width, height: size.height, alignment: .bottomLeading)
     }
         
     func buttonArea(w:CGFloat,h:CGFloat,alignment:Alignment = .center,innerView: () -> AnyView,handler: (() -> Void)? = nil) -> some View{
@@ -70,8 +70,8 @@ struct NewsCard: View {
             let w = size.width
             ZStack(alignment: .bottom) {
                 ImageView(url: self.news.thumbnail,width: w, height: h, contentMode: .fill, alignment: .center)
-                self.newsView(size: .init(width: w, height: h * 0.5))
-                    .background(Color.darkGradColor.opacity(0.5).frame(height: h * 0.5))
+                self.newsView(size: .init(width: w, height: h))
+                    .background(Color.darkGradColor.opacity(0.5).frame(height: h * 0.5,alignment: .bottom),alignment: .bottom)
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
                 
         }else{
@@ -178,6 +178,6 @@ struct NewsCard_Previews: PreviewProvider {
     static var previews: some View {
         let cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
         NewsCardCarousel(currency: ["LTC"],size: .init(width: cardSize.width * 0.5 - 5, height: cardSize.height * 0.75))
-            .background(Color.black)
+            .background(mainBGView)
     }
 }

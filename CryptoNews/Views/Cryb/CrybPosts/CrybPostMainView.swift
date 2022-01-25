@@ -23,10 +23,6 @@ struct CrybPostMainView: View {
         if self.crybPostAPI.posts == nil{
             self.crybPostAPI.getPosts()
         }
-//        if self.crybPostAPI.posts.isEmpty{
-//            self.crybPostAPI.loadPost()
-//        }
-//
         if self.width == .zero && self.ignoreSides{
             self.ignoreSides.toggle()
         }

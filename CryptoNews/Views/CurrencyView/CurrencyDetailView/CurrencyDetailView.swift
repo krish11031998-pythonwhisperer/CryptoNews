@@ -57,14 +57,24 @@ extension CurrencyDetailView{
     @ViewBuilder var mainView:some View{
         self.priceMainInfo
         self.transactionHistoryView
-        self.CurrencySummary
-        self.infoSection
-        self.feedContainer
-        self.newsContainer
+//        self.TradingSignalsView
+        self.paginatedViews.padding(.top,10)
+//        self.feedContainer
+//        self.newsContainer
     }
     
+    var CurrencyGeneralView:some View{
+        VStack(alignment: .leading, spacing: 10) {
+            self.CurrencySummary
+            self.infoSection
+        }
+    }
+    
+    var headingFontSize:CGFloat{
+        return 25
+    }
 
-    var socialData:CrybseCoinSocialData?{
+    var socialData:CrybseCoinData?{
         return self.assetData.coin
     }
     
@@ -122,8 +132,17 @@ extension CurrencyDetailView{
         return self.coinTotal * self.price
     }
     
+    var paginatedViews:some View{
+        ButtonScrollView(headerviews: ["General":AnyView(self.CurrencyGeneralView),"Twitter":AnyView(self.feedContainer),"News":AnyView(self.newsContainer)], width: self.size.width)
+    }
+    
     var profit:Float{
+        if self.choosen != -1,let selectedPrice = self.OHLCV[self.choosen].close{
+            return self.assetData.txns?.map({$0.asset_quantity * (selectedPrice - $0.asset_spot_price)}).reduce(0, {$0 == 0 ? $1 : $0 + $1}) ?? self.assetData.Profit
+        }
+        
         return self.assetData.Profit
+        
     }
     
     var txnForAssetPortfolioData:[PortfolioData]{
@@ -131,7 +150,7 @@ extension CurrencyDetailView{
     }
     
     var CurrencySummary:some View{
-        Container(heading: "Statistics", width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+        Container(heading: "Statistics",headingSize: headingFontSize, width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
             if let coinMetaData = self.socialData?.MetaData{
                 CurrencySummaryView(currency: coinMetaData, size: .init(width: w, height: self.size.height))
             }else{
@@ -172,7 +191,7 @@ extension CurrencyDetailView{
     
     @ViewBuilder var infoSection:some View{
         if let coinMetaData = self.socialData?.MetaData{
-            Container(heading: "About", width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+            Container(heading: "About",headingSize: headingFontSize, width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
                 MainText(content:"What is \(coinMetaData.Symbol)", fontSize: 17.5, color: .white, fontWeight: .semibold)
                     .frame(width: w, alignment: .leading)
                 ForEach(coinMetaData.Description.split(separator: "\n"), id:\.self) { text in
@@ -203,38 +222,59 @@ extension CurrencyDetailView{
         }
     }
     
+    @ViewBuilder var TradingSignalsView : some View{
+        if let tradingSignal = self.assetData.coin?.tradingSignals{
+            self.tradingSignalViews(tradingSignal: tradingSignal)
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+
+    @ViewBuilder func tradingSignalViews(tradingSignal:CrybseTradingSignalsData) -> some View{
+        let order = ["In Out Var","Addresses Net Growth","Concentration Var","Largest XS Var"]
+        if tradingSignal.overall == 0{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }else{
+            Container(heading: "Trading Signals",headingSize: headingFontSize,width: self.size.width,ignoreSides: false,verticalPadding: 15,orientation: .horizontal) { w in
+                MainSubHeading(heading: tradingSignal.getEmoji, subHeading: tradingSignal.getSentiment, headingSize: 40, subHeadingSize: 18, orientation: .vertical, alignment: .center)
+                VStack(alignment: .leading, spacing: 10) {
+                    ForEach(order,id:\.self){ key in
+                        if let value = tradingSignal.tradingSignalValues[key]{
+                            MainSubHeading(heading: key , subHeading: value.0.ToDecimals(), headingSize: 14, subHeadingSize: 20, headColor: .gray, subHeadColor: .white, orientation: .vertical, alignment: .leading)
+                        }
+                    }
+                }.frame(width: w * 0.55, alignment: .center)
+                
+            }.basicCard(size: .zero)
+        }
+    }
+        
+    
     func infoViewGen(type:PostCardType) -> some View{
         let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
         var data:[Any] = type == .News ? self.News : self.Tweets
         data = data.count < 5 ? data : Array(data[0...4])
-        let view = VStack(alignment: .leading, spacing: 10){
-            MainText(content: title, fontSize: 25, color: .white,fontWeight: .bold, style: .heading).padding(.vertical)
-            ForEach(Array(data.enumerated()),id:\.offset) { _data in
-                let data = _data.element
-                self.cardBuilder(data: data)
-            }
-            TabButton(width: size.width, title: "Load More", action: {
-                withAnimation(.easeInOut) {
-                    self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : .none
+        return Container(headingDivider: false, width: self.size.width, ignoreSides: true) { w in
+            VStack(alignment: .center, spacing: 10) {
+                ForEach(Array(data.enumerated()),id:\.offset) { _data in
+                    let data = _data.element
+                    self.cardBuilder(data: data)
+                        .aspectRatio(contentMode: .fit)
                 }
-            }).padding(.vertical)
+                TabButton(width: size.width, title: "Load More", action: {
+                    setWithAnimation {
+                        self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : .none
+                    }
+                }).padding(.vertical)
+            }
         }
-        return view
-    }
-    
-    var feedView:some View{
-        self.infoViewGen(type: .Tweet)
-    }
-    
-    var newsView:some View{
-        self.infoViewGen(type: .News)
     }
     
     @ViewBuilder var feedContainer:some View{
         if self.Tweets.isEmpty{
             ProgressView()
         }else if self.Tweets.count >= 5{
-            self.feedView
+            self.infoViewGen(type: .Tweet)
         }
         
     }
@@ -243,7 +283,7 @@ extension CurrencyDetailView{
         if self.News.isEmpty{
             ProgressView()
         }else if self.News.count >= 5{
-            self.newsView
+            self.infoViewGen(type: .News)
         }
         
     }
@@ -281,7 +321,7 @@ extension CurrencyDetailView{
         }else if let latestPrice = self.OHLCV.last?.close{
             return latestPrice
         }else{
-            return self.socialData?.MetaData?.Price ?? 0
+            return self.socialData?.MetaData.Price ?? 0
         }
     }
     
@@ -298,7 +338,7 @@ extension CurrencyDetailView{
             let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.time! >= self.assetData.LatestPriceTime + 60 ? $0 : nil : nil})
             for count in 0..<latestPrices.count{
                 let latestPrice = latestPrices[count]
-                self.assetData.coin?.TimeseriesData?.append(latestPrice)
+                self.assetData.coin?.TimeseriesData.append(latestPrice)
                 if let latestClosePrice = latestPrice.close,count == (latestPrices.count - 1){
                     let newValue = self.coinTotal * latestClosePrice
                     self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)

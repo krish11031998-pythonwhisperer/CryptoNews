@@ -125,7 +125,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
         let currencyCondition = lhs.Currency == rhs.Currency
         let txnCondition = lhs.txns?.count == rhs.txns?.count
         let coinDataCondition = lhs.coinData?.Price == rhs.coinData?.Price
-        let coinCondition = lhs.coin?.TimeseriesData?.last?.time == rhs.coin?.TimeseriesData?.last?.time
+        let coinCondition = lhs.coin?.TimeseriesData.last?.time == rhs.coin?.TimeseriesData.last?.time
         
         return currencyCondition || txnCondition || coinCondition || coinDataCondition
     }
@@ -136,7 +136,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     @Published var value:Float?
     @Published var profit:Float?
     @Published var coinTotal:Float?
-    @Published var coin:CrybseCoinSocialData?
+    @Published var coin:CrybseCoinData?
     
     var coinDataCancellable:AnyCancellable? = nil
     var coinSocialDataCancellable:AnyCancellable? = nil
@@ -239,7 +239,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     }
     
     var LatestPriceTime:Int{
-        return self.coin?.TimeseriesData?.last?.time ?? 0
+        return self.coin?.TimeseriesData.last?.time ?? 0
     }
     
     
@@ -386,13 +386,13 @@ class CrybseCoin:ObservableObject,Codable{
 }
 
 
-class CrybseSocialCoin:ObservableObject,Codable{
+class CrybseCoinMetaData:ObservableObject,Codable{
     init(){}
     
     class CoinSupply:ObservableObject,Codable{
         @Published var confirmed:Bool?
-        @Published var total:String?
-        @Published var circulating:String?
+        @Published var total:Float?
+        @Published var circulating:Float?
         
         init(confirmed:Bool? = nil){
             self.confirmed = confirmed
@@ -407,8 +407,8 @@ class CrybseSocialCoin:ObservableObject,Codable{
         required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             confirmed = try container.decode(Bool?.self, forKey: .confirmed)
-            total = try container.decode(String?.self, forKey: .total)
-            circulating = try container.decode(String?.self, forKey: .circulating)
+            total = try container.decode(Float?.self, forKey: .total)
+            circulating = try container.decode(Float?.self, forKey: .circulating)
         }
         
         func encode(to encoder: Encoder) throws {
@@ -448,10 +448,10 @@ class CrybseSocialCoin:ObservableObject,Codable{
     }
     
     class CoinAllTimeHigh:ObservableObject,Codable{
-        @Published var price:String?
+        @Published var price:Float?
         @Published var timestamp:Double?
         
-        init(price:String? = nil,timestamp:Double? = nil){
+        init(price:Float? = nil,timestamp:Double? = nil){
             self.price = price
             self.timestamp = timestamp
         }
@@ -463,7 +463,7 @@ class CrybseSocialCoin:ObservableObject,Codable{
         
         required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            price = try container.decode(String?.self, forKey: .price)
+            price = try container.decode(Float?.self, forKey: .price)
             timestamp = try container.decode(Double?.self, forKey: .timestamp)
         }
         
@@ -483,7 +483,7 @@ class CrybseSocialCoin:ObservableObject,Codable{
    @Published var websiteUrl:String?
    @Published var supply:CoinSupply?
    @Published var links:[CoinLink?]?
-   @Published var _24hVolume:Float?
+   @Published var dailyVolume:Float?
    @Published var allTimeHigh:CoinAllTimeHigh?
    @Published var numberOfMarkets:Int?
    @Published var numberOfExchanges:Int?
@@ -507,7 +507,7 @@ class CrybseSocialCoin:ObservableObject,Codable{
        case websiteUrl
        case supply
        case links
-       case _24hVolume
+       case dailyVolume
        case allTimeHigh
        case numberOfMarkets
        case numberOfExchanges
@@ -533,6 +533,7 @@ class CrybseSocialCoin:ObservableObject,Codable{
         iconUrl = try container.decode(String?.self, forKey: .iconUrl)
         supply = try container.decode(CoinSupply?.self, forKey: .supply)
         links = try container.decode([CoinLink?]?.self, forKey: .links)
+        dailyVolume = try container.decode(Float?.self, forKey: .dailyVolume)
         allTimeHigh = try container.decode(CoinAllTimeHigh?.self, forKey: .allTimeHigh)
         numberOfMarkets = try container.decode(Int?.self, forKey: .numberOfMarkets)
         numberOfExchanges = try container.decode(Int?.self, forKey: .numberOfExchanges)
@@ -555,7 +556,7 @@ class CrybseSocialCoin:ObservableObject,Codable{
         try container.encode(websiteUrl, forKey: .websiteUrl)
         try container.encode(supply, forKey: .supply)
         try container.encode(links, forKey: .links)
-        try container.encode(_24hVolume, forKey: ._24hVolume)
+        try container.encode(dailyVolume, forKey: .dailyVolume)
         try container.encode(allTimeHigh, forKey: .allTimeHigh)
         try container.encode(numberOfMarkets, forKey: .numberOfMarkets)
         try container.encode(numberOfExchanges, forKey: .numberOfExchanges)

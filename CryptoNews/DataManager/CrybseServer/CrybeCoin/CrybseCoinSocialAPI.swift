@@ -10,7 +10,7 @@ import Foundation
 
 class CrybseCoinSocialAPI:CrybseAPI{
     
-    @Published var coinData:CrybseCoinSocialData? = nil
+    @Published var coinData:CrybseCoinData? = nil
     
     var coinUID:String = ""
     var fiat:String = ""
@@ -39,7 +39,7 @@ class CrybseCoinSocialAPI:CrybseAPI{
 //        DataCache.shared[url] = data
         print("(DEBUG) coinData url : ",url.absoluteString)
         setWithAnimation {
-            if let data = CrybseCoinSocialData.parseCoinDataFromData(data: data){
+            if let data = CrybseCoinData.parseCoinDataFromData(data: data){
                 self.coinData = data
             }
             

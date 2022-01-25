@@ -25,9 +25,9 @@ struct HomePage: View {
             if let _ = self.context.user.user?.uid{
                 AllAssetView()
                     .environmentObject(self.context)
-                LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15)
-                    .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             }
+            LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15)
+                .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             CurrencyFeed()
                 .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
             Spacer(minLength: 200)

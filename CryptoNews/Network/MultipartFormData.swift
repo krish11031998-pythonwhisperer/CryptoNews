@@ -6,6 +6,27 @@
 //
 
 import Foundation
+import UIKit
+
+typealias Params = [String:String]
+
+extension Params{
+    
+}
+
+struct Media{
+    var name:String
+    var data:Data
+    var mimeType:String
+    var filename:String
+    
+    
+    static func generateMediaDataFromImage(key:String,img:UIImage) -> Media?{
+        guard let data = img.jpegData(compressionQuality: 0.5) else {return nil}
+        return Media(name: key, data: data, mimeType: "img/jpg", filename: "\(arc4random()).jpg")
+    }
+}
+
 
 extension URLSession {
     func dataTask(with request: MultipartFormDataRequest,
@@ -17,62 +38,60 @@ extension URLSession {
 
 struct MultipartFormDataRequest {
     private let boundary: String = UUID().uuidString
-    private var httpBody = NSMutableData()
     let url: URL
 
     init(url: URL) {
         self.url = url
     }
 
-    func addTextField(named name: String, value: String) {
-        httpBody.append(textFormField(named: name, value: value))
-    }
-
-    private func textFormField(named name: String, value: String) -> String {
-        var fieldString = "--\(boundary)\r\n"
-        fieldString += "Content-Disposition: form-data; name=\"\(name)\"\r\n"
-        fieldString += "Content-Type: text/plain; charset=ISO-8859-1\r\n"
-        fieldString += "Content-Transfer-Encoding: 8bit\r\n"
-        fieldString += "\r\n"
-        fieldString += "\(value)\r\n"
-
-        return fieldString
-    }
-
-    func addDataField(named name: String, data: Data, mimeType: String) {
-        httpBody.append(dataFormField(named: name, data: data, mimeType: mimeType))
-    }
-
-    private func dataFormField(named name: String,
-                               data: Data,
-                               mimeType: String) -> Data {
-        let fieldData = NSMutableData()
-
-        fieldData.append("--\(boundary)\r\n")
-        fieldData.append("Content-Disposition: form-data; name=\"\(name)\"\r\n")
-        fieldData.append("Content-Type: \(mimeType)\r\n")
-        fieldData.append("\r\n")
-        fieldData.append(data)
-        fieldData.append("\r\n")
-        print("(DEBUG) imageFile Data : ",fieldData)
-
-        return fieldData as Data
+    func generateRequestDataBoundary(params:Params? = nil,allmedia:[Media]? = nil) -> Data{
+        var bodyData = Data()
+        let lineBreak = "\r\n"
+        if let safeParams = params{
+            for (key,value) in safeParams{
+                bodyData.append("--\(boundary + lineBreak)")
+                bodyData.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak+lineBreak)")
+                bodyData.append("\(value + lineBreak)")
+            }
+        }
+        
+        
+        if let allSafeMedia = allmedia{
+            for media in allSafeMedia{
+                bodyData.append("--\(boundary + lineBreak)")
+                bodyData.append("Content-Disposition: form-data; name=\"\(media.name)\"; filename=\"\(media.filename)\"\(lineBreak+lineBreak)")
+                bodyData.append("Content-Type: \(media.mimeType + lineBreak + lineBreak)")
+                bodyData.append(media.data)
+                bodyData.append(lineBreak)
+            }
+        }
+        
+        bodyData.append("--\(boundary)--\(lineBreak)")
+        
+        return bodyData
     }
     
-    func asURLRequest() -> URLRequest {
+    func asURLRequest(params:Params? = nil,allMedia:[Media]? = nil) -> URLRequest {
         var request = URLRequest(url: url)
-
         request.httpMethod = "POST"
         request.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
-
-        httpBody.append("--\(boundary)--")
-        request.httpBody = httpBody as Data
+        
+        request.httpBody = self.generateRequestDataBoundary(params: params, allmedia: allMedia)
+    
         return request
     }
 }
 
-extension NSMutableData {
-  func append(_ string: String) {
+//extension NSMutableData {
+//  func append(_ string: String) {
+//    if let data = string.data(using: .utf8) {
+//      self.append(data)
+//    }
+//  }
+//}
+
+extension Data {
+  mutating func append(_ string: String) {
     if let data = string.data(using: .utf8) {
       self.append(data)
     }

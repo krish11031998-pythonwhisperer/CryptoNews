@@ -35,21 +35,6 @@ struct CrybPostGen: View {
         var postdata:CrybPostData = .test
         postdata.User = .init(uid: uid, userName: username)
         postdata.PostMessage =  self.text
-//        CrybPostAPI.shared.uploadTransaction(post: postdata , image: self.image) { err in
-//            var heading:String = "Error"
-//            var message:String = "No Message"
-//            if let err = err{
-//                message = err.localizedDescription
-//                print("Trouble uploading the crybPost data : ",err.localizedDescription)
-//            }else{
-//                heading = "Successfully Add CrybPost"
-//                message = "CrybPost was successfully posted"
-//               print("The data was uploaded to teh crypPost successfully!")
-//            }
-//            setWithAnimation {
-//                self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
-//            }
-//        }
         CrybsePostAPI.shared.uploadPost(post: postdata, image: self.image) { status in
             var heading = ""
             var message = ""
@@ -61,7 +46,7 @@ struct CrybPostGen: View {
                 message = "Your CrybsePost was not uploaded successfully !"
             }
             setWithAnimation {
-                self.context.bottomSwipeNotification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
+                self.notification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
             }
         }
         
@@ -106,26 +91,33 @@ struct CrybPostGen: View {
     }
     
     var mainbody:some View{
-        Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
-            self.header
-            StylizedTextEditor(limit:350,width: w)
-                .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newText in
-                    if self.text != newText{
-                        self.text = newText
+        ZStack(alignment: .bottom) {
+            Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
+                self.header
+                StylizedTextEditor(limit:350,width: w)
+                    .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newText in
+                        if self.text != newText{
+                            self.text = newText
+                        }
                     }
+                if self.keyboardHeight == .zero{
+                    self.imageView(w: w)
+                    self.sideButton(w: w)
+                    TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
+                        print("Click on Add Poll")
+                    }.padding(.bottom,5)
+                    TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
+                }else{
+                    TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting).padding(.vertical,15)
                 }
-            if self.keyboardHeight == .zero{
-                self.imageView(w: w)
-                self.sideButton(w: w)
-                TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
-                    print("Click on Add Poll")
-                }.padding(.bottom,5)
-                TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
-            }else{
-                TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting).padding(.vertical,15)
+                
+            }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
+            if self.notification.showNotification{
+                self.notification.generateView()
             }
-            
-        }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
+        }.ignoresSafeArea()
+        .frame(width: totalWidth, height: totalHeight, alignment: .center)
+        
         
     }
     

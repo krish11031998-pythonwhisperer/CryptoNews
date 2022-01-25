@@ -51,8 +51,8 @@ struct NewsStandCard: View {
         return HStack(alignment: .center, spacing: 5) {
             if let data = self.news as? AssetNewsData{
                 MainText(content: data.date.stringDate(), fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
-            }else if let data = self.news as? CryptoNews{
-                MainText(content: "\(data.published_on)",fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+            }else if let data = self.news as? CryptoNews,let epochTime = data.published_on, let time = Date(timeIntervalSince1970: Double(epochTime)){
+                MainText(content: "\(time.stringDate())",fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             }
             
             Spacer()
@@ -84,9 +84,11 @@ struct NewsStandCard: View {
 
     var body: some View {
         Button {
-            withAnimation(.easeInOut) {
+            setWithAnimation {
                 if let news = self.news as? AssetNewsData{
                     self.context.selectedNews = news
+                }else if let cryptoNews = self.news as? CryptoNews{
+                    self.context.selectedNews = AssetNewsData.parseAssetNewsDatafromCryptoNews(news: cryptoNews)
                 }
             }
         } label: {
@@ -144,8 +146,6 @@ struct NewsStandCard_Previews: PreviewProvider {
             }.padding(.top,20)
             
         }
-//        .padding(.vertical,50)
-//        .padding(.top,50)
         .frame(width: totalWidth,height: totalHeight, alignment: .center)
         .background(Color.mainBGColor.edgesIgnoringSafeArea(.all))
             

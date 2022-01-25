@@ -77,24 +77,29 @@ class CrybsePostAPI:CrybseAPI{
     }
     
     
-    func generateMultiPartFormRequest(url:URL?,post:CrybPostData,image:UIImage?) -> MultipartFormDataRequest?{
+    func generateMultiPartFormRequest(url:URL?,post:CrybPostData,image:UIImage?) -> URLRequest?{
         guard let url = url else {return nil}
-        var multipartForm = MultipartFormDataRequest(url: url)
-        multipartForm.addTextField(named: "userImg", value: post.User.Img)
-        multipartForm.addTextField(named: "userName", value: post.User.UserName)
-        multipartForm.addTextField(named: "userUid", value: post.User.User_Uid)
-        multipartForm.addTextField(named: "comments", value: "\(post.Comments)")
-        multipartForm.addTextField(named: "likes", value: "\(post.Likes)")
-        multipartForm.addTextField(named: "postMessage", value: post.PostMessage)
-        multipartForm.addTextField(named: "high", value: "\(post.PricePrediction.High)")
-        multipartForm.addTextField(named: "low", value: "\(post.PricePrediction.Low)")
-        multipartForm.addTextField(named: "price", value: "\(post.PricePrediction.Price)")
-        multipartForm.addTextField(named: "view", value: "\(post.Views)")
-        multipartForm.addTextField(named: "currency", value: "\(post.Coin)")
-        if let imgData = image?.pngData(){
-            multipartForm.addDataField(named: "imageFile", data: imgData, mimeType: "image/png")
+        let params = ["userImg": post.User.Img,
+                      "userName": post.User.UserName,
+                      "userUid": post.User.User_Uid,
+                      "comments": "\(post.Comments)",
+                      "likes": "\(post.Likes)",
+                      "postMessage": post.PostMessage,
+                      "high": "\(post.PricePrediction.High)",
+                      "low": "\(post.PricePrediction.Low)",
+                      "price": "\(post.PricePrediction.Price)",
+                      "view": "\(post.Views)",
+                      "currency": "\(post.Coin)"]
+        var media:[Media]? = nil
+        let multipartForm = MultipartFormDataRequest(url: url)
+                
+        if let safeImage = image,let imgMedia = Media.generateMediaDataFromImage(key: "imageFile", img: safeImage){
+            media = [imgMedia]
+            print("(DEBUG) imgMedia has been generatedfromImage!")
         }
-        return multipartForm
+        
+        
+        return multipartForm.asURLRequest(params: params, allMedia: media)
     }
 
     
@@ -129,10 +134,19 @@ class CrybsePostAPI:CrybseAPI{
     
     func uploadPost(post:CrybPostData,image:UIImage?,completion:((Bool) -> Void)? = nil){
         if let safeRequest = self.generateMultiPartFormRequest(url: self.postRequest?.url, post: post, image: image){
-            URLSession.shared.dataTask(with: safeRequest) { data, response, err in
-                guard let safeData = data,let safeResponse = response as? HTTPURLResponse, safeResponse.statusCode > 400 && safeResponse.statusCode < 500 else {return}
-                _ = self.parsePostFromData(data: safeData)
-            }.resume()
+            print("Now Sending the request!")
+            self.PostData(request: safeRequest) { data in
+                guard let safeData = data as? Data else {return}
+                if let _ = self.parsePostFromData(data: safeData){
+                    completion?(true)
+                }else{
+                    completion?(false)
+                }
+            }
+//            URLSession.shared.dataTask(with: safeRequest) { data, response, err in
+//                guard let safeData = data,let safeResponse = response as? HTTPURLResponse, !(safeResponse.statusCode > 400 && safeResponse.statusCode < 500) else {return}
+//
+//            }.resume()
         }
     }
     

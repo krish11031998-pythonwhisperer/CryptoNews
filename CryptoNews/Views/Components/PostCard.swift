@@ -41,7 +41,7 @@ struct PostCard: View {
     
     @ViewBuilder var bgView:some View{
         if self.bg == .dark{
-            mainBGView
+            BlurView.thinDarkBlur
         }else{
             mainLightBGView
         }
@@ -77,13 +77,9 @@ struct PostCard: View {
             Divider().frame(width: w, alignment: .center)
             self.Footer(data: data, size: .init(width: w, height: h * 0.1))
         }.padding()
-//        }
         .frame(width: size.width, alignment: .center)
-        .background(self.bgView)
-        .aspectRatio(contentMode: .fill)
-        .frame(minHeight: self.const_size ? size.height : 0,maxHeight: self.size.height)
-        .clipContent(clipping: .roundClipping)
-        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 0)
+        .frame(minHeight: self.const_size ? self.size.height : 0, maxHeight: self.size.height, alignment: .center)
+        .basicCard(size: .zero,background: AnyView(self.bgView))
         
         return view
         
@@ -138,8 +134,6 @@ extension PostCard{
             HStack(alignment: .center, spacing: 15) {
                 ImageView(url: data.profile_image, width: h, height: h, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
-                    .padding(10)
-//                    .background(BlurView(style: .light).clipContent(clipping: .circleClipping))
                 VStack(alignment: .leading, spacing: 5) {
                     MainText(content: self.cardType == .Reddit ?  "/\(data.subreddit ?? "Subreddit")" : "@\(data.twitter_screen_name ?? "Tweet")", fontSize: 12.5,color: font_color,fontWeight: .semibold)
                     MainText(content: "\(Date(timeIntervalSince1970: .init(data.time ?? 0)).stringDate())", fontSize: 10, color: .gray, fontWeight: .regular)

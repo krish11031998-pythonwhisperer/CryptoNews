@@ -40,14 +40,16 @@ struct CrybPostCard: View {
         }
     }
     
+    var maxHeight:CGFloat{
+        return totalHeight * 0.65
+    }
+    
     var body: some View {
-        Container(width: self.cardWidth, ignoreSides: false) { w in
+        Container(width: self.cardWidth, ignoreSides: false,verticalPadding: 15) { w in
             self.view(w: w)
         }
-        .frame(minHeight:self.const_h ? totalHeight * 0.65 : 0,maxHeight: totalHeight * 0.65, alignment: .center)
-//        .background(Color.white.opacity(0.35).overlay(BlurView.thinLightBlur))
-        .background(mainLightBGView)
-        .clipContent(clipping: .roundClipping)
+        .basicCard(size: .zero, background: AnyView(mainLightBGView))
+        .frame(minHeight:self.const_h ? self.maxHeight : 0,maxHeight: self.maxHeight,alignment: .center)
     }
 }
 
@@ -140,9 +142,7 @@ extension CrybPostCard{
 //            self.cryptoScale
             LazyVGrid(columns: [.init(.adaptive(minimum: w_el, maximum: w_el), alignment: .leading)], alignment: .center, spacing: 10) {
                 self.RatingsMeter(header: "Cryb. Rating", percent: 60,w: w_el)
-//                    .frame(width: w_el, alignment: .topLeading)
                 self.RatingsMeter(header: "Audience Rating", percent: 75,w: w_el)
-//                    .frame(width: w_el, alignment: .topTrailing)
             }.frame(width: self.width, alignment: .leading)
             SystemButton(b_content: "Analysis →", haveBG: false, bgcolor: .white, alignment: .horizontal, borderedBG: true) {
                 self.context.selectedPost = self.postData
@@ -156,7 +156,7 @@ struct CrybPostCard_Previews: PreviewProvider {
     static var previews: some View {
         ZStack(alignment: .center) {
             Color.mainBGColor
-            CrybPostCard(data: .test,cardWidth: totalWidth - 20)
+            CrybPostCard(data: .test,cardWidth: totalWidth - 20,const_h: false)
         }.ignoresSafeArea()
     }
 }

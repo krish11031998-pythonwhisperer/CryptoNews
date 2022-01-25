@@ -62,7 +62,7 @@ struct CurrencyView:View{
         }
     }
     
-    func onReceiveCoinData(_ coinData: CrybseCoinSocialData?){
+    func onReceiveCoinData(_ coinData: CrybseCoinData?){
         guard let coinData = coinData else {
             return
         }
@@ -165,9 +165,8 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-            ScrollView(.vertical, showsIndicators: false) {
+            LazyScrollView(data: [1], embedScrollView: true) { _ in
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
-                    .refreshableView(refreshing: $refresh,width: size.width,hasToRender:self.context.selectedCurrency != nil)
                     .onChange(of: self.refresh) { refresh in}
             }
         }else{
@@ -219,7 +218,6 @@ struct CurrencyView:View{
         .onAppear(perform: self.onAppear)
         .onReceive(self.coinAPI.$coinData, perform: self.onReceiveCoinData(_:))
         .onDisappear(perform: self.onDisappear)
-        .preference(key: AssetPreferenceKey.self, value: self.assetData)
     }
 }
 
