@@ -486,42 +486,62 @@ struct MainSubHeading:View{
     var headingSize:CGFloat
     var subHeadingSize:CGFloat
     var headingFont:TextStyle
+    var headingWeight:Font.Weight
+    var bodyWeight:Font.Weight
     var subHeadingFont:TextStyle
     var headColor:Color
+    var spacing:CGFloat
     var subHeadColor:Color
     var alignment:Alignment
     var orientation:Axis
-    init(heading:String,subHeading:String,headingSize:CGFloat = 10,subHeadingSize:CGFloat = 13,headingFont:TextStyle = .heading, subHeadingFont:TextStyle = .normal,headColor:Color = .gray,subHeadColor:Color = .white,orientation:Axis = .vertical,alignment:Alignment = .leading){
+    init(
+        heading:String,
+        subHeading:String,
+        headingSize:CGFloat = 10,
+        subHeadingSize:CGFloat = 13,
+        headingFont:TextStyle = .heading,
+        subHeadingFont:TextStyle = .normal,
+        headColor:Color = .gray,
+        subHeadColor:Color = .white,
+        orientation:Axis = .vertical,
+        headingWeight:Font.Weight = .semibold,
+        bodyWeight:Font.Weight = .semibold,
+        spacing:CGFloat = 5,
+        alignment:Alignment = .leading)
+    {
         self.heading = heading
         self.subHeading = subHeading
         self.headingSize = headingSize
         self.subHeadingSize = subHeadingSize
         self.headingFont = headingFont
         self.subHeadingFont = subHeadingFont
+        self.headingWeight = headingWeight
+        self.bodyWeight = bodyWeight
         self.headColor = headColor
         self.subHeadColor = subHeadColor
         self.orientation = orientation
         self.alignment = alignment
+        self.spacing = spacing
     }
         
     var body: some View{
         if self.orientation == .vertical{
-            VStack(alignment: self.alignment.horizontal, spacing: 5) {
-                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
+            VStack(alignment: self.alignment.horizontal, spacing: spacing) {
+                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: self.headingWeight,style: headingFont)
                     .lineLimit(1)
-                MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
+                MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: self.bodyWeight,style: subHeadingFont)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }else if self.orientation == .horizontal{
-            HStack(alignment: self.alignment.vertical, spacing: 5) {
-                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: .semibold,style: headingFont)
+            HStack(alignment: self.alignment.vertical, spacing: spacing) {
+                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: self.headingWeight,style: headingFont)
                     .lineLimit(1)
-                MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: .semibold,style: subHeadingFont)
+                MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: self.bodyWeight,style: subHeadingFont)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }
     }
-    
+     
 }
 
 

@@ -10,11 +10,9 @@ import SwiftUI
 struct NewsSectionMain: View {
     @EnvironmentObject var context:ContextData
     @StateObject var newsFeed:FeedAPI
-//    var currency:String
     
     init(currency:String? = nil,currencies:[String]? = nil,limit:Int = 10){
         self._newsFeed = .init(wrappedValue: .init(currency: currencies ?? [currency ?? "BTC"], sources: ["news"], type: .Chronological, limit: limit, page: 0))
-//        self.currency = currency
     }
     
     var data:[AssetNewsData]{
@@ -22,12 +20,11 @@ struct NewsSectionMain: View {
     }
     
     func onAppear(){
-//        DispatchQueue.main.async {
         if self.data.isEmpty{
             self.newsFeed.getAssetInfo()
         }
-//        }
     }
+    
     var cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
     
     var autoTimedCards:some View{

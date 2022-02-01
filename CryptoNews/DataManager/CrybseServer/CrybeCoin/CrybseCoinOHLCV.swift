@@ -9,13 +9,19 @@ import Foundation
 
 // MARK: - CryptoCoinOHLCV
 struct CryptoCoinOHLCVPoint:Codable{
-    var time:Int?
+    var time:Float?
     var high:Float?
     var low:Float?
     var open:Float?
     var close:Float?
-    var volumefrom:Float?
-    var volumeto:Float?
+    var volume:Float?
+    var number_of_trades:Float?
+    var vwap:Float?
+    var twap:Float?
+    
+    var Time:Int{
+        return Int(self.time ?? 0.0)
+    }
 }
 
 struct CryptoCoinOHLCV:Codable{
@@ -33,3 +39,4 @@ struct CryptoCoinOHLCVResponse:Codable{
     var HasWarning:Bool?
     var Data:CryptoCoinOHLCV?
 }
+

@@ -32,7 +32,7 @@ struct AddTransactionView:View {
     @Namespace var animation
     @StateObject var txn:TxnFormDetails
     @State var showModal:ModalType = .none
-    @State var coin:CrybseCoinPrice? = nil
+    @State var coin:CrybseCoinSpotPrice? = nil
     @State var curr_sym:String? = nil
     @State var currentAsset: AssetData?
     
@@ -123,7 +123,7 @@ struct AddTransactionView:View {
     }
     
     
-    func handleCurrencyUpdate(_ newCurrency:CrybseCoinPrice?){
+    func handleCurrencyUpdate(_ newCurrency:CrybseCoinSpotPrice?){
         setWithAnimation {
             if self.coin != newCurrency{
                 self.coin = newCurrency

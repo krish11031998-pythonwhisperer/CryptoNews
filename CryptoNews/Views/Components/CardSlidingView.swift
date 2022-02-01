@@ -11,7 +11,6 @@ import Combine
 struct CardSlidingView: View {
     var cardSize:CGSize
     var views:Array<AnyView>
-//    @StateObject var SP:swipeParams
     @State var idx:Int = -1
     @StateObject var scrollViewHelper = ScrollViewHelper()
     var centralize:Bool = false

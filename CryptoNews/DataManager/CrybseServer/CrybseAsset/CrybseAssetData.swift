@@ -136,7 +136,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     @Published var value:Float?
     @Published var profit:Float?
     @Published var coinTotal:Float?
-    @Published var coin:CrybseCoinData?
+    @Published var coin:CrybseCoinSocialData?
     
     var coinDataCancellable:AnyCancellable? = nil
     var coinSocialDataCancellable:AnyCancellable? = nil
@@ -239,7 +239,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     }
     
     var LatestPriceTime:Int{
-        return self.coin?.TimeseriesData.last?.time ?? 0
+        return Int(self.coin?.TimeseriesData.last?.time ?? 0.0)
     }
     
     
@@ -268,6 +268,23 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
 //    var Coin:CrybseCoinSocialData{
 //        return self.coin ?? .init()
 //    }
+    
+    func updatePriceWithLatestTimeSeriesPrice(timeSeries:Array<CryptoCoinOHLCVPoint>?){
+        guard let safeTimeseries = timeSeries, let latestPrice = safeTimeseries.last?.close else {return}
+        let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.Time >= self.LatestPriceTime + 60 ? $0 : nil : nil})
+        setWithAnimation {
+            self.coin?.TimeseriesData.append(contentsOf: latestPrices)
+            self.updateAssetInfo(price: latestPrice)
+        }
+    }
+    
+    func updateAssetInfo(price latestClosePrice:Float) {
+        let newValue = self.CoinTotal * latestClosePrice
+        self.profit = self.Profit + (newValue - self.Value)
+        self.value = newValue
+        self.Price = latestClosePrice
+
+    }
     
 }
 
@@ -385,6 +402,18 @@ class CrybseCoin:ObservableObject,Codable{
     
 }
 
+class CrybseCoinDescription:Codable{
+    var header:String?
+    var body:String?
+    
+    var Header:String{
+        return self.header ?? "No Header"
+    }
+    
+    var Body:String{
+        return self.body ?? "No Body"
+    }
+}
 
 class CrybseCoinMetaData:ObservableObject,Codable{
     init(){}
@@ -477,7 +506,7 @@ class CrybseCoinMetaData:ObservableObject,Codable{
    @Published var uuid:String?
    @Published var symbol:String?
    @Published var name:String?
-   @Published var description:String?
+   @Published var description:Array<CrybseCoinDescription>?
    @Published var color:String?
    @Published var iconUrl:String?
    @Published var websiteUrl:String?
@@ -528,7 +557,7 @@ class CrybseCoinMetaData:ObservableObject,Codable{
         uuid = try container.decode(String?.self, forKey: .uuid)
         symbol = try container.decode(String?.self, forKey: .symbol)
         name = try container.decode(String?.self, forKey: .name)
-        description = try container.decode(String?.self, forKey: .description)
+        description = try container.decode(Array<CrybseCoinDescription>?.self, forKey: .description)
         color = try container.decode(String?.self, forKey: .color)
         iconUrl = try container.decode(String?.self, forKey: .iconUrl)
         supply = try container.decode(CoinSupply?.self, forKey: .supply)
@@ -583,8 +612,8 @@ class CrybseCoinMetaData:ObservableObject,Codable{
         return self.links?.compactMap({$0}) ?? []
     }
     
-    var Description:String{
-        return self.description ?? ""
+    var Description:Array<CrybseCoinDescription>{
+        return self.description ?? []
     }
     
     var Symbol:String{

@@ -8,12 +8,13 @@
 import Foundation
 import Combine
 import SwiftUI
+
 // MARK: - CrybseCoinData
-class CrybseCoinSocialDataResponse:Codable{
-    var data:CrybseCoinData?
+class CrybseCoinDataResponse:Codable{
+    var data:CrybseCoinSocialData?
     var success:Bool
     
-    init(data:CrybseCoinData? = nil,success:Bool = false){
+    init(data:CrybseCoinSocialData? = nil,success:Bool = false){
         self.data = data
         self.success = success
     }
@@ -21,11 +22,12 @@ class CrybseCoinSocialDataResponse:Codable{
 }
 
 
-class CrybseCoinData:ObservableObject,Codable{
+class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var tweets: Array<AssetNewsData>?
     @Published var metaData:CrybseCoinMetaData?
     @Published var timeSeriesData:Array<CryptoCoinOHLCVPoint>?
-    @Published var news:Array<CryptoNews>?
+    @Published var prices:CrybseCoinPrices?
+    @Published var news:Array<AssetNewsData>?
     @Published var tradingSignals:CrybseTradingSignalsData?
     
     var cancellable:AnyCancellable? = nil
@@ -44,6 +46,7 @@ class CrybseCoinData:ObservableObject,Codable{
         case timeSeriesData
         case news
         case tradingSignals
+        case prices
     }
     
     required init(from decoder: Decoder) throws {
@@ -51,8 +54,9 @@ class CrybseCoinData:ObservableObject,Codable{
         tweets = try container.decode(Array<AssetNewsData>?.self, forKey: .tweets)
         metaData = try container.decode(CrybseCoinMetaData?.self, forKey: .metaData)
         timeSeriesData = try container.decode(Array<CryptoCoinOHLCVPoint>?.self, forKey: .timeSeriesData)
-        news = try container.decode(Array<CryptoNews>?.self, forKey: .news)
+        news = try container.decode(Array<AssetNewsData>?.self, forKey: .news)
         tradingSignals = try container.decode(CrybseTradingSignalsData?.self, forKey: .tradingSignals)
+        prices = try container.decode(CrybseCoinPrices?.self, forKey: .prices)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -62,17 +66,18 @@ class CrybseCoinData:ObservableObject,Codable{
         try container.encode(timeSeriesData, forKey: .timeSeriesData)
         try container.encode(news, forKey: .news)
         try container.encode(tradingSignals, forKey: .tradingSignals)
+        try container.encode(prices,forKey: .prices)
     }
     
     var TimeSeriesData:[CryptoCoinOHLCVPoint]{
-        self.TimeseriesData ?? []
+        self.TimeseriesData
     }
     
-    static func parseCoinDataFromData(data:Data) -> CrybseCoinData?{
-        var coinData:CrybseCoinData? = nil
+    static func parseCoinDataFromData(data:Data) -> CrybseCoinSocialData?{
+        var coinData:CrybseCoinSocialData? = nil
         let decoder = JSONDecoder()
         do{
-            let res = try decoder.decode(CrybseCoinSocialDataResponse.self, from: data)
+            let res = try decoder.decode(CrybseCoinDataResponse.self, from: data)
             if let data = res.data, res.success{
                 coinData = data
             }else{
@@ -115,7 +120,7 @@ class CrybseCoinData:ObservableObject,Codable{
         }
     }
     
-    var News:Array<CryptoNews>{
+    var News:Array<AssetNewsData>{
         get{
             return self.news ?? []
         }

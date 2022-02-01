@@ -25,7 +25,7 @@ struct CurrencyFeedView: View {
         self.reload = reload
     }
     
-    func handleCurrencyChange(_ newCurrency:CrybseCoinPrice?){
+    func handleCurrencyChange(_ newCurrency:CrybseCoinSpotPrice?){
         if let sym = newCurrency?.Currency{
             setWithAnimation {
                 self.currency = sym

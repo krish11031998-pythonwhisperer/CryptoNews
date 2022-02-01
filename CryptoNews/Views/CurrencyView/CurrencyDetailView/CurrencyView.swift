@@ -24,6 +24,7 @@ enum CurrencyViewSection{
     case feed
     case none
 }
+
 struct CurrencyView:View{
     @EnvironmentObject var context:ContextData
     @StateObject var assetData:CrybseAsset
@@ -42,7 +43,7 @@ struct CurrencyView:View{
         self._assetData = .init(wrappedValue: asset)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(coinUID: asset.coinData?.uuid ?? "", fiat: "USD", crypto: asset.Currency))
+        self._coinAPI = .init(wrappedValue: .init(crypto: asset.Currency, coinUID: asset.coinData?.uuid ?? "", fiat: "USD"))
     }
     
     
@@ -51,18 +52,17 @@ struct CurrencyView:View{
         if self.assetData.coin == nil{
             self.coinAPI.getCoinData()
             self.loading.toggle()
-        }else if let _ = self.assetData.coin?.TimeseriesData{
-            CrybseTimeseriesPriceAPI.shared.getPrice(currency: self.assetData.Currency) { data in
-                if let timeData = CrybseTimeseriesPriceAPI.parseData(data: data){
-                    setWithAnimation {
-                        self.assetData.coin?.TimeseriesData = timeData
-                    }
+        }else if let _ = self.assetData.coin?.prices{
+            CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: self.assetData.coin?.MetaData.Name.lowercased() ?? "xxx", interval: "m1") { price in
+                guard let latestPrice = price.last else {return}
+                setWithAnimation {
+                    self.assetData.coin?.prices?.append(latestPrice)
                 }
             }
         }
     }
     
-    func onReceiveCoinData(_ coinData: CrybseCoinData?){
+    func onReceiveCoinData(_ coinData: CrybseCoinSocialData?){
         guard let coinData = coinData else {
             return
         }
@@ -91,14 +91,14 @@ struct CurrencyView:View{
         return self.coinAPI.coinData?.Tweets
     }
     
-    var news:[CryptoNews]?{
+    var news:[AssetNewsData]?{
         return self.coinAPI.coinData?.News
     }
     
     
     @ViewBuilder func feedView(w:CGFloat) -> some View{
         if let feed = self.tweets{
-            LazyScrollView(data: feed.compactMap({$0 as Any}),embedScrollView: false) { data in
+            LazyScrollView(data: feed.compactMap({$0 as Any}),embedScrollView: false,stopLoading: true) { data in
                 if let data = data as? AssetNewsData{
                     let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                     PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
@@ -165,7 +165,7 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-            LazyScrollView(data: [1], embedScrollView: true) { _ in
+            LazyScrollView(data: [1], embedScrollView: true, stopLoading: true){ _ in
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
                     .onChange(of: self.refresh) { refresh in}
             }
@@ -193,8 +193,8 @@ struct CurrencyView:View{
     }
     
     func onDisappear(){
-        guard let safeURL = self.coinAPI.url,let originalCoinData = self.coinAPI.coinData,let coinData = self.assetData.coin else {return}
-        let coinResponse = CrybseCoinSocialDataResponse(data: coinData, success: true)
+        guard let safeURL = self.coinAPI.request?.url,let originalCoinData = self.coinAPI.coinData,let coinData = self.assetData.coin else {return}
+        let coinResponse = CrybseCoinDataResponse(data: coinData, success: true)
         let encoder = JSONEncoder()
         do{
             let res = try encoder.encode(coinResponse)

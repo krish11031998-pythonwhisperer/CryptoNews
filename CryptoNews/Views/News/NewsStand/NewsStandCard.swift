@@ -12,10 +12,7 @@ struct NewsStandCard: View {
 //    var news:AssetNewsData
     var news:Any
     var size:CGSize
-//    init(news:AssetNewsData,size:CGSize = .init(width: totalWidth - 20, height: 250)){
-//        self.news = news
-//        self.size = size
-//    }
+    
     init(news:Any,size:CGSize = .init(width: totalWidth - 20, height: 250)){
         self.news = news
         self.size = size
@@ -34,7 +31,7 @@ struct NewsStandCard: View {
     func mainBody(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .top, spacing: 10) {
             self.mainText
-                .frame(height: h - 20, alignment: .topLeading)
+                .frame(height: h, alignment: .topLeading)
             Spacer()
             if let data = self.news as? AssetNewsData{
                 ImageView(url: data.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
@@ -116,24 +113,22 @@ struct NewsStand:View{
     
     
     var body: some View{
-//        Container(heading: "News", width: width) { w in
-                ZStack(alignment:.top){
-                    if self.MAPI.FeedData.isEmpty{
-                        ProgressView()
-                    }else{
-                        VStack(alignment: .center, spacing: 10) {
-                            ForEach(self.MAPI.FeedData) { data in
-                                NewsStandCard(news: data,size: .init(width: width, height: 225))
-                            }
-                            TabButton(width: width, title: "Load More", action: {
-                                withAnimation(.easeInOut) {
-                                    self.showMoreView = true
-                                }
-                            }).padding(.top,10)
-                        }
+        ZStack(alignment:.top){
+            if self.MAPI.FeedData.isEmpty{
+                ProgressView()
+            }else{
+                VStack(alignment: .center, spacing: 10) {
+                    ForEach(self.MAPI.FeedData) { data in
+                        NewsStandCard(news: data,size: .init(width: width, height: 225))
                     }
-                }.onAppear(perform: self.onAppear)
-//        }
+                    TabButton(width: width, title: "Load More", action: {
+                        withAnimation(.easeInOut) {
+                            self.showMoreView = true
+                        }
+                    }).padding(.top,10)
+                }
+            }
+        }.onAppear(perform: self.onAppear)
     }
     
 }

@@ -9,9 +9,9 @@ import SwiftUI
 
 class CurrencySelectorPreference:PreferenceKey{
     
-    static var defaultValue:CrybseCoinPrice? = nil
+    static var defaultValue:CrybseCoinSpotPrice? = nil
     
-    static func reduce(value: inout CrybseCoinPrice?, nextValue: () -> CrybseCoinPrice?) {
+    static func reduce(value: inout CrybseCoinSpotPrice?, nextValue: () -> CrybseCoinSpotPrice?) {
         value = nextValue()
     }
     
@@ -76,7 +76,7 @@ struct CurrencyCardView: View {
     var width:CGFloat
     var large:Bool
     @State var currency:CrybseCoin = .init()
-    @State var price:CrybseCoinPrice? = nil
+    @State var price:CrybseCoinSpotPrice? = nil
 
     init(width:CGFloat = totalWidth,large:Bool = false){
         self._CoinsAPI = .init(wrappedValue: .init())
@@ -149,7 +149,7 @@ extension CurrencyCardView{
         guard let sym = sym else {return}
         CrybsePriceAPI.shared.getSinglePrice(curr: sym) { price in
             if let price = price {
-                let newPrice = CrybseCoinPrice()
+                let newPrice = CrybseCoinSpotPrice()
                 newPrice.USD = price.close
                 newPrice.Currency = sym
                 self.price = newPrice

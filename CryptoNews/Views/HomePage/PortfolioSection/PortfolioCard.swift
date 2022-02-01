@@ -64,7 +64,7 @@ struct PortfolioCard: View {
         HStack(alignment: .center, spacing: 10) {
             MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: self.priceColor, orientation: .vertical, alignment: .topLeading)
             Spacer()
-            MainText(content: "Rank #\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
+            MainText(content: "#\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
                 .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
         }
         .frame(width: inner_w,height: self.innerViewSize.height * 0.1, alignment: .topLeading)

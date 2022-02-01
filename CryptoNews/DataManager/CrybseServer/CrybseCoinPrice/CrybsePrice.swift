@@ -7,8 +7,8 @@
 
 import Foundation
 
-class CrybseCoinPrice:Codable,Equatable{
-    static func == (lhs: CrybseCoinPrice, rhs: CrybseCoinPrice) -> Bool {
+class CrybseCoinSpotPrice:Codable,Equatable{
+    static func == (lhs: CrybseCoinSpotPrice, rhs: CrybseCoinSpotPrice) -> Bool {
         return lhs.Currency == rhs.Currency && lhs.USD == rhs.USD
     }
     
@@ -20,7 +20,7 @@ class CrybseCoinPrice:Codable,Equatable{
     }
 }
 
-class CrybseCoinPriceResponse:Codable{
+class CrybseCoinSpotPriceResponse:Codable{
     var data:[String:[CryptoCoinOHLCVPoint]]?
     var success:Bool
     var err:String?
@@ -77,7 +77,7 @@ class CrybsePriceAPI:CrybseAPI{
         var result:[String:[CryptoCoinOHLCVPoint]]?
         let decoder = JSONDecoder()
         do{
-            let res = try decoder.decode(CrybseCoinPriceResponse.self, from: data)
+            let res = try decoder.decode(CrybseCoinSpotPriceResponse.self, from: data)
             if let data = res.data,res.success{
                 result = data
             }

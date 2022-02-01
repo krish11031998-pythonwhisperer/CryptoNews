@@ -7,36 +7,18 @@
 
 import Foundation
 
-class CrybseCoinQuery:Loopable{
-    var orderBy:String?
-    var orderDirection:String?
-    var tags:[String]?
-    var limit:Int?
-    var offset:Int?
-    
-    var keyValues:[String:Any]?{
-        var res:[String:Any]? = nil
-        do{
-            res = try self.allKeysValues(obj: nil)
-        }catch{
-            print("(DEBUG) There was an error while trying to get teh keyValues : ",error.localizedDescription)
-        }
-        return res
-    }
-}
-
-
 class CrybseCoinsResponse:Codable{
-    var data:[CrybseCoin]?
+    var data:CrybseCoins?
     var success:Bool
 }
 
 class CrybseCoinsAPI:CrybseAPI{
-    @Published var coins:[CrybseCoin] = []
+    @Published var coins:CrybseCoins = []
     
     var coinQuery:CrybseCoinQuery? = nil
     
     init(orderBy:String? = nil,orderDirection:String? = nil,tags:[String]? = nil,limit:Int? = nil,offset:Int? = nil){
+        
         self.coinQuery = .init()
         self.coinQuery?.orderBy = orderBy
         self.coinQuery?.orderDirection = orderDirection
@@ -57,9 +39,7 @@ class CrybseCoinsAPI:CrybseAPI{
                 for tag in strValues{
                     queries?.append(.init(name: "\(key)[]", value: tag))
                 }
-                
             }
-            
         }
         return queries
     }
@@ -70,26 +50,12 @@ class CrybseCoinsAPI:CrybseAPI{
     
     
     override func parseData(url: URL, data: Data) {
-        let coins = self.parseCoinsFromData(data: data)
+        let coins = CrybseCoins.parseCrybseCoinsFromData(data: data)
         if !coins.isEmpty{
             setWithAnimation {
                 self.coins = coins
             }
         }
-    }
-    
-    func parseCoinsFromData(data:Data) -> [CrybseCoin]{
-        var res:[CrybseCoin] = []
-        let decoder = JSONDecoder()
-        do{
-            let response = try decoder.decode(CrybseCoinsResponse.self, from: data)
-            if let data = response.data, response.success{
-                res = data
-            }
-        }catch{
-            print("There was an issue with parsing the CoinResponse : ",error.localizedDescription)
-        }
-        return res
     }
     
     func getCoins(){

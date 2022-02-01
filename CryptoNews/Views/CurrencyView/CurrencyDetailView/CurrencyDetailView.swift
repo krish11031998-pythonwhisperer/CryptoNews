@@ -17,6 +17,7 @@ struct ShowSectionPreferenceKey:PreferenceKey{
 
 struct CurrencyDetailView: View {
     @EnvironmentObject var context:ContextData
+    @Namespace var animation
     @State var showMoreSection:CurrencyViewSection = .none
     @StateObject var timeSeriesAPI:CrybseTimeseriesPriceAPI
     @ObservedObject var assetData: CrybseAsset
@@ -25,6 +26,8 @@ struct CurrencyDetailView: View {
     @State var refresh:Bool = false
     @State var choosen:Int = -1
     @State var choosen_sent:Int = -1
+    @State var choosenTimeInterval:String = "1hr"
+    let timeLimit:Int = 300
     let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     init(
         assetData:CrybseAsset,
@@ -57,10 +60,7 @@ extension CurrencyDetailView{
     @ViewBuilder var mainView:some View{
         self.priceMainInfo
         self.transactionHistoryView
-//        self.TradingSignalsView
         self.paginatedViews.padding(.top,10)
-//        self.feedContainer
-//        self.newsContainer
     }
     
     var CurrencyGeneralView:some View{
@@ -74,37 +74,91 @@ extension CurrencyDetailView{
         return 25
     }
 
-    var socialData:CrybseCoinData?{
+    var socialData:CrybseCoinSocialData?{
         return self.assetData.coin
     }
     
-    func OnReceiveTimer(_ time:Date){
-        if self.timeCounter < 60{
+    func getLatestPrice(){
+        guard let name = self.assetData.coin?.MetaData.Name.lowercased() else {
+            print("(Error) Invalid CoinName !")
             setWithAnimation {
-                self.timeCounter += 1
+                self.timeCounter = 0
             }
-        }else if !self.timeSeriesAPI.loading{
-            self.timeSeriesAPI.refreshTimseriesPrice()
+            return
+        }
+        
+        if !self.refresh{
+            self.refresh.toggle()
+        }
+        
+        CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: name, interval: "m5") { prices in
+            if let latestPrice = prices.last{
+                setWithAnimation {
+                    self.assetData.coin?.prices?.append(latestPrice)
+                }
+            }
+            self.timeCounter = 0
+            self.refresh.toggle()
         }
     }
     
-    var loadingPriceView:some View{
-        let percent = (1 - Float(self.timeCounter)/Float(60)) * Float(100)
+    func OnReceiveTimer(_ time:Date){
+        if self.timeCounter < timeLimit{
+            setWithAnimation {
+                self.timeCounter += 1
+            }
+        }else if !self.refresh{
+            self.getLatestPrice()
+        }
+    }
+    
+    var choosenPriceData:CrybseCoinPrice{
+        if self.choosen != -1{
+            let offset = self.Prices.count - self.timeSpan
+            let idx = offset + (self.choosen == -1 ? 0 : self.choosen)
+            return self.Prices[idx]
+        }
         
+        return self.Prices.last ?? .init()
+    }
+    
+    var NowPriceView:some View{
+
+        let nowText:String = self.choosen == -1 ? "Now" : self.choosenPriceData.DateValue
+
         return HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: "Now", subHeading: convertToMoneyNumber(value: self.price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
+            MainSubHeading(heading: nowText, subHeading: convertToMoneyNumber(value: self.choosenPriceData.Price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
             Spacer()
-            if self.timeSeriesAPI.loading{
+            if self.refresh{
                 ProgressView().frame(width: 30, height: 30, alignment: .center)
             }else{
-                CircleChart(percent: percent, size: .init(width: 20, height: 20), widthFactor: 0.15)
+                self.refreshMeter
             }
         }.frame(width: self.size.width, alignment: .center)
     }
     
+    var refreshMeter:some View{
+        let percent = (1 - Float(self.timeCounter)/Float(timeLimit))
+        let color = percent > 0.65 ? Color.green : percent <= 0.65 && percent >= 0.35 ? Color.orange : Color.red
+        return VStack(alignment: .center, spacing: 5) {
+            MainText(content: "Refresh", fontSize: 15, color: .white, fontWeight: .semibold)
+            ZStack(alignment: .leading) {
+                RoundedRectangle(cornerRadius: 20)
+                    .background(BlurView.thinDarkBlur)
+                    .frame(width: 50, height: 2, alignment: .center)
+                    
+                RoundedRectangle(cornerRadius: 20)
+                    .fill(color)
+                    .frame(width: 50 * CGFloat(percent), height: 2, alignment: .center)
+                    
+            }
+        }
+    }
+    
     var  priceMainInfo:some View{
         VStack(alignment: .leading, spacing: 10) {
-            self.loadingPriceView
+            self.NowPriceView
+            self.choosenTimeIntervalView
             if !self.OHLCV.isEmpty{
                 self.priceInfo
             }
@@ -112,7 +166,7 @@ extension CurrencyDetailView{
         }
     }
     
-    var News:[CryptoNews]{
+    var News:[AssetNewsData]{
         return self.socialData?.News ?? []
     }
     
@@ -137,7 +191,7 @@ extension CurrencyDetailView{
     }
     
     var profit:Float{
-        if self.choosen != -1,let selectedPrice = self.OHLCV[self.choosen].close{
+        if self.choosen != -1,let selectedPrice = self.Prices[self.choosen].price{
             return self.assetData.txns?.map({$0.asset_quantity * (selectedPrice - $0.asset_spot_price)}).reduce(0, {$0 == 0 ? $1 : $0 + $1}) ?? self.assetData.Profit
         }
         
@@ -192,16 +246,11 @@ extension CurrencyDetailView{
     @ViewBuilder var infoSection:some View{
         if let coinMetaData = self.socialData?.MetaData{
             Container(heading: "About",headingSize: headingFontSize, width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
-                MainText(content:"What is \(coinMetaData.Symbol)", fontSize: 17.5, color: .white, fontWeight: .semibold)
-                    .frame(width: w, alignment: .leading)
-                ForEach(coinMetaData.Description.split(separator: "\n"), id:\.self) { text in
-                    if text.contains("<p>") && text.contains("</p>") {
-                        MainText(content: text.replacingOccurrences(of: "<p>", with: "").replacingOccurrences(of: "</p>", with: ""), fontSize: 15, color: .white, fontWeight: .regular)
-                            .frame(width: w, alignment: .leading)
-                    }else{
-                        MainText(content: text.replacingOccurrences(of: "<h3>", with: "").replacingOccurrences(of: "</h3>", with: ""), fontSize: 17.5, color: .white, fontWeight: .semibold)
-                            .frame(width: w, alignment: .leading)
-                    }
+                ForEach(Array(coinMetaData.Description.enumerated()), id:\.offset) { _desc in
+                    let description = _desc.element
+                    
+                    MainSubHeading(heading: description.Header, subHeading: description.Body, headingSize: 17.5, subHeadingSize: 15, headColor: .white, subHeadColor: .white,orientation: .vertical, headingWeight: .semibold, bodyWeight: .regular, spacing: 15, alignment: .leading)
+                        .frame(width: w, alignment: .leading)
                 }
             }
             .basicCard(size: .zero)
@@ -212,13 +261,19 @@ extension CurrencyDetailView{
     }
     
     
-    @ViewBuilder func cardBuilder(data:Any) -> some View{
-        if let news = data as? CryptoNews{
-            NewsStandCard(news: news,size:.init(width: size.width, height: 200))
-        }else if let post = data as? AssetNewsData{
-            PostCard(cardType: .Tweet, data: post, size: self.size,bg: .light, const_size: false)
-        }else{
-            Color.clear.frame(width:.zero, height: .zero, alignment: .center)
+    @ViewBuilder func cardBuilder(type:PostCardType,data:Any) -> some View{
+        switch(type){
+            case .Tweet:
+                if let post = data as? AssetNewsData{
+                    PostCard(cardType: .Tweet, data: post, size: self.size,bg: .light, const_size: false)
+                }else{
+                    Color.clear
+                }
+                
+            case .News:
+                NewsStandCard(news: data,size:.init(width: size.width, height: 200))
+            default:
+                Color.clear.frame(width:.zero, height: .zero, alignment: .center)
         }
     }
     
@@ -249,16 +304,67 @@ extension CurrencyDetailView{
         }
     }
         
+    var timeSpan:Int{
+        let hr = 12
+        if self.choosenTimeInterval == "3hr"{
+            return hr * 3
+        }else if self.choosenTimeInterval == "6hr"{
+            return hr * 6
+        }else if self.choosenTimeInterval == "24hr"{
+            return hr * 24
+        }
+        return hr
+    }
+    
+    var choosenTimeIntervalView:some View{
+        let intervals:[String] = ["1hr","3hr","6hr","24hr"]
+        return HStack(alignment: .center, spacing: 10) {
+            ForEach(Array(intervals.enumerated()),id:\.offset){ _interval in
+                let interval = _interval.element
+                let idx = _interval.offset
+                
+                Button {
+                    self.choosenTimeInterval = interval
+                } label:{
+                    MainText(content: interval, fontSize: 10, color: self.choosenTimeInterval == interval ? .white : .white, fontWeight: .semibold,padding: 10)
+                        .padding(10)
+                        .background(
+                            ZStack(alignment: .center){
+                                if self.choosenTimeInterval == interval{
+                                    BlurView
+                                        .thinLightBlur
+                                        .matchedGeometryEffect(id: "hightlighted", in: self.animation,properties:.position)
+                                }else{
+                                    Color.clear
+                                }
+                            }
+                                .clipContent(clipping: .roundCornerMedium)
+                                .animation(.spring(), value: self.choosenTimeInterval)
+                        )
+                        .clipContent(clipping: .roundCornerMedium)
+                    
+                }
+                    
+                if idx != intervals.count - 1{
+                    Spacer()
+                }
+                
+            }
+        }.padding(10)
+        .frame(width: self.size.width, alignment: .center)
+        .background(BlurView.thinDarkBlur)
+        .clipContent(clipping: .roundClipping)
+    }
     
     func infoViewGen(type:PostCardType) -> some View{
         let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
         var data:[Any] = type == .News ? self.News : self.Tweets
         data = data.count < 5 ? data : Array(data[0...4])
         return Container(headingDivider: false, width: self.size.width, ignoreSides: true) { w in
-            VStack(alignment: .center, spacing: 10) {
+            VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(data.enumerated()),id:\.offset) { _data in
                     let data = _data.element
-                    self.cardBuilder(data: data)
+                    self.cardBuilder(type:type,data: data)
                         .aspectRatio(contentMode: .fit)
                 }
                 TabButton(width: size.width, title: "Load More", action: {
@@ -293,6 +399,13 @@ extension CurrencyDetailView{
         return timeSeries.count >= 10 ? Array(timeSeries[(timeSeries.count - 10)...]) : timeSeries
     }
     
+    
+    var Prices:CrybseCoinPrices{
+        guard let prices = self.assetData.coin?.prices else {return []}
+        let length = prices.count
+        return prices.count > self.timeSpan ? Array(prices[(length - self.timeSpan)...]) : prices
+    }
+    
     var priceInfo:some View{
         let asset = self.choosen == -1 ? self.OHLCV.last ?? .init() : self.OHLCV[self.choosen]
         return HStack(alignment: .top, spacing: 20){
@@ -306,23 +419,25 @@ extension CurrencyDetailView{
     
     var curveChart:some View{
         return ZStack(alignment: .center){
-            if !self.OHLCV.isEmpty{
-                CurveChart(data: OHLCV.compactMap({$0.close}),choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
+            if !self.Prices.isEmpty{
+                CurveChart(data: Prices.compactMap({$0.price}),choosen: $choosen,interactions: true,size: self.size, bg: .clear,chartShade: true)
             }else{
-                MainText(content: "NO Time Series Data", fontSize: 20, color: .white, fontWeight: .bold)
+                MainText(content: "No Time Series Data", fontSize: 20, color: .white, fontWeight: .bold)
+                    .frame(width: self.size.width, height: self.size.height, alignment: .center)
             }
         }
     }
     
     
     var price:Float{
-        if self.choosen > 0 && self.choosen < self.OHLCV.count{
-            return self.OHLCV[self.choosen].close ?? 0
-        }else if let latestPrice = self.OHLCV.last?.close{
-            return latestPrice
-        }else{
-            return self.socialData?.MetaData.Price ?? 0
+        if !self.Prices.isEmpty{
+            if self.choosen > 0 && self.choosen < self.Prices.count{
+                return self.Prices[self.choosen].Price
+            }else if let latestPrice = self.Prices.last{
+                return latestPrice.Price
+            }
         }
+        return self.socialData?.MetaData.Price ?? 0
     }
     
     func text(heading:String,info:String,heading_size:CGFloat = 12.5,info_size:CGFloat = 17.5) -> some View{
@@ -333,19 +448,8 @@ extension CurrencyDetailView{
     }
     
     func onReceiveNewTimeseriesData(timeSeries:Array<CryptoCoinOHLCVPoint>?){
-        guard let safeTimeseries = timeSeries else {return}
         setWithAnimation {
-            let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.time! >= self.assetData.LatestPriceTime + 60 ? $0 : nil : nil})
-            for count in 0..<latestPrices.count{
-                let latestPrice = latestPrices[count]
-                self.assetData.coin?.TimeseriesData.append(latestPrice)
-                if let latestClosePrice = latestPrice.close,count == (latestPrices.count - 1){
-                    let newValue = self.coinTotal * latestClosePrice
-                    self.assetData.profit = self.assetData.Profit + (newValue - self.assetData.Value)
-                    self.assetData.value = newValue
-                    self.assetData.Price = latestClosePrice
-                }
-            }
+            self.assetData.updatePriceWithLatestTimeSeriesPrice(timeSeries: timeSeries)
             self.timeCounter = 0
         }
     }

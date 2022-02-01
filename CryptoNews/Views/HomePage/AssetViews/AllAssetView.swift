@@ -11,16 +11,8 @@ import Combine
 struct AllAssetView: View {
     @EnvironmentObject var context:ContextData
 //    @StateObject var assetAPI:CrybseAssetsAPI = .init(symbols: nil, uid: nil)
-    var timer = Timer.TimerPublisher(interval: 30, runLoop: .main, mode: .common).autoconnect()
-    
-//    func onAppear(){
-//        guard let uid = self.context.user.user?.uid , let currencies = self.context.user.user?.watching, self.assetAPI.coinsData == nil else {return}
-//        self.assetAPI.uid = uid
-//        self.assetAPI.symbols = currencies
-//        self.assetAPI.getAssets()
-//
-//    }
-    
+    var timer = Timer.TimerPublisher(interval: 150, runLoop: .main, mode: .common).autoconnect()
+        
     var assets:CrybseAssets{
         return self.context.userAssets
     }
@@ -35,11 +27,11 @@ struct AllAssetView: View {
     }
     
     func updateAssetPrices(){
-        CrybsePriceAPI.shared.getMultiplePrice(curr: self.context.Currencies) { assetPriceValue in
-            guard let safeAssetPrice = assetPriceValue else {return}
-            for (currency,timePrice) in safeAssetPrice{
-                if let _ = self.context.userAssets.assets?[currency],let latestPrice = timePrice.last?.close{
-                    self.context.userAssets.assets?[currency]?.Price = latestPrice
+        print("(DEBUG) Currencies : ",self.context.Currencies)
+        if self.context.Currencies.count  > 0{
+            CrybseMultiCoinPriceAPI.shared.getPrices(coins: self.context.Currencies) { prices in
+                for (currency,price) in prices{
+                    self.context.userAssets.assets?[currency]?.Price = price.USD
                 }
             }
         }
@@ -63,7 +55,6 @@ struct AllAssetView: View {
     
     var body: some View {
         self.mainBody
-//            .onAppear(perform: self.onAppear)
             .onReceive(self.timer) { _ in
                 self.updateAssetPrices()
             }

@@ -26,7 +26,7 @@ struct ButtonScrollView:View{
     
     func tabBarHeader(proxy:ScrollViewProxy) -> some View {
         
-        HStack(spacing:20){
+        LazyHStack(spacing:20){
             ForEach(Array(self.headers.enumerated()),id:\.offset){ _header in
                 let header = _header.element
                 let color:Color = self.selectedTab == nil || (self.selectedTab != nil && self.selectedTab! != header) ? .white : .white

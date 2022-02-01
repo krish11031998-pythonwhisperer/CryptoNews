@@ -103,7 +103,6 @@ class MarketAPI:DAPI{
     }
     
     func getMarketData(){
-//        self.getData(_url: self.marketURL, completion: self.parseData(data:))
         self.getData(_url: self.marketURL)
     }
     
