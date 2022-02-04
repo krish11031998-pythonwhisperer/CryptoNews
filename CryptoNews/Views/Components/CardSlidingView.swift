@@ -22,7 +22,7 @@ struct CardSlidingView: View {
         self.centralize = centralize
     }
 
-    @ViewBuilder func viewGen(view:AnyView,idx:Int,scrollProxy:ScrollViewProxy) -> some View{
+    @ViewBuilder func viewGen(view:AnyView,idx:Int,scrollProxy:ScrollViewProxy? = nil) -> some View{
         if self.centralize{
             view
                 .id(idx)

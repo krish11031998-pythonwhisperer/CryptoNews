@@ -60,6 +60,7 @@ extension CurrencyDetailView{
     @ViewBuilder var mainView:some View{
         self.priceMainInfo
         self.transactionHistoryView
+        self.CurrencyGeneralView
         self.paginatedViews.padding(.top,10)
     }
     
@@ -187,7 +188,7 @@ extension CurrencyDetailView{
     }
     
     var paginatedViews:some View{
-        ButtonScrollView(headerviews: ["General":AnyView(self.CurrencyGeneralView),"Twitter":AnyView(self.feedContainer),"News":AnyView(self.newsContainer)], width: self.size.width)
+        ButtonScrollView(headerviews: ["Twitter":AnyView(self.feedContainer),"News":AnyView(self.newsContainer)], width: self.size.width)
     }
     
     var profit:Float{
@@ -234,8 +235,8 @@ extension CurrencyDetailView{
         if !self.txns.isEmpty{
             MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,profit: self.profit, fee: 1.36, totalfee: 0.0, totalBuys: 1,currentPrice: self.price,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
             HStack(alignment: .center, spacing: 10) {
-                TabButton(width: self.size.width * 0.5 - 5, height: 50, title: "View Portfolio", textColor: .white,action: self.viewPortfolio)
-                TabButton(width: self.size.width * 0.5 - 5, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
+                TabButton(width: self.size.width * 0.5 - 10, height: 50, title: "View Portfolio", textColor: .white,action: self.viewPortfolio)
+                TabButton(width: self.size.width * 0.5 - 10, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
             }.frame(width: self.size.width, alignment: .center)
         }else{
             TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
@@ -357,7 +358,6 @@ extension CurrencyDetailView{
     }
     
     func infoViewGen(type:PostCardType) -> some View{
-        let title = type == .News ? "News" : type == .Tweet ? "Tweets" : "Reddit"
         var data:[Any] = type == .News ? self.News : self.Tweets
         data = data.count < 5 ? data : Array(data[0...4])
         return Container(headingDivider: false, width: self.size.width, ignoreSides: true) { w in

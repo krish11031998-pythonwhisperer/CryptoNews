@@ -91,7 +91,7 @@ struct CrybPostMainView: View {
     }
 }
 
-struct CrybPostMaiNView_Previews: PreviewProvider {
+struct CrybPostMainView_Previews: PreviewProvider {
     static var previews: some View {
         CrybPostMainView()
             .background(mainBGView)

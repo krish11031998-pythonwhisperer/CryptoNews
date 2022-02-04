@@ -13,7 +13,7 @@ struct CrybPostGen: View {
     @State var image:UIImage? = nil 
     @State var showImagePicker:Bool = false
     @StateObject var notification:NotificationData = .init()
-//    @State var showKeyboard:Bool = true
+    @State var textheight:CGFloat = .zero
     @State var keyboardHeight:CGFloat = .zero
     let staticText:String = "Enter the value !"
     
@@ -75,8 +75,10 @@ struct CrybPostGen: View {
     }
     
     func doneEditting(){
-        if self.keyboardHeight != .zero{
-             UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        setWithAnimation {
+            if self.keyboardHeight != .zero{
+                 UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            }
         }
     }
     
@@ -94,6 +96,7 @@ struct CrybPostGen: View {
         ZStack(alignment: .bottom) {
             Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
                 self.header
+                
                 StylizedTextEditor(limit:350,width: w)
                     .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newText in
                         if self.text != newText{
@@ -101,21 +104,23 @@ struct CrybPostGen: View {
                         }
                     }
                 if self.keyboardHeight == .zero{
-                    self.imageView(w: w)
-                    self.sideButton(w: w)
+                    Spacer()
                     TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
                         print("Click on Add Poll")
-                    }.padding(.bottom,5)
+                    }
+                    .padding(.bottom,5)
                     TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
                 }else{
-                    TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting).padding(.vertical,15)
+                    TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting)
+                        .padding(.vertical,50)
                 }
                 
             }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
             if self.notification.showNotification{
                 self.notification.generateView()
             }
-        }.ignoresSafeArea()
+        }
+        .ignoresSafeArea(.keyboard, edges: .bottom)
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         
         
@@ -127,9 +132,9 @@ struct CrybPostGen: View {
         .frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
             .padding(.top,self.keyboardHeight)
             .keyboardAdaptiveValue(keyboardHeight: $keyboardHeight)
-            .sheet(isPresented: $showImagePicker) {
-                ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
-            }
+//            .sheet(isPresented: $showImagePicker) {
+//                ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
+//            }
         .onAppear {
             if self.context.showTab{
                 self.context.showTab.toggle()
@@ -175,7 +180,7 @@ struct CrybPostGen_Previews: PreviewProvider {
     static var previews: some View {
         CrybPostGen()
             .environmentObject(CrybPostGen_Previews.context)
-            .background(Color.mainBGColor)
+            .background(mainBGView)
             .ignoresSafeArea()
     }
 }

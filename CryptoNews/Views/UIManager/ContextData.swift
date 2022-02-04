@@ -230,15 +230,22 @@ extension ContextData{
     
     func AddNewTxn(txn:Transaction){
         let currency = txn.asset
-        if let _ = self.userAssets.assets?[currency]{
-            self.userAssets.assets?[currency]?.txns?.append(txn)
+        if let safeAsset = self.userAssets.assets?[currency]{
+            guard let watching = self.userAssets.watching else {return}
+            if watching.contains(currency){
+                self.userAssets.watching = watching.filter({$0 != currency})
+            }
+            self.userAssets.assets?[currency] = safeAsset
+            self.userAssets.tracked?.append(currency)
         }else{
             CrybseAssetsAPI.shared.getAssets(symbols: [currency], uid: txn.uid) { assets in
                 guard let safeAsset = assets?.assets?[currency] else {return}
                 safeAsset.txns = [txn]
                 self.userAssets.assets?[currency] = safeAsset
+                self.userAssets.tracked?.append(currency)
             }
         }
+
     }
     
     func signInHandler(){

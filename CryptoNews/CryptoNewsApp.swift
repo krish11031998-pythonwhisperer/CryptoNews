@@ -36,16 +36,14 @@ struct CryptoNewsApp: App {
     func fetchAssets(_ user:ProfileData?){
         guard let uid = user?.uid, let currencies = user?.watching else {return}
         CrybseAssetsAPI.shared.getAssets(symbols: currencies, uid: uid) { assets in
-//            setWithAnimation {
-                if let safeAssets = assets{
-                    self.context.userAssets = safeAssets
-                    print("(DEBUG) Tracked Assets : ",safeAssets.tracked)
-                    print("(DEBUG) Watched Assets : ",safeAssets.watching)
-                }
-                if self.loading{
-                    self.loading.toggle()
-                }
-//            }
+            if let safeAssets = assets{
+                self.context.userAssets = safeAssets
+                print("(DEBUG) Tracked Assets : ",safeAssets.tracked ?? [])
+                print("(DEBUG) Watched Assets : ",safeAssets.watching ?? [])
+            }
+            if self.loading{
+                self.loading.toggle()
+            }
         }
     }
     

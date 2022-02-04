@@ -125,7 +125,7 @@ struct StylizedTextEditor:View{
         UITextView.appearance().backgroundColor = .clear
     }
     
-    func resetPlaceHolderWhentextEditBeigns(){
+    func RemovePlaceHolderText(){
         if self.textObj.text == self.placeHolder{
             self.textObj.resetPlaceHolder()
         }
@@ -133,12 +133,14 @@ struct StylizedTextEditor:View{
     
     func textEditorView(w:CGFloat) -> some View{
         TextEditor(text: self.$textObj.text)
+            .onTapGesture(perform: self.RemovePlaceHolderText)
             .font(self.textObj.font)
             .foregroundColor(self.textObj.fontColor)
             .frame(width: w, alignment: .topLeading)
             .frame(maxHeight: totalHeight * 0.35, alignment: .center)
             .aspectRatio(contentMode: .fit)
-            .onTapGesture(perform: self.resetPlaceHolderWhentextEditBeigns)
+
+            .keyboardType(.twitter)
             .padding(.top,-7.5)
         
     }
@@ -175,8 +177,6 @@ struct CustomTextFieldPreviews:PreviewProvider{
         }
         
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
-        
-        
     }
     
 }

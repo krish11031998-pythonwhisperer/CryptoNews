@@ -35,8 +35,6 @@ struct LazyScrollView<T:View>: View {
     
     var reloadContainer:some View{
         GeometryReader{g -> AnyView in
-            
-//            let minY = g.frame(in: .global).minY
             let maxY = g.frame(in: .global).maxY
             
             DispatchQueue.main.async {

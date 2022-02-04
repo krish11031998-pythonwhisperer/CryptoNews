@@ -23,7 +23,7 @@ struct Media{
     
     static func generateMediaDataFromImage(key:String,img:UIImage) -> Media?{
         guard let data = img.jpegData(compressionQuality: 0.5) else {return nil}
-        return Media(name: key, data: data, mimeType: "img/jpg", filename: "\(arc4random()).jpg")
+        return Media(name: key, data: data, mimeType: "image/jpg", filename: "\(arc4random()).jpg")
     }
 }
 

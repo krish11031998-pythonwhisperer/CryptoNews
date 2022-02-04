@@ -29,7 +29,7 @@ struct CrybseView: View {
             }
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
-        .edgesIgnoringSafeArea(.all)
+        .ignoresSafeArea(.keyboard, edges: .bottom)
     }
     
     var body: some View {

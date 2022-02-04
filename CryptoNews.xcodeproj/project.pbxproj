@@ -125,6 +125,8 @@
 		EF5F456B278E6310008EC5EB /* DAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4568278E6310008EC5EB /* DAPI.swift */; };
 		EF5F456F278E6325008EC5EB /* CrybsePostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F456D278E6325008EC5EB /* CrybsePostData.swift */; };
 		EF5F4570278E6325008EC5EB /* CrybsePostAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F456E278E6325008EC5EB /* CrybsePostAPI.swift */; };
+		EF64A3C527A9D23100628487 /* LazyHScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF64A3C427A9D23100628487 /* LazyHScrollView.swift */; };
+		EF64A3C727AD3F9C00628487 /* DynamicHeightContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF64A3C627AD3F9C00628487 /* DynamicHeightContainer.swift */; };
 		EF6BA085278F80E6000DA7D2 /* CrybseAssetData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BA084278F80E6000DA7D2 /* CrybseAssetData.swift */; };
 		EF6BA088278F8127000DA7D2 /* CrybseCoinsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BA087278F8127000DA7D2 /* CrybseCoinsAPI.swift */; };
 		EF6BA08A27902D6F000DA7D2 /* RotationModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF6BA08927902D6F000DA7D2 /* RotationModifier.swift */; };
@@ -299,6 +301,8 @@
 		EF5F4568278E6310008EC5EB /* DAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAPI.swift; sourceTree = "<group>"; };
 		EF5F456D278E6325008EC5EB /* CrybsePostData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybsePostData.swift; sourceTree = "<group>"; };
 		EF5F456E278E6325008EC5EB /* CrybsePostAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybsePostAPI.swift; sourceTree = "<group>"; };
+		EF64A3C427A9D23100628487 /* LazyHScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyHScrollView.swift; sourceTree = "<group>"; };
+		EF64A3C627AD3F9C00628487 /* DynamicHeightContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicHeightContainer.swift; sourceTree = "<group>"; };
 		EF6BA084278F80E6000DA7D2 /* CrybseAssetData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybseAssetData.swift; sourceTree = "<group>"; };
 		EF6BA087278F8127000DA7D2 /* CrybseCoinsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinsAPI.swift; sourceTree = "<group>"; };
 		EF6BA08927902D6F000DA7D2 /* RotationModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RotationModifier.swift; sourceTree = "<group>"; };
@@ -501,6 +505,8 @@
 				BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */,
 				EF4F39F0279853F00040688E /* HighlightView.swift */,
 				EF009EA127A09FE100486B33 /* ButtonScrollView.swift */,
+				EF64A3C427A9D23100628487 /* LazyHScrollView.swift */,
+				EF64A3C627AD3F9C00628487 /* DynamicHeightContainer.swift */,
 			);
 			path = Components;
 			sourceTree = "<group>";
@@ -1323,6 +1329,7 @@
 				BCBC1DC026BE835100B87E5C /* Constants.swift in Sources */,
 				BCE861C3274D6E9200F0E8C2 /* NotificationTestView.swift in Sources */,
 				BCE861A82735534500F0E8C2 /* InfoGrid.swift in Sources */,
+				EF64A3C527A9D23100628487 /* LazyHScrollView.swift in Sources */,
 				BCBC1DB726BE824300B87E5C /* ChartsMainView.swift in Sources */,
 				EF6C4E502781C65A00AF54C8 /* CrybseTransactionAPI.swift in Sources */,
 				BCB7836626C67874009D5822 /* TimerBlobs.swift in Sources */,
@@ -1354,6 +1361,7 @@
 				EF1D5C432784ED2B003718BA /* CrybseTimelinePrice.swift in Sources */,
 				BCAD1609271F5BCF0020F6A8 /* CurrencySymbolView.swift in Sources */,
 				BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */,
+				EF64A3C727AD3F9C00628487 /* DynamicHeightContainer.swift in Sources */,
 				BC2267A626DA5C830058315E /* VideoCard.swift in Sources */,
 				BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */,
 				EF7F6F74279AE05800CF350A /* CrybseTradingSignalsAPI.swift in Sources */,
