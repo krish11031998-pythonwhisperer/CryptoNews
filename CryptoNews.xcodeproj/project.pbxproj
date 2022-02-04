@@ -120,6 +120,7 @@
 		EF42CCB627873F2E00DE27E1 /* CrybseApprovedQuestion.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCB527873F2E00DE27E1 /* CrybseApprovedQuestion.swift */; };
 		EF458980278250730078FB0E /* CrybsePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF45897F278250730078FB0E /* CrybsePrice.swift */; };
 		EF4F39F1279853F00040688E /* HighlightView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4F39F0279853F00040688E /* HighlightView.swift */; };
+		EF4FE23027AD719600296BD5 /* CrybsePostPoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4FE22F27AD719600296BD5 /* CrybsePostPoll.swift */; };
 		EF5F4569278E6310008EC5EB /* MultipartFormData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4566278E6310008EC5EB /* MultipartFormData.swift */; };
 		EF5F456A278E6310008EC5EB /* DataManagerHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4567278E6310008EC5EB /* DataManagerHelper.swift */; };
 		EF5F456B278E6310008EC5EB /* DAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F4568278E6310008EC5EB /* DAPI.swift */; };
@@ -296,6 +297,7 @@
 		EF42CCB527873F2E00DE27E1 /* CrybseApprovedQuestion.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseApprovedQuestion.swift; sourceTree = "<group>"; };
 		EF45897F278250730078FB0E /* CrybsePrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrice.swift; sourceTree = "<group>"; };
 		EF4F39F0279853F00040688E /* HighlightView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HighlightView.swift; sourceTree = "<group>"; };
+		EF4FE22F27AD719600296BD5 /* CrybsePostPoll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePostPoll.swift; sourceTree = "<group>"; };
 		EF5F4566278E6310008EC5EB /* MultipartFormData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MultipartFormData.swift; sourceTree = "<group>"; };
 		EF5F4567278E6310008EC5EB /* DataManagerHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DataManagerHelper.swift; sourceTree = "<group>"; };
 		EF5F4568278E6310008EC5EB /* DAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DAPI.swift; sourceTree = "<group>"; };
@@ -520,12 +522,12 @@
 			path = Reddit;
 			sourceTree = "<group>";
 		};
-		BCBBD14A2756CC52002CBECE /* Cryb */ = {
+		BCBBD14A2756CC52002CBECE /* Crybse */ = {
 			isa = PBXGroup;
 			children = (
 				BCBBD14B2756CC6B002CBECE /* CrybPosts */,
 			);
-			path = Cryb;
+			path = Crybse;
 			sourceTree = "<group>";
 		};
 		BCBBD14B2756CC6B002CBECE /* CrybPosts */ = {
@@ -537,6 +539,7 @@
 				BC06AE5127578850006F00DE /* CrybPostData.swift */,
 				BCF31F9D27596E2500690E04 /* CrybPostMainView.swift */,
 				EFAC17CF275EADD9000A768D /* AddCrybPost.swift */,
+				EF4FE22F27AD719600296BD5 /* CrybsePostPoll.swift */,
 			);
 			path = CrybPosts;
 			sourceTree = "<group>";
@@ -613,7 +616,7 @@
 			isa = PBXGroup;
 			children = (
 				EF42CCA227863CF400DE27E1 /* Portfolio */,
-				BCBBD14A2756CC52002CBECE /* Cryb */,
+				BCBBD14A2756CC52002CBECE /* Crybse */,
 				BCB5BE00275149FE00EA0394 /* InAppNotifications */,
 				BCE861A9273AD9C200F0E8C2 /* LoginView */,
 				BCE861A2273549AB00F0E8C2 /* ProfileView */,
@@ -1364,6 +1367,7 @@
 				EF64A3C727AD3F9C00628487 /* DynamicHeightContainer.swift in Sources */,
 				BC2267A626DA5C830058315E /* VideoCard.swift in Sources */,
 				BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */,
+				EF4FE23027AD719600296BD5 /* CrybsePostPoll.swift in Sources */,
 				EF7F6F74279AE05800CF350A /* CrybseTradingSignalsAPI.swift in Sources */,
 				BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */,
 				BC64592527119E2C00BAECBC /* CurrencySummaryView.swift in Sources */,
