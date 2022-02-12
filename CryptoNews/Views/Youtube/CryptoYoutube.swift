@@ -58,22 +58,22 @@ struct CryptoYoutube: View {
         return AnyView(view)
     }
     
+    var innerContainerHeight:CGFloat{
+        return self.size.height * 0.75
+    }
     
     var body: some View {
-        Container(heading: "Top Videos", innerView: { w in
-            return GeometryReader{g in
-                let size = g.frame(in: .local).size
-                VStack(alignment: .center, spacing: 10){
-                    if self.videos.isEmpty{
-                        ProgressView()
-                    }else{
-                        self.firstVideo(size: .init(width: size.width, height: size.height * 0.4 - 10))
-                        self.vGrid(size: .init(width: size.width, height: size.height * 0.6))
-                    }
-                }.frame(width: size.width, height: size.height, alignment: .center)
-            }
-            .frame(width: w, height: size.height , alignment: .center)
-        })
+        Container(heading: "Top Videos",width: self.size.width,ignoreSides: false){ w in
+            VStack(alignment: .center, spacing: 10){
+                if self.videos.isEmpty{
+                    ProgressView()
+                }else{
+                    self.firstVideo(size: .init(width: w, height: self.innerContainerHeight * 0.4 - 10))
+                    self.vGrid(size: .init(width: w, height: self.innerContainerHeight * 0.6))
+                }
+            }.frame(width: w, height: self.innerContainerHeight, alignment: .center)
+        }
+        .frame(width: size.width, height: size.height , alignment: .center)
         .onAppear(perform: self.onAppear)
     }
 }
@@ -81,6 +81,6 @@ struct CryptoYoutube: View {
 struct CryptoYoutube_Previews: PreviewProvider {
     static var previews: some View {
         CryptoYoutube(q: "bitcoin")
-            .background(Color.black)
+            .background(Color.black.ignoresSafeArea())
     }
 }

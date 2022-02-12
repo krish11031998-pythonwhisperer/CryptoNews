@@ -908,14 +908,4 @@ struct GradientShadows:View{
     
 }
 
-//struct Stylings_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VStack{
-//            AnimatedWaves(image: UIImage(named: "NightLifeStockImage")!, offset: 0.15)
-//
-//            Spacer()
-//        }.edgesIgnoringSafeArea(.all)
-//
-//    }
-//}
 

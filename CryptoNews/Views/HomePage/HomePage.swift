@@ -24,6 +24,7 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             AllAssetView()
             HighlightView(currencies: self.currencies)
+            CrybseYoutubeHighlightView(width: totalWidth)
             Spacer(minLength: 200)
         }.zIndex(1)
     }

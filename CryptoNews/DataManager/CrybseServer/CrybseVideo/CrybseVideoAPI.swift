@@ -17,16 +17,18 @@ class CrybseVideoAPI:CrybseAPI{
     
     @Published var videos:[CrybseVideoData] = []
     var q:String
+    var limit:Int
     
     static var shared:CrybseVideoAPI = .init(q: "")
     
-    init(q:String?){
+    init(q:String?,limit:Int = 15){
         self.q = q ?? ""
+        self.limit = limit
         super.init()
     }
     
     var request:URLRequest?{
-        self.requestBuilder(path: "/videos", queries: [.init(name: "q", value: self.q)])
+        self.requestBuilder(path: "coin/youtube", queries: [.init(name: "coin", value: self.q),.init(name: "limit", value: String(self.limit))])
     }
     
     override func parseData(url: URL, data: Data) {

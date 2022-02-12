@@ -24,24 +24,28 @@ struct HighlightView: View {
         return self.feedAPI.FeedData.count > 10 ? Array(self.feedAPI.FeedData[0...9]) : self.feedAPI.FeedData
     }
     
+    @ViewBuilder func selectedView(_ _data:Any, _ w:CGFloat) -> some View{
+        if let data = _data as? AssetNewsData{
+            if let _ = data.twitter_screen_name{
+                PostCard(cardType: .Tweet, data: data, size: .init(width: w, height: cardSize.height), const_size: true, isButton: true)
+            }else if let _ = data.subreddit{
+                PostCard(cardType: .Reddit, data: data, size: .init(width: w, height: cardSize.height), const_size: true, isButton: true)
+            }else{
+                NewsCard(news: data, size: .init(width: w, height: cardSize.height))
+                    .buttonify {
+                        if self.context.selectedNews?.id != data.id{
+                            self.context.selectedNews = data
+                        }
+                    }
+            }
+        }
+    }
+    
     var body: some View {
         Container(heading: "Social Highlights", headingDivider: true, width: self.width, ignoreSides: false) { w in
             if !self.posts.isEmpty && !self.feedAPI.loading{
                 CardFanView(width: w,indices: self.posts) { _data in
-                    if let data = _data as? AssetNewsData{
-                        if let _ = data.twitter_screen_name{
-                            PostCard(cardType: .Tweet, data: data, size: .init(width: w, height: cardSize.height), const_size: true, isButton: true)
-                        }else if let _ = data.subreddit{
-                            PostCard(cardType: .Reddit, data: data, size: .init(width: w, height: cardSize.height), const_size: true, isButton: true)
-                        }else{
-                            NewsCard(news: data, size: .init(width: w, height: cardSize.height))
-                                .buttonify {
-                                    if self.context.selectedNews?.id != data.id{
-                                        self.context.selectedNews = data
-                                    }
-                                }
-                        }
-                    }
+                    self.selectedView(_data, w)
                 }.padding(.vertical,25)
             }else if self.feedAPI.loading{
                 ProgressView()
