@@ -46,7 +46,7 @@ struct CardSlidingView: View {
     }
     
     func mainScrollBody(scrollProxy:ScrollViewProxy? = nil) -> some View{
-        HStack(alignment: .center, spacing: 15){
+        LazyHStack(alignment: .center, spacing: 15){
             ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
                 let idx = _view.offset
                 let view = _view.element

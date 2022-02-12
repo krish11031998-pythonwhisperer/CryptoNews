@@ -21,8 +21,10 @@ struct CrybseYoutubeHighlightView: View {
     
     
     func onAppear(){
-        if self.VAPI.videos.isEmpty{
-            self.VAPI.getVideos()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .microseconds(100)) {
+            if self.VAPI.videos.isEmpty{
+                self.VAPI.getVideos()
+            }
         }
     }
 

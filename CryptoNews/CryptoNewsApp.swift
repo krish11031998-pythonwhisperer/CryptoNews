@@ -51,9 +51,7 @@ struct CryptoNewsApp: App {
     var mainView:some View{
         Group{
             if self.context.loggedIn == .signedIn && !self.loading{
-//                CrybseView()
-                CryptoYoutube()
-                    .background(Color.mainBGColor.ignoresSafeArea())
+                CrybseView()
             }else{
                 if self.loading{
                     LoginView()

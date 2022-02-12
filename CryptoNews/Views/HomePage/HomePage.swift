@@ -23,8 +23,8 @@ struct HomePage: View {
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
             AllAssetView()
-            HighlightView(currencies: self.currencies)
-            CrybseYoutubeHighlightView(width: totalWidth)
+            HighlightView(currencies: self.currencies).asyncContainer()
+            CrybseYoutubeHighlightView(width: totalWidth).asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

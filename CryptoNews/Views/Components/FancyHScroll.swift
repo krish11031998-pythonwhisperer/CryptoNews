@@ -69,7 +69,7 @@ struct FancyHScroll<T:View>: View {
     }
     
     var offset:CGFloat{
-        return -CGFloat(self.SP.swiped) * totalWidth
+        return -CGFloat(self.SP.swiped <= 1 ? self.SP.swiped : 1) * totalWidth
     }
     
     func onReceiveTimer(){
@@ -127,7 +127,12 @@ struct FancyHScroll<T:View>: View {
         HStack(alignment: .center, spacing: 0) {
             ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
                 let data = _data.element
-                self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
+                let idx = _data.offset
+                
+                if idx >= self.SP.swiped - 1 && idx <= self.SP.swiped + 1{
+                    self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
+                }
+                
             }
         }
     }
