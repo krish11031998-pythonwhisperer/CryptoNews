@@ -17,12 +17,6 @@ struct CrybsePostResponse:Codable{
     var success:Bool
 }
 
-
-struct CrybPostPoll:Codable{
-    var question:String?
-    var options:[String]?
-}
-
 struct CrybPostData:Codable,Loopable{
     
     var id:UUID?
@@ -35,7 +29,7 @@ struct CrybPostData:Codable,Loopable{
     private var currency:String?
     private var image:String?
     private var imageFile:Data?
-    private var polls:Array<CrybPostPoll>?
+    private var poll:CrybsePollData?
     
     init(
         id:UUID = UUID(),
@@ -80,8 +74,15 @@ struct CrybPostData:Codable,Loopable{
         return self.image
     }
     
-    var Polls:Array<CrybPostPoll>{
-        return self.polls ?? []
+    var Poll:CrybsePollData{
+        get{
+            return self.poll ?? .init()
+        }
+        
+        
+        set{
+            self.poll = newValue
+        }
     }
     
     var Likes:Int{

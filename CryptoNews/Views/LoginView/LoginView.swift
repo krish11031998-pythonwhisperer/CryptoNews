@@ -207,7 +207,7 @@ struct LoginView: View {
         TabView(selection: $formDetails.page) {
             self.signUpPageGen(heading: "Sign Up", fields: self.signUpformKeys,actionHandler: self.signUpUser,anotherButton: {
                 AnyView(TabButton(width: totalWidth - 30, height: 50, title: "Already a User? Sign In", textColor: .white,action: {
-                    withAnimation(.easeInOut) {
+                    setWithAnimation {
                         if !self.formDetails.signIn{
                             self.formDetails.signIn.toggle()
                         }

@@ -43,10 +43,10 @@ struct CurrencyView:View{
         self._assetData = .init(wrappedValue: asset)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(crypto: asset.Currency, coinUID: asset.coinData?.uuid ?? "", fiat: "USD"))
+        self._coinAPI = .init(wrappedValue: .init(crypto: asset.Currency, coinUID: asset.coinData?.uuid ?? "", fiat: "USD",name:asset.coinData?.Name ?? ""))
     }
     
-    
+      
     
     func onAppear(){
         if self.assetData.coin == nil{
@@ -165,8 +165,10 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-            LazyScrollView(data: [1], embedScrollView: true, stopLoading: true){ _ in
+//            LazyScrollView(data: [1], embedScrollView: true, stopLoading: true){ _ in
+            ScrollView(.vertical, showsIndicators: false){
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
+                    .padding(.vertical,50)
                     .onChange(of: self.refresh) { refresh in}
             }
         }else{

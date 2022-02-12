@@ -30,10 +30,9 @@ struct CrybPostMainView: View {
     
     var posts:[CrybPostData]{
         if let posts = self.crybPostAPI.posts{
-            return posts.isEmpty ? Array(repeating: CrybPostData.test, count: 10) : posts
+            return posts
         }
         return Array(repeating: CrybPostData.test, count: 10)
-        
     }
     
     
@@ -86,8 +85,9 @@ struct CrybPostMainView: View {
                 }else{
                     self.mainBodyGen
                 }
-            }.onAppear(perform: self.onAppear)
+            }
         }.padding(.top,30)
+            .onAppear(perform: self.onAppear)
     }
 }
 

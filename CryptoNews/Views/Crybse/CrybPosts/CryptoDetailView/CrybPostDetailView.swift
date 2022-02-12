@@ -47,7 +47,7 @@ struct CrybPostDetailView: View {
                     CrybseUserPredictionView(postData: self.postData, width: self.width)
                     CrybseCrybotPredictionView(postData: self.postData,width: self.width)
                     CrybseRatingView(postData: self.postData, width: self.width)
-                    CrybseApprovedQuestionView(postData: self.postData, width: self.width)
+                    CrybsePollsView(postData: self.postData, width: self.width)
                 }
             }.padding(.bottom,150)
                 .frame(width: totalWidth, alignment: .center)

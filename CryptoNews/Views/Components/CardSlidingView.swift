@@ -45,7 +45,7 @@ struct CardSlidingView: View {
         return (totalWidth - self.cardSize.width) * 0.5
     }
     
-    func mainScrollBody(scrollProxy:ScrollViewProxy) -> some View{
+    func mainScrollBody(scrollProxy:ScrollViewProxy? = nil) -> some View{
         HStack(alignment: .center, spacing: 15){
             ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
                 let idx = _view.offset
@@ -59,12 +59,20 @@ struct CardSlidingView: View {
     }
     
     var body: some View {
-        ScrollViewReader { scrollProxy in
+        if self.centralize{
+            ScrollViewReader { scrollProxy in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    self.mainScrollBody(scrollProxy: scrollProxy)
+                }
+            }.frame(width:totalWidth,height: cardSize.height,alignment: .leading)
+        }else{
             ScrollView(.horizontal, showsIndicators: false) {
-                self.mainScrollBody(scrollProxy: scrollProxy)
+                self.mainScrollBody()
             }
+            
         }
-        .frame(width:totalWidth,height: cardSize.height,alignment: .leading)
+        
+        
         
     }
 }

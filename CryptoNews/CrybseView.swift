@@ -110,7 +110,8 @@ extension CrybseView{
         
 
         if self.context.addPost{
-            CrybPostGen()
+//            CrybPostGen()
+            CrybsePostMainView()
                 .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(mainBGView)

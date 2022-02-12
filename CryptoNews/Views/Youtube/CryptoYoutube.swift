@@ -8,21 +8,23 @@
 import SwiftUI
 
 struct CryptoYoutube: View {
-    @StateObject var VAPI:FeedAPI = .init(sources:["youtube"],type: .Chronological)
+//    @StateObject var VAPI:FeedAPI = .init(sources:["youtube"],type: .Chronological)
+    @StateObject var VAPI:CrybseVideoAPI
     var size:CGSize = .init()
     
-    init(size:CGSize = .init(width: totalWidth, height: totalHeight)){
+    init(q:String = "cryptocurrency",size:CGSize = .init(width: totalWidth, height: totalHeight)){
         self.size = size
+        self._VAPI = .init(wrappedValue: .init(q: q))
     }
     
     func onAppear(){
-        if self.VAPI.FeedData.isEmpty{
-            self.VAPI.getAssetInfo()
+        if self.VAPI.videos.isEmpty{
+            self.VAPI.getVideos()
         }
     }
     
-    var videos:[AssetNewsData]{
-        return self.VAPI.FeedData.compactMap({$0.url != nil && $0.url!.contains("watch") ? $0 : nil})
+    var videos:CrybseVideosData{
+        return self.VAPI.videos
     }
     
     func firstVideo(size:CGSize) -> AnyView{
@@ -52,14 +54,6 @@ struct CryptoYoutube: View {
             self.singleCol(col: .Left, size: card_size)
             self.singleCol(col: .Right, size: card_size)
         }
-//        let view = LazyVGrid(columns: [GridItem(.adaptive(minimum: card_w, maximum: card_w))], alignment: .center, spacing: 10){
-//            ForEach(Array(self.videos[1...4].enumerated()),id:\.offset) { _video in
-//                let video = _video.element
-//
-//                VideoCard(data: video, size: card_size)
-//            }
-//
-//        }
         
         return AnyView(view)
     }
@@ -86,7 +80,7 @@ struct CryptoYoutube: View {
 
 struct CryptoYoutube_Previews: PreviewProvider {
     static var previews: some View {
-        CryptoYoutube()
+        CryptoYoutube(q: "bitcoin")
             .background(Color.black)
     }
 }

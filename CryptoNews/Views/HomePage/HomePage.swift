@@ -22,14 +22,8 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            if let _ = self.context.user.user?.uid{
-                AllAssetView()
-                    .environmentObject(self.context)
-            }
-            LatestTweets(header:"Trending Tweets",currencies:currencies,type:.Influential,limit: 15)
-                .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
-            CurrencyFeed()
-                .asyncContainer(size: .init(width: totalWidth, height: totalHeight))
+            AllAssetView()
+            HighlightView(currencies: self.currencies)
             Spacer(minLength: 200)
         }.zIndex(1)
     }
@@ -48,8 +42,7 @@ extension HomePage{
             CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)
         }
     }
-    
-    
+
     var showMainView:Bool {
         return self.context.selectedNews == nil && self.context.selectedCurrency == nil
     }

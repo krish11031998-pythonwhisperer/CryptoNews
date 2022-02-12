@@ -25,16 +25,18 @@ struct DataCache:DataDictCache{
     
     subscript(url: URL) -> Data? {
         get {
-            var res:Data? = nil
-            if let ns_url = url as? NSURL, let data = self.cache.object(forKey: ns_url) as? Data{
-                res = data
-            }
-            return res
+            let ns_url = url as NSURL
+            return self.cache.object(forKey: ns_url) as Data?
         }
+        
         set {
-            if let nsData = newValue as? NSData, let ns_url = url as? NSURL{
-                self.cache.setObject(nsData, forKey: ns_url)
+            
+            guard let nsData = newValue as NSData? else {return}
+            let ns_url = url as NSURL
+            if let _  = self.cache.object(forKey: ns_url){
+                self.cache.removeObject(forKey: ns_url)
             }
+            self.cache.setObject(nsData, forKey: ns_url)
         }
     }
 }

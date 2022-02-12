@@ -110,7 +110,6 @@ class FeedAPI:DAPI{
         do{
             let res = try decoder.decode(News.self, from: data)
             if let news = res.data {
-//                DispatchQueue.main.async {
                 withAnimation(.easeInOut) {
                     if self.FeedData.isEmpty{
                         self.FeedData = news
@@ -121,7 +120,6 @@ class FeedAPI:DAPI{
                         self.loading = false
                     }
                 }
-//                }
             }
         }catch{
             print("DEBUG MESSAGE FROM DAPI : Error will decoding the data : ",error.localizedDescription)

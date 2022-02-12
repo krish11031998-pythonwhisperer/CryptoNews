@@ -29,6 +29,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var prices:CrybseCoinPrices?
     @Published var news:Array<AssetNewsData>?
     @Published var tradingSignals:CrybseTradingSignalsData?
+    @Published var additionalInfo:CrybseCoinAdditionalData?
     
     var cancellable:AnyCancellable? = nil
     
@@ -47,6 +48,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         case news
         case tradingSignals
         case prices
+        case additionalInfo
     }
     
     required init(from decoder: Decoder) throws {
@@ -57,6 +59,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         news = try container.decode(Array<AssetNewsData>?.self, forKey: .news)
         tradingSignals = try container.decode(CrybseTradingSignalsData?.self, forKey: .tradingSignals)
         prices = try container.decode(CrybseCoinPrices?.self, forKey: .prices)
+        additionalInfo = try container.decode(CrybseCoinAdditionalData?.self, forKey: .additionalInfo)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -67,6 +70,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         try container.encode(news, forKey: .news)
         try container.encode(tradingSignals, forKey: .tradingSignals)
         try container.encode(prices,forKey: .prices)
+        try container.encode(additionalInfo,forKey: .additionalInfo)
     }
     
     var TimeSeriesData:[CryptoCoinOHLCVPoint]{

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct HighlightView: View {
+struct HighlightPriceChangeView: View {
     @Binding var value:Float {
         willSet{
             self.updatePrice(newPrice: newValue)

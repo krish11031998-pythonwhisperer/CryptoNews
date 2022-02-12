@@ -21,15 +21,17 @@ class swipeParams:ObservableObject,Equatable{
     var start:Int = 0
     var end:Int = 0
     var thresValue:CGFloat = 0
+    var singleSide:Bool
     fileprivate var _type:SliderType = .Carousel
     var onTap: ((Int) -> Void)? = nil
     
-    init(_ start:Int? = nil,_ end:Int? = nil, _ thresValue:CGFloat? = nil,type:SliderType = .Carousel,onTap:((Int) -> Void)? = nil){
+    init(_ start:Int? = nil,_ end:Int? = nil, _ thresValue:CGFloat? = nil,type:SliderType = .Carousel,singleSide:Bool = false,onTap:((Int) -> Void)? = nil){
         self.start = start ?? 0
         self.end = end ?? 0
         self.thresValue = thresValue ?? 100
         self._type = type
         self.onTap = onTap
+        self.singleSide = singleSide
     }
     
     var type:SliderType{
@@ -51,21 +53,23 @@ class swipeParams:ObservableObject,Equatable{
     
     func onChanged(value:CGFloat){
         if self.swiped >= self.start || self.swiped < self.end{
-            withAnimation(.easeInOut) {
-                self.extraOffset = value;
+            setWithAnimation {
+                self.extraOffset = value
             }
         }
     }
     
     func updateSwipe(val:Int){
-        withAnimation(.easeInOut) {
+        setWithAnimation {
             self.swiped += val
         }
     }
     
     func onChanged(ges_value:DragGesture.Value){
         let value = self.type == .Carousel ? ges_value.translation.width : ges_value.translation.height
-        self.onChanged(value: value)
+        if self.singleSide && value < 0 || !self.singleSide{
+            self.onChanged(value: value)
+        }
     }
     
     
@@ -82,14 +86,16 @@ class swipeParams:ObservableObject,Equatable{
             self.updateSwipe(val: val)
         }
         
-        withAnimation(.easeInOut) {
+        setWithAnimation {
             self.extraOffset = 0
         }
     }
     
     func onEnded(ges_value:DragGesture.Value){
         let value = self.type == .Carousel ? ges_value.translation.width : ges_value.translation.height
-        self.onEnded(value: value)
+        if self.singleSide && value < 0 || !self.singleSide{
+            self.onEnded(value: value)
+        }
     }
     
     

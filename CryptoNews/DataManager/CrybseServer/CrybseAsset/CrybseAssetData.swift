@@ -415,6 +415,43 @@ class CrybseCoinDescription:Codable{
     }
 }
 
+class CrybseCoinAdditionalData:Codable{
+    
+    class CrybseCoinAdditionalSocialData:Codable{
+        var explorer:[String]?
+        var facebook:[String]?
+        var reddit:[String]?
+        var source_code:[String]?
+        var website:[String]?
+        var youtube:[String]?
+    }
+    
+    class CrybseCoinAdditionalWhitepaper:Codable{
+        var link:String?
+        var thumbnail:String?
+    }
+    
+    
+    var id:String?
+    var name:String?
+    var symbol:String?
+    var rank:Int?
+    var is_new:Bool?
+    var is_active:Bool?
+    var type:String?
+    var description:String?
+    var open_source:Bool?
+    var started_at:String?
+    var development_status:String?
+    var hardware_wallet:Bool?
+    var proof_type:String?
+    var org_structure:String?
+    var hash_algorithm:String?
+    var links:CrybseCoinAdditionalSocialData?
+    var whitepaper:CrybseCoinAdditionalWhitepaper?
+    
+}
+
 class CrybseCoinMetaData:ObservableObject,Codable{
     init(){}
     

@@ -9,16 +9,22 @@ import SwiftUI
 
 struct CrybPostGen: View {
     @EnvironmentObject var context:ContextData
-    @State var text:String = ""
-    @State var image:UIImage? = nil 
-    @State var showImagePicker:Bool = false
-    @StateObject var notification:NotificationData = .init()
-    @State var textheight:CGFloat = .zero
+    @EnvironmentObject var postState:CrybsePostState
     @State var keyboardHeight:CGFloat = .zero
     let staticText:String = "Enter the value !"
-    
+
     init(){
         UITextView.appearance().backgroundColor = .clear
+    }
+    
+    var text:String{
+        get{
+            return self.postState.text
+        }
+        
+        set{
+            self.postState.text = newValue
+        }
     }
     
     var textinTextEditor:String{
@@ -30,44 +36,7 @@ struct CrybPostGen: View {
     }
     
     func uploadButton(){
-        print("Update the button")
-        guard let uid = self.context.user.user?.uid, let username = self.context.user.user?.userName else {return}
-        var postdata:CrybPostData = .test
-        postdata.User = .init(uid: uid, userName: username)
-        postdata.PostMessage =  self.text
-        CrybsePostAPI.shared.uploadPost(post: postdata, image: self.image) { status in
-            var heading = ""
-            var message = ""
-            if status{
-                heading = "Upload Successful"
-                message = "Your CrybsePost was uploaded successfully !"
-            }else{
-                heading = "Upload Unsuccessful"
-                message = "Your CrybsePost was not uploaded successfully !"
-            }
-            setWithAnimation {
-                self.notification.updateNotification(heading: heading, buttonText: "Done", showNotification: true, innerText: message)
-            }
-        }
-        
-    }
-    
-    func sideButton(w:CGFloat) -> some View{
-        return SystemButton(b_name: "plus", color: .white, haveBG: false, size: .init(width: 15, height: 15), bgcolor: .clear, alignment: .vertical, borderedBG: true) {
-            if !self.showImagePicker{
-                self.showImagePicker.toggle()
-            }
-        }.frame(width: w, alignment: .trailing)
-        
-    }
-    
-    @ViewBuilder func imageView(w:CGFloat) -> some View{
-        let h = totalHeight * 0.175
-        if let image = self.image{
-            ImageView(img: image, width: w, height: h, contentMode: .fill, alignment: .center, clipping: .roundClipping)
-        }else{
-            Color.clear.frame(width: w, height: h, alignment: .center).clipContent(clipping: .roundClipping)
-        }
+        self.postState.addPost.toggle()
     }
     
     var containerHeight:CGFloat{
@@ -84,7 +53,7 @@ struct CrybPostGen: View {
     
     @ViewBuilder var textField:some View{
         MainText(content: "Post about what you think....", fontSize: 15, color: .white.opacity(0.75), fontWeight: .semibold)
-        TextEditor(text: $text)
+        TextEditor(text: self.$postState.text)
             .foregroundColor(Color.white)
             .font(.custom(TextStyle.normal.rawValue, size: 15, relativeTo: .body))
             .frame(maxHeight: totalHeight * 0.25, alignment: .leading)
@@ -100,13 +69,15 @@ struct CrybPostGen: View {
                 StylizedTextEditor(limit:350,width: w)
                     .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newText in
                         if self.text != newText{
-                            self.text = newText
+                            self.postState.text = newText
                         }
                     }
                 if self.keyboardHeight == .zero{
                     Spacer()
                     TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
-                        print("Click on Add Poll")
+                        if self.postState.page != 2{
+                            self.postState.page = 2
+                        }
                     }
                     .padding(.bottom,5)
                     TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
@@ -116,9 +87,6 @@ struct CrybPostGen: View {
                 }
                 
             }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
-            if self.notification.showNotification{
-                self.notification.generateView()
-            }
         }
         .ignoresSafeArea(.keyboard, edges: .bottom)
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
@@ -132,9 +100,6 @@ struct CrybPostGen: View {
         .frame(width: totalWidth, height: totalHeight, alignment: .bottomLeading)
             .padding(.top,self.keyboardHeight)
             .keyboardAdaptiveValue(keyboardHeight: $keyboardHeight)
-//            .sheet(isPresented: $showImagePicker) {
-//                ImagePicker(sourceType: .photoLibrary, selectedImage: $image)
-//            }
         .onAppear {
             if self.context.showTab{
                 self.context.showTab.toggle()
@@ -173,14 +138,14 @@ extension CrybPostGen{
     
 }
 
-struct CrybPostGen_Previews: PreviewProvider {
-    
-    static var context:ContextData = .init()
-    
-    static var previews: some View {
-        CrybPostGen()
-            .environmentObject(CrybPostGen_Previews.context)
-            .background(mainBGView)
-            .ignoresSafeArea()
-    }
-}
+//struct CrybPostGen_Previews: PreviewProvider {
+//    
+//    static var context:ContextData = .init()
+//    @State static var text:String = ""
+//    static var previews: some View {
+//        CrybPostGen(text: .constant(""))
+//            .environmentObject(CrybPostGen_Previews.context)
+//            .background(mainBGView)
+//            .ignoresSafeArea()
+//    }
+//}

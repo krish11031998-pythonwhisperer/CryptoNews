@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 
-typealias Params = [String:String]
+typealias Params = [String:Any]
 
 extension Params{
     
@@ -18,12 +18,29 @@ struct Media{
     var name:String
     var data:Data
     var mimeType:String
-    var filename:String
+    var filename:String?
     
+    
+    static func generateMediaJSON(key:String,params:[String:Any]) -> Media?{
+        var data:Data? = nil
+        do{
+            data = try JSONSerialization.data(withJSONObject: params, options: .prettyPrinted)
+        }catch{
+            print("The error while trying to serialize the Data : ",error.localizedDescription)
+        }
+        
+        if let safeData = data {
+            return Media(name: key, data: safeData, mimeType: "application/json")
+        }else{
+            return nil
+        }
+        
+
+    }
     
     static func generateMediaDataFromImage(key:String,img:UIImage) -> Media?{
         guard let data = img.jpegData(compressionQuality: 0.5) else {return nil}
-        return Media(name: key, data: data, mimeType: "image/jpg", filename: "\(arc4random()).jpg")
+        return Media(name: key, data: data, mimeType: "image/jpg",filename:"\(arc4random()).jpg")
     }
 }
 
@@ -51,7 +68,12 @@ struct MultipartFormDataRequest {
             for (key,value) in safeParams{
                 bodyData.append("--\(boundary + lineBreak)")
                 bodyData.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak+lineBreak)")
-                bodyData.append("\(value + lineBreak)")
+                if let StrValue = value as? String{
+                    bodyData.append("\(StrValue + lineBreak)")
+                }else if let safeData = value as? Data{
+                    bodyData.append(contentsOf: safeData)
+                }
+                
             }
         }
         
@@ -59,7 +81,11 @@ struct MultipartFormDataRequest {
         if let allSafeMedia = allmedia{
             for media in allSafeMedia{
                 bodyData.append("--\(boundary + lineBreak)")
-                bodyData.append("Content-Disposition: form-data; name=\"\(media.name)\"; filename=\"\(media.filename)\"\(lineBreak+lineBreak)")
+                bodyData.append("Content-Disposition: form-data; name=\"\(media.name)\";")
+                if let safeFilename = media.filename{
+                    bodyData.append("filename=\"\(safeFilename)\"")
+                }
+                bodyData.append("\(lineBreak+lineBreak)")
                 bodyData.append("Content-Type: \(media.mimeType + lineBreak + lineBreak)")
                 bodyData.append(media.data)
                 bodyData.append(lineBreak)

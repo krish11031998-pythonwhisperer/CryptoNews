@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CrybseApprovedQuestionView: View {
+struct CrybsePollsView: View {
     var postData:CrybPostData
     @State var choosenOption:String = ""
     var width:CGFloat
@@ -21,15 +21,13 @@ struct CrybseApprovedQuestionView: View {
         Container(heading: "Questions", headingDivider: false,headingSize: 18, width: self.width, ignoreSides: true,horizontalPadding: 0) { _ in
             ForEach(Array(self.questions.enumerated()), id:\.offset){ _question in
                 let question = _question.element
-                
-                self.approvalQuestion(question: question.key, options: question.value)
-                
+                CrybsePoll(poll: .init(question: question.key, options: question.value), width: self.width )
             }
         }
     }
 }
 
-extension CrybseApprovedQuestionView{
+extension CrybsePollsView{
     
     
     var questions:[String:[String]]{

@@ -7,112 +7,80 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "12CD5C49-5CDD-4004-85ED-1348A2FE2EE2"
+            uuid = "F31F8C71-6005-4013-AB56-834D6A129C57"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/UIManager/ContextData.swift"
+            filePath = "CryptoNews/Network/MultipartFormData.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "245"
-            endingLineNumber = "245"
-            landmarkName = "AddNewTxn(txn:)"
+            startingLineNumber = "74"
+            endingLineNumber = "74"
+            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "76FC1F5A-06D2-43F2-AB95-782555B7BF87"
+            uuid = "5B0BEE67-22F1-49F2-8537-87F66478B905"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/UIManager/ContextData.swift"
+            filePath = "CryptoNews/Network/MultipartFormData.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "244"
-            endingLineNumber = "244"
-            landmarkName = "AddNewTxn(txn:)"
+            startingLineNumber = "73"
+            endingLineNumber = "73"
+            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A7E92459-64AF-4FEA-A6CF-272925B13F42"
+            uuid = "9F5E2049-02A1-4559-ACD3-436B5F303086"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/UIManager/ContextData.swift"
+            filePath = "CryptoNews/Network/MultipartFormData.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "238"
-            endingLineNumber = "238"
-            landmarkName = "AddNewTxn(txn:)"
+            startingLineNumber = "72"
+            endingLineNumber = "72"
+            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "7E2474CC-4425-43DD-828B-AB6D82639FAC"
+            uuid = "964C9E89-96F3-4293-BC6B-05FBE7DF1FEC"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/UIManager/ContextData.swift"
+            filePath = "CryptoNews/Network/MultipartFormData.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "239"
-            endingLineNumber = "239"
-            landmarkName = "AddNewTxn(txn:)"
+            startingLineNumber = "71"
+            endingLineNumber = "71"
+            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9133C5D4-BEFD-4F20-891F-529AF70DE8DC"
-            shouldBeEnabled = "No"
+            uuid = "C0B56479-1DAB-4505-B317-6B98FD9A40B1"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Helpers/CustomTextField.swift"
+            filePath = "CryptoNews/DataManager/CrybseServer/CrybsePost/CrybsePostAPI.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "RemovePlaceHolderText()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "FEF61DFB-88F8-4972-A7F9-23A3EBE06997"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Helpers/CustomTextField.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
-            landmarkName = "RemovePlaceHolderText()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "93165B47-A8EB-4CC5-AF85-57E5B1845A1E"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Helpers/CustomTextField.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "131"
-            endingLineNumber = "131"
-            landmarkName = "RemovePlaceHolderText()"
+            startingLineNumber = "103"
+            endingLineNumber = "103"
+            landmarkName = "generateMultiPartFormRequest(url:post:image:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

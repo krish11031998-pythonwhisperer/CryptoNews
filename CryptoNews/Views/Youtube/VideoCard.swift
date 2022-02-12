@@ -10,20 +10,16 @@ import youtube_ios_player_helper
 
 struct VideoCard: View {
     @State var playerState:YTPlayerState
-    var data:AssetNewsData
+//    var data:AssetNewsData
+    var data:CrybseVideoData
     var size:CGSize
     
-    init(data:AssetNewsData,size:CGSize){
+    init(data:CrybseVideoData,size:CGSize){
         self.data = data
         self.size = size
         self._playerState = .init(initialValue: .unstarted)
     }
     
-    
-    var video_id:String?{
-        guard let url = self.data.url,let video_id = url.split(separator: "=").last else {return nil}
-        return String(video_id)
-    }
     
     
     var videoView:some View{
@@ -33,7 +29,7 @@ struct VideoCard: View {
             let vw_h = h * 0.65
             VStack(alignment: .leading, spacing: 10){
                 ZStack(alignment: .center){
-                    YoutubePlayer(size: .init(width: w, height: vw_h), videoID: self.video_id!, playerState: self.$playerState)
+                    YoutubePlayer(size: .init(width: w, height: vw_h), videoID: self.data.videoID, playerState: self.$playerState)
                     if self.playerState == .unstarted{
                         ImageView(url: self.data.thumbnail, width: w, height: vw_h, contentMode: .fill, alignment: .center)
                         SystemButton(b_name: "play.fill") {
@@ -42,9 +38,8 @@ struct VideoCard: View {
                     }
                 }.frame(width: w, height: vw_h , alignment: .center)
                 .clipShape(RoundedRectangle(cornerRadius: 10))
-                MainText(content: self.data.title ?? "No Title", fontSize: 15,color: .white,fontWeight: .medium)
+                MainText(content: self.data.title, fontSize: 15,color: .white,fontWeight: .medium)
                 Spacer()
-//                MainText(content: self.data.description ?? "", fontSize: 12, color: .white, fontWeight: .thin)
             }.frame(width: w, height: h, alignment: .topLeading)
             
             

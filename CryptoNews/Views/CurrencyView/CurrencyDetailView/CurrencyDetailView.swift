@@ -44,13 +44,8 @@ struct CurrencyDetailView: View {
     var body:some View{
         self.mainView
             .preference(key: ShowSectionPreferenceKey.self, value: self.showMoreSection)
-            .onAppear {
-                print("(DEBUG) The Coin Data : ",self.assetData.currency ?? "XXX")
-            }
             .onReceive(self.timer, perform: self.OnReceiveTimer)
-            .onDisappear {
-                self.timer.upstream.connect().cancel()
-            }
+            .onDisappear {self.timer.upstream.connect().cancel()}
             .onReceive(self.timeSeriesAPI.$timeseriesData, perform: self.onReceiveNewTimeseriesData(timeSeries:))
     }
 }
@@ -60,19 +55,21 @@ extension CurrencyDetailView{
     @ViewBuilder var mainView:some View{
         self.priceMainInfo
         self.transactionHistoryView
-        self.CurrencyGeneralView
-        self.paginatedViews.padding(.top,10)
+        self.CurrencySummary
+        self.infoSection
+//        self.paginatedViews.padding(.top,10)
+        self.feedContainer
+        self.newsContainer 
     }
     
     var CurrencyGeneralView:some View{
         VStack(alignment: .leading, spacing: 10) {
-            self.CurrencySummary
-            self.infoSection
+            
         }
     }
     
     var headingFontSize:CGFloat{
-        return 25
+        return 20
     }
 
     var socialData:CrybseCoinSocialData?{
@@ -245,14 +242,10 @@ extension CurrencyDetailView{
     }
     
     @ViewBuilder var infoSection:some View{
-        if let coinMetaData = self.socialData?.MetaData{
+        if let coinMetaData = self.socialData?.MetaData,let additionalInfo = self.assetData.coin?.additionalInfo{
             Container(heading: "About",headingSize: headingFontSize, width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
-                ForEach(Array(coinMetaData.Description.enumerated()), id:\.offset) { _desc in
-                    let description = _desc.element
-                    
-                    MainSubHeading(heading: description.Header, subHeading: description.Body, headingSize: 17.5, subHeadingSize: 15, headColor: .white, subHeadColor: .white,orientation: .vertical, headingWeight: .semibold, bodyWeight: .regular, spacing: 15, alignment: .leading)
-                        .frame(width: w, alignment: .leading)
-                }
+                MainText(content: "What is \(self.assetData.Currency)", fontSize: 17.5, color: .white, fontWeight: .medium).frame(width: w, alignment: .leading)
+                MainText(content: additionalInfo.description ?? "", fontSize: 15, color: .white, fontWeight: .regular).frame(width: w, alignment: .leading)
             }
             .basicCard(size: .zero)
         }else{
@@ -358,9 +351,10 @@ extension CurrencyDetailView{
     }
     
     func infoViewGen(type:PostCardType) -> some View{
+        let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : "Posts"
         var data:[Any] = type == .News ? self.News : self.Tweets
         data = data.count < 5 ? data : Array(data[0...4])
-        return Container(headingDivider: false, width: self.size.width, ignoreSides: true) { w in
+        return Container(heading:heading,headingDivider: false,headingSize: headingFontSize, width: self.size.width, ignoreSides: true) { w in
             VStack(alignment: .leading, spacing: 10) {
                 ForEach(Array(data.enumerated()),id:\.offset) { _data in
                     let data = _data.element

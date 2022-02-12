@@ -17,6 +17,7 @@ struct SystemButton: View {
     var alignment:Axis.Set?
     var size:CGSize = .init(width: 10, height: 10)
     var borderedBG:Bool
+    var clipping:Clipping
     fileprivate var bgcolor:Color? = nil
     init(
         b_name:String? = nil,
@@ -28,6 +29,7 @@ struct SystemButton: View {
         bgcolor:Color? = nil,
         alignment:Axis.Set? = nil,
         borderedBG:Bool = false,
+        clipping:Clipping = .roundCornerMedium,
         action:@escaping () -> Void
     ){
         self.buttonName = b_name
@@ -39,6 +41,7 @@ struct SystemButton: View {
         self.customIcon = customIcon
         self.alignment = alignment
         self.borderedBG = borderedBG
+        self.clipping = clipping
         if let safeSize = size{
             self.size = safeSize
         }
@@ -103,7 +106,7 @@ struct SystemButton: View {
     var body: some View {
         if self.borderedBG{
             self.labelView
-                .blobify(color: AnyView(BlurView.regularBlur), clipping: .roundCornerMedium)
+                .blobify(color: AnyView(BlurView.regularBlur), clipping: self.clipping)
                 .buttonify(handler: self.actionHandler)
         }else{
             self.labelView
