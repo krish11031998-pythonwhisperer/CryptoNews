@@ -45,6 +45,11 @@ struct VideoCard: View {
             VStack(alignment: .leading, spacing: 10){
                 ZStack(alignment: .center){
                     YoutubePlayer(size: .init(width: w, height: vw_h), videoID: self.data.videoID, playerState: self.$playerState)
+                        .onTapGesture {
+                            if self.playerState == .playing{
+                                self.playerState = .paused
+                            }
+                        }
                     if self.playerState == .unstarted || self.playerState == .paused{
                         self.imageVideoInfo(size: .init(width: w, height: vw_h))
                     }

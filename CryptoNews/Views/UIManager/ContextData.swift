@@ -42,6 +42,7 @@ class ContextData:ObservableObject{
     @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedNews:AssetNewsData? = nil
     @Published private var _selectedPost:CrybPostData? = nil
+    @Published private var _selectedVideo:CrybseVideoData? = nil
     @Published private var _selectedSymbol:String? = nil
     @Published private var _addTxn:Bool = false
     @Published private var _addPost:Bool = false
@@ -159,14 +160,25 @@ extension ContextData{
         }
         
         set{
-            DispatchQueue.main.async {
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    self._selectedPost = newValue
-                    self.showTab = newValue != nil ? false : true
-                }
+            setWithAnimation {
+                self._selectedPost = newValue
+                self.showTab = newValue != nil ? false : true
             }
         }
         
+    }
+    
+    var selectedVideoData:CrybseVideoData?{
+        get{
+            return self._selectedVideo
+        }
+        
+        set{
+            setWithAnimation {
+                self._selectedVideo = newValue
+                self.showTab = newValue != nil ? false : true
+            }
+        }
     }
     
     var addTxn:Bool{

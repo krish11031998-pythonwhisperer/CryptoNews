@@ -50,18 +50,23 @@ struct FancyHScroll<T:View>: View {
             
             self.viewGen(data)
                 .scaleEffect(scaleEff(midX: midX))
-                .animation(.easeInOut)
+//                .animation(.linear)
                 .frame(width: size.width, height: size.height, alignment: .center)
         }.padding(.horizontal,15)
             .frame(width: totalWidth, height: size.height, alignment: .center)
         
         let dragGesture = DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:))
         if self.scrollable{
-            view
-                .gesture(dragGesture)
-                .buttonify {
-                    self.onTap?(self.SP.swiped)
-                }
+            if let onTap = self.onTap {
+                view
+                    .gesture(dragGesture)
+                    .buttonify {
+                        self.onTap?(self.SP.swiped)
+                    }
+            }else{
+                view
+                    .gesture(dragGesture)
+            }
         }else{
             view
                 
