@@ -11,6 +11,7 @@ enum PostCardType{
     case Tweet
     case Reddit
     case News
+    case Youtube
 }
 
 enum PostCardBG{
@@ -68,8 +69,6 @@ struct PostCard: View {
         let h = size.height - 20
         
         let view =
-//        ZStack(alignment: .bottom) {
-//            self.bgView
         VStack(alignment: .leading, spacing: 10) {
             self.Header(size: .init(width: w, height: h * 0.1))
             self.body(w: w, h: h)

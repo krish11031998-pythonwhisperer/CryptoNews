@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 
 typealias CrybseVideosData = Array<CrybseVideoData>
 
@@ -74,6 +75,13 @@ class CrybseVideoData:Codable{
     
     var thumbnail:String?{
         return self.snippet?.thumbnails?.high?.url ?? "https://i.ytimg.com/vi/OLORVyBHhHI/hqdefault.jpg"
+    }
+    
+    var thumbnailHeight:CGFloat?{
+        guard let safeHeight = self.snippet?.thumbnails?.high?.height else {
+            return nil
+        }
+        return CGFloat(safeHeight)
     }
     
     var videoID:String{

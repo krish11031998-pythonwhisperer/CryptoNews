@@ -52,6 +52,7 @@ struct CryptoNewsApp: App {
         Group{
             if self.context.loggedIn == .signedIn && !self.loading{
                 CrybseView()
+//                RedditCardTester(subReddit: "bitcoin")
             }else{
                 if self.loading{
                     LoginView()

@@ -30,6 +30,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var news:Array<AssetNewsData>?
     @Published var tradingSignals:CrybseTradingSignalsData?
     @Published var additionalInfo:CrybseCoinAdditionalData?
+    @Published var youtube:CrybseVideosData?
+    @Published var reddit:CrybseRedditPosts?
     
     var cancellable:AnyCancellable? = nil
     
@@ -49,6 +51,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         case tradingSignals
         case prices
         case additionalInfo
+        case youtube
+        case reddit
     }
     
     required init(from decoder: Decoder) throws {
@@ -60,6 +64,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         tradingSignals = try container.decode(CrybseTradingSignalsData?.self, forKey: .tradingSignals)
         prices = try container.decode(CrybseCoinPrices?.self, forKey: .prices)
         additionalInfo = try container.decode(CrybseCoinAdditionalData?.self, forKey: .additionalInfo)
+        youtube = try container.decode(CrybseVideosData?.self, forKey: .youtube)
+        reddit = try container.decode(CrybseRedditPosts?.self, forKey: .reddit)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -71,6 +77,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         try container.encode(tradingSignals, forKey: .tradingSignals)
         try container.encode(prices,forKey: .prices)
         try container.encode(additionalInfo,forKey: .additionalInfo)
+        try container.encode(reddit,forKey: .reddit)
+        try container.encode(youtube,forKey: .youtube)
     }
     
     var TimeSeriesData:[CryptoCoinOHLCVPoint]{
@@ -131,6 +139,28 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         
         set{
             self.news = newValue
+        }
+    }
+    
+    
+    var RedditPosts:CrybseRedditPosts{
+        get{
+            return self.reddit ?? []
+        }
+        
+        set{
+            self.reddit = newValue
+        }
+    }
+    
+    
+    var Videos:CrybseVideosData{
+        get{
+            return self.youtube ?? []
+        }
+        
+        set{
+            return self.youtube = newValue
         }
     }
     

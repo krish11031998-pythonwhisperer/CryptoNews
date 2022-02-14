@@ -450,6 +450,13 @@ class CrybseCoinAdditionalData:Codable{
     var links:CrybseCoinAdditionalSocialData?
     var whitepaper:CrybseCoinAdditionalWhitepaper?
     
+    
+    var reddit:String?{
+        let subRedditName = self.links?.reddit?.first?.split(separator: "/").last?.description
+        print("(DEBUG) SubReddit : ",subRedditName)
+        return subRedditName
+    }
+    
 }
 
 class CrybseCoinMetaData:ObservableObject,Codable{

@@ -57,9 +57,9 @@ extension CurrencyDetailView{
         self.transactionHistoryView
         self.CurrencySummary
         self.infoSection
-//        self.paginatedViews.padding(.top,10)
-        self.feedContainer
-        self.newsContainer 
+        self.paginatedViews
+//        self.feedContainer
+//        self.newsContainer
     }
     
     var CurrencyGeneralView:some View{
@@ -168,6 +168,14 @@ extension CurrencyDetailView{
         return self.socialData?.News ?? []
     }
     
+    var Reddit:CrybseRedditPosts{
+        return self.socialData?.RedditPosts ?? []
+    }
+    
+    var Videos:CrybseVideosData{
+        return self.socialData?.Videos ?? []
+    }
+    
     var Tweets:[AssetNewsData]{
         return self.socialData?.Tweets ?? []
     }
@@ -185,7 +193,13 @@ extension CurrencyDetailView{
     }
     
     var paginatedViews:some View{
-        ButtonScrollView(headerviews: ["Twitter":AnyView(self.feedContainer),"News":AnyView(self.newsContainer)], width: self.size.width)
+        return ButtonScrollView(headerviews: [
+            "Twitter":AnyView(self.feedContainer),
+            "News":AnyView(self.newsContainer),
+            "Reddit":AnyView(self.redditContainer),
+            "Youtube":AnyView(self.youtubeContainer)
+        ]
+        , width: self.size.width)
     }
     
     var profit:Float{
@@ -266,6 +280,18 @@ extension CurrencyDetailView{
                 
             case .News:
                 NewsStandCard(news: data,size:.init(width: size.width, height: 200))
+            case .Reddit:
+                if let reddit = data as? CrybseRedditData{
+                    RedditPostCard(width: self.size.width, redditPost: reddit)
+                }else{
+                    Color.clear
+                }
+            case .Youtube:
+                if let youtube = data as? CrybseVideoData{
+                    VideoCard(data: youtube, size: self.size)
+                }else{
+                    Color.clear
+                }
             default:
                 Color.clear.frame(width:.zero, height: .zero, alignment: .center)
         }
@@ -351,11 +377,11 @@ extension CurrencyDetailView{
     }
     
     func infoViewGen(type:PostCardType) -> some View{
-        let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : "Posts"
-        var data:[Any] = type == .News ? self.News : self.Tweets
+        let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : type == .Reddit ? "Reddit" : type  == .Youtube ? "Youtube" : "Posts"
+        var data:[Any] = type == .News ? self.News : type == .Tweet ? self.Tweets : type == .Reddit ? self.Reddit : type == .Youtube ? self.Videos : []
         data = data.count < 5 ? data : Array(data[0...4])
-        return Container(heading:heading,headingDivider: false,headingSize: headingFontSize, width: self.size.width, ignoreSides: true) { w in
-            VStack(alignment: .leading, spacing: 10) {
+        return Container(heading:heading,headingDivider: false,headingSize: headingFontSize, width: self.size.width,ignoreSides: true, horizontalPadding: 0) { w in
+            VStack(alignment: .leading, spacing: 15) {
                 ForEach(Array(data.enumerated()),id:\.offset) { _data in
                     let data = _data.element
                     self.cardBuilder(type:type,data: data)
@@ -386,6 +412,22 @@ extension CurrencyDetailView{
             self.infoViewGen(type: .News)
         }
         
+    }
+    
+    @ViewBuilder var redditContainer:some View{
+        if self.Reddit.isEmpty{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }else{
+            self.infoViewGen(type: .Reddit)
+        }
+    }
+    
+    @ViewBuilder var youtubeContainer:some View{
+        if self.Videos.isEmpty{
+            
+        }else{
+            self.infoViewGen(type: .Youtube)
+        }
     }
     
     var OHLCV:[CryptoCoinOHLCVPoint]{
