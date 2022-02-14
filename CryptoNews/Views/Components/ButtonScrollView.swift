@@ -61,20 +61,6 @@ struct ButtonScrollView:View{
     }
     
     var body: some View{
-//        VStack(alignment: .leading, spacing: 10) {
-//            self.tabBarHeader(proxy: )
-//        }
-//        TabView(selection: $selectedTab) {
-//            ForEach(Array(self.headers.enumerated()), id:\.offset) { _header in
-//                let header = _header.element
-//
-//                if let view = self.headerviews[header]{
-//                    view
-//                        .frame(width:self.width)
-//                        .id(header)
-//                }
-//            }
-//        }.tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
         ScrollViewReader { proxy in
             self.tabBarHeader(proxy: proxy)
             

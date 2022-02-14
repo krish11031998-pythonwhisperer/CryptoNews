@@ -58,8 +58,6 @@ extension CurrencyDetailView{
         self.CurrencySummary
         self.infoSection
         self.paginatedViews
-//        self.feedContainer
-//        self.newsContainer
     }
     
     var CurrencyGeneralView:some View{

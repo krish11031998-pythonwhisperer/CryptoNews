@@ -105,9 +105,6 @@ struct CurrencyView:View{
                 }
             }
             .onPreferenceChange(RefreshPreference.self) { reload in
-//                if reload{
-//                    self.asset_feed.getNextPage()
-//                }
             }
         }else if self.coinAPI.loading{
             ProgressView().frame(width: w, alignment: .center)
@@ -170,7 +167,7 @@ struct CurrencyView:View{
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
                     .padding(.vertical,50)
                     .onChange(of: self.refresh) { refresh in}
-            }
+            }.aspectRatio(contentMode: .fit)
         }else{
             ProgressView()
         }
