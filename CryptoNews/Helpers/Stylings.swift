@@ -603,6 +603,10 @@ extension AnyTransition{
         return AnyTransition.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .leading))
     }
     
+    static var slideLeftRight:AnyTransition{
+        return AnyTransition.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .trailing))
+    }
+    
 }
 
 
@@ -633,6 +637,10 @@ extension View{
     
     func slideRightLeft() -> some View{
         self.transition(.slideRightLeft)
+    }
+    
+    func slideLeftRight() -> some View{
+        self.transition(.slideLeftRight)
     }
     
     func slideInOut() -> some View{
@@ -670,7 +678,7 @@ extension View{
     }
     
     
-    func basicCard(size:CGSize,background:AnyView = AnyView(BlurView.thinDarkBlur)) -> some View{
+    func basicCard(size:CGSize = .zero,background:AnyView = AnyView(BlurView.thinDarkBlur)) -> some View{
         self.modifier(BasicCard(size: size,background: background))
     }
 

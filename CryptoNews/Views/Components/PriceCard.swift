@@ -31,7 +31,7 @@ struct PriceCard: View {
     }
     
     var prices:[Float]{
-        self.coin.Sparkline ?? []
+        self.coin.Sparkline
     }
     
     func headingSize(w:CGFloat,h:CGFloat) -> some View{

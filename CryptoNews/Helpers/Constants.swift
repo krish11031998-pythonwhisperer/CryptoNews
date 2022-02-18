@@ -1,6 +1,7 @@
 import SwiftUI
 
 var totalWidth = UIScreen.main.bounds.width
+var halfTotalWidth = totalWidth * 0.5
 var AppWidth = totalWidth * 0.9
 var totalHeight = UIScreen.main.bounds.height
 extension Color{

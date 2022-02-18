@@ -21,7 +21,7 @@ struct HighlightView: View {
     }
     
     var posts:[AssetNewsData]{
-        return self.feedAPI.FeedData.count > 10 ? Array(self.feedAPI.FeedData[0...9]) : self.feedAPI.FeedData
+        return self.feedAPI.FeedData.count > 5 ? Array(self.feedAPI.FeedData[0...4]) : self.feedAPI.FeedData
     }
     
     @ViewBuilder func selectedView(_ _data:Any, _ w:CGFloat) -> some View{

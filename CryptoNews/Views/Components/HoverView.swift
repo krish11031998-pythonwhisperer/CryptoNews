@@ -13,7 +13,7 @@ struct HoverView<T:View>:View{
     var heading:String
     var inner_view: (CGFloat) -> T
     var onClose:(() -> Void)?
-    init(heading:String="Heading",onClose: (() -> Void)? = nil,inner_view: @escaping (CGFloat) ->T){
+    init(heading:String="Heading",onClose: (() -> Void)? = nil,@ViewBuilder inner_view: @escaping (CGFloat) ->T){
         self.heading = heading
         self.inner_view = inner_view
         self.onClose = onClose

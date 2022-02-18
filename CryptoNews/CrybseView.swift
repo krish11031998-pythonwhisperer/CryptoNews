@@ -40,7 +40,7 @@ struct CrybseView: View {
 extension CrybseView{
     
     var tabs:[Tabs]{
-        return [.home,.search,.info,.profile]
+        return [.home,.search,.info,.profile,.none]
     }
     
     @ViewBuilder var mainBody:some View{
@@ -49,12 +49,18 @@ extension CrybseView{
                     self.tabPage(page: tab).tag(tab)
                     .background(mainBGView)
                     .ignoresSafeArea()
-                    
             }
         }
         .onAppear {
             UITabBar.appearance().isHidden = true
             UITabBar.appearance().barTintColor = .clear
+        }
+        .onChange(of: self.context.hoverViewEnabled) { enabled in
+            if enabled{
+                self.context.tab = .none
+            }else if self.context.tab != .home{
+                self.context.tab = self.context.prev_tab
+            }
         }
     }
     
@@ -65,17 +71,13 @@ extension CrybseView{
             case .info: SlideTabView {
                 return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
             }.environmentObject(self.context)
-        case .profile: ProfileView().environmentObject(self.context)
+            case .profile: ProfileView().environmentObject(self.context)
             default: Color.clear
         }
     }
-    
-    var hoverViewIsOn:Bool{
-        return self.context.addTxn || self.context.selectedCurrency != nil || self.context.selectedNews != nil || self.context.selectedSymbol != nil
-    }
-    
+        
     var hoverViewEnabled:Bool{
-        return self.context.selectedNews != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedCurrency != nil || self.context.selectedPost != nil
+        return self.context.selectedNews != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedCurrency != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
     }
     
     @ViewBuilder var hoverView:some View{
@@ -110,7 +112,6 @@ extension CrybseView{
         
 
         if self.context.addPost{
-//            CrybPostGen()
             CrybsePostMainView()
                 .environmentObject(self.context)
                 .transition(.slideInOut)
@@ -118,18 +119,15 @@ extension CrybseView{
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
         }
-
-        
     
     }
     
     func closeAsset(){
-        if self.context.selectedCurrency != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
+        setWithAnimation {
+            if self.context.selectedCurrency != nil{
                 self.context.selectedCurrency = nil
-            }
-        }else if self.context.selectedSymbol != nil{
-            withAnimation(.easeInOut(duration: 0.5)) {
+                
+            }else if self.context.selectedSymbol != nil{
                 self.context.selectedSymbol = nil
             }
         }

@@ -7,7 +7,7 @@
 
 import Foundation
 
-class CrybseCoinSpotPrice:Codable,Equatable{
+class CrybseCoinSpotPrice:Codable,Equatable,ObservableObject{
     static func == (lhs: CrybseCoinSpotPrice, rhs: CrybseCoinSpotPrice) -> Bool {
         return lhs.Currency == rhs.Currency && lhs.USD == rhs.USD
     }

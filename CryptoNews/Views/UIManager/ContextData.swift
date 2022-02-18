@@ -85,7 +85,7 @@ extension ContextData{
             DispatchQueue.main.async{
                 withAnimation(.easeInOut(duration: 0.5)) {
                     if self.prev_tab != self._tab{
-                        self.prev_tab = self.tab
+                        self.prev_tab = self._tab
                     }
                     self._tab = newValue
                 }
@@ -104,7 +104,6 @@ extension ContextData{
             DispatchQueue.main.async{
                 withAnimation(.easeInOut(duration: 0.5)) {
                     self._prev_tab = newValue
-                    
                 }
             }
         }
@@ -120,6 +119,7 @@ extension ContextData{
             setWithAnimation {
                 self._selectedCurrency = newValue
                 self.showTab = newValue != nil ? false : true
+                self.tab = .none
             }
         }
     }
@@ -149,6 +149,7 @@ extension ContextData{
                 withAnimation(.easeInOut(duration: 0.5)) {
                     self._selectedNews = newValue
                     self.showTab = newValue != nil ? false : true
+//                    self.tab = .none
                 }
             }
         }
@@ -163,6 +164,7 @@ extension ContextData{
             setWithAnimation {
                 self._selectedPost = newValue
                 self.showTab = newValue != nil ? false : true
+//                self.tab = .none
             }
         }
         
@@ -204,6 +206,7 @@ extension ContextData{
             DispatchQueue.main.async {
                 withAnimation(.easeInOut) {
                     self._addPost = newValue
+//                    self.tab = .none
                 }
             }
         }
@@ -238,6 +241,10 @@ extension ContextData{
         get{
             return self.user.user?.watching ?? []
         }
+    }
+    
+    var hoverViewEnabled:Bool{
+        return !(self.selectedNews == nil && self.selectedPost == nil && self.selectedCurrency == nil && self.selectedVideoData == nil && !self.addTxn && !self.addPost)
     }
     
     func AddNewTxn(txn:Transaction){

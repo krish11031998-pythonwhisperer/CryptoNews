@@ -39,35 +39,38 @@ struct VideoCard: View {
     
     func imageVideoInfo(size:CGSize) -> some View{
         ZStack(alignment: .center) {
-            ImageView(url: self.data.thumbnail, width: size.width, height: size.height, contentMode: .fill, alignment: .center)
-//            bottomShadow.frame(height: size.height, alignment: .center)
+            ImageView(url: self.data.thumbnail, width: size.width, height: size.height, contentMode: .fill, alignment: .top)
             if self.smallCard{
-                bottomShadow.frame(height: size.height, alignment: .center)
                 VStack(alignment: .center, spacing: 10) {
-                    Spacer()
                     MainText(content: self.data.title, fontSize: 17.5, color: .white, fontWeight: .medium)
-                        .padding(12.5)
-                        .frame(width: size.width, alignment: .leading)
-                }.frame(width: size.width, height: size.height, alignment: .bottom)
+                        .padding(.horizontal,10)
+                        .padding(.vertical)
+                        .frame(width: size.width,alignment: .topLeading)
+                }
+                .background(lightbottomShadow.frame(width: size.width, alignment: .center))
+                .frame(width: size.width,height:size.height, alignment: .bottom)
+                
             }
             self.playButton
         }
     }
     
     @ViewBuilder func CardDetails(w:CGFloat) -> some View{
-        MainText(content: self.data.title, fontSize: 17.5, color: .white, fontWeight: .medium)
-            .padding(.horizontal,5)
-            .padding(.vertical,12.5)
-            .frame(width: w, alignment: .leading)
-        RoundedRectangle(cornerRadius: 20)
-            .fill(Color.white)
-            .frame(width: w, height: 0.5, alignment: .center).padding(.bottom,25)
+        VStack(alignment: .leading, spacing: 10) {
+            MainText(content: self.data.title, fontSize: 15, color: .white, fontWeight: .medium)
+                .padding(.horizontal,5)
+                .padding(.vertical,12.5)
+                .frame(width: w, alignment: .leading)
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white)
+                .frame(width: w, height: 0.5, alignment: .center).padding(.bottom,25)
+        }
     }
     
     var videoView:some View{
         let w = self.size.width
         let h = self.size.height
-        let vw_h = self.smallCard ? h : self.data.thumbnailHeight ?? 0.65 * h
+        let vw_h = self.smallCard ? h : 0.65 * h
         return VStack(alignment: .center, spacing: 5){
             ZStack(alignment: .center){
                 YoutubePlayer(size: .init(width: w, height: vw_h), videoID: self.data.videoID, playerState: self.$playerState)
@@ -79,7 +82,6 @@ struct VideoCard: View {
             if !self.smallCard{
                 self.CardDetails(w: w)
             }
-            
         }
         .frame(width: w, alignment: .topLeading)
     }
@@ -91,7 +93,7 @@ struct VideoCard: View {
 
 struct VideoCard_Previews: PreviewProvider {
     static var previews: some View {
-        VideoCard(data: CrybseVideoData.test, size: .init(width: totalWidth - 50, height: 350),smallCard: false)
+        VideoCard(data: CrybseVideoData.test, size: .init(width: totalWidth - 50, height: 350),smallCard: true)
             .frame(width: totalWidth, height: totalHeight, alignment: .center)
             .background(Color.mainBGColor.ignoresSafeArea())
     }

@@ -13,13 +13,15 @@ class CrybseRedditAPI:CrybseAPI{
     @Published var posts:CrybseRedditPosts = []
     
     var subReddit:String
+    var limit:Int
     
-    init(subReddit:String?){
+    init(subReddit:String?,limit:Int = 10){
         self.subReddit = subReddit ?? ""
+        self.limit = limit
     }
 
     func requestGenerator( _ subReddit:String?) -> URLRequest?{
-        return self.requestBuilder(path: "reddit", queries: [.init(name: "subreddit", value: subReddit ?? self.subReddit)])
+        return self.requestBuilder(path: "reddit", queries: [.init(name: "subreddit", value: subReddit ?? self.subReddit),.init(name: "limit", value: "\(self.limit)")])
     }
     
     override func parseData(url: URL, data: Data) {

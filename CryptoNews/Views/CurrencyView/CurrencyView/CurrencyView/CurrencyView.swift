@@ -18,11 +18,13 @@ struct AssetPreferenceKey:PreferenceKey{
     }
 }
 
-enum CurrencyViewSection{
-    case news
-    case txns
-    case feed
-    case none
+enum CurrencyViewSection:String{
+    case news = "News"
+    case txns = "Transactions"
+    case feed = "Tweets"
+    case none = "None"
+    case reddit = "Reddit"
+    case videos = "Videos"
 }
 
 struct CurrencyView:View{
@@ -53,10 +55,12 @@ struct CurrencyView:View{
             self.coinAPI.getCoinData()
             self.loading.toggle()
         }else if let _ = self.assetData.coin?.prices{
+            self.loading.toggle()
             CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: self.assetData.coin?.MetaData.Name.lowercased() ?? "xxx", interval: "m1") { price in
                 guard let latestPrice = price.last else {return}
                 setWithAnimation {
                     self.assetData.coin?.prices?.append(latestPrice)
+                    self.loading.toggle()
                 }
             }
         }
@@ -98,7 +102,7 @@ struct CurrencyView:View{
     
     @ViewBuilder func feedView(w:CGFloat) -> some View{
         if let feed = self.tweets{
-            LazyScrollView(data: feed.compactMap({$0 as Any}),embedScrollView: false,stopLoading: true) { data in
+            LazyScrollView(data: feed,embedScrollView: false,stopLoading: true) { data in
                 if let data = data as? AssetNewsData{
                     let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
                     PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
@@ -109,10 +113,42 @@ struct CurrencyView:View{
         }else if self.coinAPI.loading{
             ProgressView().frame(width: w, alignment: .center)
         }else{
+            MainText(content: "No Feed", fontSize: 15)
             Color.clear.frame(width: w, height: 0, alignment: .center)
         }
         
     }
+    
+    @ViewBuilder func redditView(w:CGFloat) -> some View{
+        if let reddit = self.assetData.coin?.reddit{
+            LazyScrollView(data: reddit, embedScrollView: false, stopLoading: true) { data in
+                if let redditData = data as? CrybseRedditData{
+                    RedditPostCard(width: w, redditPost: redditData)
+                }
+            }
+        }else if self.coinAPI.loading{
+            ProgressView().frame(width: w, alignment: .center)
+        }else{
+            MainText(content: "No Reddit", fontSize: 15)
+            Color.clear.frame(width: w, height: 0, alignment: .center)
+        }
+    }
+    
+    @ViewBuilder func videoView(w:CGFloat) -> some View{
+        if let youtube = self.assetData.coin?.youtube{
+            LazyScrollView(data: youtube, embedScrollView: false, stopLoading: true) { data in
+                if let videoData = data as? CrybseVideoData{
+                    VideoCard(data: videoData, size: .init(width: w, height: totalHeight * 0.3))
+                }
+            }
+        }else if self.coinAPI.loading{
+            ProgressView().frame(width: w, alignment: .center)
+        }else{
+            MainText(content: "No Videos", fontSize: 15)
+            Color.clear.frame(width: w, height: 0, alignment: .center)
+        }
+    }
+
     
     @ViewBuilder func newsView(w:CGFloat) -> some View{
         if let news = self.news{
@@ -124,6 +160,7 @@ struct CurrencyView:View{
         }else if self.coinAPI.loading{
             ProgressView().frame(width: w, alignment: .center)
         }else{
+            MainText(content: "No News", fontSize: 15)
             Color.clear.frame(width: w, height: 0, alignment: .center)
         }
         
@@ -162,7 +199,6 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-//            LazyScrollView(data: [1], embedScrollView: true, stopLoading: true){ _ in
             ScrollView(.vertical, showsIndicators: false){
                 Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
                     .padding(.vertical,50)
@@ -174,21 +210,25 @@ struct CurrencyView:View{
     }
     
     @ViewBuilder var diff_Views:some View{
-        if self.showSection == .feed{
-            HoverView(heading: "Feed", onClose: self.onCloseSection) {w in
-                self.feedView(w: w)
+        if self.showSection != .none{
+            HoverView(heading: self.showSection.rawValue, onClose: self.onCloseSection) { w in
+                switch(self.showSection){
+                case .feed:
+                    self.feedView(w: w)
+                case .txns:
+                    TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.Currency, currencyCurrentPrice: self.assetData.coinData?.Price ?? 0,width: w)
+                case .news:
+                    self.newsView(w: w)
+                case .reddit:
+                    self.redditView(w: w)
+                case .videos:
+                    self.videoView(w: w)
+                default:
+                    Color.clear
+                }
             }
         }
-        if self.showSection == .txns{
-            HoverView(heading: "Transactions", onClose: self.onCloseSection) { w in
-                TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.Currency, currencyCurrentPrice: self.assetData.coinData?.Price ?? 0,width: w)
-            }
-        }
-        if self.showSection == .news{
-            HoverView(heading: "News", onClose: self.onCloseSection) { w in
-                self.newsView(w: w)
-            }
-        }
+        
     }
     
     func onDisappear(){
@@ -208,10 +248,11 @@ struct CurrencyView:View{
         ZStack(alignment: .topLeading) {
             if !self.loading {
                 self.mainView
+                self.diff_Views
             }else{
                 ProgressView().frame(width: totalWidth, alignment: .center)
             }
-            self.diff_Views
+            
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)

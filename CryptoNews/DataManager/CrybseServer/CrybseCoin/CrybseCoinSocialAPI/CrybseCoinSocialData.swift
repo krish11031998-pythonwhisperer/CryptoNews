@@ -82,7 +82,14 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     }
     
     var TimeSeriesData:[CryptoCoinOHLCVPoint]{
-        self.TimeseriesData
+        get{
+            return self.TimeseriesData
+        }
+        
+        set{
+            self.TimeseriesData = newValue
+        }
+        
     }
     
     static func parseCoinDataFromData(data:Data) -> CrybseCoinSocialData?{

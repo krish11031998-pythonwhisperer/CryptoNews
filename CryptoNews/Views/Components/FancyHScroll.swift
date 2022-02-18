@@ -11,6 +11,7 @@ struct FancyHScroll<T:View>: View {
     @EnvironmentObject var context:ContextData
     @State var time:Int = 0
     @StateObject var SP:swipeParams
+    @State var reset:Bool = false
     
     @ViewBuilder var viewGen:(Any) -> T
     var onTap:((Int) -> Void)?
@@ -19,7 +20,6 @@ struct FancyHScroll<T:View>: View {
     var scrollable:Bool
     var size:CGSize
     var headers:[String]?
-    
     var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     init(data:[Any],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize,scrollable:Bool = false,onTap:((Int) -> Void)? = nil,@ViewBuilder viewGen: @escaping (Any) -> T){
@@ -74,12 +74,25 @@ struct FancyHScroll<T:View>: View {
     }
     
     var offset:CGFloat{
-        return -CGFloat(self.SP.swiped <= 1 ? self.SP.swiped : 1) * totalWidth
+        return -CGFloat(self.reset || self.SP.swiped <= 1 ? self.SP.swiped : 1) * totalWidth
     }
     
     func onReceiveTimer(){
         if self.time == self.timeLimit{
-            self.SP.swiped = self.SP.swiped + 1 <= self.data.count - 1 ? self.SP.swiped + 1 : 0
+            setWithAnimation {
+                let newSwipe = self.SP.swiped + 1 <= self.data.count - 1 ? self.SP.swiped + 1 : 0
+                if newSwipe == 0 &&  !self.reset{
+                    self.reset.toggle()
+                }
+                DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
+                    withAnimation(.easeInOut){
+                        self.SP.swiped = newSwipe
+                    }
+                }
+                if self.SP.extraOffset != .zero{
+                    self.SP.extraOffset = .zero
+                }
+            }
         }else{
             self.time += 1
         }
@@ -87,6 +100,9 @@ struct FancyHScroll<T:View>: View {
     
     func resetTimer(_ idx:Int){
         self.time = 0
+        if idx == 0 && self.reset{
+            self.reset.toggle()
+        }
     }
     
     func headerView(h:CGFloat) -> some View{
@@ -134,7 +150,7 @@ struct FancyHScroll<T:View>: View {
                 let data = _data.element
                 let idx = _data.offset
                 
-                if idx >= self.SP.swiped - 1 && idx <= self.SP.swiped + 1{
+                if (idx >= self.SP.swiped - 1 && idx <= self.SP.swiped + 1) || self.reset{
                     self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
                 }
                 
@@ -151,15 +167,19 @@ struct FancyHScroll<T:View>: View {
     }
     
     var body: some View {
-        self.mainBody
-        .frame(width:totalWidth,height: size.height, alignment: .leading)
-        .offset(x: self.SP.extraOffset + self.offset)
-        .onReceive(self.timer, perform: { _ in
-            withAnimation(.easeInOut) {
-                self.onReceiveTimer()
-            }
-        })
-        .onChange(of: self.SP.swiped, perform: self.resetTimer)
+//        VStack(alignment: .center, spacing: 10) {
+//            MainText(content: "\(self.time)", fontSize: 20,color: .blue,fontWeight: .bold)
+            self.mainBody
+            .frame(width:totalWidth,height: size.height, alignment: .leading)
+            .offset(x: self.SP.extraOffset + self.offset)
+            .onReceive(self.timer, perform: { _ in
+                withAnimation(.easeInOut) {
+                    self.onReceiveTimer()
+                }
+            })
+            .onChange(of: self.SP.swiped, perform: self.resetTimer)
+//        }
+        
        
     }
 }

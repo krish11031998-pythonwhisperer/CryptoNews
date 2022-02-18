@@ -42,6 +42,22 @@ class CrybseAssets:ObservableObject,Codable{
         }
     }
     
+    var Profit:Float{
+        var profit:Float = 0.0
+        if let assetValues = self.assets?.values.compactMap({$0.Value}){
+            profit = assetValues.reduce(0, {$0 + $1})
+        }
+        return profit/self.TotalCurrentValue
+    }
+    
+    var TotalCurrentValue:Float{
+        var total:Float = 0.0
+        if let assetsValues = self.assets?.values.compactMap({$0.Value}){
+            total = assetsValues.reduce(0, {$0 + $1})
+        }
+        return total
+    }
+    
     var trackedAssets:[CrybseAsset]{
         return self.tracked?.compactMap({self.assets?[$0] ?? nil}) ?? []
     }
@@ -265,9 +281,17 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     var MarketCap:Float{
         return self.coinData?.marketCap ?? 0.0
     }
-//    var Coin:CrybseCoinSocialData{
-//        return self.coin ?? .init()
-//    }
+    
+    var PriceData:Array<CryptoCoinOHLCVPoint>{
+        get{
+            return self.coin?.TimeseriesData ?? []
+        }
+        
+        
+        set{
+            self.coin?.TimeSeriesData = newValue
+        }
+    }
     
     func updatePriceWithLatestTimeSeriesPrice(timeSeries:Array<CryptoCoinOHLCVPoint>?){
         guard let safeTimeseries = timeSeries, let latestPrice = safeTimeseries.last?.close else {return}

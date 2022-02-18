@@ -17,14 +17,14 @@ struct RefreshPreference:PreferenceKey{
 }
 
 struct LazyScrollView<T:View>: View {
-    var data:[Any]
+    var data:[Any]?
     var embedScrollView:Bool
     var viewGen: (Any) -> T
     @State var reloadNow:Bool = false
     var stopLoading:Bool
     var header:String?
     
-    init(header:String? = nil,data:[Any],embedScrollView:Bool = false,stopLoading:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
+    init(header:String? = nil,data:[Any]? = nil,embedScrollView:Bool = false,stopLoading:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
         self.header = header
         self.data = data
         self.stopLoading = stopLoading
@@ -50,20 +50,25 @@ struct LazyScrollView<T:View>: View {
     
     var refreshingView:some View{
         LazyVStack(alignment: .center, spacing: 10) {
-            ForEach(Array(self.data.enumerated()), id:\.offset) {_data in
-                let data = _data.element
-                self.viewGen(data)
+            if let data = data {
+                ForEach(Array(data.enumerated()), id:\.offset) {_data in
+                    let data = _data.element
+                    self.viewGen(data)
+                }
+            }else{
+                self.viewGen(1)
             }
+            
             if !self.stopLoading{
                 self.reloadContainer
                     .padding(.bottom,200)
             }
-            
-        }.onChange(of: self.data.count) { newCount in
-            if self.reloadNow{
-                self.reloadNow.toggle()
-            }
         }
+//        .onChange(of: self.data.count) { newCount in
+//            if self.reloadNow{
+//                self.reloadNow.toggle()
+//            }
+//        }
         .preference(key: RefreshPreference.self, value: self.reloadNow)
     }
         
