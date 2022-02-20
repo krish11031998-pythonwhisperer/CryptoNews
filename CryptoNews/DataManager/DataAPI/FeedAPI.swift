@@ -56,6 +56,10 @@ class AssetNewsData:Identifiable,Codable{
         res.url = news.url
         return res
     }
+    
+    var Thumbnail:String{
+        return self.thumbnail ?? ""
+    }
 }
 
 

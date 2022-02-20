@@ -43,9 +43,9 @@ struct NewsCard: View {
             let linelimit = Int(floor(text_h/16) - 2)
             
             return VStack(alignment: .leading, spacing: 5) {
-                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: linelimit <= 0 ? 13 : 16, headingFont: .normal, subHeadingFont: .normal).fixedSize(horizontal: false, vertical: true)
-                    .lineLimit(linelimit)
-//                    .frame(width: w,height: text_h,alignment: .topLeading)
+                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: linelimit <= 0 ? 13 : 16, headingFont: .normal, subHeadingFont: .normal)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(3)
                 self.footer(w: w, h: 50)
                     .padding(.bottom,5)
             }.padding(.horizontal,10)
@@ -73,16 +73,17 @@ struct NewsCard: View {
                 self.newsView(size: .init(width: w, height: h))
                     .background(Color.darkGradColor.opacity(0.5).frame(height: h * 0.5,alignment: .bottom),alignment: .bottom)
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
-                
+            
         }else{
-                let img_h = size.height * 0.7
-                let news_h = size.height * 0.3 - 5
-                VStack(alignment: .leading, spacing: 5) {
-                    ZStack(alignment: .center) {
-                        ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
-                    }.frame(width: size.width, height: img_h, alignment: .center)
-                    self.newsView(size: .init(width: size.width, height: news_h))
-                }.frame(width: size.width, height: size.height, alignment: .topLeading)
+            let img_h = size.height * 0.6
+            let news_h = size.height * 0.4 - 5
+            VStack(alignment: .leading, spacing: 5) {
+                ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
+                self.newsView(size: .init(width: size.width, height: news_h))
+            }.frame(width: size.width, height: size.height, alignment: .topLeading)
+                .onAppear {
+                    print("(DEBUG) Thumbnail for news  - \(self.news.title ?? "") : ",self.news.Thumbnail)
+                }
         }
     }
     
@@ -91,7 +92,6 @@ struct NewsCard: View {
             .background(BlurView(style: .systemThinMaterialDark))
             .clipContent(clipping: .roundClipping)
             .defaultShadow()
-        
     }
 }
 

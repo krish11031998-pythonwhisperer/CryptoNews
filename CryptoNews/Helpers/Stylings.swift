@@ -56,18 +56,14 @@ struct AsyncContainerModifier:ViewModifier{
         switch(self.axis){
             case .horizontal:
                 DispatchQueue.main.async {
-                    if !self.showView && minX < totalWidth * 1.2{
-                        withAnimation(.easeInOut) {
-                            self.showView.toggle()
-                        }
+                    if !self.showView && minX < totalWidth * 0.75{
+                        self.showView.toggle()
                     }
                 }
             case .vertical:
                 DispatchQueue.main.async {
-                    if !self.showView && minY < totalHeight * 1.5{
-                        withAnimation(.easeInOut) {
-                            self.showView.toggle()
-                        }
+                    if !self.showView && minY < totalHeight * 0.75{
+                        self.showView.toggle()
                     }
                 }
             default:

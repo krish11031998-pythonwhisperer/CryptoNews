@@ -7,177 +7,305 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "F31F8C71-6005-4013-AB56-834D6A129C57"
+            uuid = "FC81E996-314B-4CF6-80A2-335FE9055968"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Network/MultipartFormData.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "74"
-            endingLineNumber = "74"
-            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
+            startingLineNumber = "344"
+            endingLineNumber = "344"
+            landmarkName = "downloadImg(url:mode:crop:bounds:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "5B0BEE67-22F1-49F2-8537-87F66478B905"
+            uuid = "10217635-5EB6-42D7-AA74-9B8B0854CC3B"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Network/MultipartFormData.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "73"
-            endingLineNumber = "73"
-            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "downloadImg(url:mode:crop:bounds:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "9F5E2049-02A1-4559-ACD3-436B5F303086"
+            uuid = "50CD4F51-9EDC-435F-A8D3-087778CC2636"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Network/MultipartFormData.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
+            startingLineNumber = "346"
+            endingLineNumber = "346"
+            landmarkName = "downloadImg(url:mode:crop:bounds:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "50CD4F51-9EDC-435F-A8D3-087778CC2636 - 7d5440458afd4447"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CryptoNews.ImageDownloader.downloadImg(url: Foundation.URL, mode: Swift.String, crop: Swift.Bool, bounds: Swift.Optional&lt;__C.CGSize&gt;) -&gt; ()"
+                  moduleName = "CryptoNews"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/krish_venkat/Desktop/Crybse/CryptoNews/CryptoNews/Helpers/ImageHelper.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "346"
+                  endingLineNumber = "346"
+                  offsetFromSymbolStart = "1476">
+               </Location>
+               <Location
+                  uuid = "50CD4F51-9EDC-435F-A8D3-087778CC2636 - 52c0bcb0bbab4c39"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "implicit closure #2 ((data: Foundation.Data, response: __C.NSURLResponse)) throws -&gt; Foundation.Data in implicit closure #1 (CryptoNews.ImageDownloader) -&gt; ((data: Foundation.Data, response: __C.NSURLResponse)) throws -&gt; Foundation.Data in CryptoNews.ImageDownloader.downloadImg(url: Foundation.URL, mode: Swift.String, crop: Swift.Bool, bounds: Swift.Optional&lt;__C.CGSize&gt;) -&gt; ()"
+                  moduleName = "CryptoNews"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/krish_venkat/Desktop/Crybse/CryptoNews/CryptoNews/Helpers/ImageHelper.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "346"
+                  endingLineNumber = "346"
+                  offsetFromSymbolStart = "96">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "21921911-FD1E-4F35-96E7-C0052117CEF7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "347"
+            endingLineNumber = "347"
+            landmarkName = "downloadImg(url:mode:crop:bounds:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "964C9E89-96F3-4293-BC6B-05FBE7DF1FEC"
+            uuid = "DECB19CF-09D2-4D97-BE90-0F56800E9B64"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Network/MultipartFormData.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
-            landmarkName = "generateRequestDataBoundary(params:allmedia:)"
+            startingLineNumber = "349"
+            endingLineNumber = "349"
+            landmarkName = "downloadImg(url:mode:crop:bounds:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "C0B56479-1DAB-4505-B317-6B98FD9A40B1"
+            uuid = "EF273F91-5258-4220-B44A-4B10BF90CFC8"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/DataManager/CrybseServer/CrybsePost/CrybsePostAPI.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "103"
-            endingLineNumber = "103"
-            landmarkName = "generateMultiPartFormRequest(url:post:image:)"
+            startingLineNumber = "335"
+            endingLineNumber = "335"
+            landmarkName = "checkData(output:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "AA02342D-3497-4462-9638-AE6062CA5994"
+            uuid = "30D03E5B-399C-46F0-8989-0039A8124511"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/CurrencyView/CurrencyView/CurrencyDetailView/CurrencyDetailView.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "188"
-            endingLineNumber = "188"
-            landmarkName = "paginatedViews"
-            landmarkType = "24">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "59A94F9D-D2B0-4717-B813-C5CC712D8F8B"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/CurrencyView/CurrencyView/CurrencyView.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "71"
-            endingLineNumber = "71"
-            landmarkName = "onReceiveCoinData(_:)"
+            startingLineNumber = "336"
+            endingLineNumber = "336"
+            landmarkName = "checkData(output:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0BF9F239-5748-4C95-8E68-407D05DA5DFA"
+            uuid = "AC14867E-F2B5-4378-9CA3-CA86E2AF986D"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/CurrencyView/CurrencyView/CurrencyView.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "72"
-            endingLineNumber = "72"
-            landmarkName = "onReceiveCoinData(_:)"
+            startingLineNumber = "337"
+            endingLineNumber = "337"
+            landmarkName = "checkData(output:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "17877D81-9512-4613-A6AD-F79A97744102"
+            uuid = "04A292EE-04B6-4048-959D-E6B6A9E79FFE"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/Views/CurrencyView/CurrencyView/CurrencyView/CurrencyDetailView.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "47"
-            endingLineNumber = "47"
-            landmarkName = "body"
-            landmarkType = "24">
+            startingLineNumber = "338"
+            endingLineNumber = "338"
+            landmarkName = "checkData(output:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "0C952DDA-C3FA-42EF-8951-6AF954104332"
+            uuid = "F694167E-43D1-4822-9223-9132C040BD86"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/CrybseView.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "62"
-            endingLineNumber = "62"
-            landmarkName = "mainBody"
-            landmarkType = "24">
+            startingLineNumber = "339"
+            endingLineNumber = "339"
+            landmarkName = "checkData(output:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "30BE37BC-320F-407A-BA03-1073F3BD9779"
+            uuid = "6CDF1C4A-21E1-4CA1-8B13-B558736B159B"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "CryptoNews/CrybseView.swift"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "60"
-            endingLineNumber = "60"
-            landmarkName = "mainBody"
-            landmarkType = "24">
+            startingLineNumber = "323"
+            endingLineNumber = "323"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "068075E5-3C73-4398-B7F4-24DA5B4597A4"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "324"
+            endingLineNumber = "324"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "274EEF67-44FB-4431-A0DF-37E607BDC7A1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "325"
+            endingLineNumber = "325"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1FA65C2A-7F99-4EB5-8D71-C27B0F98DB7F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "326"
+            endingLineNumber = "326"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2A2FC70E-3035-467C-8D44-33DA5ED3AEEE"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "327"
+            endingLineNumber = "327"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B825B2B2-9E30-406E-9EA1-8FDBCFEFF882"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "329"
+            endingLineNumber = "329"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9088FE24-946D-4CC4-A02C-07ECBAE9F358"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CryptoNews/Helpers/ImageHelper.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "330"
+            endingLineNumber = "330"
+            landmarkName = "parseImage(data:url:bound:)"
+            landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

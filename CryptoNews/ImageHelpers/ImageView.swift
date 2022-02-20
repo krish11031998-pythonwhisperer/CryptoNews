@@ -29,6 +29,7 @@ extension Image{
 struct ImageView:View{
     @State var image:UIImage?
     @StateObject var IMD:ImageDownloader = .init()
+    var debug:Bool = false
     var url:String?
     var width:CGFloat
     var height:CGFloat
@@ -59,7 +60,14 @@ struct ImageView:View{
         self.clipping = clipping
 //        self._IMD = .init(wrappedValue: .init(url: url,quality: quality,isModelURL: isModel))
     }
-            
+          
+    
+    func onAppear(){
+        if let url = self.url , !url.contains("svg") && self.IMD.image == nil{
+            self.IMD.getImage(url: url)
+        }
+    }
+    
     func img_h(img:UIImage? = nil) -> CGFloat{
         var h = self.height
         if self.autoHeight && img != nil{
@@ -76,7 +84,7 @@ struct ImageView:View{
     
     
     var imgSize:CGSize{
-        guard let mainImg = mainImg else {return .zero}
+        guard let mainImg = mainImg else {return .init(width: self.width, height: self.height)}
         return .init(width: self.width, height: self.img_h(img: mainImg))
     }
     
@@ -85,30 +93,21 @@ struct ImageView:View{
             Image(uiImage: img)
                 .standardImageView(size: self.imgSize, contentMode: .fill)
         }else{
-//            mainBGView
             BlurView(style: .dark)
                 .frame(width: self.imgSize.width, height: self.imgSize.height, alignment: .center)
-                .clipContent(clipping: .circleClipping)
         }
     }
 
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
         return ZStack(alignment: .center) {
-            BlurView(style: .dark)
+//            BlurView(style: .dark)
             self.imgUIImageView
             if self.heading != nil{
                 lightbottomShadow.frame(width: self.width, height: self.imgSize.height, alignment: .center)
                 self.overlayView(h: self.imgSize.height)
             }
-            if self.isHidden && !self.IMD.loading{
-                BlurView(style: .regular)
-            }
         }.frame(width: self.imgSize.width,height: self.imgSize.height)
-        .onAppear {
-            if let url = self.url , !url.contains("svg") && self.IMD.image == nil{
-                self.IMD.getImage(url: url)
-            }
-        }
+            .onAppear(perform: self.onAppear)
     }
     
     func overlayView(h : CGFloat) -> some View{
@@ -145,7 +144,26 @@ struct ImageView:View{
     }
     
     var body: some View{
-        self.imgView().clipContent(clipping: clipping)
+        if self.debug{
+            self.debugView
+        }else{
+            self.imgView().clipContent(clipping: clipping)
+        }
     }
     
+    var debugView:some View{
+        VStack(alignment: .center, spacing: 10) {
+            MainText(content: self.IMD.loading ? "loading" : "not loading", fontSize: 15,color: .black,fontWeight: .semibold)
+            self.imgView()
+                .clipContent(clipping: self.clipping)
+        }
+    }
+    
+}
+
+
+struct ImageViewPreview:PreviewProvider{
+    static var previews: some View{
+        ImageView(url: "https://www.coindesk.com/resizer/2ZTTTqx35W5zdkJmkQdJf8a8w6E=/800x600/cloudfront-us-east-1.images.arcpublishing.com/coindesk/UN4BNCYGXVEP7ILZNLYQ5GEF5Q.jpg",width: 300, height: 300, contentMode: .fill, alignment: .center)
+    }
 }

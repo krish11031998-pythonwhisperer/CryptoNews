@@ -22,9 +22,10 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            AllAssetView()
-            HighlightView(currencies: self.currencies)
-            CrybseYoutubeHighlightView(width: totalWidth)
+            AllAssetView().asyncContainer()
+            HighlightView(currencies: self.currencies).asyncContainer()
+            CrybseYoutubeHighlightView(width: totalWidth).asyncContainer()
+            NewsSectionMain(currencies: self.currencies, limit: 10,cardHeight: totalHeight * 0.45).asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

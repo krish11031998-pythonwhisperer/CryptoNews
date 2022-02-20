@@ -97,27 +97,20 @@ struct Container<T:View>: View {
         }.aspectRatio(contentMode: .fit)
     }
     
-    @ViewBuilder var headingView: some View{
-        let heading = self.heading!
-        HStack {
-            if let close = self.onClose{
-                SystemButton(b_name: "xmark",action: close)
-            }
-            self.headingTitle
-            Spacer()
-            if rightButton != nil{
-                self.rightButton?()
-            }
-        }
-    }
     
     @ViewBuilder var headerView:some View{
-        if self.heading != nil{
-            self.headingView
+        if let _ = self.heading{
+            HStack {
+                if let close = self.onClose{
+                    SystemButton(b_name: "xmark",action: close)
+                }
+                self.headingTitle
+                Spacer()
+                if rightButton != nil{
+                    self.rightButton?()
+                }
+            }
         }
-//        else if self.onClose != nil{
-//            self.onCloseView
-//        }
         else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
