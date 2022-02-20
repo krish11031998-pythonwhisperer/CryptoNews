@@ -151,6 +151,7 @@
 		EF757C6127A719F600F957BC /* CrybseCoinPrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF757C6027A719F600F957BC /* CrybseCoinPrice.swift */; };
 		EF7F6F72279ADEF000CF350A /* CrybseTradingSignalsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7F6F71279ADEF000CF350A /* CrybseTradingSignalsData.swift */; };
 		EF7F6F74279AE05800CF350A /* CrybseTradingSignalsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF7F6F73279AE05800CF350A /* CrybseTradingSignalsAPI.swift */; };
+		EF8BE63227C1024200877234 /* Forum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF8BE63127C1024200877234 /* Forum-Regular.ttf */; };
 		EFAB19CB2792C4FB00AABDC8 /* CrybseNewsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */; };
 		EFAB19CD2792C54600AABDC8 /* CrybseCoinOHLCV.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */; };
 		EFAB19CF27952CDF00AABDC8 /* CrybsePrices.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */; };
@@ -345,6 +346,7 @@
 		EF757C6027A719F600F957BC /* CrybseCoinPrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinPrice.swift; sourceTree = "<group>"; };
 		EF7F6F71279ADEF000CF350A /* CrybseTradingSignalsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseTradingSignalsData.swift; sourceTree = "<group>"; };
 		EF7F6F73279AE05800CF350A /* CrybseTradingSignalsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseTradingSignalsAPI.swift; sourceTree = "<group>"; };
+		EF8BE63127C1024200877234 /* Forum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Forum-Regular.ttf"; sourceTree = "<group>"; };
 		EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsData.swift; sourceTree = "<group>"; };
 		EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinOHLCV.swift; sourceTree = "<group>"; };
 		EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrices.swift; sourceTree = "<group>"; };
@@ -437,6 +439,7 @@
 				BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */,
 				BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */,
 				BC6459362713894100BAECBC /* Codystar-Regular.ttf */,
+				EF8BE63127C1024200877234 /* Forum-Regular.ttf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -1202,6 +1205,7 @@
 				BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */,
 				BC64592C2711CDCF00BAECBC /* NixieOne-Regular.ttf in Resources */,
 				BCBC1D7A26BE7D7500B87E5C /* Assets.xcassets in Resources */,
+				EF8BE63227C1024200877234 /* Forum-Regular.ttf in Resources */,
 				BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */,
 				BC6459282711C7A500BAECBC /* MajorMonoDisplay-Regular.ttf in Resources */,
 			);

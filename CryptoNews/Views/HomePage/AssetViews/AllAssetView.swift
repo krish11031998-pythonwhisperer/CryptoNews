@@ -49,13 +49,7 @@ struct AllAssetView: View {
 
 
     @ViewBuilder var mainBody:some View{
-//        self.portfolioViews
-//        AssetViewBuilder(type: "watching", size:CardSize.medium, coins: self.coins(type: "watching") ?? [], alternative: false)
-//        if let uid = self.context.user.user?.uid{
-//            PortfolioSummaryView(symbols: self.assets.Tracked,uid: uid)
-//        }
         PortfolioSummary(asset: self.assets, width: totalWidth - 30)
-        
     }
     
     var body: some View {

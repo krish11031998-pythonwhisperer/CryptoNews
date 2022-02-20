@@ -40,7 +40,7 @@ struct CrybseView: View {
 extension CrybseView{
     
     var tabs:[Tabs]{
-        return [.home,.search,.info,.profile,.none]
+        return [.home,.search,.info,.profile,.currency]
     }
     
     @ViewBuilder var mainBody:some View{
@@ -55,13 +55,13 @@ extension CrybseView{
             UITabBar.appearance().isHidden = true
             UITabBar.appearance().barTintColor = .clear
         }
-        .onChange(of: self.context.hoverViewEnabled) { enabled in
-            if enabled{
-                self.context.tab = .none
-            }else if self.context.tab != .home{
-                self.context.tab = self.context.prev_tab
-            }
-        }
+//        .onChange(of: self.context.hoverViewEnabled) { enabled in
+//            if enabled{
+//                self.context.tab = .none
+//            }else if self.context.tab != .home{
+//                self.context.tab = self.context.prev_tab
+//            }
+//        }
     }
     
     @ViewBuilder func tabPage(page:Tabs) -> some View{

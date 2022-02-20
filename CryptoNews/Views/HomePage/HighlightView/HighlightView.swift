@@ -9,19 +9,19 @@ import SwiftUI
 
 struct HighlightView: View {
     @EnvironmentObject var context:ContextData
-    @StateObject var feedAPI:FeedAPI
+//    @StateObject var feedAPI:FeedAPI
+    @StateObject var redditAPI:CrybseRedditAPI = .init(subReddit: "cryptocurrency")
     var width:CGFloat
     init(width:CGFloat = totalWidth,currencies:[String]){
         self.width = width
-        self._feedAPI = .init(wrappedValue: .init(currency: currencies, sources: ["twitter","reddit","news"], type: .Chronological, limit: 50, page: 0))
     }
 
     var cardSize:CGSize{
         return .init(width: self.width, height: totalHeight * 0.475)
     }
     
-    var posts:[AssetNewsData]{
-        return self.feedAPI.FeedData.count > 5 ? Array(self.feedAPI.FeedData[0...4]) : self.feedAPI.FeedData
+    var posts:CrybseRedditPosts{
+        return self.redditAPI.posts.count > 5 ? Array(self.redditAPI.posts[0...4]) : self.redditAPI.posts
     }
     
     @ViewBuilder func selectedView(_ _data:Any, _ w:CGFloat) -> some View{
@@ -38,22 +38,26 @@ struct HighlightView: View {
                         }
                     }
             }
+        }else if let safeReddit = _data as? CrybseRedditData{
+            RedditPostCard(width: w, size: .init(width: w, height: totalHeight * 0.25), redditPost: safeReddit)
         }
     }
     
     var body: some View {
         Container(heading: "Social Highlights", headingDivider: true, width: self.width, ignoreSides: false) { w in
-            if !self.posts.isEmpty && !self.feedAPI.loading{
+            if !self.posts.isEmpty && !self.redditAPI.loading{
                 CardFanView(width: w,indices: self.posts) { _data in
                     self.selectedView(_data, w)
                 }.padding(.vertical,25)
-            }else if self.feedAPI.loading{
+            }else if self.redditAPI.loading{
                 ProgressView()
             }else{
                 Color.clear.frame(width: .zero, height: .zero, alignment: .center)
             }
             
-        }.onAppear(perform: self.feedAPI.getAssetInfo)
+        }.onAppear {
+            self.redditAPI.getRedditPosts()
+        }
     }
 }
 

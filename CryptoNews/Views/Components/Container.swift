@@ -86,32 +86,39 @@ struct Container<T:View>: View {
         }
     }
     
+    @ViewBuilder var headingTitle:some View{
+        VStack(alignment: .leading, spacing: 5) {
+            MainText(content: self.heading!, fontSize: self.headingSize, color: self.headingColor, fontWeight: .semibold,style: .heading)
+            if self.headingDivider{
+                RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue)
+                    .fill(Color.mainBGColor)
+                    .frame(height:2)
+            }
+        }.aspectRatio(contentMode: .fit)
+    }
+    
     @ViewBuilder var headingView: some View{
         let heading = self.heading!
         HStack {
             if let close = self.onClose{
                 SystemButton(b_name: "xmark",action: close)
             }
-            MainText(content: heading, fontSize: self.headingSize, color: self.headingColor, fontWeight: .semibold,style: .heading)
+            self.headingTitle
             Spacer()
             if rightButton != nil{
                 self.rightButton?()
             }
-        }
-        if self.headingDivider{
-            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue)
-                .fill(Color.mainBGColor)
-                .frame(width:self.innerWidth * 0.5,height: 2,alignment: .leading)
-            
         }
     }
     
     @ViewBuilder var headerView:some View{
         if self.heading != nil{
             self.headingView
-        }else if self.onClose != nil{
-            self.onCloseView
-        }else{
+        }
+//        else if self.onClose != nil{
+//            self.onCloseView
+//        }
+        else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
     }

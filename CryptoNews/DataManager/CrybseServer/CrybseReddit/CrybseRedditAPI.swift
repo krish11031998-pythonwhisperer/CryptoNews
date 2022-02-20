@@ -36,7 +36,7 @@ class CrybseRedditAPI:CrybseAPI{
         
         
     }
-    
+        
     func getRedditPosts(subReddit:String? = nil,completion:((Data) -> Void)? = nil){
         guard let safeRequest = self.requestGenerator(subReddit) else {return}
         self.getData(request: safeRequest,completion: completion)

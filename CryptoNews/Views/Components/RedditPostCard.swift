@@ -35,12 +35,12 @@ struct RedditPostCard: View {
             if let _ = self.redditPost.selftext{
                 MainText(content: self.redditPost.SelfText, fontSize: 13, color: .white, fontWeight: .regular)
             }
-            if self.redditPost.URL.isImgURLStr(){
+            if self.redditPost.URL.isImgURLStr() && self.size == .zero{
                 ImageView(url: self.redditPost.URL, width: w, contentMode: .fill, alignment: .center, autoHeight: true)
                     .clipContent(clipping: .roundCornerMedium)
             }
         }.frame(width: w, alignment: .leading)
-            .padding(.vertical,7.5)
+        .padding(.vertical,7.5)
         
     }
     
@@ -61,19 +61,25 @@ struct RedditPostCard: View {
         Container(width: self.width,verticalPadding: 15) { w in
             self.Header(w: w)
                 .padding(.bottom,10)
-            self.mainBody(w: w)
-//            RoundedRectangle(cornerRadius: 20).fill(Color.white).frame(width: w, height:0.5, alignment: .center)
+            if self.size.height != .zero{
+                self.mainBody(w: w)
+                    .frame(height: size.height, alignment: .topLeading)
+            }else{
+                self.mainBody(w: w)
+            }
             Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
             self.footer(w: w)
-        }.basicCard(size: self.size)
+        }.basicCard(size: .zero)
     }
 }
 
 struct RedditCardTester:View{
     @StateObject var RAPI:CrybseRedditAPI
+    var size:CGSize
     
-    init(subReddit:String){
+    init(subReddit:String,size:CGSize = .zero){
         self._RAPI = .init(wrappedValue: .init(subReddit: subReddit))
+        self.size = size
     }
     
     func onAppear(){
@@ -87,7 +93,7 @@ struct RedditCardTester:View{
             ScrollView(.vertical, showsIndicators: false) {
                 Container(heading: "Reddit Posts", width: totalWidth) { w in
                     ForEach(Array(self.RAPI.posts.enumerated()), id:\.offset) { post in
-                        RedditPostCard(width: w, redditPost: post.element)
+                        RedditPostCard(width: w,size: size, redditPost: post.element)
                     }
                 }
             }
@@ -106,7 +112,7 @@ struct RedditCardTester:View{
 
 struct RedditPostCard_Previews: PreviewProvider {
     static var previews: some View {
-        RedditCardTester(subReddit: "bitcoin")
+        RedditCardTester(subReddit: "bitcoin",size: .zero )
             .background(Color.mainBGColor.frame(width: totalWidth, height: totalHeight, alignment: .center).ignoresSafeArea())
     }
 }

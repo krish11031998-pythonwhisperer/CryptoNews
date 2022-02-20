@@ -15,10 +15,11 @@ enum Tabs:String,Hashable{
     case feed = "TwitterIcon"
     case news = "newspaper.fill"
     case txn = "plus.circle"
+    case currency
     case reddit = "RedditIcon"
     case search = "magnifyingglass"
     case profile = "person.fill"
-    case none = ""
+    case none
 }
 
 struct TabBarItem:Hashable{
@@ -119,7 +120,11 @@ extension ContextData{
             setWithAnimation {
                 self._selectedCurrency = newValue
                 self.showTab = newValue != nil ? false : true
-                self.tab = .none
+                if self.tab != .none{
+                    self.tab = .none
+                }else{
+                    self.tab = self.prev_tab
+                }
             }
         }
     }

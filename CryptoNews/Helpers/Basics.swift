@@ -5,6 +5,7 @@ enum TextStyle:String{
 //    case normal = "NixieOne-Regular"
 //    case normal = "Cochin"
     case normal = "Avenir Next"
+//    case normal = "Forum-Regular"
     case monospaced = ""
 }
 
@@ -80,7 +81,6 @@ struct MainText: View {
     
     var _font_:Font{
         return self.style != .monospaced ? .custom(self.style.rawValue, size: self.fontSize) : Font.system(size: self.fontSize, weight: .regular, design: .monospaced)
-//        return .custom(self.style.rawValue, size: self.fontSize)
     }
     
     var body: some View {
