@@ -26,16 +26,10 @@ struct LatestTweets: View {
     
     
     var body: some View {
-        Container(heading:self.heading,ignoreSides: true) { w in
+        Container(heading: self.heading, ignoreSides: false, horizontalPadding: 15, verticalPadding: 0, orientation: .vertical) { w in
             self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
-            if !self.tweets.isEmpty{
-                ForEach(Array(self.moreTweets.enumerated()), id:\.offset) { _tweet in
-                    PostCard(cardType: .Tweet, data: _tweet.element, size: .init(width: w, height: totalHeight * 0.4), bg: .dark, const_size: false, isButton: true)
-                }
-                .frame(width: totalWidth, alignment: .center)
-            }
+                .basicCard()
         }.onAppear(perform: self.onAppear)
-        
     }
 }
 
@@ -55,7 +49,7 @@ extension LatestTweets{
         }
     }
     var topTweets:[AssetNewsData]{
-        return Array(self.tweets[0..<(self.tweets.count - 5)])
+        return Array(self.tweets[0..<5])
     }
     
     var moreTweets:[AssetNewsData]{
@@ -64,15 +58,17 @@ extension LatestTweets{
     
     @ViewBuilder func TweetsFeed(size:CGSize) -> some View{
         if !self.tweetsAPI.FeedData.isEmpty{
-            FancyHScroll(data: self.topTweets, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { data in
+            FancyHScroll(data: self.topTweets, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { (data,size) in
                 if let data = data as? AssetNewsData{
-                    PostCard(cardType: .Tweet, data: data, size: .init(width: size.width, height: size.height),bg: .light, const_size: true,isButton: false)
+                    PostCard(cardType: .Tweet, data: data, size: size,bg: .light, const_size: true,isButton: false)
                 }else{
                     Color.clear.frame(width: size.width, height: size.height, alignment: .center)
                 }
             })
         }else if self.tweetsAPI.loading{
-            Color.clear.frame(width: size.width, height: size.height, alignment: .center).overlay(ProgressView())
+            ProgressView()
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
     }
 }

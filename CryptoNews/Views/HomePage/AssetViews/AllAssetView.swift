@@ -10,7 +10,6 @@ import Combine
 
 struct AllAssetView: View {
     @EnvironmentObject var context:ContextData
-//    @StateObject var assetAPI:CrybseAssetsAPI = .init(symbols: nil, uid: nil)
     var timer = Timer.TimerPublisher(interval: 150, runLoop: .main, mode: .common).autoconnect()
         
     var assets:CrybseAssets{
@@ -49,13 +48,13 @@ struct AllAssetView: View {
 
 
     @ViewBuilder var mainBody:some View{
-        PortfolioSummary(asset: self.assets, width: totalWidth - 30)
+        PortfolioSummary(width: totalWidth - 30)
     }
     
     var body: some View {
         self.mainBody
             .onReceive(self.timer) { _ in
-                self.updateAssetPrices()
+                self.context.userAssets.updateAssetPrices()
             }
     }
 }

@@ -81,9 +81,6 @@ struct NewsCard: View {
                 ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
                 self.newsView(size: .init(width: size.width, height: news_h))
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
-                .onAppear {
-                    print("(DEBUG) Thumbnail for news  - \(self.news.title ?? "") : ",self.news.Thumbnail)
-                }
         }
     }
     

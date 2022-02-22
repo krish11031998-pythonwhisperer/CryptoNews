@@ -34,7 +34,7 @@ struct CrybseYoutubeHighlightView: View {
             if self.VAPI.videos.isEmpty{
                 ProgressView()
             }else{
-                FancyHScroll(data: self.VAPI.videos,timeLimit: 30, size: size, scrollable: true) { data in
+                FancyHScroll(data: self.VAPI.videos,timeLimit: 30, size: size, scrollable: true) { data,size in
                     if let videoData = data as? CrybseVideoData{
                         VideoCard(data: videoData, size: size,smallCard: true)
                     }else{

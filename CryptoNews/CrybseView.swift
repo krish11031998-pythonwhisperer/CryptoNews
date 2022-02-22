@@ -55,13 +55,6 @@ extension CrybseView{
             UITabBar.appearance().isHidden = true
             UITabBar.appearance().barTintColor = .clear
         }
-//        .onChange(of: self.context.hoverViewEnabled) { enabled in
-//            if enabled{
-//                self.context.tab = .none
-//            }else if self.context.tab != .home{
-//                self.context.tab = self.context.prev_tab
-//            }
-//        }
     }
     
     @ViewBuilder func tabPage(page:Tabs) -> some View{

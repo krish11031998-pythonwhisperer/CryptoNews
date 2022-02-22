@@ -6,14 +6,20 @@
 //
 
 import SwiftUI
+import Combine
+
 struct PortfolioSummary: View {
     @EnvironmentObject var context:ContextData
-    var assets:CrybseAssets
+//    @ObservedObject var assets:CrybseAssets
     var width:CGFloat
+    var assetCancellable:AnyCancellable? = nil
     
-    init(asset:CrybseAssets,width:CGFloat = totalWidth - 20){
-        self.assets = asset
+    init(width:CGFloat = totalWidth - 20){
         self.width = width
+    }
+    
+    var assets:CrybseAssets{
+        return self.context.userAssets
     }
     
     var header:some View{
@@ -23,8 +29,8 @@ struct PortfolioSummary: View {
             PercentChangeView(value: self.assets.Profit, type: "large")
         }
     }
-    
-    func assetCardView(asset:CrybseAsset,w:CGFloat) -> some View{
+        
+    func portfolioSummaryAssetCard(asset:CrybseAsset,width:CGFloat) -> some View{
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
@@ -36,11 +42,11 @@ struct PortfolioSummary: View {
                     MainText(content: asset.Price?.ToMoney() ?? "0.0", fontSize: 12.5, color: .white, fontWeight: .medium)
                     PercentChangeView(value: asset.Change,type: "small")
                 }
-            }.frame(width: w, alignment: .topLeading)
+            }.frame(width: width, alignment: .topLeading)
     
             
             if let sparkline = asset.coinData?.Sparkline{
-                CurveChart(data: sparkline, interactions: false, size: .init(width: w, height: 100),bg: .clear,chartShade: true)
+                CurveChart(data: sparkline, interactions: false, size: .init(width: width, height: 100),bg: .clear,chartShade: true)
             }
         }.padding()
         .background(BlurView.thinDarkBlur)
@@ -51,8 +57,9 @@ struct PortfolioSummary: View {
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 10) {
                 ForEach(self.assets.Tracked, id:\.self) { assetName in
-                    if let asset = self.assets.assets?[assetName]{
-                        self.assetCardView(asset: asset, w: self.width * 0.35)
+                    if let asset = self.context.userAssets.assets?[assetName]{
+//                        PortfolioSummaryAssetCard(asset: asset, width: self.width * 0.35)
+                        self.portfolioSummaryAssetCard(asset: asset, width: self.width * 0.35)
                             .buttonify {
                                 if self.context.selectedCurrency != asset{
                                     self.context.selectedCurrency = asset
@@ -69,7 +76,46 @@ struct PortfolioSummary: View {
             self.header
             self.assetsView
         }.basicCard()
+            .onReceive(self.context.userAssets.objectWillChange) { _ in
+                print("(DEBUG) Change in the userAsset Data")
+            }
     }
+}
+
+struct PortfolioSummaryAssetCard:View{
+    @ObservedObject var asset:CrybseAsset
+    var width:CGFloat
+    init(asset:CrybseAsset,width:CGFloat){
+        self.asset = asset
+        self.width = width
+    }
+    
+    var body: some View{
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center, spacing: 10) {
+                VStack(alignment: .center, spacing: 10) {
+                    CurrencySymbolView(currency: asset.Currency, width:25)
+                    MainText(content: asset.Currency, fontSize: 12.5, color: .white, fontWeight: .medium)
+                }
+                Spacer()
+                VStack(alignment: .trailing, spacing: 10) {
+                    MainText(content: asset.Price?.ToMoney() ?? "0.0", fontSize: 12.5, color: .white, fontWeight: .medium)
+                    PercentChangeView(value: asset.Change,type: "small")
+                }
+            }.frame(width: width, alignment: .topLeading)
+    
+            
+            if let sparkline = asset.coinData?.Sparkline{
+                CurveChart(data: sparkline, interactions: false, size: .init(width: width, height: 100),bg: .clear,chartShade: true)
+            }
+        }.padding()
+        .background(BlurView.thinDarkBlur)
+        .clipContent(clipping: .roundClipping)
+        .onReceive(self.asset.objectWillChange) { _ in
+            print("(DEBUG) \(self.asset.Currency) New Price : ",self.asset.Price)
+        }
+    }
+
 }
 
 struct PortfolioSummaryView:View{
@@ -82,7 +128,7 @@ struct PortfolioSummaryView:View{
     var body:some View{
         ZStack(alignment: .center) {
             if let safeAssets = self.assetAPI.coinsData{
-                PortfolioSummary(asset: safeAssets)
+                PortfolioSummary()
             }else{
                 ProgressView()
             }

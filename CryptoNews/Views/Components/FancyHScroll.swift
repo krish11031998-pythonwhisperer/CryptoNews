@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct FancyHScroll<T:View>: View {
     @EnvironmentObject var context:ContextData
@@ -13,21 +14,22 @@ struct FancyHScroll<T:View>: View {
     @StateObject var SP:swipeParams
     @State var reset:Bool = false
     
-    @ViewBuilder var viewGen:(Any) -> T
+    @ViewBuilder var viewGen:(Any,CGSize) -> T
     var onTap:((Int) -> Void)?
     var data:[Any]
     var timeLimit:Int
     var scrollable:Bool
     var size:CGSize
     var headers:[String]?
-    var timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    var timer:Publishers.Autoconnect<Timer.TimerPublisher>
 
-    init(data:[Any],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize,scrollable:Bool = false,onTap:((Int) -> Void)? = nil,@ViewBuilder viewGen: @escaping (Any) -> T){
+    init(data:[Any],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize,scrollable:Bool = false,onTap:((Int) -> Void)? = nil,@ViewBuilder viewGen: @escaping (Any,CGSize) -> T){
         self.data = data
         self.timeLimit = timeLimit
         self._SP = StateObject(wrappedValue: .init(0, data.count - 1, 50 , type: .Carousel,onTap:onTap))
         self.size = size
         self.headers = headers
+        self.timer = Timer.publish(every: TimeInterval(timeLimit),on:.main,in:.common).autoconnect()
         self.scrollable = scrollable
         self.viewGen = viewGen
         self.onTap = onTap
@@ -42,18 +44,18 @@ struct FancyHScroll<T:View>: View {
         return scale
     }
 
-    @ViewBuilder func Card(data:Any,size:CGSize) -> some View{
+    @ViewBuilder func Card(data:Any,size _size:CGSize) -> some View{
         let view = GeometryReader{g in
-            let size = g.frame(in: .local)
+            let size = g.frame(in: .local).size
             let midX = g.frame(in: .global).midX
             
             
-            self.viewGen(data)
+            self.viewGen(data,size)
                 .scaleEffect(scaleEff(midX: midX))
-//                .animation(.linear)
-                .frame(width: size.width, height: size.height, alignment: .center)
-        }.padding(.horizontal,15)
-            .frame(width: totalWidth, height: size.height, alignment: .center)
+                .animation(.linear)
+        }
+            .padding(0)
+        .frame(width: _size.width, height: _size.height, alignment: .center)
         
         let dragGesture = DragGesture().onChanged(self.SP.onChanged(ges_value:)).onEnded(self.SP.onEnded(ges_value:))
         if self.scrollable{
@@ -74,7 +76,7 @@ struct FancyHScroll<T:View>: View {
     }
     
     var offset:CGFloat{
-        return -CGFloat(self.reset || self.SP.swiped <= 1 ? self.SP.swiped : 1) * totalWidth
+        return -CGFloat(self.reset || self.SP.swiped <= 1 ? self.SP.swiped : 1) * size.width
     }
     
     func onReceiveTimer(){
@@ -170,7 +172,7 @@ struct FancyHScroll<T:View>: View {
 //        VStack(alignment: .center, spacing: 10) {
 //            MainText(content: "\(self.time)", fontSize: 20,color: .blue,fontWeight: .bold)
             self.mainBody
-            .frame(width:totalWidth,height: size.height, alignment: .leading)
+            .frame(width:size.width,height: size.height, alignment: .leading)
             .offset(x: self.SP.extraOffset + self.offset)
             .onReceive(self.timer, perform: { _ in
                 withAnimation(.easeInOut) {
@@ -185,13 +187,13 @@ struct FancyHScroll<T:View>: View {
 }
 
 
-struct FancyScrollViewPreview:PreviewProvider{
-    
-    static var previews: some View{
-        FancyHScroll(data: Array(0...10), size: CardSize.slender,scrollable: true) { idx in
-            Container(heading: "\(idx)", width: CardSize.slender.width, ignoreSides: false, horizontalPadding: 10, verticalPadding: 10) { _ in
-                MainText(content: "\(idx)", fontSize: 15)
-            }.basicCard(size: CardSize.slender)
-        }
-    }
-}
+//struct FancyScrollViewPreview:PreviewProvider{
+//
+//    static var previews: some View{
+//        FancyHScroll(data: Array(0...10), size: CardSize.slender,scrollable: true) { idx in
+//            Container(heading: "\(idx)", width: CardSize.slender.width, ignoreSides: false, horizontalPadding: 10, verticalPadding: 10) { _ in
+//                MainText(content: "\(idx)", fontSize: 15)
+//            }.basicCard(size: CardSize.slender)
+//        }
+//    }
+//}

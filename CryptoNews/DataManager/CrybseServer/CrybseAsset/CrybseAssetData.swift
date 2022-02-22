@@ -123,13 +123,10 @@ class CrybseAssets:ObservableObject,Codable{
     
     func updateAssetPrices(){
         let watching = self.Tracked + self.Watching
-        CrybsePriceAPI.shared.getMultiplePrice(curr: watching){ prices in
-            guard let safePrices = prices else {return}
-            for currency in watching{
-                if let currPrices = safePrices[currency],let latestPrice = currPrices.last?.close{
-                    setWithAnimation {
-                        self.assets?[currency]?.coinData?.price = latestPrice
-                    }
+        CrybseMultiCoinPriceAPI.shared.getPrices(coins: watching) { prices in
+            setWithAnimation {
+                for (currency,price) in prices{
+                    self.assets?[currency]?.Price = price.USD
                 }
             }
         }
@@ -160,7 +157,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     init(currency:String?){
         self.currency = currency
         self.coinDataCancellable = self.coinData?.objectWillChange.sink(receiveValue: { _ in
-            withAnimation(.easeInOut)  {
+            setWithAnimation {
                 self.objectWillChange.send()
             }
         })

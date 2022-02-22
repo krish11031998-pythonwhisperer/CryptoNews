@@ -110,7 +110,7 @@ extension CurrencyDetailView{
                 ProgressView().frame(width: 30, height: 30, alignment: .center)
             }else{
 //                self.refreshMeter
-//                RefreshTimerView(timeLimit: 300, refresh: self.$refresh)
+                RefreshTimerView(timeLimit: 300, refresh: self.$refresh)
             }
         }.frame(width: self.size.width, alignment: .center)
     }

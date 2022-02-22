@@ -63,13 +63,13 @@ struct RedditPostCard: View {
                 .padding(.bottom,10)
             if self.size.height != .zero{
                 self.mainBody(w: w)
-                    .frame(height: size.height, alignment: .topLeading)
+                    .frame(height: size.height * 0.65, alignment: .topLeading)
             }else{
                 self.mainBody(w: w)
             }
             Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
             self.footer(w: w)
-        }.basicCard(size: .zero)
+        }.basicCard(size: self.size)
     }
 }
 

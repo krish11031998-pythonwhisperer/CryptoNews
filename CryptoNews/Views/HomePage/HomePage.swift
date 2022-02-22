@@ -23,8 +23,8 @@ struct HomePage: View {
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
             AllAssetView().asyncContainer()
-            HighlightView(currencies: self.currencies).asyncContainer()
-            CrybseYoutubeHighlightView(width: totalWidth).asyncContainer()
+            LatestRedditPost(currencies: self.currencies).asyncContainer()
+            LatestTweets(header: "Trending Tweets", currencies: self.currencies, type: .Chronological, limit: 20).asyncContainer()
             NewsSectionMain(currencies: self.currencies, limit: 10,cardHeight: totalHeight * 0.45).asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
