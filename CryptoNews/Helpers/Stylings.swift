@@ -490,6 +490,7 @@ struct MainSubHeading:View{
     var subHeadColor:Color
     var alignment:Alignment
     var orientation:Axis
+    var titleLine:Bool
     init(
         heading:String,
         subHeading:String,
@@ -503,6 +504,7 @@ struct MainSubHeading:View{
         headingWeight:Font.Weight = .semibold,
         bodyWeight:Font.Weight = .semibold,
         spacing:CGFloat = 5,
+        titleLine:Bool = false,
         alignment:Alignment = .leading)
     {
         self.heading = heading
@@ -518,20 +520,37 @@ struct MainSubHeading:View{
         self.orientation = orientation
         self.alignment = alignment
         self.spacing = spacing
+        self.titleLine = titleLine
     }
         
+    @ViewBuilder var headingView:some View{
+        if self.titleLine{
+            VStack(alignment: .center, spacing: 2.5) {
+                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: self.headingWeight,style: headingFont)
+                    .lineLimit(1)
+                if self.titleLine{
+                    Color.mainBGColor
+                        .frame(height: 5, alignment: .center)
+                        .clipContent(clipping: .roundClipping)
+                }
+            }.aspectRatio(contentMode: .fit)
+        }else{
+            MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: self.headingWeight,style: headingFont)
+                .lineLimit(1)
+        }
+        
+    }
+    
     var body: some View{
         if self.orientation == .vertical{
             VStack(alignment: self.alignment.horizontal, spacing: spacing) {
-                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: self.headingWeight,style: headingFont)
-                    .lineLimit(1)
+                self.headingView
                 MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: self.bodyWeight,style: subHeadingFont)
                     .fixedSize(horizontal: false, vertical: true)
             }
         }else if self.orientation == .horizontal{
             HStack(alignment: self.alignment.vertical, spacing: spacing) {
-                MainText(content: self.heading, fontSize: self.headingSize, color: headColor, fontWeight: self.headingWeight,style: headingFont)
-                    .lineLimit(1)
+                self.headingView
                 MainText(content: self.subHeading, fontSize: self.subHeadingSize, color: subHeadColor, fontWeight: self.bodyWeight,style: subHeadingFont)
                     .fixedSize(horizontal: false, vertical: true)
             }

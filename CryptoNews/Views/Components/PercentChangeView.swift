@@ -29,7 +29,7 @@ struct PercentChangeView: View {
     }
     
     var textSize:CGFloat{
-        type == "large" ? 12 : 9
+        type == "large" ? 12 : 7.5
     }
     
     var padding:CGFloat{
@@ -43,6 +43,7 @@ struct PercentChangeView: View {
                 .frame(width: self.imgSize, height: self.imgSize, alignment: .center)
                 .foregroundColor(.white)
             MainText(content: convertToDecimals(value: abs(self.value)) + "%", fontSize: self.textSize, color: .white, fontWeight: .bold,style: .monospaced)
+                .fixedSize(horizontal: true, vertical: true)
         }.padding(self.padding)
         .background(self.color)
         .clipContent(clipping: .roundClipping)

@@ -39,7 +39,6 @@ struct RefreshTimerView: View {
                     RoundedRectangle(cornerRadius: 20)
                         .fill(color)
                         .frame(width: 50 * CGFloat(percent), height: 2, alignment: .center)
-                    
                 }
             }
         }
@@ -47,12 +46,9 @@ struct RefreshTimerView: View {
     
     func OnReceiveTimer(_ time:Date){
         if self.timeCounter < timeLimit{
-//            setWithAnimation {
             withAnimation(.easeInOut){
                 self.timeCounter += 1
             }
-                
-//            }
         }else if !self.refresh{
             self.refresh = true
         }

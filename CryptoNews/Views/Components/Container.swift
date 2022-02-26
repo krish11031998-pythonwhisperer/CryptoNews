@@ -19,6 +19,9 @@ struct Container<T:View>: View {
     var refreshFn:(() -> Void)? = nil
     var orientation:Axis
     var paddingSize:CGSize = .zero
+    var alignment:Alignment
+    var spacing:CGFloat
+    var lazyLoad:Bool
     init(
         heading:String? = nil,
         headingColor:Color = .white,
@@ -29,6 +32,9 @@ struct Container<T:View>: View {
         horizontalPadding:CGFloat = 15,
         verticalPadding:CGFloat = 10,
         orientation:Axis = .vertical,
+        aligment:Alignment = .leading,
+        spacing:CGFloat = 15,
+        lazyLoad:Bool = false,
         onClose:(() -> Void)? = nil,
         @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
@@ -42,6 +48,9 @@ struct Container<T:View>: View {
         self.orientation = orientation
         self.ignoreSides = ignoreSides
         self.rightButton = nil
+        self.spacing = spacing
+        self.alignment = aligment
+        self.lazyLoad = lazyLoad
         self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
     }
     
@@ -56,8 +65,11 @@ struct Container<T:View>: View {
         horizontalPadding:CGFloat = 15,
         verticalPadding:CGFloat = 10,
         orientation:Axis = .vertical,
+        alignment:Alignment = .center,
         onClose:(() -> Void)? = nil,
         rightView: (() -> AnyView)? = nil,
+        spacing:CGFloat = 15,
+        lazyLoad:Bool = false,
         @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
         self.heading = heading
@@ -70,6 +82,9 @@ struct Container<T:View>: View {
         self.rightButton = rightView
         self.ignoreSides = ignoreSides
         self.orientation = orientation
+        self.alignment = alignment
+        self.spacing = spacing
+        self.lazyLoad = lazyLoad
         self.paddingSize = .init(width: horizontalPadding, height: verticalPadding)
     }
     
@@ -86,9 +101,9 @@ struct Container<T:View>: View {
         }
     }
     
-    @ViewBuilder var headingTitle:some View{
+    @ViewBuilder func headingTitle(heading:String) -> some View{
         VStack(alignment: .leading, spacing: 5) {
-            MainText(content: self.heading!, fontSize: self.headingSize, color: self.headingColor, fontWeight: .semibold,style: .heading)
+            MainText(content: heading, fontSize: self.headingSize, color: self.headingColor, fontWeight: .semibold,style: .heading)
             if self.headingDivider{
                 RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue)
                     .fill(Color.mainBGColor)
@@ -99,49 +114,80 @@ struct Container<T:View>: View {
     
     
     @ViewBuilder var headerView:some View{
-        if let _ = self.heading{
-            HStack {
-                if let close = self.onClose{
-                    SystemButton(b_name: "xmark",action: close)
-                }
-                self.headingTitle
-                Spacer()
-                if rightButton != nil{
-                    self.rightButton?()
-                }
+        HStack {
+            if let close = self.onClose{
+                SystemButton(b_name: "xmark",action: close)
             }
-        }
-        else{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-        }
+            if let heading = self.heading{
+                self.headingTitle(heading: heading)
+            }
+            Spacer()
+            if rightButton != nil{
+                self.rightButton?()
+            }
+        }.padding(.horizontal,self.ignoreSides ? self.paddingSize.width : .zero)
     }
     
     @ViewBuilder var mainBodyWElements:some View{
-        if self.orientation == .vertical{
-            VStack(alignment: .center, spacing: 10) {
-                self.headerView.frame(width:self.innerWidth,alignment: .leading)
-                self.innerView(self.innerWidth).padding(.top,10)
+        if self.lazyLoad{
+            if self.orientation == .vertical{
+                LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+                    self.headerView.frame(width:self.innerWidth,alignment: .leading)
+                        .padding(.bottom,10)
+                    self.innerView(self.innerWidth)
+                }
+            }else if self.orientation == .horizontal{
+                LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+                    self.headerView.frame(width:self.innerWidth,alignment: .leading)
+                        .padding(.bottom,10)
+                    HStack(alignment: .center, spacing: 10) {
+                        self.innerView(self.innerWidth)
+                    }
+                }
             }
-        }else if self.orientation == .horizontal{
-            VStack(alignment: .center, spacing: 10) {
-                self.headerView.frame(width:self.innerWidth,alignment: .leading)
-                HStack(alignment: .center, spacing: 10) {
-                    self.innerView(self.innerWidth).padding(.top,10)
+        }else{
+            if self.orientation == .vertical{
+                VStack(alignment: self.alignment.horizontal, spacing: 10) {
+                    self.headerView.frame(width:self.innerWidth,alignment: .leading)
+                        .padding(.bottom,10)
+                    self.innerView(self.innerWidth)
+                }
+            }else if self.orientation == .horizontal{
+                VStack(alignment: self.alignment.horizontal, spacing: 10) {
+                    self.headerView.frame(width:self.innerWidth,alignment: .leading)
+                        .padding(.bottom,10)
+                    HStack(alignment: .center, spacing: 10) {
+                        self.innerView(self.innerWidth)
+                    }
                 }
             }
         }
+        
     }
     
     @ViewBuilder var mainBody:some View{
-        VStack(alignment: .center, spacing: 10) {
-            if self.orientation == .vertical{
-                self.innerView(self.innerWidth)
-            }else if self.orientation == .horizontal{
-                HStack(alignment: .center, spacing: 10) {
+        if self.lazyLoad{
+            LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+                if self.orientation == .vertical{
                     self.innerView(self.innerWidth)
+                }else if self.orientation == .horizontal{
+                    HStack(alignment: .center, spacing: 10) {
+                        self.innerView(self.innerWidth)
+                    }
+                }
+            }
+        }else{
+            VStack(alignment: self.alignment.horizontal, spacing: 10) {
+                if self.orientation == .vertical{
+                    self.innerView(self.innerWidth)
+                }else if self.orientation == .horizontal{
+                    HStack(alignment: .center, spacing: 10) {
+                        self.innerView(self.innerWidth)
+                    }
                 }
             }
         }
+       
         
     }
 

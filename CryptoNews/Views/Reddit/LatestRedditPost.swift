@@ -16,7 +16,7 @@ struct LatestRedditPost: View {
     }
 
     var cardSize:CGSize{
-        return .init(width: self.width, height: totalHeight * 0.4)
+        return .init(width: self.width, height: totalHeight * 0.3)
     }
     
     var posts:CrybseRedditPosts{
@@ -32,7 +32,10 @@ struct LatestRedditPost: View {
     var body: some View {
         Container(heading: "Trending Reddits", headingDivider: true, width: self.width, ignoreSides: false, horizontalPadding: 15,verticalPadding: 0) { w in
             if !self.posts.isEmpty && !self.redditAPI.loading{
-                FancyHScroll(data: self.posts,timeLimit:100, size: .init(width: w, height: cardSize.height),scrollable: true) { data, size in
+                FancyHScroll(data: self.posts,timeLimit:100, size: .init(width: w, height: cardSize.height),scrollable: true,onTap: { idx in
+                    let redditPost = self.posts[idx]
+                    self.context.selectedLink = redditPost.URL
+                }) { data, size in
                     self.selectedView(data, size.width,size.height)
                 }.basicCard(size: .init(width: w, height: cardSize.height))
             }else if self.redditAPI.loading{

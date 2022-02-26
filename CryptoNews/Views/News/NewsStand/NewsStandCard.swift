@@ -81,12 +81,10 @@ struct NewsStandCard: View {
 
     var body: some View {
         Button {
-            setWithAnimation {
-                if let news = self.news as? AssetNewsData{
-                    self.context.selectedNews = news
-                }else if let cryptoNews = self.news as? CryptoNews{
-                    self.context.selectedNews = AssetNewsData.parseAssetNewsDatafromCryptoNews(news: cryptoNews)
-                }
+            if let news = self.news as? AssetNewsData,let urlStr = news.url, let url = URL(string: urlStr){
+                self.context.selectedLink = url
+            }else if let cryptoNews = self.news as? CryptoNews,let urlStr = cryptoNews.url, let url = URL(string: urlStr){
+                self.context.selectedLink = url
             }
         } label: {
             self.mainBody

@@ -32,6 +32,7 @@ struct TransactionDetailsView: View {
     var body: some View {
         LazyVStack(alignment: .leading, spacing: 10) {
             self.SummaryView
+            self.SummaryDetailView
             Container(heading: "Transaction History", headingColor: .white, headingDivider: false, headingSize: 20, width: self.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0) { _ in
                 self.TxnTypesView
                 VStack(alignment: .center, spacing: 7.5) {
@@ -80,20 +81,39 @@ extension TransactionDetailsView{
     }
     
     var SummaryView:some View{
-        Container(width: self.width,ignoreSides: true) { w in
-            self.SummaryHeadingView(w: w)
-                .padding(.horizontal,15)
-            MainSubHeading(heading: "Coin(s)", subHeading: "\(convertToDecimals(value: self.totalCoins))", headingSize: 15, subHeadingSize: 36, headingFont: .normal, subHeadingFont: .normal,alignment: .center)
-                .frame(width: w, alignment: .center)
-            InfoGrid(info: self.AssetHeadKeys, width: w, viewPopulator: self.AssetSummaryVal(key:))
-        }.basicCard(size: .zero)
+        Container(width: self.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+            CurrencySymbolView(currency: self.currency, size: .medium, width: 50)
+                .frame(width: w, alignment: .topLeading)
+            Spacer()
+            HStack(alignment: .bottom, spacing: 10) {
+                MainText(content: self.currency, fontSize: 25, color: .white, fontWeight: .semibold)
+                Spacer()
+                MainSubHeading(heading: "Coin(s)", subHeading: "\(convertToDecimals(value: self.totalCoins))",headingSize: 15, subHeadingSize: 25, headColor: .gray,subHeadColor: .white,alignment: .center)
+                    .aspectRatio(contentMode: .fit)
+            }.frame(width: w, alignment: .center)
+        }
+        .frame(width: self.width, height: totalHeight * 0.25, alignment: .center)
+        .basicCard(background:AnyView(mainLightBGView))
+    }
+    
+    
+    
+    var SummaryDetailView:some View{
+        HStack(alignment: .center, spacing: 15){
+            MainSubHeading(heading: "Profit", subHeading: self.profit.ToMoney(), headingSize: 15, subHeadingSize: 18, headColor: .white, subHeadColor: self.profit > 0 ? .green : .red, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,spacing: 15, titleLine: true, alignment: .leading)
+            Spacer()
+            MainSubHeading(heading: "Value(Bought)", subHeading: self.totalBoughtValue.ToMoney(), headingSize: 15, subHeadingSize: 18, headColor: .white, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,spacing: 15, titleLine: true, alignment: .leading)
+            Spacer()
+            MainSubHeading(heading: "Value(Now)", subHeading: self.currentValue.ToMoney(), headingSize: 15, subHeadingSize: 18, headColor: .white, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,spacing: 15, titleLine: true, alignment: .leading)
+        }.padding(20).basicCard()
     }
     
     var TxnTypesView:some View{
-        let type = ["all","buy","sell","send","recieve"]
+        let types = ["all","buy","sell","send","recieve"]
         return HStack(alignment: .center, spacing: 10) {
-            ForEach(Array(type.enumerated()), id:\.offset){ _type in
-                let type = _type.element                
+            ForEach(Array(types.enumerated()), id:\.offset){ _type in
+                let type = _type.element
+                let idx = _type.offset
                 VStack(alignment: .center, spacing: 2.5) {
                     MainText(content: type.capitalized, fontSize: 15, color: .white, fontWeight: .semibold)
                     if self.txnType == type{
@@ -102,15 +122,18 @@ extension TransactionDetailsView{
                     }else{
                         RoundedRectangle(cornerRadius: 20).fill(Color.clear).frame(height: 5, alignment: .center)
                     }
-                }
+                }.aspectRatio(contentMode: .fit)
                 .buttonify {
                     if self.txnType != type{
                         self.txnType = type
                     }
                 }
-                
+                if idx < types.count - 1{
+                    Spacer()
+                }
             }
-        }.padding(.vertical,10).frame(width: self.width, alignment: .topLeading)
+        }.padding(.vertical,10)
+        .frame(width: self.width, alignment: .topLeading)
     }
     
     var totalBoughtValue:Float{
@@ -143,28 +166,28 @@ extension TransactionDetailsView{
     
 }
 
-//struct CurrencyDetailTester:View{
-//    @StateObject var TAPI:TransactionAPI = .init()
-//    
-//    func onAppear(){
-//        self.TAPI.loadTransaction()
-//    }
-//    
-//    var body: some View{
-//        Container(heading: "Transactions", width: totalWidth) { w in
-//            TransactionDetailsView(txns: self.TAPI.transactions.filter({$0.asset == "litecoin"}),currency: "LTC",currencyCurrentPrice: 500,width: w)
-//        }.onAppear(perform: self.onAppear)
-//            .padding(.top,50)
-//    }
-//}
-//
-//struct CurrencyAssetDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        ScrollView(.vertical, showsIndicators: false) {
-//            CurrencyDetailTester()
-//
-//        }
-//        .background(Color.mainBGColor)
-//        .edgesIgnoringSafeArea(.all)
-//    }
-//}
+struct CurrencyDetailTester:View{
+    @StateObject var TAPI:CrybseTransactionAPI = .init()
+    
+    func onAppear(){
+        self.TAPI.getTxns(uid: "jV217MeUYnSMyznDQMBgoNHfMvH2", currencies: ["XRP"])
+    }
+    
+    var body: some View{
+        Container(heading: "Transactions", width: totalWidth) { w in
+            TransactionDetailsView(txns: self.TAPI.transactions,currency: "XRP",currencyCurrentPrice: 0.8,width: w)
+        }.onAppear(perform: self.onAppear)
+            .padding(.top,50)
+    }
+}
+
+struct CurrencyAssetDetailView_Previews: PreviewProvider {
+    static var previews: some View {
+        ScrollView(.vertical, showsIndicators: false) {
+            CurrencyDetailTester()
+
+        }
+        .background(mainBGView)
+        .edgesIgnoringSafeArea(.all)
+    }
+}

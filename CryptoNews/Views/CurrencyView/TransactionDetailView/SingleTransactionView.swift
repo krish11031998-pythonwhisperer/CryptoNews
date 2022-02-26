@@ -85,7 +85,7 @@ extension SingleTransactionView{
     
     
     var txnMiscDetails:some View{
-        VStack(alignment: .leading, spacing: 3.5) {
+        VStack(alignment: .leading, spacing: 10) {
             if let spotPrice = self.txn.asset_spot_price,spotPrice != 0{
                 MainSubHeading(heading: "Spot Price", subHeading: convertToMoneyNumber(value: spotPrice), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
             }

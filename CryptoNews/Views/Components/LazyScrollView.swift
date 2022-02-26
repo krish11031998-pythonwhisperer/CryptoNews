@@ -47,16 +47,28 @@ struct LazyScrollView<T:View>: View {
         }
     }
     
+    @ViewBuilder func headingTitle(heading:String) -> some View{
+        VStack(alignment: .leading, spacing: 5) {
+            MainText(content: heading, fontSize: 30, color: .white, fontWeight: .semibold,style: .heading)
+            RoundedRectangle(cornerRadius: Clipping.roundCornerMedium.rawValue)
+                .fill(Color.mainBGColor)
+                .frame(height:2)
+        }.aspectRatio(contentMode: .fit)
+    }
+    
     
     var refreshingView:some View{
         LazyVStack(alignment: .center, spacing: 10) {
+            if let header = header {
+                self.headingTitle(heading: header)
+            }
             if let data = data {
                 ForEach(Array(data.enumerated()), id:\.offset) {_data in
                     let data = _data.element
                     self.viewGen(data)
                 }
             }else{
-                self.viewGen(1)
+                self.viewGen(0)
             }
             
             if !self.stopLoading{
@@ -64,11 +76,6 @@ struct LazyScrollView<T:View>: View {
                     .padding(.bottom,200)
             }
         }
-//        .onChange(of: self.data.count) { newCount in
-//            if self.reloadNow{
-//                self.reloadNow.toggle()
-//            }
-//        }
         .preference(key: RefreshPreference.self, value: self.reloadNow)
     }
         

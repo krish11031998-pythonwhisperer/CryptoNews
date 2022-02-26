@@ -62,7 +62,11 @@ class CrybseRedditData:Codable{
         return self.subreddit_name_prefixed ?? ""
     }
     
-    var URL:String{
+//    var URL:String{
+//        return self.url ?? ""
+//    }
+    
+    var URLStr:String{
         return self.url ?? ""
     }
     
@@ -73,6 +77,10 @@ class CrybseRedditData:Codable{
     var Created_UTC:String{
         guard let dateStr = self.created_utc else {return Date().stringDateTime()}
         return Date.date_from_string(str_Date: dateStr)
+    }
+    
+    var URL:Foundation.URL?{
+        return Foundation.URL(string: self.Permalink)
     }
 }
 

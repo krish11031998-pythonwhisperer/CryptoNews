@@ -134,7 +134,7 @@ struct NewsCardCarousel:View{
     func tapFunction(value:Int){
         DispatchQueue.main.async {
             if value == 0{
-                self.context.selectedNews = self.newsFeed.FeedData[self.idx]
+                self.context.selectedLink = self.newsFeed.FeedData[self.idx].URL
             }else{
                 self.updateIdx(val: value)
             }

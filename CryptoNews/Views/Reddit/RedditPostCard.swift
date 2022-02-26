@@ -27,16 +27,26 @@ struct RedditPostCard: View {
         }.frame(width: w, alignment: .center)
     }
     
+    @ViewBuilder func MainBody(size:CGSize) -> some View{
+        if self.size.height != .zero{
+            self.mainBody(w: size.width)
+                .frame(height: (size.height * 0.8 - 60), alignment: .topLeading)
+        }else{
+            self.mainBody(w: size.width)
+        }
+    }
+    
     @ViewBuilder func mainBody(w:CGFloat) -> some View{
         VStack(alignment: .leading, spacing: 15) {
             if let _ = self.redditPost.title{
                 MainText(content: self.redditPost.Title, fontSize: 15, color: .white, fontWeight: .medium)
+//                    .fixedSize(horizontal: false, vertical: false)
             }
             if let _ = self.redditPost.selftext{
                 MainText(content: self.redditPost.SelfText, fontSize: 13, color: .white, fontWeight: .regular)
             }
-            if self.redditPost.URL.isImgURLStr() && self.size == .zero{
-                ImageView(url: self.redditPost.URL, width: w, contentMode: .fill, alignment: .center, autoHeight: true)
+            if self.redditPost.URLStr.isImgURLStr() && self.size == .zero{
+                ImageView(url: self.redditPost.URLStr, width: w, contentMode: .fill, alignment: .center, autoHeight: true)
                     .clipContent(clipping: .roundCornerMedium)
             }
         }.frame(width: w, alignment: .leading)
@@ -44,7 +54,7 @@ struct RedditPostCard: View {
         
     }
     
-    func footer(w:CGFloat) -> some View{
+    func Footer(w:CGFloat) -> some View{
         
         return HStack(alignment: .center, spacing: 10) {
             SystemButton(b_name: "suit.heart", b_content: "\(self.redditPost.Likes)", color: .black, haveBG:false,bgcolor: .white) {
@@ -60,15 +70,11 @@ struct RedditPostCard: View {
     var body: some View {
         Container(width: self.width,verticalPadding: 15) { w in
             self.Header(w: w)
-                .padding(.bottom,10)
-            if self.size.height != .zero{
-                self.mainBody(w: w)
-                    .frame(height: size.height * 0.65, alignment: .topLeading)
-            }else{
-                self.mainBody(w: w)
-            }
-            Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
-            self.footer(w: w)
+            self.MainBody(size: .init(width: w, height: size.height))
+//            Group{
+                Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
+                self.Footer(w: w)
+//            }
         }.basicCard(size: self.size)
     }
 }

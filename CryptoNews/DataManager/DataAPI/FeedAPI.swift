@@ -60,6 +60,14 @@ class AssetNewsData:Identifiable,Codable{
     var Thumbnail:String{
         return self.thumbnail ?? ""
     }
+    
+    var URL:URL?{
+        if let urlStr = self.url{
+            return Foundation.URL(string: urlStr)
+        }else{
+            return nil
+        }
+    }
 }
 
 

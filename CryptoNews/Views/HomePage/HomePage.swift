@@ -27,6 +27,7 @@ struct HomePage: View {
             LatestTweets(header: "Trending Tweets", currencies: self.currencies, type: .Chronological, limit: 20).asyncContainer()
             NewsSectionMain(currencies: self.currencies, limit: 10,cardHeight: totalHeight * 0.45).asyncContainer()
             Spacer(minLength: 200)
+//            CurrencyPriceSummaryViewPreviewProvider()
         }.zIndex(1)
     }
     
@@ -44,12 +45,6 @@ extension HomePage{
             CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)
         }
     }
-
-    var showMainView:Bool {
-        return self.context.selectedNews == nil && self.context.selectedCurrency == nil
-    }
-
-    
 }
 
 struct HomePage_Previews: PreviewProvider {

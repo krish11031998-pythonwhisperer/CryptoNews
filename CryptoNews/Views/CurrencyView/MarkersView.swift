@@ -86,11 +86,7 @@ struct MarkerMainView:View{
         let percent:Float =  (Float(txn.crypto_coins) * self.data.currentPrice - txn.totalfee)/txn.totalfee
         let color:Color = percent < 0 ? .red : .green
         return VStack(alignment: .leading, spacing: 2.5){
-            HStack(alignment: .center, spacing: 10){
-                MainSubHeading(heading: txn.type?.capitalized  ?? "Coins", subHeading: convertToDecimals(value: Float(txn.crypto_coins)), headingSize: 12, subHeadingSize: 15)
-                Spacer()
-                
-            }
+            MainSubHeading(heading: txn.type?.capitalized  ?? "Coins", subHeading: convertToDecimals(value: Float(txn.crypto_coins)), headingSize: 12, subHeadingSize: 15)
             MainSubHeading(heading: "Value", subHeading: convertToMoneyNumber(value: txn.value_usd), headingSize: 12, subHeadingSize: 15)
             self.percentChangeView(value: percent * 100,type: "small").padding(.vertical,5)
             
@@ -116,7 +112,7 @@ struct MarkerMainView:View{
             let h = self.size.height - 20
 //            VStack(alignment: .leading, spacing: 20){
             self.Header(size: .init(width: w, height: h * 0.2))
-            self.transactionDetails(size: .init(width: w, height: h * 0.2))
+//            self.transactionDetails(size: .init(width: w, height: h * 0.2))
             self.transactionHistory(size: .init(width: w, height: h * 0.4))
 //             }.padding(.vertical,10)
         }.basicCard(size: .zero)

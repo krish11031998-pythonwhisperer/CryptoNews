@@ -35,11 +35,11 @@ struct PortfolioSummary: View {
             HStack(alignment: .center, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
                     CurrencySymbolView(currency: asset.Currency, width:25)
-                    MainText(content: asset.Currency, fontSize: 12.5, color: .white, fontWeight: .medium)
+                    MainText(content: asset.Currency, fontSize: 12.5, color: .black, fontWeight: .medium)
                 }
                 Spacer()
                 VStack(alignment: .trailing, spacing: 10) {
-                    MainText(content: asset.Price?.ToMoney() ?? "0.0", fontSize: 12.5, color: .white, fontWeight: .medium)
+                    MainText(content: asset.Price?.ToMoney() ?? "0.0", fontSize: 12.5, color: .black, fontWeight: .medium)
                     PercentChangeView(value: asset.Change,type: "small")
                 }
             }.frame(width: width, alignment: .topLeading)
@@ -48,9 +48,9 @@ struct PortfolioSummary: View {
             if let sparkline = asset.coinData?.Sparkline{
                 CurveChart(data: sparkline, interactions: false, size: .init(width: width, height: 100),bg: .clear,chartShade: true)
             }
-        }.padding()
-        .background(BlurView.thinDarkBlur)
-        .clipContent(clipping: .roundClipping)
+        }
+        .padding(12.5)
+        .basicCard(background: AnyView(mainLightBGView))
     }
     
     var assetsView:some View{

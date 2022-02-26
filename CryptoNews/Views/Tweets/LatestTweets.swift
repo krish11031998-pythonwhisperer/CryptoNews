@@ -27,7 +27,7 @@ struct LatestTweets: View {
     
     var body: some View {
         Container(heading: self.heading, ignoreSides: false, horizontalPadding: 15, verticalPadding: 0, orientation: .vertical) { w in
-            self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.4))
+            self.TweetsFeed(size: .init(width: w, height: totalHeight * 0.3))
                 .basicCard()
         }.onAppear(perform: self.onAppear)
     }
@@ -43,11 +43,10 @@ extension LatestTweets{
     
     func onTapHandler(_ idx:Int){
         if idx >= 0 && idx < self.tweets.count{
-            withAnimation(.easeInOut) {
-                self.context.selectedNews = self.tweets[idx]
-            }
+            self.context.selectedLink = self.tweets[idx].URL
         }
     }
+    
     var topTweets:[AssetNewsData]{
         return Array(self.tweets[0..<5])
     }

@@ -9,11 +9,6 @@ import SwiftUI
 
 struct CrybseView: View {
     @EnvironmentObject var context:ContextData
-    func closeNews(){
-        if self.context.selectedNews != nil{
-            self.context.selectedNews = nil
-        }
-    }
     
     var contentView:some View{
         ZStack(alignment: .bottom) {
@@ -40,13 +35,20 @@ struct CrybseView: View {
 extension CrybseView{
     
     var tabs:[Tabs]{
-        return [.home,.search,.info,.profile,.currency]
+        return [.home,.search,.info,.profile,.currency,.none]
+    }
+    
+    func closeLink(){
+        if self.context.selectedLink != nil{
+            self.context.selectedLink = nil
+        }
     }
     
     @ViewBuilder var mainBody:some View{
         TabView(selection: $context.tab){
             ForEach(self.tabs, id: \.rawValue) { tab in
-                    self.tabPage(page: tab).tag(tab)
+                    self.tabPage(page: tab)
+                    .tag(tab)
                     .background(mainBGView)
                     .ignoresSafeArea()
             }
@@ -62,7 +64,7 @@ extension CrybseView{
             case .home: HomePage().environmentObject(self.context)
             case .search: SearchMainPage().environmentObject(self.context)
             case .info: SlideTabView {
-                return [AnyView(CrybPostMainView().environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
+                return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
             }.environmentObject(self.context)
             case .profile: ProfileView().environmentObject(self.context)
             default: Color.clear
@@ -70,12 +72,12 @@ extension CrybseView{
     }
         
     var hoverViewEnabled:Bool{
-        return self.context.selectedNews != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedCurrency != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
+        return self.context.selectedLink != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedCurrency != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
     }
     
     @ViewBuilder var hoverView:some View{
-        if let news = self.context.selectedNews, let urlStr = news.url,let url  = URL(string: urlStr){
-            WebModelView(url: url, close: self.closeNews)
+        if let url = self.context.selectedLink{
+            WebModelView(url: url, close: self.closeLink)
                 .transition(.slideInOut)
                 .zIndex(3)
         }
@@ -93,25 +95,25 @@ extension CrybseView{
             .edgesIgnoringSafeArea(.all)
             .zIndex(2)
         }
-        
-        if let post = self.context.selectedPost{
-            CrybPostDetailView(postData: post)
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(mainBGView)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-        
-
-        if self.context.addPost{
-            CrybsePostMainView()
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(mainBGView)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
+//
+//        if let post = self.context.selectedPost{
+//            CrybPostDetailView(postData: post)
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(mainBGView)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
+//
+//
+//        if self.context.addPost{
+//            CrybsePostMainView()
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(mainBGView)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
     
     }
     

@@ -38,12 +38,15 @@ struct NewsSectionMain: View {
         }
     }
     
+    func onTapHandler(data:AssetNewsData){
+        self.context.selectedLink = data.URL
+    }
     
     func onTapHandle(_ idx:Int){
         if idx >= 0 && idx < self.data.count{
             let data = self.data[idx]
-            if self.context.selectedNews?.lunar_id != data.lunar_id{
-                self.context.selectedNews = data
+            if context.selectedLink?.absoluteString != data.url{
+                self.context.selectedLink = URL(string: data.url ?? "")
             }
         }
     }
@@ -52,9 +55,7 @@ struct NewsSectionMain: View {
         if let data = data as? AssetNewsData{
             NewsCard(news: data, size: .init(width: width * 0.75, height: self.cardHeight))
                 .buttonify {
-                    if self.context.selectedNews?.lunar_id != data.lunar_id{
-                        self.context.selectedNews = data
-                    }
+                    self.onTapHandler(data: data)
                 }
                 .motionModifiedView(axis: .vertical, modifier: .zoomInOut)
                 .frame(width: width * 0.75, height: self.cardHeight, alignment: .topLeading)
@@ -70,9 +71,7 @@ struct NewsSectionMain: View {
                 
                 NewsCard(news: data, size: .init(width: w * 0.5, height: self.cardHeight * 0.75))
                     .buttonify {
-                        if self.context.selectedNews?.lunar_id != data.lunar_id{
-                            self.context.selectedNews = data
-                        }
+                        self.onTapHandler(data: data)
                     }
             }
         }.frame(width: totalWidth, alignment: .center)

@@ -41,7 +41,7 @@ class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
     @Published private var _selectedCurrency:CrybseAsset? = nil
-    @Published private var _selectedNews:AssetNewsData? = nil
+    @Published private var _selectedLink:URL? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedVideo:CrybseVideoData? = nil
     @Published private var _selectedSymbol:String? = nil
@@ -125,10 +125,12 @@ extension ContextData{
             setWithAnimation {
                 self._selectedCurrency = newValue
                 self.showTab = newValue != nil ? false : true
-                if self.tab != .none{
+                if newValue != nil && self.tab != .none{
                     self.tab = .none
-                }else{
+                    print("(DEBUG) Changing the tab to .none")
+                }else if newValue == nil && self.tab == .none{
                     self.tab = self.prev_tab
+                    print("(DEBUG) Changing the tab to prev_tab")
                 }
             }
         }
@@ -149,21 +151,6 @@ extension ContextData{
         }
     }
     
-    var selectedNews:AssetNewsData?{
-        get{
-            return self._selectedNews
-        }
-        
-        set{
-            DispatchQueue.main.async{
-                withAnimation(.easeInOut(duration: 0.5)) {
-                    self._selectedNews = newValue
-                    self.showTab = newValue != nil ? false : true
-//                    self.tab = .none
-                }
-            }
-        }
-    }
     
     var selectedPost:CrybPostData?{
         get{
@@ -254,7 +241,7 @@ extension ContextData{
     }
     
     var hoverViewEnabled:Bool{
-        return !(self.selectedNews == nil && self.selectedPost == nil && self.selectedCurrency == nil && self.selectedVideoData == nil && !self.addTxn && !self.addPost)
+        return !(self.selectedLink == nil && self.selectedPost == nil && self.selectedCurrency == nil && self.selectedVideoData == nil && !self.addTxn && !self.addPost)
     }
     
     func AddNewTxn(txn:Transaction){
@@ -274,7 +261,20 @@ extension ContextData{
                 self.userAssets.tracked?.append(currency)
             }
         }
-
+    }
+    
+    var selectedLink:URL?{
+        get{
+            return self._selectedLink
+        }
+        
+        set{
+            setWithAnimation {
+                if self._selectedLink != newValue{
+                    self._selectedLink = newValue
+                }
+            }
+        }
     }
     
     func signInHandler(){

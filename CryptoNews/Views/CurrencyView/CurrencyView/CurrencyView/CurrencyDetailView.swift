@@ -53,15 +53,16 @@ struct CurrencyDetailView: View {
 extension CurrencyDetailView{
         
     @ViewBuilder var mainView:some View{
-        self.priceMainInfo
+//        self.priceMainInfo
+        CurrencyPriceSummaryView(asset: self.assetData, width: self.size.width,choosenPrice: $choosen,choosenInterval: $choosenTimeInterval,refresh: $refresh)
         self.transactionHistoryView
         self.CurrencySummary
         self.infoSection
-//        self.feedContainer
-//        self.newsContainer
-//        self.redditContainer
-//        self.youtubeContainer
-        self.paginatedViews
+        self.feedContainer
+        self.newsContainer
+        self.redditContainer
+        self.youtubeContainer
+//        self.paginatedViews
     }
     
     var headingFontSize:CGFloat{
@@ -97,33 +98,6 @@ extension CurrencyDetailView{
         }
         
         return self.Prices.last ?? .init()
-    }
-    
-    var NowPriceView:some View{
-
-        let nowText:String = self.choosen == -1 ? "Now" : self.choosenPriceData.DateValue
-
-        return HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: nowText, subHeading: convertToMoneyNumber(value: self.choosenPriceData.Price),headingSize: 12.5,subHeadingSize: 17.5).frame(alignment: .leading)
-            Spacer()
-            if self.refresh{
-                ProgressView().frame(width: 30, height: 30, alignment: .center)
-            }else{
-//                self.refreshMeter
-                RefreshTimerView(timeLimit: 300, refresh: self.$refresh)
-            }
-        }.frame(width: self.size.width, alignment: .center)
-    }
-
-    var  priceMainInfo:some View{
-        VStack(alignment: .leading, spacing: 10) {
-            self.NowPriceView
-            self.choosenTimeIntervalView
-            if !self.OHLCV.isEmpty{
-                self.priceInfo
-            }
-            self.curveChart.clipContent(clipping: .roundClipping)
-        }
     }
     
     var News:[AssetNewsData]{
@@ -179,9 +153,7 @@ extension CurrencyDetailView{
         if self.choosen != -1,let selectedPrice = self.Prices[self.choosen].price{
             return self.assetData.txns?.map({$0.asset_quantity * (selectedPrice - $0.asset_spot_price)}).reduce(0, {$0 == 0 ? $1 : $0 + $1}) ?? self.assetData.Profit
         }
-        
         return self.assetData.Profit
-        
     }
     
     var txnForAssetPortfolioData:[PortfolioData]{
@@ -234,7 +206,6 @@ extension CurrencyDetailView{
                 MainText(content: "What is \(self.assetData.Currency)", fontSize: 17.5, color: .white, fontWeight: .medium).frame(width: w, alignment: .leading)
                 MainText(content: additionalInfo.description ?? "", fontSize: 15, color: .white, fontWeight: .regular).frame(width: w, alignment: .leading)
             }
-            .basicCard(size: .zero)
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
@@ -246,13 +217,13 @@ extension CurrencyDetailView{
         switch(type){
             case .Tweet:
                 if let post = data as? AssetNewsData{
-                    PostCard(cardType: .Tweet, data: post, size: self.size,bg: .light, const_size: true)
+                    PostCard(cardType: .Tweet, data: post, size: self.size,bg: .light, const_size: false)
                 }else{
                     Color.clear
                 }
                 
             case .News:
-            NewsStandCard(news: data,size:.init(width: self.size.width, height: totalHeight * 0.25))
+                NewsStandCard(news: data,size:.init(width: self.size.width, height: totalHeight * 0.25))
             case .Reddit:
                 if let reddit = data as? CrybseRedditData{
                     RedditPostCard(width: self.size.width, redditPost: reddit)
@@ -270,33 +241,6 @@ extension CurrencyDetailView{
         }
     }
     
-    @ViewBuilder var TradingSignalsView : some View{
-        if let tradingSignal = self.assetData.coin?.tradingSignals{
-            self.tradingSignalViews(tradingSignal: tradingSignal)
-        }else{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-        }
-    }
-
-    @ViewBuilder func tradingSignalViews(tradingSignal:CrybseTradingSignalsData) -> some View{
-        let order = ["In Out Var","Addresses Net Growth","Concentration Var","Largest XS Var"]
-        if tradingSignal.overall == 0{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-        }else{
-            Container(heading: "Trading Signals",headingSize: headingFontSize,width: self.size.width,ignoreSides: false,verticalPadding: 15,orientation: .horizontal) { w in
-                MainSubHeading(heading: tradingSignal.getEmoji, subHeading: tradingSignal.getSentiment, headingSize: 40, subHeadingSize: 18, orientation: .vertical, alignment: .center)
-                VStack(alignment: .leading, spacing: 10) {
-                    ForEach(order,id:\.self){ key in
-                        if let value = tradingSignal.tradingSignalValues[key]{
-                            MainSubHeading(heading: key , subHeading: value.0.ToDecimals(), headingSize: 14, subHeadingSize: 20, headColor: .gray, subHeadColor: .white, orientation: .vertical, alignment: .leading)
-                        }
-                    }
-                }.frame(width: w * 0.55, alignment: .center)
-                
-            }.basicCard(size: .zero)
-        }
-    }
-        
     var timeSpan:Int{
         let hr = 12
         if self.choosenTimeInterval == "3hr"{
@@ -308,61 +252,21 @@ extension CurrencyDetailView{
         }
         return hr
     }
-    
-    var choosenTimeIntervalView:some View{
-        let intervals:[String] = ["1hr","3hr","6hr","24hr"]
-        return HStack(alignment: .center, spacing: 10) {
-            ForEach(Array(intervals.enumerated()),id:\.offset){ _interval in
-                let interval = _interval.element
-                let idx = _interval.offset
-                
-                Button {
-                    self.choosenTimeInterval = interval
-                } label:{
-                    MainText(content: interval, fontSize: 10, color: self.choosenTimeInterval == interval ? .white : .white, fontWeight: .semibold,padding: 10)
-                        .padding(10)
-                        .background(
-                            ZStack(alignment: .center){
-                                if self.choosenTimeInterval == interval{
-                                    BlurView
-                                        .thinLightBlur
-                                        .matchedGeometryEffect(id: "hightlighted", in: self.animation,properties:.position)
-                                }else{
-                                    Color.clear
-                                }
-                            }.clipContent(clipping: .roundCornerMedium)
-                            .animation(.spring(), value: self.choosenTimeInterval)
-                        )
-                        .clipContent(clipping: .roundCornerMedium)
-                    
-                }
-                    
-                if idx != intervals.count - 1{
-                    Spacer()
-                }
-                
-            }
-        }.padding(10)
-        .frame(width: self.size.width, alignment: .center)
-        .background(BlurView.thinDarkBlur)
-        .clipContent(clipping: .roundClipping)
-    }
-    
+
     func infoViewGen(type:PostCardType) -> some View{
         let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : type == .Reddit ? "Reddit" : type  == .Youtube ? "Youtube" : "Posts"
         var data:[Any] = type == .News ? self.News : type == .Tweet ? self.Tweets : type == .Reddit ? self.Reddit : type == .Youtube ? self.Videos : []
-        data = data.count < 5 ? data : Array(data[0...4])
-        return VStack(alignment:.center,spacing: 10){
+        data = data.count < 3 ? data : Array(data[0...2])
+        return Container(heading: heading, headingColor: .white, headingDivider: true, headingSize: 20, width: self.size.width, ignoreSides: true,horizontalPadding: 0, verticalPadding: 0, orientation: .vertical, aligment: .leading,lazyLoad: true) { _ in
             ForEach(Array(data.enumerated()),id:\.offset) { _data in
-                    let data = _data.element
-                    self.cardBuilder(type:type,data: data)
-                        .aspectRatio(contentMode: .fit)
+                let data = _data.element
+                self.cardBuilder(type:type,data: data)
+            }
+            TabButton(width: size.width, title: "Load More", action: {
+                setWithAnimation {
+                    self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : type == .Reddit ? .reddit : type == .Youtube ? .videos : .none
                 }
-                TabButton(width: size.width, title: "Load More", action: {
-                    setWithAnimation {
-                        self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : type == .Reddit ? .reddit : type == .Youtube ? .videos : .none
-                    }
-                }).padding(.vertical)
+            }).padding(.vertical)
         }
     }
     
@@ -422,7 +326,6 @@ extension CurrencyDetailView{
         }.padding(.vertical)
         .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
     }
-//    prices.count > self.timeSpan ? Array(prices[(prices.count - self.timeSpan)...]) : prices
     
     var curveChart:some View{
         return ZStack(alignment: .center){
