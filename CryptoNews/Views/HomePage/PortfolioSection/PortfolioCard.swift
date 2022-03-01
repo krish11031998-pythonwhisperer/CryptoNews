@@ -14,18 +14,19 @@ struct PortfolioCard: View {
     @State var switchView:Bool = false
     @State var priceColor:Color = .black
     var w:CGFloat
+    var h:CGFloat
     
-    init(asset:CrybseAsset,w:CGFloat = .zero){
+    init(asset:CrybseAsset,w:CGFloat = .zero,h:CGFloat = totalHeight * 0.25){
         self.asset = asset
         if let safePrice = asset.Price{
             self._price = .init(wrappedValue: safePrice)
         }
-        
+        self.h = h
         self.w = w
     }
     
     var innerViewSize:CGSize{
-        return .init(width: w, height: totalHeight * 0.3)
+        return .init(width: w, height: h)
     }
     
     func assetHeaderInfo(w:CGFloat) -> some View{
@@ -55,30 +56,30 @@ struct PortfolioCard: View {
         ]
     }
     
-    func summaryViewGenerator<T:View>(heading:String,@ViewBuilder innerView: @escaping (CGFloat) -> T) -> some View{
-        Container(heading: heading, headingColor: .black, headingDivider: false, headingSize: 15, width: w,ignoreSides: false, horizontalPadding: 15,innerView: innerView)
-            .frame(width: w, height: innerViewSize.height, alignment: .center)
+    func summaryViewGenerator<T:View>(heading:String,w:CGFloat,@ViewBuilder innerView: @escaping (CGFloat) -> T) -> some View{
+        Container(heading: heading, headingColor: .black, headingDivider: false, headingSize: 15, width: w,ignoreSides: false, horizontalPadding: 7.5,verticalPadding: 0,spacing: 5,innerView: innerView)
     }
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
-        HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: self.priceColor, orientation: .vertical, alignment: .topLeading)
-            Spacer()
-            MainText(content: "#\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
-                .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
-        }
-        .frame(width: inner_w,height: self.innerViewSize.height * 0.1, alignment: .topLeading)
-        
-        if let sparkline = self.asset.coinData?.Sparkline{
-            CurveChart(data: sparkline,interactions: false, size: .init(width: inner_w, height: self.innerViewSize.height * 0.75), bg: .clear)
-        }else{
-            MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
-        }
+        VStack(alignment: .leading, spacing: 10) {
+            HStack(alignment: .center, spacing: 10) {
+                MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: self.priceColor, orientation: .vertical, alignment: .topLeading)
+                Spacer()
+                MainText(content: "#\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
+                    .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
+            }
+            .frame(width: inner_w,height: h * 0.25, alignment: .topLeading)
+            
+            if let sparkline = self.asset.coinData?.Sparkline{
+                CurveChart(data: sparkline,interactions: false, size: .init(width: inner_w, height: h * 0.75 - 10), bg: .clear)
+            }else{
+                MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
+            }
+        }.frame(width: inner_w, height: self.innerViewSize.height, alignment: .topLeading)
     }
     
     @ViewBuilder func moreInfoSummary(_ inner_w:CGFloat) -> some View{
         VStack{
-            Spacer(minLength: 0)
             ForEach(Array(self.financialSummaryKeyValues.keys.sorted().enumerated()),id: \.offset){ _key in
                 let key = _key.element
                 let idx = _key.offset
@@ -94,8 +95,7 @@ struct PortfolioCard: View {
                     Divider().frame(width: 15, alignment: .topLeading)
                 }
             }
-            Spacer(minLength: 0)
-        }.frame(width: inner_w, alignment: .topLeading)
+        }.frame(width: inner_w,height: self.innerViewSize.height, alignment: .topLeading)
     }
     
     
@@ -130,32 +130,30 @@ struct PortfolioCard: View {
     }
     
     func dynamicInnerView(w:CGFloat) -> some View{
-        
-        let buttonText = self.switchView ? "←" : "Quick Info  →"
-        
-        return VStack(alignment: .leading, spacing: 10) {
-            ZStack(alignment: .center) {
-                if !self.switchView{
-                    self.summaryViewGenerator(heading: "Market Summary", innerView: self.marketSummary(_:))
-                        .opacity(!self.switchView ? 1 : 0)
-                }else{
-                    self.summaryViewGenerator(heading: "Financial Summary", innerView: self.moreInfoSummary(_:))
-                        .opacity(self.switchView ? 1 : 0)
-                        .rotation3DEffect(.degrees(-180), axis: (x: 0.5,y:0.0,z:0.0))
-                }
+        return ZStack(alignment: .center) {
+            if !self.switchView{
+                self.summaryViewGenerator(heading: "Market Summary",w: w, innerView: self.marketSummary(_:))
+                    .opacity(!self.switchView ? 1 : 0)
+            }else{
+                self.summaryViewGenerator(heading: "Financial Summary",w:w, innerView: self.moreInfoSummary(_:))
+                    .opacity(self.switchView ? 1 : 0)
+                    .rotation3DEffect(.degrees(-180), axis: (x: 0.5,y:0.0,z:0.0))
             }
-            .frame(width: w, height: innerViewSize.height, alignment: .center)
-            .padding(.top,10)
-            .flipRotation(rotate: $switchView)
-            HStack(alignment: .center, spacing: 10) {
-                TabButton(title: buttonText, fontSize: 7.5, textColor: .white, flexible: true) {
-                    self.switchView.toggle()
-                }
-                Spacer()
-                TabButton(title: "More  →", fontSize: 7.5, textColor: .white, flexible: true,action: self.handleOnTap)
-            }.padding(.horizontal,7.5)
         }
+        .frame(width: w, alignment: .center)
+        .flipRotation(rotate: $switchView)
         
+    }
+    
+    func footerView(w:CGFloat) -> some View{
+        let buttonText = self.switchView ? "←" : "Quick Info  →"
+        return HStack(alignment: .center, spacing: 10) {
+            TabButton(title: buttonText, fontSize: 7.5, textColor: .white, flexible: true) {
+                self.switchView.toggle()
+            }
+            Spacer()
+            TabButton(title: "More  →", fontSize: 7.5, textColor: .white, flexible: true,action: self.handleOnTap)
+        }.padding(.horizontal,7.5)
     }
     
     func updateAsset(_ newAsset:CrybseAsset) {
@@ -175,9 +173,10 @@ struct PortfolioCard: View {
     
     
     var body: some View {
-        Container(width: w, horizontalPadding: 7.5, verticalPadding: 15, orientation: .vertical) { w in
+        Container(width: w, horizontalPadding: 7.5, verticalPadding: 15, orientation: .vertical,spacing:10) { w in
             self.assetHeaderInfo(w: w)
             self.dynamicInnerView(w: w)
+            self.footerView(w: w)
         }
         .frame(width: w, alignment: .center)
         .background(mainLightBGView.overlay(BlurView.thinLightBlur.opacity(0.25)))

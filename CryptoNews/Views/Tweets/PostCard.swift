@@ -49,38 +49,16 @@ struct PostCard: View {
         
     }
     
-    
-    var cardDynamicSize:some View{
-        return Container(width:self.size.width){ w in
+    @ViewBuilder var card:some View{
+        Container(width:self.size.width,verticalPadding: 15){ w in
             self.Header(width:w)
             self.Body(w: w)
+            if self.const_size{
+                Spacer(minLength: 0)
+            }
             self.Footer(width: w)
-        }.basicCard(background: AnyView(self.bgView))
-    }
-    
-    
-    var cardConstSize:some View{
-        let h = size.height
-        
-        let view =
-        Container(width: self.size.width) { w in
-            self.Header(width: w)
-                .frame(height: h * 0.15, alignment: .topLeading)
-            self.Body(w: w, h: h * 0.8 - 70)
-            self.Footer(width: w)
-                .frame(height: h * 0.15,alignment: .topLeading)
-        }.basicCard(size: self.size,background: AnyView(self.bgView))
-        
-        return view
-        
-    }
-    
-    @ViewBuilder var card:some View{
-        if self.const_size{
-            self.cardConstSize
-        }else{
-            self.cardDynamicSize
         }
+        .basicCard(size:self.const_size ? self.size : .zero,background: AnyView(self.bgView))
     }
 
     
@@ -153,13 +131,9 @@ extension PostCard{
             .multilineTextAlignment(.leading)
         if self.const_size{
             textView
-                .lineLimit(Int(h)/14)
-//                .truncationMode(.tail)
-                .frame(width: w, height: h, alignment: .topLeading)
+                .truncationMode(.tail)
         }else{
             textView
-//                .aspectRatio(contentMode: .fill)
-//                .truncationMode(.tail)
         }
         
     }

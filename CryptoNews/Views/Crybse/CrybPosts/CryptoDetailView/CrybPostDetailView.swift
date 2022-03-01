@@ -10,6 +10,7 @@ import SwiftUI
 struct CrybPostDetailView: View {
     @State var postData:CrybPostData
     @State var width:CGFloat = .zero
+    @State var postReaction:CrybsePostReaction = .none
     @State var chartIndicator:Int = -1
     @EnvironmentObject var context:ContextData
     
@@ -42,11 +43,8 @@ struct CrybPostDetailView: View {
                     self.loadView(w: w)
                 }else{
                     CryptoPostCardView(postData: self.postData,width: self.width)
-                    self.socialEngagementView
                     CrybseCurrentView(postData: self.postData, width: self.width)
-                    CrybseUserPredictionView(postData: self.postData, width: self.width)
-                    CrybseCrybotPredictionView(postData: self.postData,width: self.width)
-                    CrybseRatingView(postData: self.postData, width: self.width)
+                    CrybsePostReactionView(rating: self.$postReaction, width: self.width)
                     CrybsePollsView(postData: self.postData, width: self.width)
                 }
             }.padding(.bottom,150)

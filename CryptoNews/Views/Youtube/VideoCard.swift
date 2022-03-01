@@ -56,15 +56,24 @@ struct VideoCard: View {
     }
     
     @ViewBuilder func CardDetails(w:CGFloat) -> some View{
-        VStack(alignment: .leading, spacing: 10) {
+        VStack(alignment: .leading, spacing: 5) {
             MainText(content: self.data.title, fontSize: 15, color: .white, fontWeight: .medium)
-                .padding(.horizontal,5)
-                .padding(.vertical,12.5)
-                .frame(width: w, alignment: .leading)
+                .fixedSize(horizontal: false, vertical: true)
+                .lineLimit(2)
             RoundedRectangle(cornerRadius: 20)
                 .fill(Color.white)
-                .frame(width: w, height: 0.5, alignment: .center).padding(.bottom,25)
-        }
+                .frame(height: 0.5, alignment: .center)
+                .padding(.top,10)
+                .padding(.bottom,5)
+            HStack(alignment: .center, spacing: 5) {
+                Spacer()
+                SystemButton(b_name: "circle.grid.2x2", color: .white) {
+                    print("Hi")
+                }
+            }
+        }.padding(.horizontal,15)
+            .padding(.vertical,10)
+        .frame(width: w, alignment: .leading)
     }
     
     var videoView:some View{
@@ -78,12 +87,13 @@ struct VideoCard: View {
                     self.imageVideoInfo(size: .init(width: w, height: vw_h))
                 }
             }.frame(width: w, height: vw_h , alignment: .center)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+//                .clipShape(RoundedRectangle(cornerRadius: 10))
             if !self.smallCard{
                 self.CardDetails(w: w)
             }
         }
         .frame(width: w, alignment: .topLeading)
+        .basicCard()
     }
     
     var body: some View {
@@ -93,7 +103,7 @@ struct VideoCard: View {
 
 struct VideoCard_Previews: PreviewProvider {
     static var previews: some View {
-        VideoCard(data: CrybseVideoData.test, size: .init(width: totalWidth - 50, height: 350),smallCard: true)
+        VideoCard(data: CrybseVideoData.test, size: .init(width: totalWidth - 50, height: 350),smallCard: false)
             .frame(width: totalWidth, height: totalHeight, alignment: .center)
             .background(Color.mainBGColor.ignoresSafeArea())
     }

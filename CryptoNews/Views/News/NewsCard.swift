@@ -35,22 +35,15 @@ struct NewsCard: View {
     
     func newsView(size:CGSize) -> some View{
             let w = size.width - 20
-            let h = size.height - 10
             let publisher = self.news.publisher ?? "News Publisher"
-
             let title =  self.news.title ?? "News Publisher"
-            let text_h = h - 60
-            let linelimit = Int(floor(text_h/16) - 2)
             
             return VStack(alignment: .leading, spacing: 5) {
-                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: linelimit <= 0 ? 13 : 16, headingFont: .normal, subHeadingFont: .normal)
-                    .fixedSize(horizontal: false, vertical: true)
+                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal)
                     .lineLimit(3)
+                Spacer()
                 self.footer(w: w, h: 50)
-                    .padding(.bottom,5)
-            }.padding(.horizontal,10)
-            .padding(.vertical,5)
-            .frame(width: size.width, height: size.height, alignment: .bottomLeading)
+            }.padding(10)
     }
         
     func buttonArea(w:CGFloat,h:CGFloat,alignment:Alignment = .center,innerView: () -> AnyView,handler: (() -> Void)? = nil) -> some View{
@@ -71,6 +64,7 @@ struct NewsCard: View {
             ZStack(alignment: .bottom) {
                 ImageView(url: self.news.thumbnail,width: w, height: h, contentMode: .fill, alignment: .center)
                 self.newsView(size: .init(width: w, height: h))
+                    .frame(width: size.width, height: size.height, alignment: .bottomLeading)
                     .background(Color.darkGradColor.opacity(0.5).frame(height: h * 0.5,alignment: .bottom),alignment: .bottom)
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
             
@@ -80,6 +74,7 @@ struct NewsCard: View {
             VStack(alignment: .leading, spacing: 5) {
                 ImageView(url: self.news.thumbnail,width: size.width, height: img_h, contentMode: .fill, alignment: .center)
                 self.newsView(size: .init(width: size.width, height: news_h))
+                    .frame(width: size.width, height: news_h, alignment: .topLeading)
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
         }
     }
@@ -174,7 +169,7 @@ struct NewsCardCarousel:View{
 struct NewsCard_Previews: PreviewProvider {
     static var previews: some View {
         let cardSize:CGSize = .init(width: totalWidth - 30, height: 450)
-        NewsCardCarousel(currency: ["LTC"],size: .init(width: cardSize.width * 0.5 - 5, height: cardSize.height * 0.75))
+        NewsCardCarousel(currency: ["LTC"],size: .init(width: cardSize.width - 30, height: cardSize.height * 1))
             .background(mainBGView)
     }
 }

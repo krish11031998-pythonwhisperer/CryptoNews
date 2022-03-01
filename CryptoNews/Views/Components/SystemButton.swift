@@ -66,18 +66,18 @@ struct SystemButton: View {
     }
      
     @ViewBuilder var ButtonImg:some View{
-            if self.haveBG{
-                self.Img
-                    .systemButtonModifier(size: size, color: color, bg: {
-                        AnyView(haveBG ? bgColor : Color.clear)
-                    })
-                
-            }else{
-                self.Img
-                    .systemButtonModifier(size: size, color: color, bg: {
-                        AnyView(Color.mainBGColor)
-                    })
-            }
+//            if self.haveBG{
+        self.Img
+            .systemButtonModifier(size: size, color: color, bg: {
+                AnyView(haveBG ? bgColor : Color.clear)
+            })
+//
+//            }else{
+//                self.Img
+//                    .systemButtonModifier(size: size, color: color, bg: {
+//                        AnyView(Color.mainBGColor)
+//                    })
+//            }
     }
     
     @ViewBuilder var labelView:some View{

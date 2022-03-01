@@ -49,7 +49,6 @@ struct PriceCard: View {
         return HStack(alignment: .center, spacing: 10){
             
             CurrencySymbolView(currency: self.coin.Symbol, size: .small, width: size.width * 0.2)
-            ImageView(url: self.coin.iconUrl, width: size.width * 0.2, height: size.width * 0.2, contentMode: .fill, alignment: .center, clipping: .circleClipping)
             Spacer()
             VStack(alignment: .trailing, spacing: 2.5) {
                 MainText(content: percentage, fontSize: 10, color: fontColor, fontWeight: .semibold)
@@ -106,11 +105,9 @@ struct PriceCard: View {
                 self.footerView(w: w, h: footerHeight)
                     .background(Color.white.frame(width: size.width,height: size.height, alignment: .center))
             }
-            
         }
         .padding()
-        .frame(width: size.width, height: size.height, alignment: .center)
-//        .background(bgColor)
+        .frame(width: size.width, height: size.height, alignment: .center) 
         .clipContent(clipping: .roundClipping)
         
     }
@@ -137,9 +134,7 @@ struct PriceCard: View {
     var body: some View {
         self.mainBody
             .buttonify {
-//                DispatchQueue.main.async {
-                    self.context.selectedCurrency = self.coinAsset
-//                }
+                self.context.selectedCurrency = self.coinAsset
             }
     }
 }

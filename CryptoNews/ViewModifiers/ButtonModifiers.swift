@@ -111,6 +111,40 @@ struct ShadowButtonModifier:ButtonStyle{
     }
 }
 
+struct ButtonClickedHighlightView:ViewModifier{
+    var selected:Bool
+    var clipping:Clipping
+    var color:Color?
+    
+    init(selected:Bool = false,clipping:Clipping = .roundClipping,color:Color? = nil){
+        self.selected = selected
+        self.clipping = clipping
+        self.color = color
+    }
+    
+    
+    @ViewBuilder var selectiveBorder:some View{
+        if self.selected{
+            if let color = self.color{
+                RoundedRectangle(cornerRadius: self.clipping.rawValue)
+                    .stroke(color,lineWidth: 1.25)
+            }else{
+                RoundedRectangle(cornerRadius: self.clipping.rawValue)
+                    .stroke(Color.mainBGColor,lineWidth: 1.25)
+            }
+        }else{
+            RoundedRectangle(cornerRadius: self.clipping.rawValue)
+                .stroke(Color.gray,lineWidth: 1.25)
+        }
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .overlay(selectiveBorder)
+    }
+    
+}
+
 extension View{
     func springButton(withBG:Bool = false,clipping:Clipping = .clipped) -> some View{
         self.buttonStyle(SpringButtonModifier(withBG: withBG,clipping: clipping))
@@ -127,6 +161,10 @@ extension View{
             self.modifier(ShadowSpringButton(withShadow: withBG, handler: handler))
         }
         
+    }
+    
+    func buttonclickedhighlight(selected:Bool = false,clipping:Clipping = .roundClipping,color:Color? = nil) -> some View{
+        self.modifier(ButtonClickedHighlightView(selected: selected, clipping: clipping, color: color))
     }
     
 }

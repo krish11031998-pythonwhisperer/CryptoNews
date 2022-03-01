@@ -58,10 +58,12 @@ extension CurrencyDetailView{
         self.transactionHistoryView
         self.CurrencySummary
         self.infoSection
-        self.feedContainer
-        self.newsContainer
-        self.redditContainer
-        self.youtubeContainer
+//        LazyVStack(alignment: .leading, spacing: 10) {
+            self.feedContainer
+            self.newsContainer
+            self.redditContainer
+            self.youtubeContainer
+//        }
 //        self.paginatedViews
     }
     

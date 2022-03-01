@@ -24,11 +24,11 @@ struct CrybsePoll: View {
     
     func optionBuilder(option:String,width:CGFloat) -> some View{
         let isSelected = option == self.selectedOption
-        let borderColor = isSelected ? AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 1.25)) :AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.gray, lineWidth: 1.25))
+//        let borderColor = isSelected ? AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 1.25)) :AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.gray, lineWidth: 1.25))
         return MainText(content: option, fontSize: 13, color: .white, fontWeight: .regular)
         .padding()
         .frame(width: width, alignment: .leading)
-        .overlay(borderColor)
+        .buttonclickedhighlight(selected: isSelected)
         .clipContent(clipping: .roundClipping)
         .buttonify {
             if self.selectedOption != option{
@@ -36,7 +36,8 @@ struct CrybsePoll: View {
                     self.selectedOption = option
                 }
             }
-        }    }
+        }
+    }
     
     var body: some View {
         Container(heading: self.poll.Question, headingColor: .white, headingDivider: false, headingSize: 20, width: self.width,ignoreSides: false, verticalPadding: 15) { w in

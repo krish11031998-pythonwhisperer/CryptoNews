@@ -25,7 +25,7 @@ struct LatestRedditPost: View {
     
     @ViewBuilder func selectedView(_ _data:Any, _ w:CGFloat,_ h:CGFloat) -> some View{
         if let safeReddit = _data as? CrybseRedditData{
-            RedditPostCard(width: w, size: .init(width: w, height: h), redditPost: safeReddit)
+            RedditPostCard(width: w, size: .init(width: w, height: h), redditPost: safeReddit,const_size: true)
         }
     }
     
@@ -37,7 +37,7 @@ struct LatestRedditPost: View {
                     self.context.selectedLink = redditPost.URL
                 }) { data, size in
                     self.selectedView(data, size.width,size.height)
-                }.basicCard(size: .init(width: w, height: cardSize.height))
+                }.basicCard()
             }else if self.redditAPI.loading{
                 ProgressView().frame(width: w, height: cardSize.height, alignment: .center)
             }else{

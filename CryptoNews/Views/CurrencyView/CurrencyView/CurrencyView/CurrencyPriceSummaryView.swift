@@ -32,7 +32,7 @@ struct CurrencyPriceSummaryView: View {
             if self.refresh{
                 ProgressView().frame(width: 50, alignment: .center)
             }else{
-                RefreshTimerView(timeLimit: 100, refresh: $refresh)
+                RefreshTimerView(timeLimit: 300, refresh: $refresh)
             }
             
         }.frame(width: self.width, alignment: .center)

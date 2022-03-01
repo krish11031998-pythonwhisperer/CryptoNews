@@ -12,10 +12,12 @@ struct PortfolioSummary: View {
     @EnvironmentObject var context:ContextData
 //    @ObservedObject var assets:CrybseAssets
     var width:CGFloat
+    var height:CGFloat
     var assetCancellable:AnyCancellable? = nil
     
-    init(width:CGFloat = totalWidth - 20){
+    init(width:CGFloat = totalWidth - 20,height:CGFloat = totalHeight * 0.2){
         self.width = width
+        self.height = height
     }
     
     var assets:CrybseAssets{
@@ -51,21 +53,23 @@ struct PortfolioSummary: View {
         }
         .padding(12.5)
         .basicCard(background: AnyView(mainLightBGView))
+        .buttonify {
+            if self.context.selectedCurrency != asset{
+                self.context.selectedCurrency = asset
+            }
+        }
+    }
+    
+    var TrackedAssets:[CrybseAsset]{
+        return self.assets.Tracked.compactMap({self.context.userAssets.assets?[$0]}).sorted(by: {$0.Rank < $1.Rank})
     }
     
     var assetsView:some View{
         ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 10) {
-                ForEach(self.assets.Tracked, id:\.self) { assetName in
-                    if let asset = self.context.userAssets.assets?[assetName]{
-//                        PortfolioSummaryAssetCard(asset: asset, width: self.width * 0.35)
-                        self.portfolioSummaryAssetCard(asset: asset, width: self.width * 0.35)
-                            .buttonify {
-                                if self.context.selectedCurrency != asset{
-                                    self.context.selectedCurrency = asset
-                                }
-                            }
-                    }
+                ForEach(Array(self.TrackedAssets.enumerated()), id:\.offset) { _asset in
+                    let asset = _asset.element
+                    PortfolioCard(asset: asset, w: self.width * 0.65,h: self.height)
                 }
             }
         }

@@ -125,12 +125,15 @@ extension ContextData{
             setWithAnimation {
                 self._selectedCurrency = newValue
                 self.showTab = newValue != nil ? false : true
+                if newValue == nil && self.tab == .none{
+                    self.tab = self.prev_tab
+                    print("(DEBUG) Changing the tab to prev_tab")
+                }
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)){
                 if newValue != nil && self.tab != .none{
                     self.tab = .none
                     print("(DEBUG) Changing the tab to .none")
-                }else if newValue == nil && self.tab == .none{
-                    self.tab = self.prev_tab
-                    print("(DEBUG) Changing the tab to prev_tab")
                 }
             }
         }
@@ -161,7 +164,6 @@ extension ContextData{
             setWithAnimation {
                 self._selectedPost = newValue
                 self.showTab = newValue != nil ? false : true
-//                self.tab = .none
             }
         }
         

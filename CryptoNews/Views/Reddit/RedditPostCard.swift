@@ -7,15 +7,21 @@
 
 import SwiftUI
 
+enum RedditPostCardSize:CGFloat{
+    case small = 200
+}
+
 struct RedditPostCard: View {
     var redditPost:CrybseRedditData
     var width:CGFloat
     var size:CGSize = .zero
+    var const_size:Bool = false
     
-    init(width:CGFloat,size:CGSize = .zero,redditPost:CrybseRedditData){
+    init(width:CGFloat,size:CGSize = .zero,redditPost:CrybseRedditData,const_size:Bool = false){
         self.redditPost = redditPost
         self.width = width
         self.size = size
+        self.const_size = const_size
     }
     
     func Header(w:CGFloat) -> some View{
@@ -30,7 +36,8 @@ struct RedditPostCard: View {
     @ViewBuilder func MainBody(size:CGSize) -> some View{
         if self.size.height != .zero{
             self.mainBody(w: size.width)
-                .frame(height: (size.height * 0.8 - 60), alignment: .topLeading)
+                .truncationMode(.tail)
+//                .frame(height: (size.height * 0.8 - 60), alignment: .topLeading)
         }else{
             self.mainBody(w: size.width)
         }
@@ -40,12 +47,11 @@ struct RedditPostCard: View {
         VStack(alignment: .leading, spacing: 15) {
             if let _ = self.redditPost.title{
                 MainText(content: self.redditPost.Title, fontSize: 15, color: .white, fontWeight: .medium)
-//                    .fixedSize(horizontal: false, vertical: false)
             }
             if let _ = self.redditPost.selftext{
                 MainText(content: self.redditPost.SelfText, fontSize: 13, color: .white, fontWeight: .regular)
             }
-            if self.redditPost.URLStr.isImgURLStr() && self.size == .zero{
+            if self.redditPost.URLStr.isImgURLStr() && !self.const_size{
                 ImageView(url: self.redditPost.URLStr, width: w, contentMode: .fill, alignment: .center, autoHeight: true)
                     .clipContent(clipping: .roundCornerMedium)
             }
@@ -57,10 +63,10 @@ struct RedditPostCard: View {
     func Footer(w:CGFloat) -> some View{
         
         return HStack(alignment: .center, spacing: 10) {
-            SystemButton(b_name: "suit.heart", b_content: "\(self.redditPost.Likes)", color: .black, haveBG:false,bgcolor: .white) {
+            SystemButton(b_name: "suit.heart", b_content: "\(self.redditPost.Likes)", color: .white, haveBG:false,bgcolor: .white) {
                 print("Pressed Like")
             }
-            SystemButton(b_name: "arrow.2.squarepath", b_content: "\(self.redditPost.UpVote_Ratio)", color: .black, haveBG:false, bgcolor: .white) {
+            SystemButton(b_name: "arrow.2.squarepath", b_content: "\(self.redditPost.UpVote_Ratio)", color: .white, haveBG:false, bgcolor: .white) {
                 print("Pressed Share")
             }
             Spacer()
@@ -68,14 +74,17 @@ struct RedditPostCard: View {
     }
     
     var body: some View {
-        Container(width: self.width,verticalPadding: 15) { w in
+        
+        Container(width: self.width,verticalPadding: 15,spacing: 10) { w in
             self.Header(w: w)
             self.MainBody(size: .init(width: w, height: size.height))
-//            Group{
-                Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
-                self.Footer(w: w)
-//            }
-        }.basicCard(size: self.size)
+            if self.const_size{
+                Spacer(minLength: 0)
+            }
+            Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
+            self.Footer(w: w)
+        }
+        .basicCard(size:self.const_size ?  self.size : .zero)
     }
 }
 
@@ -99,7 +108,7 @@ struct RedditCardTester:View{
             ScrollView(.vertical, showsIndicators: false) {
                 Container(heading: "Reddit Posts", width: totalWidth) { w in
                     ForEach(Array(self.RAPI.posts.enumerated()), id:\.offset) { post in
-                        RedditPostCard(width: w,size: size, redditPost: post.element)
+                        RedditPostCard(width: w,size: size, redditPost: post.element,const_size: true)
                     }
                 }
             }
@@ -118,7 +127,7 @@ struct RedditCardTester:View{
 
 struct RedditPostCard_Previews: PreviewProvider {
     static var previews: some View {
-        RedditCardTester(subReddit: "bitcoin",size: .zero )
+        RedditCardTester(subReddit: "bitcoin",size: .init(width: totalWidth - 30, height: RedditPostCardSize.small.rawValue) )
             .background(Color.mainBGColor.frame(width: totalWidth, height: totalHeight, alignment: .center).ignoresSafeArea())
     }
 }

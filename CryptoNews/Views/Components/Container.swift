@@ -89,7 +89,7 @@ struct Container<T:View>: View {
     }
     
     var innerWidth:CGFloat{
-        return width - (self.paddingSize.width * 2)
+        return width - (self.ignoreSides ? 0 : self.paddingSize.width * 2)
     }
     
     
@@ -131,32 +131,32 @@ struct Container<T:View>: View {
     @ViewBuilder var mainBodyWElements:some View{
         if self.lazyLoad{
             if self.orientation == .vertical{
-                LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+                LazyVStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
                     self.innerView(self.innerWidth)
                 }
             }else if self.orientation == .horizontal{
-                LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+                LazyVStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
-                    HStack(alignment: .center, spacing: 10) {
+                    HStack(alignment: .center, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
                     }
                 }
             }
         }else{
             if self.orientation == .vertical{
-                VStack(alignment: self.alignment.horizontal, spacing: 10) {
+                VStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
                     self.innerView(self.innerWidth)
                 }
             }else if self.orientation == .horizontal{
-                VStack(alignment: self.alignment.horizontal, spacing: 10) {
+                VStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
-                    HStack(alignment: .center, spacing: 10) {
+                    HStack(alignment: .center, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
                     }
                 }
@@ -167,21 +167,21 @@ struct Container<T:View>: View {
     
     @ViewBuilder var mainBody:some View{
         if self.lazyLoad{
-            LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+            LazyVStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                 if self.orientation == .vertical{
                     self.innerView(self.innerWidth)
                 }else if self.orientation == .horizontal{
-                    HStack(alignment: .center, spacing: 10) {
+                    HStack(alignment: .center, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
                     }
                 }
             }
         }else{
-            VStack(alignment: self.alignment.horizontal, spacing: 10) {
+            VStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                 if self.orientation == .vertical{
                     self.innerView(self.innerWidth)
                 }else if self.orientation == .horizontal{
-                    HStack(alignment: .center, spacing: 10) {
+                    HStack(alignment: .center, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
                     }
                 }

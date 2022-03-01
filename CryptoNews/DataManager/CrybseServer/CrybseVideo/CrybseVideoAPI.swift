@@ -28,7 +28,7 @@ class CrybseVideoAPI:CrybseAPI{
     }
     
     var request:URLRequest?{
-        self.requestBuilder(path: "coin/youtube", queries: [.init(name: "coin", value: self.q),.init(name: "limit", value: String(self.limit))])
+        self.requestBuilder(path: "youtube", queries: [.init(name: "search", value: self.q),.init(name: "limit", value: String(self.limit))])
     }
     
     override func parseData(url: URL, data: Data) {
@@ -44,7 +44,7 @@ class CrybseVideoAPI:CrybseAPI{
     }
     
     func getVideos(q:String,completion:@escaping (CrybseVideosData?) -> Void){
-        let request = self.requestBuilder(path: "/videos", queries: [.init(name: "q", value: q)])
+        let request = self.requestBuilder(path: "youtube", queries: [.init(name: "search", value: q)])
         guard let safeRequest = request else {return}
         self.getData(request: safeRequest) { data in
             completion(CrybseVideosData.parseFromData(data: data))

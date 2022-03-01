@@ -152,6 +152,9 @@
 		EF8BE63227C1024200877234 /* Forum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF8BE63127C1024200877234 /* Forum-Regular.ttf */; };
 		EF8BE63827C68EFE00877234 /* MainSubHeadingViewModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63727C68EFE00877234 /* MainSubHeadingViewModifier.swift */; };
 		EF8BE63A27C865DB00877234 /* CurrencyPriceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63927C865DB00877234 /* CurrencyPriceSummaryView.swift */; };
+		EF8BE63D27CAD08900877234 /* VideoSectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */; };
+		EF8BE63F27CAD09A00877234 /* VideoSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */; };
+		EF8BE64127CD7ADB00877234 /* CrybsePostReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE64027CD7ADB00877234 /* CrybsePostReactionView.swift */; };
 		EFAB19CB2792C4FB00AABDC8 /* CrybseNewsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */; };
 		EFAB19CD2792C54600AABDC8 /* CrybseCoinOHLCV.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */; };
 		EFAB19CF27952CDF00AABDC8 /* CrybsePrices.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */; };
@@ -166,7 +169,6 @@
 		EFC9A28E2771B122005CDEFC /* AllAssetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC9A28D2771B122005CDEFC /* AllAssetView.swift */; };
 		EFF195B4277CED7A0081368F /* CrybseCoinSocialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF195B2277CED7A0081368F /* CrybseCoinSocialData.swift */; };
 		EFF6BFD2276C631100FFC973 /* CrybseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFD1276C631100FFC973 /* CrybseView.swift */; };
-		EFF6BFDC276C634300FFC973 /* CurrencyFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFDB276C634300FFC973 /* CurrencyFeed.swift */; };
 		EFF6BFDE276C646200FFC973 /* CrybPostGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFDD276C646200FFC973 /* CrybPostGen.swift */; };
 		EFF6BFE0276C64E800FFC973 /* BottomSwipeCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFDF276C64E800FFC973 /* BottomSwipeCard.swift */; };
 		EFF6BFE2276C650E00FFC973 /* CustomTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFE1276C650E00FFC973 /* CustomTextField.swift */; };
@@ -346,6 +348,9 @@
 		EF8BE63127C1024200877234 /* Forum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Forum-Regular.ttf"; sourceTree = "<group>"; };
 		EF8BE63727C68EFE00877234 /* MainSubHeadingViewModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainSubHeadingViewModifier.swift; sourceTree = "<group>"; };
 		EF8BE63927C865DB00877234 /* CurrencyPriceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPriceSummaryView.swift; sourceTree = "<group>"; };
+		EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionCard.swift; sourceTree = "<group>"; };
+		EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionView.swift; sourceTree = "<group>"; };
+		EF8BE64027CD7ADB00877234 /* CrybsePostReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePostReactionView.swift; sourceTree = "<group>"; };
 		EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsData.swift; sourceTree = "<group>"; };
 		EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinOHLCV.swift; sourceTree = "<group>"; };
 		EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrices.swift; sourceTree = "<group>"; };
@@ -360,7 +365,6 @@
 		EFC9A28D2771B122005CDEFC /* AllAssetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAssetView.swift; sourceTree = "<group>"; };
 		EFF195B2277CED7A0081368F /* CrybseCoinSocialData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybseCoinSocialData.swift; sourceTree = "<group>"; };
 		EFF6BFD1276C631100FFC973 /* CrybseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybseView.swift; sourceTree = "<group>"; };
-		EFF6BFDB276C634300FFC973 /* CurrencyFeed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CurrencyFeed.swift; sourceTree = "<group>"; };
 		EFF6BFDD276C646200FFC973 /* CrybPostGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybPostGen.swift; sourceTree = "<group>"; };
 		EFF6BFDF276C64E800FFC973 /* BottomSwipeCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BottomSwipeCard.swift; sourceTree = "<group>"; };
 		EFF6BFE1276C650E00FFC973 /* CustomTextField.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CustomTextField.swift; sourceTree = "<group>"; };
@@ -718,9 +722,8 @@
 		BCBC1DBC26BE825200B87E5C /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
-				EF65DBAA27B27DA1008AB1D4 /* HighlightView */,
+				EF8BE63B27CAD05300877234 /* VideoSection */,
 				EF6BA08B2790D896000DA7D2 /* PortfolioSection */,
-				EFF6BFDA276C634300FFC973 /* CurrencyFeed */,
 				EFF6BFD5276C633200FFC973 /* AssetViews */,
 				BCBC1DA626BE7FE200B87E5C /* HomePage.swift */,
 			);
@@ -883,6 +886,7 @@
 				EF42CCAF27873A1D00DE27E1 /* CrybseCrybotPredictionView.swift */,
 				EF42CCB127873C8600DE27E1 /* CrybseUserPredictionView.swift */,
 				EF42CCB327873DB800DE27E1 /* CrybseRatingView.swift */,
+				EF8BE64027CD7ADB00877234 /* CrybsePostReactionView.swift */,
 			);
 			path = CryptoDetailView;
 			sourceTree = "<group>";
@@ -933,13 +937,6 @@
 				EF4FE23B27AE6E4800296BD5 /* CrybsePostMainView.swift */,
 			);
 			path = CrybsePostSubmitView;
-			sourceTree = "<group>";
-		};
-		EF65DBAA27B27DA1008AB1D4 /* HighlightView */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = HighlightView;
 			sourceTree = "<group>";
 		};
 		EF65DBAD27B43057008AB1D4 /* CrybseVideo */ = {
@@ -1016,6 +1013,15 @@
 			path = CrybseTradingSignals;
 			sourceTree = "<group>";
 		};
+		EF8BE63B27CAD05300877234 /* VideoSection */ = {
+			isa = PBXGroup;
+			children = (
+				EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */,
+				EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */,
+			);
+			path = VideoSection;
+			sourceTree = "<group>";
+		};
 		EFAB19C92792C4E200AABDC8 /* CrybseNews */ = {
 			isa = PBXGroup;
 			children = (
@@ -1078,14 +1084,6 @@
 				EFC9A28D2771B122005CDEFC /* AllAssetView.swift */,
 			);
 			path = AssetViews;
-			sourceTree = "<group>";
-		};
-		EFF6BFDA276C634300FFC973 /* CurrencyFeed */ = {
-			isa = PBXGroup;
-			children = (
-				EFF6BFDB276C634300FFC973 /* CurrencyFeed.swift */,
-			);
-			path = CurrencyFeed;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1390,6 +1388,7 @@
 				BCBC1DB426BE824300B87E5C /* SummaryView.swift in Sources */,
 				EF42CCB027873A1D00DE27E1 /* CrybseCrybotPredictionView.swift in Sources */,
 				EFB3528927A6ADA400D6430B /* CrybseCoinAPI.swift in Sources */,
+				EF8BE63F27CAD09A00877234 /* VideoSectionView.swift in Sources */,
 				EF757C6127A719F600F957BC /* CrybseCoinPrice.swift in Sources */,
 				BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */,
 				BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */,
@@ -1399,7 +1398,6 @@
 				EF6C4E522781C81400AF54C8 /* TransactionData.swift in Sources */,
 				BC645921270E31C800BAECBC /* HoverView.swift in Sources */,
 				BCBC1DD326BF3C3F00B87E5C /* RecentNews.swift in Sources */,
-				EFF6BFDC276C634300FFC973 /* CurrencyFeed.swift in Sources */,
 				BCBC1DDA26C064AA00B87E5C /* RecentNewsCarousel.swift in Sources */,
 				EF65DBAF27B43066008AB1D4 /* CrybseVideoData.swift in Sources */,
 				BCBCACCE2705172A00E76436 /* ContextData.swift in Sources */,
@@ -1473,11 +1471,13 @@
 				BC305F1126D8D2D300826AB4 /* CardSlidingView.swift in Sources */,
 				EF64A3C727AD3F9C00628487 /* DynamicHeightContainer.swift in Sources */,
 				BC2267A626DA5C830058315E /* VideoCard.swift in Sources */,
+				EF8BE63D27CAD08900877234 /* VideoSectionCard.swift in Sources */,
 				BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */,
 				EF4FE23027AD719600296BD5 /* CrybsePostPoll.swift in Sources */,
 				EF7F6F74279AE05800CF350A /* CrybseTradingSignalsAPI.swift in Sources */,
 				BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */,
 				BC64592527119E2C00BAECBC /* CurrencySummaryView.swift in Sources */,
+				EF8BE64127CD7ADB00877234 /* CrybsePostReactionView.swift in Sources */,
 				BCB7836026C58E03009D5822 /* Container.swift in Sources */,
 				EF4FF92027BE5FCF001E2BD2 /* PercentChangeView.swift in Sources */,
 				EFF6BFE0276C64E800FFC973 /* BottomSwipeCard.swift in Sources */,

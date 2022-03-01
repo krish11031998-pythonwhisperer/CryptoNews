@@ -37,18 +37,45 @@ struct AllAssetView: View {
     }
     
     func portfolioCardViews(w:CGFloat) -> [AnyView]{
-        return self.coins(type: "tracked")?.sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset:$0, w: w * 0.65))}) ?? []
+        return self.coins(type: "tracked")?.sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset:$0, w: w * 0.65,h:totalHeight * 0.65))}) ?? []
     }
     
     var portfolioViews:some View{
         Container(heading: "Portfolio", headingColor: .white,ignoreSides: true) { inner_w in
-            CardSlidingView(cardSize: .init(width: inner_w * 0.65, height: totalHeight * 0.45), views: self.portfolioCardViews(w: inner_w),leading: true,centralize: true)
+            CardSlidingView(cardSize: .init(width: inner_w * 0.5, height: totalHeight * 0.45), views: self.portfolioCardViews(w: inner_w),leading: true,centralize: true)
         }
     }
 
+    func watchListCardSize(_ inner_w:CGFloat) -> CGSize{
+        return .init(width: inner_w * 0.5, height: totalHeight * 0.3)
+    }
+    
+    func watchListViews(size:CGSize) -> [AnyView]{
+        return (self.coins(type: "watching") ?? []).compactMap({AnyView(PriceCard(coin: $0, size: size))})
+    }
 
     @ViewBuilder var mainBody:some View{
-        PortfolioSummary(width: totalWidth - 30)
+        Group{
+            PortfolioSummary(width: totalWidth - 30,height: totalHeight * 0.2)
+            
+            Container(heading: "Watchlist", orientation: .vertical, aligment: .center) { inner_w in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 10) {
+                        ForEach(Array(self.watchListViews(size: self.watchListCardSize(inner_w)).enumerated()),id:\.offset) { _view in
+                            _view.element
+                        }
+                    }
+                }
+//                ScrollView(.horizontal, showsIndicators: false) {
+//                    HStack(alignment: .center, spacing: 10) {
+//                        ForEach(Array((self.coins(type: "watching") ?? []).enumerated()), id:\.offset) { _asset in
+//                            PriceCard(coin: _asset.element, size: .init(width: inner_w * 0.5, height: totalHeight * 0.3), alternativeView: false)
+//                        }
+//                    }
+//                }
+            }
+
+        }
     }
     
     var body: some View {

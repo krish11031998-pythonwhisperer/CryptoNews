@@ -28,7 +28,7 @@ struct NewsSectionMain: View {
     }
     
     func autoTimedCards(w:CGFloat) -> some View{
-        let feed = Array(self.data[..<(self.data.count - 2)])
+        let feed = self.data.count > 3 ? Array(self.data[0...2]) : self.data
         return ScrollView(.horizontal, showsIndicators: false) {
             HStack(alignment: .center, spacing: 15){
                 ForEach(Array(feed.enumerated()),id:\.offset){ _feed in
@@ -78,29 +78,20 @@ struct NewsSectionMain: View {
     }
     
     var moreCards:some View{
-        let data = Array(self.data[(self.data.count - 5)...])
+        let data = self.data.count < 4 ? self.data : Array(self.data[3...4])
         return ForEach(Array(data.enumerated()), id:\.offset) { _data in
             let news = _data.element
             
             NewsStandCard(news: news)
         }.frame(width: totalWidth, alignment: .center)
     }
-
-    
-//    var totalFrame:CGSize{
-//        return .init(width: self.cardSize.width, height: self.cardSize.height * 1.75)
-//    }
-    
-//    func mainBodyBuilder(w:CGFloat) -> {
-//
-//    }
     
     var body: some View {
         Group{
             if !self.data.isEmpty{
                 Container(heading: "News Highlights",ignoreSides: true) { w in
                     self.autoTimedCards(w: w)
-                    self.slenderCards(w: w)
+                    self.slenderCards(w: w  - 30)
                 }
             }else if self.newsFeed.loading{
                 ProgressView()

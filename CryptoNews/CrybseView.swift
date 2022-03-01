@@ -63,12 +63,16 @@ extension CrybseView{
         switch(page){
             case .home: HomePage().environmentObject(self.context)
             case .search: SearchMainPage().environmentObject(self.context)
-            case .info: SlideTabView {
-                return [AnyView(CurrencyFeedMainPage(type: .feed).environmentObject(self.context)),AnyView(CurrencyFeedMainPage(type: .news).environmentObject(self.context))]
-            }.environmentObject(self.context)
+            case .info: self.infoFeedView
             case .profile: ProfileView().environmentObject(self.context)
             default: Color.clear
         }
+    }
+    
+    var infoFeedView:some View{
+        SlideTabView {
+            return [AnyView(CrybPostMainView()),AnyView(CurrencyFeedMainPage(type: .feed)),AnyView(CurrencyFeedMainPage(type: .news))]
+        }.environmentObject(self.context)
     }
         
     var hoverViewEnabled:Bool{
@@ -96,14 +100,14 @@ extension CrybseView{
             .zIndex(2)
         }
 //
-//        if let post = self.context.selectedPost{
-//            CrybPostDetailView(postData: post)
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(mainBGView)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
+        if let post = self.context.selectedPost{
+            CrybPostDetailView(postData: post)
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
 //
 //
 //        if self.context.addPost{
