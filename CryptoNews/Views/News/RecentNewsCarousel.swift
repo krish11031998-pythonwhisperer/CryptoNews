@@ -21,7 +21,7 @@ struct RecentNewsCarousel: View {
     
     var body: some View {
         Container(heading: "News") { w  in
-            FancyHScroll(data: self.data,timeLimit: 60, size: size,viewGen: self.view)
+            SlideZoomInOutView(data: self.data,timeLimit: 60, size: size,viewGen: self.view)
         }
         
     }

@@ -52,7 +52,7 @@ struct CryptoMarket: View {
         Container(heading: self.heading, width: totalWidth,ignoreSides: true) { w in
             ZStack{
                 if let views = self.view{
-                    CardSlidingView(cardSize: size,views: views,leading: leadingPadding)
+                    ScrollZoomInOutView(cardSize: size,views: views,leading: leadingPadding)
                 }else{
                     ProgressView()
                 }

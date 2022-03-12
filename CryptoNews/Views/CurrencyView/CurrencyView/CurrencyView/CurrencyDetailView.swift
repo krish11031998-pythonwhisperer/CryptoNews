@@ -22,19 +22,22 @@ struct CurrencyDetailView: View {
     @StateObject var timeSeriesAPI:CrybseTimeseriesPriceAPI
     @ObservedObject var assetData: CrybseAsset
     var size:CGSize = .init()
+    var onClose: (() -> Void)?
     @State var timeCounter:Int = 0
     @State var refresh:Bool = false
     @State var choosen:Int = -1
     @State var choosenTimeInterval:String = "1hr"
     init(
         assetData:CrybseAsset,
-        size:CGSize = .init(width: totalWidth, height: totalHeight * 0.15)
+        size:CGSize = .init(width: totalWidth, height: totalHeight * 0.15),
+        onClose: (() -> Void)? = nil
     )
     {
              
         self.assetData = assetData
         self._timeSeriesAPI = .init(wrappedValue: .init(currency: assetData.currency, limit: 1, fiat: "USD"))
         self.size = size
+        self.onClose = onClose
     }
     
     
@@ -53,18 +56,23 @@ struct CurrencyDetailView: View {
 extension CurrencyDetailView{
         
     @ViewBuilder var mainView:some View{
-//        self.priceMainInfo
-        CurrencyPriceSummaryView(asset: self.assetData, width: self.size.width,choosenPrice: $choosen,choosenInterval: $choosenTimeInterval,refresh: $refresh)
-        self.transactionHistoryView
-        self.CurrencySummary
-        self.infoSection
-//        LazyVStack(alignment: .leading, spacing: 10) {
-            self.feedContainer
-            self.newsContainer
-            self.redditContainer
-            self.youtubeContainer
-//        }
-//        self.paginatedViews
+        StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0",baseNavBarHeight: totalHeight * 0.6,minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+            CurrencyPriceSummaryView(asset: self.assetData, width: size.width, height: size.height, choosenPrice: self.$choosen, choosenInterval: self.$choosenTimeInterval, refresh: $refresh)
+        }, innerView: {
+            Container(width:self.size.width,ignoreSides:true){_ in
+                self.transactionHistoryView
+                self.CurrencySummary
+                self.infoSection
+                self.feedContainer
+                self.newsContainer
+                self.redditContainer
+                self.youtubeContainer
+            }.padding(.vertical,50)
+        }, bg: Color.AppBGColor.anyViewWrapper()) {
+//            self.onClose?()
+            self.onClose?()
+            
+        }
     }
     
     var headingFontSize:CGFloat{

@@ -110,14 +110,14 @@ extension CrybseView{
         }
 //
 //
-//        if self.context.addPost{
-//            CrybsePostMainView()
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(mainBGView)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
+        if self.context.addPost{
+            CrybsePostMainView()
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(mainBGView)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
     
     }
     

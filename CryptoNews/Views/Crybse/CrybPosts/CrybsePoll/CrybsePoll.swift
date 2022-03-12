@@ -10,11 +10,16 @@ import SwiftUI
 struct CrybsePoll: View {
     var poll:CrybsePollData
     var width:CGFloat = .zero
+    var height:CGFloat?
+    var alertEventChange:Bool = false
+    @State var change:String = CardFanSwipe.none.rawValue
     @State var selectedOption:String = ""
     
-    init(poll:CrybsePollData,width:CGFloat){
+    init(poll:CrybsePollData,width:CGFloat,height:CGFloat? = nil,alertEventChange:Bool = false){
         self.width = width
         self.poll = poll
+        self.height = height
+        self.alertEventChange = alertEventChange
     }
     
     
@@ -24,7 +29,6 @@ struct CrybsePoll: View {
     
     func optionBuilder(option:String,width:CGFloat) -> some View{
         let isSelected = option == self.selectedOption
-//        let borderColor = isSelected ? AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 1.25)) :AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.gray, lineWidth: 1.25))
         return MainText(content: option, fontSize: 13, color: .white, fontWeight: .regular)
         .padding()
         .frame(width: width, alignment: .leading)
@@ -40,11 +44,20 @@ struct CrybsePoll: View {
     }
     
     var body: some View {
-        Container(heading: self.poll.Question, headingColor: .white, headingDivider: false, headingSize: 20, width: self.width,ignoreSides: false, verticalPadding: 15) { w in
+        Container(heading: self.poll.Question, headingColor: .white, headingDivider: false, headingSize: 20, width: self.width,ignoreSides: false, verticalPadding: 20) { w in
             ForEach(self.poll.Options , id: \.self) { option in
                 self.optionBuilder(option: option, width: w)
             }
-        }.basicCard(size: .zero)
+        }
+        .onChange(of: self.selectedOption, perform: { _ in
+            if self.alertEventChange && self.change != CardFanSwipe.next.rawValue{
+                self.change = CardFanSwipe.next.rawValue
+            }
+        })
+        .preference(key: FanSwipedPreferenceKey.self, value: self.change)
+        .frame(width: self.width, height: self.height ?? .infinity,alignment: .topLeading)
+        .basicCard(size:.init(width: self.width, height: self.height ?? .infinity))
+        
     }
 }
 

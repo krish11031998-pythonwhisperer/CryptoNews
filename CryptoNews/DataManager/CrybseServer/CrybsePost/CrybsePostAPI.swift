@@ -92,7 +92,7 @@ class CrybsePostAPI:CrybseAPI{
             print("(DEBUG) imgMedia has been generatedfromImage!")
         }
         
-        if let safePoll = Media.generateMediaJSON(key: "poll", params: [post.Poll.Question:post.Poll.Options]){
+        if let safePoll = Media.generateMediaJSON(key: "poll", params: ["Ouestion":post.Poll.Question,"Options":post.Poll.Options]){
             if media == nil{
                 media = [safePoll]
             }else{

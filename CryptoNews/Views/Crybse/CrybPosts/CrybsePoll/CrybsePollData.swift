@@ -11,6 +11,10 @@ struct CrybsePollData:Codable{
     var question:String?
     var options:Array<String>?
     
+    init(question:String = "Question",options:Array<String> = ["Yes","No"]){
+        self.question = question
+        self.options = options
+    }
     
     var Question:String{
         return self.question ?? ""

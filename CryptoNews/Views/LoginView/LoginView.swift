@@ -12,6 +12,7 @@ struct FormTextField:TextFieldStyle{
     var fontSize:CGFloat = 25
     func _body(configuration: TextField<Self._Label>) -> some View {
             configuration
+                .textCase(.lowercase)
                 .truncationMode(.tail)
                 .font(Font.custom(TextStyle.normal.rawValue, fixedSize: 12))
                 .foregroundColor(color)

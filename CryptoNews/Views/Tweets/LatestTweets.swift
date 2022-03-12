@@ -57,7 +57,7 @@ extension LatestTweets{
     
     @ViewBuilder func TweetsFeed(size:CGSize) -> some View{
         if !self.tweetsAPI.FeedData.isEmpty{
-            FancyHScroll(data: self.topTweets, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { (data,size) in
+            SlideZoomInOutView(data: self.topTweets, timeLimit: 100, size: size, scrollable: true, onTap: self.onTapHandler(_:), viewGen: { (data,size) in
                 if let data = data as? AssetNewsData{
                     PostCard(cardType: .Tweet, data: data, size: size,bg: .light, const_size: true,isButton: false)
                 }else{

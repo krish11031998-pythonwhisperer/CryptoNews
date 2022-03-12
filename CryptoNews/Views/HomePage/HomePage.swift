@@ -24,8 +24,9 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             AllAssetView().asyncContainer()
             LatestRedditPost(currencies: self.currencies).asyncContainer()
-            LatestTweets(header: "Trending Tweets", currencies: self.currencies, type: .Chronological, limit: 20).asyncContainer()
-            NewsSectionMain(currencies: self.currencies, limit: 10,cardHeight: totalHeight * 0.45).asyncContainer()
+//            LatestTweets(header: "Trending Tweets", currencies: self.currencies, type: .Chronological, limit: 20).asyncContainer()
+            self.pollView
+//            NewsSectionMain(currencies: self.currencies, limit: 10,cardHeight: totalHeight * 0.45).asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
@@ -38,12 +39,23 @@ struct HomePage: View {
     }
 }
 
+
 extension HomePage{
-    func CryptoMarketGen(heading:String,srt:String,order:Order = .desc,leadingPadding:Bool = false,cardSize:CGSize = CardSize.slender) -> some View{
-        AsyncContainer(size: CardSize.slender) {
-            CryptoMarket(heading: heading, srt: srt,order: order,cardSize:cardSize, leadingPadding: leadingPadding)
-        }
+    
+    var pollData:Array<CrybsePollData>{
+        Array(1...5).compactMap({CrybsePollData(question: "Question \($0)")})
     }
+    
+    @ViewBuilder var pollView:some View{
+        Container(heading: "Poll",width: totalWidth,spacing: 40) { w in
+            CardFanView(width: w, indices: self.pollData, isScrollable: false) { poll in
+                if let safePoll = poll as? CrybsePollData{
+                    CrybsePoll(poll: safePoll, width: w, height: 250,alertEventChange: true)
+                }
+            }
+        }.asyncContainer()
+    }
+    
 }
 
 struct HomePage_Previews: PreviewProvider {

@@ -185,7 +185,7 @@ struct CurrencyView:View{
 
     @ViewBuilder func innerView(w:CGFloat) -> some View{
         let size:CGSize = .init(width: w, height: totalHeight * 0.3)
-        CurrencyDetailView(assetData: assetData, size: .init(width: w, height: totalHeight * 0.3))
+        CurrencyDetailView(assetData: assetData, size: .init(width: w, height: totalHeight * 0.3),onClose:self.onClose)
             .onPreferenceChange(ShowSectionPreferenceKey.self) { showSection in
                 setWithAnimation {
                     self.showSection = showSection
@@ -199,12 +199,7 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-            ScrollView(.vertical, showsIndicators: false){
-//                Container(heading: self.currencyHeading, width: totalWidth, onClose: self.onClose, rightView: self.rightSideView, innerView: self.innerView(w:))
-                Container(width: totalWidth, onClose: self.onClose, innerView: self.innerView(w:))
-                    .padding(.vertical,50)
-                    .onChange(of: self.refresh) { refresh in}
-            }.aspectRatio(contentMode: .fit)
+            self.innerView(w: totalWidth - 30)
         }else{
             ProgressView()
         }
@@ -233,7 +228,7 @@ struct CurrencyView:View{
     }
     
     func onDisappear(){
-        guard let safeURL = self.coinAPI.request?.url,let originalCoinData = self.coinAPI.coinData,let coinData = self.assetData.coin else {return}
+        guard let safeURL = self.coinAPI.request?.url,let _ = self.coinAPI.coinData,let coinData = self.assetData.coin else {return}
         let coinResponse = CrybseCoinDataResponse(data: coinData, success: true)
         let encoder = JSONEncoder()
         do{

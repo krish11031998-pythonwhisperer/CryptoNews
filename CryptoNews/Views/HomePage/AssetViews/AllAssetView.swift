@@ -42,7 +42,7 @@ struct AllAssetView: View {
     
     var portfolioViews:some View{
         Container(heading: "Portfolio", headingColor: .white,ignoreSides: true) { inner_w in
-            CardSlidingView(cardSize: .init(width: inner_w * 0.5, height: totalHeight * 0.45), views: self.portfolioCardViews(w: inner_w),leading: true,centralize: true)
+            ScrollZoomInOutView(cardSize: .init(width: inner_w * 0.5, height: totalHeight * 0.45), views: self.portfolioCardViews(w: inner_w),leading: true,centralize: true)
         }
     }
 
@@ -55,26 +55,9 @@ struct AllAssetView: View {
     }
 
     @ViewBuilder var mainBody:some View{
-        Group{
-            PortfolioSummary(width: totalWidth - 30,height: totalHeight * 0.2)
-            
-            Container(heading: "Watchlist", orientation: .vertical, aligment: .center) { inner_w in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: 10) {
-                        ForEach(Array(self.watchListViews(size: self.watchListCardSize(inner_w)).enumerated()),id:\.offset) { _view in
-                            _view.element
-                        }
-                    }
-                }
-//                ScrollView(.horizontal, showsIndicators: false) {
-//                    HStack(alignment: .center, spacing: 10) {
-//                        ForEach(Array((self.coins(type: "watching") ?? []).enumerated()), id:\.offset) { _asset in
-//                            PriceCard(coin: _asset.element, size: .init(width: inner_w * 0.5, height: totalHeight * 0.3), alternativeView: false)
-//                        }
-//                    }
-//                }
-            }
-
+        Container(width: totalWidth) { w in
+            PortfolioSummary(width: w,height: totalHeight * 0.2)
+            QuickWatch(assets: self.context.userAssets.watchingAssets, width: w)
         }
     }
     

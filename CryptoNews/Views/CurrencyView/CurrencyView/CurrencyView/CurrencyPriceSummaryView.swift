@@ -14,10 +14,12 @@ struct CurrencyPriceSummaryView: View {
     @Binding var refresh:Bool
     @Namespace var animation
     var width:CGFloat
+    var height:CGFloat
     
-    init(asset:CrybseAsset,width:CGFloat = totalWidth,choosenPrice:Binding<Int>,choosenInterval:Binding<String>,refresh:Binding<Bool>){
+    init(asset:CrybseAsset,width:CGFloat = totalWidth,height:CGFloat = totalHeight * 0.25,choosenPrice:Binding<Int>,choosenInterval:Binding<String>,refresh:Binding<Bool>){
         self.asset = asset
         self.width = width
+        self.height = height
         self._refresh = refresh
         self._choosenPrice = choosenPrice
         self._choosenInterval = choosenInterval
@@ -35,12 +37,12 @@ struct CurrencyPriceSummaryView: View {
                 RefreshTimerView(timeLimit: 300, refresh: $refresh)
             }
             
-        }.frame(width: self.width, alignment: .center)
+        }.frame(width: self.width,height:self.height * 0.2, alignment: .center)
     }
     
     
     @ViewBuilder var curveChartView:some View{
-        CurveChart(data: self.Prices.compactMap({$0.price}), choosen: self.$choosenPrice, interactions: true, size: .init(width: self.width, height: totalHeight * 0.25),bg: .clear, lineColor: nil, chartShade: true)
+        CurveChart(data: self.Prices.compactMap({$0.price}), choosen: self.$choosenPrice, interactions: true, size: .init(width: self.width, height: self.height * 0.4),bg: .clear, lineColor: nil, chartShade: true)
     }
     
     var color:Color?{
@@ -93,7 +95,7 @@ struct CurrencyPriceSummaryView: View {
         }
         .animation(.easeInOut)
         .padding(10)
-        .frame(width: self.width, alignment: .center)
+        .frame(width: self.width,height: self.height * 0.2, alignment: .center)
         .background(BlurView.thinDarkBlur)
         .clipContent(clipping: .roundClipping)
     }
@@ -108,13 +110,13 @@ struct CurrencyPriceSummaryView: View {
     
     var CoinPriceView:some View{
         MainSubHeading(heading: self.asset.CoinData.Name, subHeading: self.SelectedPrice.ToMoney(), headingSize: 17.5, subHeadingSize: 25, headColor: .white, subHeadColor: .white, headingWeight: .medium, bodyWeight: .semibold, alignment: .center)
-            .frame(width: self.width, alignment: .center)
+            .frame(width: self.width,height: self.height * 0.2, alignment: .center)
     }
 
     var body: some View {
-        Container(width: self.width, ignoreSides: true) { w in
+        Container(width: self.width, ignoreSides: true,spacing: 0) { w in
             self.headerView
-            self.CoinPriceView.padding(.vertical,25)
+            self.CoinPriceView
             self.curveChartView
             self.choosenTimeIntervalView
         }

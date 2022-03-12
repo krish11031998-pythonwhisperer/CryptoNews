@@ -24,16 +24,22 @@ struct AddPollPage: View {
         self._pollForm = .init(wrappedValue: .init())
     }
     
-    func optionView(placeHolder:String,w:CGFloat,completion: @escaping (String) -> Void) -> some View{
-        Container(headingDivider: false, width: w, horizontalPadding: 5, verticalPadding: 0,orientation: .horizontal) { inner_w in
-            SystemButton(b_name: "circle", haveBG: false, size: .init(width: 7.5,height: 7.5), bgcolor: .clear) {}
-            StylizedTextEditor(placeHolder:placeHolder,limit: 50, includeIndicator: false, width: inner_w - 25,style: .init(color: .black, fontSize: 12))
+    func optionView(placeHolder:String,w:CGFloat,extra:Bool = false,completion: @escaping (String) -> Void) -> some View{
+        Container(headingDivider: false, width: w,ignoreSides: true, horizontalPadding: 5, verticalPadding: 0,orientation: .horizontal,spacing: 5) { inner_w in
+            StylizedTextEditor(placeHolder:placeHolder,limit: 50, includeIndicator: false, width: inner_w - (extra ? 30 : 0),style: .init(color: .black, fontSize: 12))
+                .padding(.top,5)
+                .buttonclickedhighlight(selected: false)
                 .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self,perform: completion)
+            if extra{
+                SystemButton(b_name: "xmark", color: .white, haveBG: true, size: .init(width: 10, height: 10), bgcolor: .red, clipping: .circleClipping) {
+                    self.pollForm.optionsCount -= 1
+                }
+            }
         }.frame(width: w, alignment: .trailing)
     }
     
     var pollContainer:some View{
-        Container(heading: "Add Poll",headingColor: .black, headingDivider: true, headingSize: 25, width: self.width) { w in
+        Container(heading: "Add Poll",headingColor: .black, headingDivider: true, headingSize: 25, width: self.width,spacing: 17.5) { w in
             StylizedTextEditor(placeHolder:"Add Question",limit: 50, includeIndicator: false, width: w,style: .init(color: .black, fontSize: 18))
                 .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self) { newQuestion in
                     if self.pollForm.question != newQuestion{
@@ -41,7 +47,7 @@ struct AddPollPage: View {
                     }
                 }
             ForEach(Array(0..<self.pollForm.optionsCount), id:\.self){ idx in
-                self.optionView(placeHolder: "Add Option", w: w) { newOption in
+                self.optionView(placeHolder: "Add Option", w: w,extra: idx >= 2) { newOption in
                     DispatchQueue.main.async {
                         if self.pollForm.options.count <= idx {
                             self.pollForm.options.append(newOption)
@@ -65,7 +71,7 @@ struct AddPollPage: View {
     }
     
     var body: some View {
-        VStack(alignment: .center, spacing: 10) {
+        VStack(alignment: .center, spacing: 15) {
             self.pollContainer
             TabButton(width: self.width, title: "Add Poll", fontSize: 15, textColor: .white) {
                 setWithAnimation {

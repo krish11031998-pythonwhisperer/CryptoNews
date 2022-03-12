@@ -32,7 +32,7 @@ struct LatestRedditPost: View {
     var body: some View {
         Container(heading: "Trending Reddits", headingDivider: true, width: self.width, ignoreSides: false, horizontalPadding: 15,verticalPadding: 0) { w in
             if !self.posts.isEmpty && !self.redditAPI.loading{
-                FancyHScroll(data: self.posts,timeLimit:100, size: .init(width: w, height: cardSize.height),scrollable: true,onTap: { idx in
+                SlideZoomInOutView(data: self.posts,timeLimit:100, size: .init(width: w, height: cardSize.height),scrollable: true,onTap: { idx in
                     let redditPost = self.posts[idx]
                     self.context.selectedLink = redditPost.URL
                 }) { data, size in
