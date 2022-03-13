@@ -26,10 +26,9 @@ struct AddPollPage: View {
     
     func optionView(placeHolder:String,w:CGFloat,extra:Bool = false,completion: @escaping (String) -> Void) -> some View{
         Container(headingDivider: false, width: w,ignoreSides: true, horizontalPadding: 5, verticalPadding: 0,orientation: .horizontal,spacing: 5) { inner_w in
-            StylizedTextEditor(placeHolder:placeHolder,limit: 50, includeIndicator: false, width: inner_w - (extra ? 30 : 0),style: .init(color: .black, fontSize: 12))
+            StylizedTextEditor(placeHolder:placeHolder,limit: 50, includeIndicator: false, width: inner_w - (extra ? 30 : 0),style: .init(color: .black, fontSize: 12),updateText: completion)
                 .padding(.top,5)
                 .buttonclickedhighlight(selected: false)
-                .onPreferenceChange(StylizedTextEditorTextPreferenceKey.self,perform: completion)
             if extra{
                 SystemButton(b_name: "xmark", color: .white, haveBG: true, size: .init(width: 10, height: 10), bgcolor: .red, clipping: .circleClipping) {
                     self.pollForm.optionsCount -= 1

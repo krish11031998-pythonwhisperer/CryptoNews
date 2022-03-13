@@ -40,6 +40,7 @@ struct CrybsePostMainView: View {
         postdata.PostMessage =  self.postState.text
         if let safePoll = self.postState.poll{
             postdata.Poll = safePoll
+            print("(DEBUG) safePoll : ",safePoll)
         }
         CrybsePostAPI.shared.uploadPost(post: postdata,image: nil) { status in
             var heading = ""

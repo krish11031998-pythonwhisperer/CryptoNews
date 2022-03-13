@@ -57,21 +57,34 @@ public struct MultipartFormDataRequest {
     public init(url: URL) {
         self.url = url
     }
+    
+    public func writeFormData(bodyData:inout Data,params:Params? = nil){
+        let lineBreak = "\r\n"
+        guard let safeParams = params else {return}
+        for (key,value) in safeParams{
+            bodyData.append("--\(boundary + lineBreak)")
+            bodyData.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak+lineBreak)")
+            if let StrValue = value as? String{
+                bodyData.append("\(StrValue + lineBreak)")
+            }else if let StrArrValue = value as? Array<String> {
+                for value in StrArrValue{
+                    bodyData.append("--\(boundary + lineBreak)")
+                    bodyData.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak+lineBreak)")
+                    bodyData.append("\(value + lineBreak)")
+                }
+            }else if let safeData = value as? Data{
+                bodyData.append(contentsOf: safeData)
+            }
+            
+        }
+    }
 
     public func generateRequestDataBoundary(params:Params? = nil,allmedia:[Media]? = nil) -> Data{
         var bodyData = Data()
         let lineBreak = "\r\n"
+        
         if let safeParams = params{
-            for (key,value) in safeParams{
-                bodyData.append("--\(boundary + lineBreak)")
-                bodyData.append("Content-Disposition: form-data; name=\"\(key)\"\(lineBreak+lineBreak)")
-                if let StrValue = value as? String{
-                    bodyData.append("\(StrValue + lineBreak)")
-                }else if let safeData = value as? Data{
-                    bodyData.append(contentsOf: safeData)
-                }
-                
-            }
+            self.writeFormData(bodyData: &bodyData, params: params)
         }
         
         
@@ -90,6 +103,7 @@ public struct MultipartFormDataRequest {
         }
         
         bodyData.append("--\(boundary)--\(lineBreak)")
+        print("(DEBUG) bodyData : ",bodyData)
         
         return bodyData
     }

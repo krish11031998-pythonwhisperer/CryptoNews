@@ -54,8 +54,8 @@ struct PortfolioSummary: View {
         .padding(12.5)
         .basicCard(background: AnyView(mainLightBGView))
         .buttonify {
-            if self.context.selectedCurrency != asset{
-                self.context.selectedCurrency = asset
+            if self.context.selectedAsset != asset{
+                self.context.selectedAsset = asset
             }
         }
     }

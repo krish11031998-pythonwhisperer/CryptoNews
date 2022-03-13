@@ -104,51 +104,44 @@ class CrybsePostAPI:CrybseAPI{
     }
 
     
-    func parsePostForUpload(request: inout URLRequest,post:CrybPostData,image:UIImage?) -> Bool{
-        var payload = CrybsePostPayload(userImg: post.User.Img, userName: post.User.UserName, userUid: post.User.User_Uid, comments: "\(post.Comments)", likes: "\(post.Likes)", postMessage: post.PostMessage, high: "\(post.PricePrediction.High)", low: "\(post.PricePrediction.Low)", price: "\(post.PricePrediction.Price)", view: "\(post.Views)", currency: post.Coin)
-        
-        if post.Poll.Question != "" && !post.Poll.Options.isEmpty{
-            payload.poll = [post.Poll.Question:post.Poll.Options]
-        }
-        
-        if let imgData = image?.pngData(){
-            payload.imageFile = imgData
-        }
-        
-        let encoder = JSONEncoder()
+    func parsePostForUpload(request: inout URLRequest,post:CrybPostData,image:UIImage?){
+//        var payload = CrybsePostPayload(userImg: post.User.Img, userName: post.User.UserName, userUid: post.User.User_Uid, comments: "\(post.Comments)", likes: "\(post.Likes)", postMessage: post.PostMessage, high: "\(post.PricePrediction.High)", low: "\(post.PricePrediction.Low)", price: "\(post.PricePrediction.Price)", view: "\(post.Views)", currency: post.Coin)
+//
+//        if post.Poll.Question != "" && !post.Poll.Options.isEmpty{
+//            payload.poll = ["question":post.Poll.Question,"options":post.Poll.Options]
+//        }
+//
+//        if let imgData = image?.pngData(){
+//            payload.imageFile = imgData
+//        }
+//
+//        let encoder = JSONEncoder()
         do{
-            let res = try encoder.encode(payload)
-            print("httpBody : ",res)
+            let res = try JSONSerialization.data(withJSONObject: self.PostRequestBodyParams(post: post))
+            print("(DEBUG) httpBody : ",res)
             request.httpBody = res
-            return true 
         }catch{
-            print("There was an error while trying to encode the the CrybsePostPayload : ",error.localizedDescription)
+            print("(DEBUG Error) There was an error while trying to encode the the CrybsePostPayload : ",error.localizedDescription)
         }
-        
-        return false
     }
     
     func PostRequestBodyParams(post:CrybPostData) -> [String:Any]{
         var params:[String:Any] = ["userImg": post.User.Img,
-                      "userName": post.User.UserName,
-                      "userUid": post.User.User_Uid,
-                      "postMessage": post.PostMessage,
-                      "view": "\(post.Views)",
-                      "currency": "\(post.Coin)",
+                                   "userName": post.User.UserName,
+                                   "userUid": post.User.User_Uid,
+                                   "postMessage": post.PostMessage,
+                                   "view": "\(post.Views)",
+                                   "currency": "\(post.Coin)",
+                                   "question": post.Poll.Question,
+                                   "options":post.Poll.Options
         ]
-        let encoder = JSONEncoder()
-        do{
-            let polldata = try encoder.encode(post.Poll)
-            params["poll"] = polldata as Data
-        }catch{
-            print("There was an error while encoding the pollData!")
-        }
+        print("(DEBUG) Params : ",params)
         return params
     }
     
     func uploadPost(post:CrybPostData,image:UIImage?,completion:((Bool) -> Void)? = nil){
         if let safeRequest = self.generateMultiPartFormRequest(url: self.postRequest?.url, post: post, image: image){
-            print("Now Sending the request!")
+            print("(DEBUG) Now Sending the request! : ",safeRequest.httpBody)
             self.PostData(request: safeRequest) { data in
                 guard let safeData = data as? Data else {return}
                 if let _ = self.parsePostFromData(data: safeData){
@@ -157,6 +150,7 @@ class CrybsePostAPI:CrybseAPI{
                     completion?(false)
                 }
             }
+            
         }
     }
     

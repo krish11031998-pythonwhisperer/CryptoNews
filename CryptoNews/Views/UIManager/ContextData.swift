@@ -116,7 +116,7 @@ extension ContextData{
     }
     
     
-    var selectedCurrency:CrybseAsset?{
+    var selectedAsset:CrybseAsset?{
         get{
             return self._selectedCurrency
         }
@@ -243,7 +243,7 @@ extension ContextData{
     }
     
     var hoverViewEnabled:Bool{
-        return !(self.selectedLink == nil && self.selectedPost == nil && self.selectedCurrency == nil && self.selectedVideoData == nil && !self.addTxn && !self.addPost)
+        return !(self.selectedLink == nil && self.selectedPost == nil && self.selectedAsset == nil && self.selectedVideoData == nil && !self.addTxn && !self.addPost)
     }
     
     func AddNewTxn(txn:Transaction){

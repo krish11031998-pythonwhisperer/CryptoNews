@@ -85,6 +85,10 @@ struct CrybPostData:Codable,Loopable{
         }
     }
     
+    var isPollNotProvided:Bool{
+        return self.poll == nil 
+    }
+    
     var Likes:Int{
         return self.likes ?? 0
     }

@@ -66,7 +66,7 @@ extension CurrencyDetailView{
                 self.feedContainer
                 self.newsContainer
                 self.redditContainer
-                self.youtubeContainer
+//                self.youtubeContainer
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
 //            self.onClose?()

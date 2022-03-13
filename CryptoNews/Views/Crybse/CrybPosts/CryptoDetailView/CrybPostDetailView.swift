@@ -45,7 +45,9 @@ struct CrybPostDetailView: View {
                     CryptoPostCardView(postData: self.postData,width: self.width)
                     CrybseCurrentView(postData: self.postData, width: self.width)
                     CrybsePostReactionView(rating: self.$postReaction, width: self.width)
-                    CrybsePollsView(postData: self.postData, width: self.width)
+                    if !self.postData.isPollNotProvided{
+                        CrybsePollsView(postData: self.postData, width: self.width)
+                    }
                 }
             }.padding(.bottom,150)
                 .frame(width: totalWidth, alignment: .center)

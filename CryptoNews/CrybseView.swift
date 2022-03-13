@@ -76,7 +76,7 @@ extension CrybseView{
     }
         
     var hoverViewEnabled:Bool{
-        return self.context.selectedLink != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedCurrency != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
+        return self.context.selectedLink != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedAsset != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
     }
     
     @ViewBuilder var hoverView:some View{
@@ -92,7 +92,7 @@ extension CrybseView{
                 .zIndex(3)
         }
         
-        if let asset = self.context.selectedCurrency{
+        if let asset = self.context.selectedAsset{
             CurrencyView(asset:asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             .transition(.slideInOut)
             .background(mainBGView)
@@ -123,8 +123,8 @@ extension CrybseView{
     
     func closeAsset(){
         setWithAnimation {
-            if self.context.selectedCurrency != nil{
-                self.context.selectedCurrency = nil
+            if self.context.selectedAsset != nil{
+                self.context.selectedAsset = nil
                 
             }else if self.context.selectedSymbol != nil{
                 self.context.selectedSymbol = nil

@@ -15,6 +15,7 @@ enum CrybsePostReaction:String{
     case fakeNews = "fake News"
     case verifiedNews = "verified News"
     case speculation = "speculation"
+    case theory = "just a theory"
     case none = ""
 }
 
@@ -35,16 +36,20 @@ struct CrybsePostReactionView: View {
             .bearish,
             .fakeNews,
             .verifiedNews,
-            .speculation
+            .theory
         ]
     }
     
     var widthCard:CGFloat{
-        return self.width * 0.5 - 10
+        return self.width * 0.5
+    }
+    
+    var minWidthCard:CGFloat{
+        return self.width * 0.25
     }
     
     var column:[GridItem]{
-        return [.init(.adaptive(minimum: widthCard, maximum: widthCard), spacing: 10, alignment: .center)]
+        return [.init(.adaptive(minimum: minWidthCard), spacing: 10, alignment: .leading)]
     }
     
     func buttonImg(reaction:CrybsePostReaction) -> String{
@@ -77,15 +82,18 @@ struct CrybsePostReactionView: View {
             if self.rating != .none{
                 MainText(content: "\(Int.random(in: 10...90))", fontSize: 15, color: .white, fontWeight: .medium)
             }
-        }.basicCard(size:.init(width: widthCard, height: widthCard/1.65))
-//        let border = self.rating == rating ? AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.mainBGColor, lineWidth: 1.25)) : AnyView(RoundedRectangle(cornerRadius: Clipping.roundClipping.rawValue).stroke(Color.gray, lineWidth: 1.25))
+        }
+        .padding().frame(minWidth:self.minWidthCard,maxWidth: .infinity,alignment: .center)
+        .basicCard()
+        
+        
         ratingButtonView
-//            .overlay(border)
             .buttonclickedhighlight(selected: self.rating == rating)
+            
     }
     
     var RatingView:some View{
-        LazyVGrid(columns: self.column, alignment: .center, spacing: 10) {
+        LazyVGrid(columns: self.column, alignment: .leading, spacing: 10) {
             ForEach(Array(self.allRatings.enumerated()), id:\.offset) {
                 _rating in
                 let rating = _rating.element

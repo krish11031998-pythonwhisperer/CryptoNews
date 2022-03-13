@@ -32,7 +32,7 @@ public struct Container<T:View>: View {
         width:CGFloat = totalWidth,
         ignoreSides:Bool = false,
         horizontalPadding:CGFloat = 15,
-        verticalPadding:CGFloat = 10,
+        verticalPadding:CGFloat = 15,
         orientation:Axis = .vertical,
         aligment:Alignment = .leading,
         spacing:CGFloat = 15,

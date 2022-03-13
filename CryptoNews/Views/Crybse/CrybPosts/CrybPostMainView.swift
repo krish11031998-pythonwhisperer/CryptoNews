@@ -68,12 +68,11 @@ struct CrybPostMainView: View {
     }
         
     func addNewPost() -> AnyView{
-        let view = SystemButton(b_name: "pencil.circle.fill", color: .white,haveBG: true, size: .init(width: 20, height: 20), bgcolor: .black, alignment: .vertical) {
+        return SystemButton(b_name: "pencil.circle.fill", color: .white,haveBG: true, size: .init(width: 20, height: 20), bgcolor: .black, alignment: .vertical) {
             if !self.context.addPost{
                 self.context.addPost.toggle()
             }
-        }
-        return AnyView(view)
+        }.anyViewWrapper()
     }
     
     var body: some View {

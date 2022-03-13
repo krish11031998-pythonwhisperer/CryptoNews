@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct QuickWatch: View {
+    @EnvironmentObject var context:ContextData
     var assets:Array<CrybseAsset>
     var width:CGFloat
     init(assets:Array<CrybseAsset>,width:CGFloat = totalWidth){
@@ -25,15 +26,22 @@ struct QuickWatch: View {
                 Spacer()
                 MainText(content: price.ToMoney(), fontSize: 16, color: .white, fontWeight: .semibold)
                 PercentChangeView(value: asset.Change,type: "small")
-            }.frame(width: w, alignment: .center)
+            }
+            .buttonify(type: .shadow){
+                if self.context.selectedAsset != asset{
+                    self.context.selectedAsset = asset
+                }
+            }
+            .frame(width: w, alignment: .topLeading)
         }
     }
     
     var body: some View {
-        Container(heading: "Quick Watch", headingColor: .white, headingDivider: true, width: self.width,spacing: 15) { w in
+        Container(heading: "Quick Watch", headingColor: .white, headingDivider: true, width: self.width,spacing: 20) { w in
             ForEach(Array(self.assets.enumerated()), id:\.offset) { _asset in
                 let asset = _asset.element
                 self.rowAsset(asset: asset, w: w)
+                    
             }
         }.basicCard()
     }

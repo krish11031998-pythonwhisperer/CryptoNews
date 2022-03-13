@@ -51,8 +51,9 @@ public struct ShadowSpringButton:ViewModifier{
             }
         } label: {
             content
-        }.clipContent(clipping: .roundClipping)
-            .shadowButton(withShadow: self.withShadow)
+                .contentShape(Rectangle())
+        }
+        .shadowButton(withShadow: self.withShadow)
 
     }
 }
@@ -98,19 +99,23 @@ public struct ShadowButtonModifier:ButtonStyle{
     @ViewBuilder func background(isPressed:Bool) -> some View{
         if isPressed{
             BlurView.thinLightBlur
+                .scaleEffect(isPressed ? 1.05 : 1)
 //            Color.white
         }else{
             Color.clear
+                .scaleEffect(isPressed ? 1.05 : 1)
         }
     }
     
     public func makeBody(configuration: Configuration) -> some View {
+        let isPressed = configuration.isPressed
         configuration.label
-            .background(self.background(isPressed: configuration.isPressed))
-            .clipContent(clipping: .roundClipping)
-            .scaleEffect(configuration.isPressed ? 0.95 : 1)
-            .opacity(configuration.isPressed ? 0.95 : 1)
-            .shadow(color: self.color, radius: configuration.isPressed ? 1.5 : 0, x: 0, y: 0)
+            .padding(5)
+            .scaleEffect(isPressed ? 0.95 : 1)
+            .opacity(isPressed ? 0.95 : 1)
+            .background(self.background(isPressed: isPressed))
+            .clipContent(clipping: .roundCornerMedium)
+            .shadow(color: self.color, radius: isPressed ? 1.5 : 0, x: 0, y: 0)
             
     }
 }

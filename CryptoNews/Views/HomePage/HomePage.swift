@@ -11,7 +11,7 @@ struct HomePage: View {
     @EnvironmentObject var context:ContextData
     
     var activeCurrency:Bool{
-        return self.context.selectedCurrency != nil
+        return self.context.selectedAsset != nil
     }
     
     var currencies:[String]{

@@ -35,8 +35,8 @@ public struct TabButton:View{
             Color.clear
             MainText(content: self.title, fontSize: 15, color: self.color, fontWeight: .semibold)
         }
-        .blobify(color: AnyView(BlurView.thinDarkBlur), clipping: .roundCornerMedium)
         .frame(width: size.width, height: size.height, alignment: .center)
+        .blobify(color: AnyView(BlurView.thinDarkBlur), clipping: .roundCornerMedium)
         .buttonify(handler: self.action)
     }
     

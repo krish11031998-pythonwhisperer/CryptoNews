@@ -63,7 +63,7 @@ struct CrybPostGen: View {
     
     var mainbody:some View{
         ZStack(alignment: .bottom) {
-            Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose) { w in
+            Container(heading: "Add CrybPost", width: totalWidth,ignoreSides: false, verticalPadding: 50, onClose: self.onClose,spacing: 10) { w in
                 self.header
                 
                 StylizedTextEditor(limit:350,width: w)
@@ -74,13 +74,15 @@ struct CrybPostGen: View {
                     }
                 if self.keyboardHeight == .zero{
                     Spacer()
-                    TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
-                        if self.postState.page != 2{
-                            self.postState.page = 2
+                    Container(width:w,spacing: 15){ w in
+                        TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
+                            if self.postState.page != 2{
+                                self.postState.page = 2
+                            }
                         }
+                        TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
                     }
-                    .padding(.bottom,5)
-                    TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
+                    
                 }else{
                     TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting)
                         .padding(.vertical,50)

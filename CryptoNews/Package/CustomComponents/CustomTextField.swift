@@ -177,12 +177,14 @@ public struct StylizedTextEditor:View{
     var placeHolder:String
     var includeIndicator:Bool
     var width:CGFloat
+    var updateText:((String) -> Void)? = nil
     
-    public init(placeHolder:String = "Enter Value",limit:Int = 350,includeIndicator:Bool = true,width:CGFloat = totalWidth - 20,style:TextLimiterStyle = .light){
+    public init(placeHolder:String = "Enter Value",limit:Int = 350,includeIndicator:Bool = true,width:CGFloat = totalWidth - 20,style:TextLimiterStyle = .light,updateText:((String) -> Void)? = nil){
         self.placeHolder = placeHolder
         self._textObj = .init(wrappedValue: .init(placeHolder:placeHolder,limit: limit,style:style))
         self.includeIndicator = includeIndicator
         self.width = width
+        self.updateText = updateText
         UITextView.appearance().backgroundColor = .clear
     }
     
@@ -226,6 +228,11 @@ public struct StylizedTextEditor:View{
         .frame(width: self.width)
         .clipContent(clipping: .roundClipping)
         .preference(key: StylizedTextEditorTextPreferenceKey.self, value: self.textObj.text)
+        .onChange(of: self.textObj.text) { newValue in
+            if let safeUpdate = self.updateText{
+                safeUpdate(newValue)
+            }
+        }
     }
 }
 

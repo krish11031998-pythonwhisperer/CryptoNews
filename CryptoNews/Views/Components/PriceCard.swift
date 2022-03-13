@@ -134,7 +134,7 @@ struct PriceCard: View {
     var body: some View {
         self.mainBody
             .buttonify {
-                self.context.selectedCurrency = self.coinAsset
+                self.context.selectedAsset = self.coinAsset
             }
     }
 }

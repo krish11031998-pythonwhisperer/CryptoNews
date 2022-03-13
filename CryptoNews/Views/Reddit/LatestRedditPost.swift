@@ -11,12 +11,14 @@ struct LatestRedditPost: View {
     @EnvironmentObject var context:ContextData
     @StateObject var redditAPI:CrybseRedditAPI = .init(subReddit: "cryptocurrency")
     var width:CGFloat
-    init(width:CGFloat = totalWidth,currencies:[String]){
+    var height:CGFloat
+    init(width:CGFloat = totalWidth,height:CGFloat = totalHeight * 0.45,currencies:[String]){
         self.width = width
+        self.height = height
     }
 
     var cardSize:CGSize{
-        return .init(width: self.width, height: totalHeight * 0.3)
+        return .init(width: self.width, height: self.height)
     }
     
     var posts:CrybseRedditPosts{

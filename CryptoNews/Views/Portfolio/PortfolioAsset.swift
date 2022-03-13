@@ -47,8 +47,8 @@ struct PortfolioAsset: View {
             
         }.buttonify(type:.shadow,withBG: true,clipping: .roundClipping){
                 setWithAnimation {
-                    if self.context.selectedCurrency?.Currency != self.asset.Currency{
-                        self.context.selectedCurrency = self.asset
+                    if self.context.selectedAsset?.Currency != self.asset.Currency{
+                        self.context.selectedAsset = self.asset
                     }
                 }
             }

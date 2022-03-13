@@ -43,7 +43,7 @@ struct CrybsePoll: View {
         }
     }
     
-    var body: some View {
+    @ViewBuilder var mainBody:some View{
         Container(heading: self.poll.Question, headingColor: .white, headingDivider: false, headingSize: 20, width: self.width,ignoreSides: false, verticalPadding: 20) { w in
             ForEach(self.poll.Options , id: \.self) { option in
                 self.optionBuilder(option: option, width: w)
@@ -55,8 +55,18 @@ struct CrybsePoll: View {
             }
         })
         .preference(key: FanSwipedPreferenceKey.self, value: self.change)
-        .frame(width: self.width, height: self.height ?? .infinity,alignment: .topLeading)
-        .basicCard(size:.init(width: self.width, height: self.height ?? .infinity))
+        .frame(width: self.width,alignment: .topLeading)
+    }
+    
+    var body: some View {
+        if let safeHeight = self.height{
+            self.mainBody
+            .basicCard(size:.init(width: self.width, height: safeHeight))
+        }else{
+            self.mainBody
+                .basicCard()
+        }
+        
         
     }
 }

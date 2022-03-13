@@ -100,9 +100,9 @@ struct PortfolioCard: View {
     
     
     func handleOnTap(){
-        if self.context.selectedCurrency?.Currency != self.asset.Currency{
+        if self.context.selectedAsset?.Currency != self.asset.Currency{
             setWithAnimation {
-                self.context.selectedCurrency = self.asset
+                self.context.selectedAsset = self.asset
             }
         }
     }
@@ -157,7 +157,7 @@ struct PortfolioCard: View {
     }
     
     func updateAsset(_ newAsset:CrybseAsset) {
-        guard let selectedAsset = self.context.selectedCurrency, selectedAsset.Currency == self.asset.Currency && self.asset.Currency == newAsset.Currency else {return}
+        guard let selectedAsset = self.context.selectedAsset, selectedAsset.Currency == self.asset.Currency && self.asset.Currency == newAsset.Currency else {return}
         if self.asset.Price != selectedAsset.Price{
             self.asset.Price = selectedAsset.Price
         }
