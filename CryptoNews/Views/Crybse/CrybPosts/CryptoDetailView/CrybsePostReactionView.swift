@@ -19,6 +19,27 @@ enum CrybsePostReaction:String{
     case none = ""
 }
 
+extension CrybsePostReaction{
+    static func buttonImg(reaction:CrybsePostReaction) -> String{
+        switch(reaction){
+        case .like:
+            return "👍"
+        case .dislike:
+            return "👎"
+        case .bullish:
+            return "🐂"
+        case .bearish:
+            return "🐻"
+        case .fakeNews:
+            return "❌"
+        case .verifiedNews:
+            return "✅"
+        default:
+            return "😐"
+        }
+    }
+}
+
 struct CrybsePostReactionView: View {
     @Binding var rating:CrybsePostReaction
     var width:CGFloat
@@ -52,27 +73,8 @@ struct CrybsePostReactionView: View {
         return [.init(.adaptive(minimum: minWidthCard), spacing: 10, alignment: .leading)]
     }
     
-    func buttonImg(reaction:CrybsePostReaction) -> String{
-        switch(reaction){
-        case .like:
-            return "👍"
-        case .dislike:
-            return "👎"
-        case .bullish:
-            return "🐂"
-        case .bearish:
-            return "🐻"
-        case .fakeNews:
-            return "❌"
-        case .verifiedNews:
-            return "✅"
-        default:
-            return "😐"
-        }
-    }
-    
     func ratingView(rating:CrybsePostReaction) -> some View{
-        return MainSubHeading(heading: self.buttonImg(reaction: rating), subHeading: rating.rawValue.capitalized, headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
+        return MainSubHeading(heading: CrybsePostReaction.buttonImg(reaction: rating), subHeading: rating.rawValue.capitalized, headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
     }
     
     @ViewBuilder func RatingViewButton(rating:CrybsePostReaction) -> some View{

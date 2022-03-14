@@ -75,17 +75,17 @@ struct CrybPostGen: View {
                 if self.keyboardHeight == .zero{
                     Spacer()
                     Container(width:w,spacing: 15){ w in
-                        TabButton(width: w, height: 25, title: "Add Poll", textColor: .white) {
+                        TabButton(width: w, title: "Add Poll", textColor: .white) {
                             if self.postState.page != 2{
                                 self.postState.page = 2
                             }
                         }
-                        TabButton(width: w, height: 25, title: "Upload Post", textColor: .white, action: self.uploadButton)
+                        TabButton(width: w, title: "Upload Post", textColor: .white, action: self.uploadButton)
                     }
                     
                 }else{
-                    TabButton(width: w, height: 15, title: "Done Editting Post", textColor: .white, action: self.doneEditting)
-                        .padding(.vertical,50)
+                    TabButton(width: w, title: "Done Editting Post", textColor: .white, action: self.doneEditting)
+//                        .padding(.vertical,50)
                 }
                 
             }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)

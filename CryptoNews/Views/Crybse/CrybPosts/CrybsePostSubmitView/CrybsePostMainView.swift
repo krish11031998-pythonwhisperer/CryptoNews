@@ -35,13 +35,7 @@ struct CrybsePostMainView: View {
     func uploadButton(){
         print("Update the button")
         guard let uid = self.context.user.user?.uid, let username = self.context.user.user?.userName else {return}
-        var postdata:CrybPostData = .test
-        postdata.User = .init(uid: uid, userName: username)
-        postdata.PostMessage =  self.postState.text
-        if let safePoll = self.postState.poll{
-            postdata.Poll = safePoll
-            print("(DEBUG) safePoll : ",safePoll)
-        }
+        let postdata = CrybPostData.packagePostDataforUploading(postMessage: self.postState.text, user: .init(uid: uid, userName: username), poll: self.postState.poll)
         CrybsePostAPI.shared.uploadPost(post: postdata,image: nil) { status in
             var heading = ""
             var message = ""

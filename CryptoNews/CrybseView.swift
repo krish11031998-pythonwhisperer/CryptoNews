@@ -12,7 +12,7 @@ struct CrybseView: View {
     
     var contentView:some View{
         ZStack(alignment: .bottom) {
-            mainBGView.zIndex(0)
+            Color.AppBGColor.zIndex(0)
             self.mainBody
             self.hoverView
             if self.context.bottomSwipeNotification.showNotification{
@@ -49,7 +49,7 @@ extension CrybseView{
             ForEach(self.tabs, id: \.rawValue) { tab in
                     self.tabPage(page: tab)
                     .tag(tab)
-                    .background(mainBGView)
+                    .background(Color.AppBGColor)
                     .ignoresSafeArea()
             }
         }
@@ -95,26 +95,25 @@ extension CrybseView{
         if let asset = self.context.selectedAsset{
             CurrencyView(asset:asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
             .transition(.slideInOut)
-            .background(mainBGView)
+            .background(Color.AppBGColor)
             .edgesIgnoringSafeArea(.all)
             .zIndex(2)
         }
-//
+        
         if let post = self.context.selectedPost{
             CrybPostDetailView(postData: post)
                 .environmentObject(self.context)
                 .transition(.slideInOut)
-                .background(mainBGView)
+                .background(Color.AppBGColor)
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
         }
-//
-//
+
         if self.context.addPost{
             CrybsePostMainView()
                 .environmentObject(self.context)
                 .transition(.slideInOut)
-                .background(mainBGView)
+                .background(Color.AppBGColor)
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
         }

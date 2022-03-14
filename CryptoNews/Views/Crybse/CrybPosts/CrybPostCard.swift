@@ -50,6 +50,9 @@ struct CrybPostCard: View {
         }
         .basicCard(size: .zero, background: AnyView(mainLightBGView))
         .frame(minHeight:self.const_h ? self.maxHeight : 0,maxHeight: self.maxHeight,alignment: .center)
+        .buttonify {
+            self.context.selectedPost = self.postData
+        }
     }
 }
 
@@ -136,17 +139,21 @@ extension CrybPostCard{
 
     
     var footer:some View{
-        let w_el = self.width * 0.5 - 5
+        let w_el = self.width * 0.33 - 5
         return VStack(alignment: .leading, spacing: 15) {
             self.cryptoSection
 //            self.cryptoScale
             LazyVGrid(columns: [.init(.adaptive(minimum: w_el, maximum: w_el), alignment: .leading)], alignment: .center, spacing: 10) {
-                self.RatingsMeter(header: "Cryb. Rating", percent: 60,w: w_el)
-                self.RatingsMeter(header: "Audience Rating", percent: 75,w: w_el)
+                ForEach(Array(self.postData.PostReactionKeys), id:\.rawValue) { reaction in
+                    let value = self.postData.PostReactions[reaction] ?? 0
+                    MainSubHeading(heading: CrybsePostReaction.buttonImg(reaction: reaction), subHeading: "\(value)", headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
+                        .padding(10)
+                        .frame(width:w_el,alignment: .center)
+                        .basicCard()
+                        .borderCard(color: .black)
+                }
             }.frame(width: self.width, alignment: .leading)
-            SystemButton(b_content: "Analysis →", haveBG: false, bgcolor: .white, alignment: .horizontal, borderedBG: true) {
-                self.context.selectedPost = self.postData
-            }.frame(width: self.width, alignment: .trailing)
+            
         }
     }
     

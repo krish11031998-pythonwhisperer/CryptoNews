@@ -133,16 +133,28 @@ public struct ContentClipping:ViewModifier{
 public struct Blob:ViewModifier{
     var color:AnyView
     var clipping:Clipping
+    var size:CGSize?
     
-    public init(color:AnyView,clipping:Clipping){
+    public init(size:CGSize? = nil,color:AnyView,clipping:Clipping){
         self.color = color
         self.clipping = clipping
+        self.size = size
     }
     
+    @ViewBuilder func contentWithFrame(content:Content) -> some View{
+        if let size = self.size{
+            content
+                .padding(10)
+                .frame(width: size.width - 5, height: size.height - 5, alignment: .trailing)
+        }else{
+            content
+                .padding(10)
+        }
+    }
+    
+    
     public func body(content: Content) -> some View {
-        content
-            .padding(.horizontal,10)
-            .padding(.vertical,10)
+        self.contentWithFrame(content: content)
             .background(color)
             .clipContent(clipping: self.clipping)
             .overlay(RoundedRectangle(cornerRadius: self.clipping.rawValue)
@@ -161,8 +173,8 @@ public extension View{
         self.modifier(BorderCard(color: color, clipping: clipping))
     }
     
-    func blobify(color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
-        self.modifier(Blob(color: color,clipping: clipping))
+    func blobify(size:CGSize? = nil,color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
+        self.modifier(Blob(size:size,color: color,clipping: clipping))
     }
     
     func asyncContainer(g:GeometryProxy? = nil,axis:Axis = .vertical,size:CGSize = .zero) -> some View{

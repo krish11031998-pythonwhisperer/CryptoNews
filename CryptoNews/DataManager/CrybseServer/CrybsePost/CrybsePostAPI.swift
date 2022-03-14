@@ -105,17 +105,6 @@ class CrybsePostAPI:CrybseAPI{
 
     
     func parsePostForUpload(request: inout URLRequest,post:CrybPostData,image:UIImage?){
-//        var payload = CrybsePostPayload(userImg: post.User.Img, userName: post.User.UserName, userUid: post.User.User_Uid, comments: "\(post.Comments)", likes: "\(post.Likes)", postMessage: post.PostMessage, high: "\(post.PricePrediction.High)", low: "\(post.PricePrediction.Low)", price: "\(post.PricePrediction.Price)", view: "\(post.Views)", currency: post.Coin)
-//
-//        if post.Poll.Question != "" && !post.Poll.Options.isEmpty{
-//            payload.poll = ["question":post.Poll.Question,"options":post.Poll.Options]
-//        }
-//
-//        if let imgData = image?.pngData(){
-//            payload.imageFile = imgData
-//        }
-//
-//        let encoder = JSONEncoder()
         do{
             let res = try JSONSerialization.data(withJSONObject: self.PostRequestBodyParams(post: post))
             print("(DEBUG) httpBody : ",res)
@@ -132,14 +121,24 @@ class CrybsePostAPI:CrybseAPI{
                                    "postMessage": post.PostMessage,
                                    "view": "\(post.Views)",
                                    "currency": "\(post.Coin)",
-                                   "question": post.Poll.Question,
-                                   "options":post.Poll.Options
+                                   "bullish":post.Bullish,
+                                   "bearish":post.Bearish,
+                                   "like":post.Like,
+                                   "dislike":post.Dislike,
+                                   "fakeNews":post.FakeNews,
+                                   "verifiedNews":post.VerifiedNews,
+                                   "justATheory":post.JustATheory
         ]
+        if let safePoll = post.poll,let question = safePoll.question,let options = safePoll.options{
+            params["question"] = question
+            params["options"] = options
+        }
         print("(DEBUG) Params : ",params)
         return params
     }
     
     func uploadPost(post:CrybPostData,image:UIImage?,completion:((Bool) -> Void)? = nil){
+        print("(DEBUG) post : ",post)
         if let safeRequest = self.generateMultiPartFormRequest(url: self.postRequest?.url, post: post, image: image){
             print("(DEBUG) Now Sending the request! : ",safeRequest.httpBody)
             self.PostData(request: safeRequest) { data in

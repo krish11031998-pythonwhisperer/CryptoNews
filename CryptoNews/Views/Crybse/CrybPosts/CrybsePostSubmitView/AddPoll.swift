@@ -57,7 +57,7 @@ struct AddPollPage: View {
                 }
             }
             
-            TabButton(width: w, height: 15, title: "Add More Options", textColor: .white) {
+            TabButton(width: w, title: "Add More Options", textColor: .white) {
                 setWithAnimation {
                     self.pollForm.optionsCount += 1
                 }

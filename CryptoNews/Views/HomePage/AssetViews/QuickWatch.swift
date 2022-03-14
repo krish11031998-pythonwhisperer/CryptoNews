@@ -27,6 +27,8 @@ struct QuickWatch: View {
                 MainText(content: price.ToMoney(), fontSize: 16, color: .white, fontWeight: .semibold)
                 PercentChangeView(value: asset.Change,type: "small")
             }
+            .padding(.vertical,10)
+            .padding(.horizontal,5)
             .buttonify(type: .shadow){
                 if self.context.selectedAsset != asset{
                     self.context.selectedAsset = asset
