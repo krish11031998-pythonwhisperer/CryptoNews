@@ -10,7 +10,6 @@ import Combine
 
 struct PortfolioSummary: View {
     @EnvironmentObject var context:ContextData
-//    @ObservedObject var assets:CrybseAssets
     var width:CGFloat
     var height:CGFloat
     var assetCancellable:AnyCancellable? = nil
@@ -79,10 +78,11 @@ struct PortfolioSummary: View {
         Container(heading: "Portfolio", headingColor: .white, headingDivider: true, width: self.width, verticalPadding:15) { w in
             self.header
             self.assetsView
-        }.basicCard()
-            .onReceive(self.context.userAssets.objectWillChange) { _ in
-                print("(DEBUG) Change in the userAsset Data")
-            }
+        }
+        .basicCard()
+        .onReceive(self.context.userAssets.objectWillChange) { _ in
+            print("(DEBUG) Change in the userAsset Data")
+        }
     }
 }
 

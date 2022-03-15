@@ -199,7 +199,7 @@ struct CurrencyView:View{
     
     @ViewBuilder var mainView:some View{
         if self.showSection == .none{
-            self.innerView(w: totalWidth - 30)
+            self.innerView(w: totalWidth - 10)
         }else{
             ProgressView()
         }

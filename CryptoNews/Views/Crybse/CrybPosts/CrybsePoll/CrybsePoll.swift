@@ -29,9 +29,11 @@ struct CrybsePoll: View {
     
     func optionBuilder(option:String,width:CGFloat) -> some View{
         let isSelected = option == self.selectedOption
+        let isSelectedBackground = Color.mainBGColor.frame(width:  isSelected ? width * 0.65 : 0).opacity(isSelected ? 1 : 0).clipContent(clipping: .clipped).anyViewWrapper()
         return MainText(content: option, fontSize: 13, color: .white, fontWeight: .regular)
         .padding()
         .frame(width: width, alignment: .leading)
+        .background(isSelectedBackground,alignment: .leading)
         .buttonclickedhighlight(selected: isSelected)
         .clipContent(clipping: .roundClipping)
         .buttonify {
@@ -66,8 +68,6 @@ struct CrybsePoll: View {
             self.mainBody
                 .basicCard()
         }
-        
-        
     }
 }
 

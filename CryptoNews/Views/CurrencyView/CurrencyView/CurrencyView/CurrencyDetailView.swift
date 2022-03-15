@@ -66,7 +66,6 @@ extension CurrencyDetailView{
                 self.feedContainer
                 self.newsContainer
                 self.redditContainer
-//                self.youtubeContainer
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
 //            self.onClose?()
@@ -212,7 +211,7 @@ extension CurrencyDetailView{
     
     @ViewBuilder var infoSection:some View{
         if let _ = self.socialData?.MetaData,let additionalInfo = self.assetData.coin?.additionalInfo{
-            Container(heading: "About",headingSize: headingFontSize, width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+            Container(heading: "About",headingSize: headingFontSize, width: self.size.width,horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
                 MainText(content: "What is \(self.assetData.Currency)", fontSize: 17.5, color: .white, fontWeight: .medium).frame(width: w, alignment: .leading)
                 MainText(content: additionalInfo.description ?? "", fontSize: 15, color: .white, fontWeight: .regular).frame(width: w, alignment: .leading)
             }
@@ -223,26 +222,27 @@ extension CurrencyDetailView{
     }
     
     
-    @ViewBuilder func cardBuilder(type:PostCardType,data:Any) -> some View{
+    @ViewBuilder func cardBuilder(width w:CGFloat? = nil ,type:PostCardType,data:Any) -> some View{
+        let width = w ?? self.size.width
         switch(type){
             case .Tweet:
                 if let post = data as? AssetNewsData{
-                    PostCard(cardType: .Tweet, data: post, size: self.size,bg: .light, const_size: false)
+                    PostCard(cardType: .Tweet, data: post, size: .init(width: width, height: self.size.height),bg: .light, const_size: false)
                 }else{
                     Color.clear
                 }
                 
             case .News:
-                NewsStandCard(news: data,size:.init(width: self.size.width, height: totalHeight * 0.25))
+                NewsStandCard(news: data,size:.init(width: width, height: totalHeight * 0.25))
             case .Reddit:
                 if let reddit = data as? CrybseRedditData{
-                    RedditPostCard(width: self.size.width, redditPost: reddit)
+                    RedditPostCard(width: width, redditPost: reddit)
                 }else{
                     Color.clear
                 }
             case .Youtube:
                 if let youtube = data as? CrybseVideoData{
-                    VideoCard(data: youtube, size: .init(width: self.size.width, height: totalHeight * 0.3))
+                    VideoCard(data: youtube, size: .init(width: width, height: totalHeight * 0.3))
                 }else{
                     Color.clear
                 }
@@ -267,12 +267,12 @@ extension CurrencyDetailView{
         let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : type == .Reddit ? "Reddit" : type  == .Youtube ? "Youtube" : "Posts"
         var data:[Any] = type == .News ? self.News : type == .Tweet ? self.Tweets : type == .Reddit ? self.Reddit : type == .Youtube ? self.Videos : []
         data = data.count < 3 ? data : Array(data[0...2])
-        return Container(heading: heading, headingColor: .white, headingDivider: true, headingSize: 20, width: self.size.width, ignoreSides: true,horizontalPadding: 0, verticalPadding: 0, orientation: .vertical, aligment: .leading,lazyLoad: true) { _ in
+        return Container(heading: heading, headingColor: .white, headingDivider: true, headingSize: 20, width: self.size.width  ,horizontalPadding: 15, verticalPadding: 0, orientation: .vertical, aligment: .leading,lazyLoad: true) { w in
             ForEach(Array(data.enumerated()),id:\.offset) { _data in
                 let data = _data.element
-                self.cardBuilder(type:type,data: data)
+                self.cardBuilder(width:w,type:type,data: data)
             }
-            TabButton(width: size.width, title: "Load More", action: {
+            TabButton(width: w, title: "Load More", action: {
                 setWithAnimation {
                     self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : type == .Reddit ? .reddit : type == .Youtube ? .videos : .none
                 }
