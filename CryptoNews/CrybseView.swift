@@ -35,7 +35,7 @@ struct CrybseView: View {
 extension CrybseView{
     
     var tabs:[Tabs]{
-        return [.home,.search,.info,.profile,.currency,.none]
+        [.home,.search,.info,.profile,.currency,.txn,.post]
     }
     
     func closeLink(){
@@ -44,12 +44,21 @@ extension CrybseView{
         }
     }
     
+    var blurView:some View{
+        self.context.addButtonPressed ?
+            BlurView(style: .light)
+                .frame(width: totalWidth, height: totalHeight, alignment: .center)
+                .edgesIgnoringSafeArea(.all)
+                    .anyViewWrapper() : Color.clear.anyViewWrapper()
+    }
+    
     @ViewBuilder var mainBody:some View{
         TabView(selection: $context.tab){
             ForEach(self.tabs, id: \.rawValue) { tab in
                     self.tabPage(page: tab)
                     .tag(tab)
                     .background(Color.AppBGColor)
+                    .overlay(self.blurView)
                     .ignoresSafeArea()
             }
         }
@@ -86,7 +95,7 @@ extension CrybseView{
                 .zIndex(3)
         }
         
-        if self.context.addTxn || self.context.tab == .txn{
+        if self.context.addTxn{
             AddTxnMainView(currency: self.context.selectedSymbol)
                 .transition(.slideInOut)
                 .zIndex(3)

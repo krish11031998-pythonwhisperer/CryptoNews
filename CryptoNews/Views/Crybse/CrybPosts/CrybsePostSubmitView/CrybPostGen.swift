@@ -128,6 +128,10 @@ extension CrybPostGen{
         if self.context.addPost{
             self.context.addPost.toggle()
         }
+        
+        if self.context.tab == .post{
+            self.context.tab = self.context.prev_tab
+        }
     }
     
     var header:some View{

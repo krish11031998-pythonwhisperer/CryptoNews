@@ -14,7 +14,9 @@ enum Tabs:String,Hashable{
     case info = "eyeglasses"
     case feed = "TwitterIcon"
     case news = "newspaper.fill"
-    case txn = "plus.circle"
+    case add = "plus.circle"
+    case txn = "doc"
+    case post = "message"
     case currency
     case reddit = "RedditIcon"
     case search = "magnifyingglass"
@@ -40,6 +42,7 @@ enum LoginState{
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
+    @Published var _addButtonPressed:Bool = false
     @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedLink:URL? = nil
     @Published private var _selectedPost:CrybPostData? = nil
@@ -94,6 +97,12 @@ extension ContextData{
                         self.prev_tab = self._tab
                     }
                     self._tab = newValue
+                    
+                    if newValue == .post{
+                        self.addPost.toggle()
+                    }else if newValue == .txn{
+                        self.addTxn.toggle()
+                    }
                 }
             }
             
@@ -112,6 +121,16 @@ extension ContextData{
                     self._prev_tab = newValue
                 }
             }
+        }
+    }
+    
+    var addButtonPressed:Bool{
+        get{
+            return _addButtonPressed
+        }
+        
+        set{
+            self._addButtonPressed = newValue
         }
     }
     
