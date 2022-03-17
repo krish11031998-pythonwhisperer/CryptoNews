@@ -159,6 +159,14 @@ public extension AnyTransition{
 
 public extension View{
     
+    func slideBottomRightToLeft() -> some View{
+        self.transition(.move(edge: .bottom).combined(with: .move(edge: .trailing)))
+    }
+
+    func slideBottomLeftToRight() -> some View{
+        self.transition(.move(edge: .bottom).combined(with: .move(edge: .leading)))
+    }
+
     func imageSpring() -> some View{
         self.modifier(ImageTransition())
     }

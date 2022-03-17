@@ -81,7 +81,6 @@ public struct SystemButton: View {
                 if let content = self.buttonContent{
                     MainText(content: content, fontSize: size.width,color: bgColor,fontWeight: .medium)
                 }
-                
             }
         }else if self.alignment == .horizontal{
             HStack(alignment:.center,spacing:5){
@@ -89,7 +88,6 @@ public struct SystemButton: View {
                 if let content = self.buttonContent{
                     MainText(content: content, fontSize: size.width,color: bgColor,fontWeight: .medium)
                 }
-                
             }
         }else{
             self.ButtonImg

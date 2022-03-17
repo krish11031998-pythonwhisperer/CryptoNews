@@ -38,6 +38,7 @@ struct TabBarMain: View {
             .padding(.vertical,25)
             .background(LinearGradient(colors: [Color.clear,Color.black.opacity(0.05),Color.black], startPoint: .top, endPoint: .bottom))
         }.frame(width: totalWidth, height: totalHeight, alignment: .center)
+            .transition(.move(edge: .bottom))
     }
     
 }
@@ -63,24 +64,28 @@ extension TabBarMain{
                     .matchedGeometryEffect(id: "background", in: animation)
                     .frame(width: 40, height: 40, alignment: .center)
             }
-            if tab == .add{
-                ZStack(alignment: .center) {
-                    SystemButton(b_name: tab.rawValue,color: isSelected ? .black : .white,haveBG: false,size: size,action: action)
-                    if self.context.addButtonPressed {
-                        SystemButton(b_name: "message", color: .black, haveBG: true, size: size,bgcolor: .white, action: {
-                            self.onTapHandler(tab: .post)
-                        })
-                            .offset(x: -45, y: -45)
-                            .transition(.move(edge: .bottom).combined(with: .move(edge: .trailing)))
-                        SystemButton(b_name: "doc", color: .black, haveBG: true, size: size,bgcolor: .white, action: {
-                            self.onTapHandler(tab: .txn)
-                        })
-                            .offset(x: 45, y: -45)
-                            .transition(.move(edge: .bottom).combined(with: .move(edge: .leading)))
-                    }
-                }.animation(.easeInOut(duration: 0.1))
-            }else{
+            ZStack(alignment: .center) {
                 SystemButton(b_name: tab.rawValue,color: isSelected ? .black : .white,haveBG: false,size: size,action: action)
+                if self.context.addButtonPressed && tab == .add {
+//                    VStack(alignment: .center, spacing: 10) {
+//                        MainText(content: "Post", fontSize: 18, color: .white, fontWeight: .medium)
+                        SystemButton(b_name: "message", color: .black, haveBG: true, size: size,bgcolor: .white, alignment: .vertical,clipping: .clipped) {
+                            self.onTapHandler(tab: .post)
+                        }
+//                    }
+                    .slideBottomLeftToRight()
+                    .offset(x: -45, y: -75)
+                    
+//                    VStack(alignment: .center, spacing: 10) {
+//                        MainText(content: "Transaction", fontSize: 18, color: .white, fontWeight: .medium)
+                        SystemButton(b_name: "doc", color: .black, haveBG: true, size: size,bgcolor: .white, alignment: .vertical,clipping: .clipped) {
+                            self.onTapHandler(tab: .txn)
+                        }
+//                    }
+                    .slideBottomRightToLeft()
+                    .offset(x: 45, y: -75)
+                    
+                }
             }
         }.animation(.easeInOut(duration: 0.15))
     }

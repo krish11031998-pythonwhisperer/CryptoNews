@@ -67,10 +67,6 @@ class AssetData:Identifiable,Codable,Equatable{
     var social_impact_score:Float?
     var social_score:Float?
     var market_dominance:Float?
-//    var sentiment_relative:Float?
-//    var news:Int?
-//    var social_dominance:Float?
-//    var market_dominance:Float?
     var lastUpdate:Date?
     
     var timeSinceLastUpdate:Double{

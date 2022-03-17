@@ -18,7 +18,7 @@ struct NewsSectionMain: View {
     }
     
     var data:[AssetNewsData]{
-        return self.newsFeed.FeedData.filter({$0.Thumbnail != ""})
+        return self.newsFeed.FeedData
     }
     
     func onAppear(){
@@ -69,12 +69,12 @@ struct NewsSectionMain: View {
             ForEach(Array(self.data[(self.data.count - 2)...].enumerated()),id:\.offset){ _data in
                 let data = _data.element
                 
-                NewsCard(news: data, size: .init(width: w * 0.5, height: self.cardHeight * 0.75))
+                NewsCard(news: data, size: .init(width: w * 0.5 - 5, height: self.cardHeight * 0.75))
                     .buttonify {
                         self.onTapHandler(data: data)
                     }
             }
-        }.frame(width: totalWidth, alignment: .center)
+        }.frame(width: w, alignment: .center)
     }
     
     var moreCards:some View{
@@ -89,9 +89,9 @@ struct NewsSectionMain: View {
     var body: some View {
         Group{
             if !self.data.isEmpty{
-                Container(heading: "News Highlights",ignoreSides: true) { w in
+                Container(heading: "News Highlights",ignoreSides: false) { w in
                     self.autoTimedCards(w: w)
-                    self.slenderCards(w: w  - 30)
+                    self.slenderCards(w: w)
                 }
             }else if self.newsFeed.loading{
                 ProgressView()

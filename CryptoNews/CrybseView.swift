@@ -66,6 +66,7 @@ extension CrybseView{
             UITabBar.appearance().isHidden = true
             UITabBar.appearance().barTintColor = .clear
         }
+//        .navigationBarHidden(true)
     }
     
     @ViewBuilder func tabPage(page:Tabs) -> some View{

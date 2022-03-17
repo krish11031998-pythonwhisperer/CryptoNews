@@ -95,7 +95,13 @@ class FeedAPI:DAPI{
         self.page = page
     }
     
-    var tweetURL:URL?{
+    override var baseComponent: URLComponents{
+        var uC = URLComponents(string: "https://api.lunarcrush.com/v2")
+        uC?.queryItems = [.init(name: "key", value: "cce06yw0nwm0w4xj0lpl5pg")]
+        return uC ?? URLComponents()
+    }
+    
+    var feedURL:URL?{
         var uC = self.baseComponent
         uC.queryItems?.append(contentsOf: [
             URLQueryItem(name: "data", value: "feeds"),
@@ -117,7 +123,6 @@ class FeedAPI:DAPI{
     }
     
     override func parseData(url:URL,data:Data){
-//        DataCache.shared[url] = data
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(News.self, from: data)
@@ -143,10 +148,11 @@ class FeedAPI:DAPI{
     }
     
     func getAssetInfo(){
-        if !self.loading{
-            self.loading = true
-            self.getData(_url: self.tweetURL)
-        }
+//        if !self.loading{
+//            self.loading = true
+            print("(DEBUG) feedURL : ",self.feedURL?.absoluteString)
+            self.getData(_url: self.feedURL)
+//        }
         
     }
     
@@ -155,7 +161,7 @@ class FeedAPI:DAPI{
         if !self.loading{
             self.loading = true
             self.page += 1;
-            self.getData(_url: self.tweetURL)
+            self.getData(_url: self.feedURL)
         }
         
     }

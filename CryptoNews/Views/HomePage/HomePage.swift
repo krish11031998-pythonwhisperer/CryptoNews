@@ -21,12 +21,12 @@ struct HomePage: View {
     
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
+            
             Spacer().frame(height: 50)
             AllAssetView().asyncContainer()
             LatestRedditPost(currencies: self.currencies).asyncContainer()
-//            LatestTweets(header: "Trending Tweets", currencies: self.currencies, type: .Chronological, limit: 20).asyncContainer()
+            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
             self.pollView
-//            NewsSectionMain(currencies: self.currencies, limit: 10,cardHeight: totalHeight * 0.45).asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

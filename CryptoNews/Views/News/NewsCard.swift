@@ -39,9 +39,9 @@ struct NewsCard: View {
             let title =  self.news.title ?? "News Publisher"
             
             return VStack(alignment: .leading, spacing: 5) {
+                Spacer()
                 MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal)
                     .lineLimit(3)
-                Spacer()
                 self.footer(w: w, h: 50)
             }.padding(10)
     }
