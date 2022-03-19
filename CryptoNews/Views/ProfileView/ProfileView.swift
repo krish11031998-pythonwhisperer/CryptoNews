@@ -13,10 +13,10 @@ struct ProfileView: View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(width: totalWidth) { w in
                 self.userInfo(w: w)
-                    .padding(.top,50)
-                self.userAccount(w:w)
+//                self.userAccount(w:w)
+                self.portfoliocards(w)
                 self.userActivity(w: w)
-            }.padding(.bottom,100)
+            }.padding(.vertical,50)
         }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
     }
 }
@@ -27,20 +27,71 @@ extension ProfileView{
         return self.context.user.user ?? .test
     }
     
+    var trackedAssets:[CrybseAsset]{
+        return self.context.userAssets.trackedAssets
+    }
+    
+    @ViewBuilder func portfoliocards(_ w:CGFloat) -> some View{
+        if !self.trackedAssets.isEmpty{
+            Container(heading: "Portfolio", width: w, ignoreSides: true) { _ in
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 10) {
+                        ForEach(Array(self.trackedAssets.enumerated()), id:\.offset) { _asset in
+                            let asset = _asset.element
+                            let idx = _asset.offset
+                            PortfolioCard(asset: asset, w: w * 0.65,h: totalHeight * 0.2)
+                                .padding(.leading,idx == 0 ? 15 : 0)
+                                .padding(.trailing,idx == self.trackedAssets.count - 1 ? 15 : 0)
+                        }
+                    }
+                }
+                self.cryptoCurrencyInvestments(.init(width: w, height: totalHeight * 0.15))
+            }.basicCard()
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+    
     @ViewBuilder func UserinfoGridEl (key:String) -> some View{
         if let value = self.user.userInfo[key]{
-            MainSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 14, alignment: .center)
+            MainSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 14,headColor: .white.opacity(0.75),subHeadColor: .white, alignment: .center)
         }else{
             Color.clear
         }
     }
     
+    @ViewBuilder func imageBGView(_ w:CGFloat) -> AnyView{
+        let h = totalHeight * 0.2
+        let dp_h = w * 0.3
+        ZStack(alignment: .center) {
+            ImageView(img:UIImage(named: "bgImage"),width: w,height: h,contentMode: .fill,alignment: .topLeading)
+            HStack(alignment: .center, spacing: 110) {
+                Spacer()
+                MainText(content: self.context.user.user?.location ?? "London , UK", fontSize: 15, color: .white, fontWeight: .medium)
+                    .padding(7.5)
+                    .basicCard()
+            }
+            .padding()
+            .frame(width: w,height: h, alignment: .topLeading)
+            
+            ImageView(url: self.user.img, width: w * 0.3, height: dp_h, contentMode: .fill, alignment: .center, clipping: .circleClipping)
+                .offset(y: h * 0.5)
+        }.anyViewWrapper()
+    }
+    
     func userInfo(w:CGFloat) -> some View{
         VStack(alignment: .center, spacing: 15) {
-            ImageView(url: self.user.img, width: w * 0.3, height: w * 0.3, contentMode: .fill, alignment: .center, clipping: .circleClipping)
-            MainSubHeading(heading: self.user.name ?? "Name" , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .gray, alignment: .center)
+            self.imageBGView(w)
+                .padding(.bottom, w * 0.15)
+            MainSubHeading(heading: self.user.name ?? "Name" , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .white.opacity(0.75), alignment: .center)
             InfoGrid(info: self.user.userInfoKeys, width: w, viewPopulator: self.UserinfoGridEl(key:))
-        }.basicCard(size: .init(width: w, height: 0))
+                .padding(.bottom,20)
+        }
+        .frame(width: w, alignment: .center)
+        .basicCard()
+        .borderCard(color: .white, clipping: .roundClipping)
+                            
+        
     }
     
     var SocialMetricsKeys:[String]{
@@ -69,7 +120,8 @@ extension ProfileView{
             MainText(content: "\(self.user.info_coins?.ToDecimals() ?? "100") Tokens", fontSize: 25, color: .white, fontWeight: .semibold, style: .monospaced)
                 .padding(.bottom,15)
             self.ManaSpendOptions(w: w)
-        }.basicCard(size: .init(width: w, height: 0))
+        }
+        .basicCard()
     }
     
     func ManaSpendOptions(w:CGFloat) -> some View{
@@ -99,17 +151,37 @@ extension ProfileView{
         
     }
     
+    var assetColorValuePairs:[Color:Float]{
+        var colorValuePairs:[Color:Float] = [:]
+        for asset in self.context.userAssets.trackedAssets{
+            colorValuePairs[Color(hex: asset.Color)] = asset.Value
+        }
+        return colorValuePairs
+    }
+    
+    func cryptoCurrencyInvestments(_ size:CGSize) -> some View{
+        let h = size.height
+        return Container(heading:"Portfolio Breakdown",width: size.width,ignoreSides: false, orientation: .vertical, alignment: .center){ w in
+            DonutChart(diameter: h,valueColorPair: self.assetColorValuePairs)
+                .padding(.vertical)
+            ForEach(Array(self.trackedAssets.enumerated()),id:\.offset) { _trackedAsset in
+                let asset = _trackedAsset.element
+                QuickAssetInfoCard(asset: asset,showValue: true, w: w)
+            }
+        }
+    }
+    
     func chartView(w:CGFloat) -> some View{
         let half_w = w * 0.5 - 5
         let el_h = half_w + 100
+        let profileViewSize:CGSize = .init(width: w - 30, height: el_h - 30)
+        let subscriberViewSize:CGSize = .init(width: half_w, height: el_h)
         let col = [GridItem.init(.flexible(), alignment: .center),GridItem.init(.flexible(), alignment: .center)]
         return LazyVGrid(columns: col, alignment: .center, spacing: 10) {
-            CircleChart(percent: 10, header: "Subscriber Views", size: .init(width: half_w, height: el_h))
-            BarChart(heading: "Weekly Views", bar_elements: self.barData, size: .init(width: half_w, height: el_h))
-            CurveChart(data: self.barData.map({$0.data}), interactions: false, size: .init(width: w - 30, height: el_h - 30), header: "Profile Views", bg: .clear, lineColor: .white)
-                .basicCard(size: .init(width: w, height: el_h))
-                .padding(.leading,half_w + 10)
-            Color.clear.frame(width: half_w, height: el_h, alignment: .center)
+//            self.cryptoCurrencyInvestments(profileViewSize)
+            CircleChart(percent: 10, header: "Subscriber Views", size: subscriberViewSize)
+            BarChart(heading: "Weekly Views", bar_elements: self.barData, size: subscriberViewSize)
+            CurveChart(data: self.barData.map({$0.data}), interactions: false, size: profileViewSize, header: "Profile Views", bg: .clear, lineColor: .white)
         }
     }
     
@@ -123,11 +195,9 @@ extension ProfileView{
                     Color.clear
                 }
             }
-            
-            self.chartView(w: w).padding(.top,15)
-            
         }
-        .basicCard(size: .init(width: w, height: 0))
+//            self.chartView(w: w).padding(.top,15)        }
+        .basicCard()
     }
     
 }

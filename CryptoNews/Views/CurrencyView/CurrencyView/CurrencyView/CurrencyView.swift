@@ -245,10 +245,7 @@ struct CurrencyView:View{
             if !self.loading {
                 self.mainView
                 self.diff_Views
-            }else{
-                ProgressView().frame(width: totalWidth, alignment: .center)
             }
-            
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .onAppear(perform: self.onAppear)

@@ -56,8 +56,8 @@ class ProfileData:Codable,Loopable{
         data["Followers"] = String(self.followers)
         data["Following"] = String(230)
         data["i.nfo Rank"] = String(3423)
-        data["Location"] = self.location ?? "NYC"
-        data["Date of Birth"] = self.dob ?? Date().stringDate()
+//        data["Location"] = self.location ?? "NYC"
+//        data["Date of Birth"] = self.dob ?? Date().stringDate()
         return data
     }
     

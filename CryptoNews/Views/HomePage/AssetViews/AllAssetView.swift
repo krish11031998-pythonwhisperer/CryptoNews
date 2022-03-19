@@ -16,13 +16,16 @@ struct AllAssetView: View {
         return self.context.userAssets
     }
     
-    func coins(type:String) -> [CrybseAsset]?{
+    func coins(type:String = "all") -> [CrybseAsset]{
+        var assets:[CrybseAsset] = []
         if type == "tracked"{
-            return self.assets.trackedAssets
+            assets = self.assets.trackedAssets
+        }else if type == "watching"{
+            assets = self.assets.watchingAssets
         }else{
-            return self.assets.watchingAssets
+            assets = self.assets.watchingAssets + self.assets.trackedAssets
         }
-        
+        return assets.sorted(by: {$0.Rank < $1.Rank})
     }
     
     func updateAssetPrices(){
@@ -37,7 +40,7 @@ struct AllAssetView: View {
     }
     
     func portfolioCardViews(w:CGFloat) -> [AnyView]{
-        return self.coins(type: "tracked")?.sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset:$0, w: w * 0.65,h:totalHeight * 0.65))}) ?? []
+        return self.coins(type: "tracked").sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset:$0, w: w * 0.65,h:totalHeight * 0.65))})
     }
     
     var portfolioViews:some View{
@@ -51,14 +54,14 @@ struct AllAssetView: View {
     }
     
     func watchListViews(size:CGSize) -> [AnyView]{
-        return (self.coins(type: "watching") ?? []).compactMap({AnyView(PriceCard(coin: $0, size: size))})
+        return self.coins(type: "watching").compactMap({AnyView(PriceCard(coin: $0, size: size))})
     }
 
     @ViewBuilder var mainBody:some View{
         Container(width: totalWidth) { w in
             PortfolioSummary(width: w,height: totalHeight * 0.2)
                 .borderCard(color: .white, clipping: .roundClipping)
-            QuickWatch(assets: self.context.userAssets.watchingAssets, width: w)
+            QuickWatch(assets:  self.coins(type: "all"), width: w)
         }
     }
     

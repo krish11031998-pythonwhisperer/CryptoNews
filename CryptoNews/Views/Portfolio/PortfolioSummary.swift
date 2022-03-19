@@ -10,9 +10,11 @@ import Combine
 
 struct PortfolioSummary: View {
     @EnvironmentObject var context:ContextData
+    @StateObject var aotAPI:CrybseAssetOverTimeManager = .init()
     var width:CGFloat
     var height:CGFloat
     var assetCancellable:AnyCancellable? = nil
+    @State var choosenPrice:Int = -1
     
     init(width:CGFloat = totalWidth - 20,height:CGFloat = totalHeight * 0.2){
         self.width = width
@@ -23,11 +25,28 @@ struct PortfolioSummary: View {
         return self.context.userAssets
     }
     
+    
+    var assetOverTime:CrybseAssetOverTime?{
+        return self.aotAPI.assetOverTime
+    }
+    
+    func onAppear(){
+        guard let uid = self.context.user.user?.uid else {return}
+        if self.aotAPI.assetOverTime == nil{
+            self.aotAPI.getPortfolioOverTime(uid: uid)
+        }
+    }
+    
     var header:some View{
         HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: "Total Value", subHeading: self.assets.TotalCurrentValue.ToMoney(), headingSize: 15, subHeadingSize: 25, headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 10, alignment: .leading)
+            if let currentValue = self.assetOverTime?.currentPortfolioValue{
+                MainSubHeading(heading: "Current Portfolio Value", subHeading:currentValue.ToMoney(), headingSize: 15, subHeadingSize: 25, headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 10, alignment: .leading)
+            }
             Spacer()
-            PercentChangeView(value: self.assets.Profit, type: "large")
+            if let change = self.assetOverTime?.change{
+                PercentChangeView(value: (change * 100), type: "large")
+            }
+            
         }
     }
         
@@ -74,12 +93,34 @@ struct PortfolioSummary: View {
         }
     }
     
+    @ViewBuilder func portfolioValueOverTimeSummaryDetails(w:CGFloat) -> some View{
+        let chartSize:CGSize = .init(width: w, height: totalHeight * 0.175)
+        if let portfolioValueTimeline = self.assetOverTime?.portfolioTimeline{            
+            CurveChart(data: portfolioValueTimeline, choosen: self.$choosenPrice, interactions: true, size: chartSize,bg: .clear, lineColor: nil, chartShade: true)
+        }else{
+            Color.clear.frame(width: 0, height: 0, alignment: .center)
+        }
+    }
+    
+    @ViewBuilder func mainBody(w:CGFloat) -> some View{
+        if let _ = self.assetOverTime{
+            self.header
+            self.portfolioValueOverTimeSummaryDetails(w: w)
+            //            self.assetsView
+        }else{
+            ProgressView()
+                .frame(width: w, height: totalHeight * 0.2, alignment: .center)
+        }
+    }
+    
     var body: some View {
         Container(heading: "Portfolio", headingColor: .white, headingDivider: true, width: self.width, verticalPadding:15) { w in
-            self.header
-            self.assetsView
+            self.mainBody(w: w)
+//            self.assetsView
         }
+        
         .basicCard()
+        .onAppear(perform: self.onAppear)
         .onReceive(self.context.userAssets.objectWillChange) { _ in
             print("(DEBUG) Change in the userAsset Data")
         }

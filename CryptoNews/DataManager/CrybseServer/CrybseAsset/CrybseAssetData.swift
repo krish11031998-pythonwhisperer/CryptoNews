@@ -290,6 +290,12 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
         }
     }
     
+    var Color:String{
+        get{
+            return self.coinData?.Color ?? "#FFFFFF"
+        }
+    }
+    
     func updatePriceWithLatestTimeSeriesPrice(timeSeries:Array<CryptoCoinOHLCVPoint>?){
         guard let safeTimeseries = timeSeries, let latestPrice = safeTimeseries.last?.close else {return}
         let latestPrices = safeTimeseries.compactMap({$0.time != nil ? $0.Time >= self.LatestPriceTime + 60 ? $0 : nil : nil})

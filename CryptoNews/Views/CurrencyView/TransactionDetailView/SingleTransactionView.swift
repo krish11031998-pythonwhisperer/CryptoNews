@@ -41,7 +41,7 @@ extension SingleTransactionView{
                 self.txnMiscDetails
             }
         }.padding()
-            .background(Color.mainBGColor.overlay(BlurView(style: .systemChromeMaterialDark)))
+//            .background(Color.mainBGColor.overlay(BlurView(style: .systemChromeMaterialDark)))
         .frame(width:width,alignment: .topLeading)
         .clipContent(clipping: .roundClipping)
     }

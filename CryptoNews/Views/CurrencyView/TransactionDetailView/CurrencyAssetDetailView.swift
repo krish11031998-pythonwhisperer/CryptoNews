@@ -9,49 +9,49 @@ import SwiftUI
 
 struct TransactionDetailsView: View {
     @Namespace var animation
-    var transactions:[Transaction]
+    var txns:[Transaction]
     var currency:String
     var currencyCurrentPrice:Float
     @State var txnType:String = "all"
     @EnvironmentObject var context:ContextData
+    @State var idx:Int = 5
     @Binding var close:Bool
     var width:CGFloat
     
     init(txns:[Transaction],currency:String,currencyCurrentPrice:Float,width:CGFloat = totalWidth,close:Binding<Bool>? = nil){
-        self.transactions = txns
+        self.txns = txns
         self.currency = currency
         self.width = width
         self._close = close ?? .constant(false)
         self.currencyCurrentPrice = currencyCurrentPrice
     }
     
-    var selectedTransaction:[Transaction]{
-        return self.txnType != "all" ? self.transactions.filter({$0.type == self.txnType}) : self.transactions
+    var transactions:[Transaction]{
+        self.txnType != "all" ? self.txns.filter({$0.type == self.txnType}) : self.txns
     }
+        
+    var transactionList:some View{
+        AnimatedListView(data: self.transactions) { txn in
+            if let safeTxn = txn as? Transaction{
+                SingleTransactionView(txn: safeTxn, currentPrice: self.currencyCurrentPrice, width: self.width)
+            }
+        }.basicCard()
+    }
+    
 
     var body: some View {
-        LazyVStack(alignment: .leading, spacing: 10) {
-            self.SummaryView
-            self.SummaryDetailView
-            Container(heading: "Transaction History", headingColor: .white, headingDivider: false, headingSize: 20, width: self.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0) { _ in
-                self.TxnTypesView
-                VStack(alignment: .center, spacing: 7.5) {
-                    ForEach(Array(self.selectedTransaction.enumerated()),id:\.offset) { _txn in
-                        let txn = _txn.element
-                        SingleTransactionView(txn: txn, currentPrice: self.currencyCurrentPrice,width: width)
-                    }
-                }
-            }.padding(.top,10)
-            TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
-                if !self.context.addTxn{
-                    self.context.addTxn.toggle()
-                }
-                if self.context.selectedSymbol != self.currency{
-                    self.context.selectedSymbol = self.currency
-                }
+        self.SummaryView
+        self.SummaryDetailView
+        self.TxnTypesView
+        self.transactionList
+        TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
+            if !self.context.addTxn{
+                self.context.addTxn.toggle()
             }
-        }.padding(.bottom,150).frame(width: width, alignment: .topLeading)
-//        .preference(key: AddTxnUpdatePreference.self, value: self.context.addTxn)
+            if self.context.selectedSymbol != self.currency{
+                self.context.selectedSymbol = self.currency
+            }
+        }.animatedAppearance(idx: self.transactions.count)
     }
 }
 
@@ -110,7 +110,7 @@ extension TransactionDetailsView{
     
     var TxnTypesView:some View{
         let types = ["all","buy","sell","send","recieve"]
-        return HStack(alignment: .center, spacing: 10) {
+        return Container(width:self.width,orientation:.horizontal){ _ in
             ForEach(Array(types.enumerated()), id:\.offset){ _type in
                 let type = _type.element
                 let idx = _type.offset
@@ -132,12 +132,11 @@ extension TransactionDetailsView{
                     Spacer()
                 }
             }
-        }.padding(.vertical,10)
-        .frame(width: self.width, alignment: .topLeading)
+        }
     }
     
     var totalBoughtValue:Float{
-        return self.transactions.reduce(0, {$0 + $1.total_inclusive_price * ($1.type == "sell" ? -1 : 1)})
+        return self.txns.reduce(0, {$0 + $1.total_inclusive_price * ($1.type == "sell" ? -1 : 1)})
     }
     
     var currentValue:Float{
@@ -149,11 +148,11 @@ extension TransactionDetailsView{
     }
     
     var totalCoins:Float{
-        return self.transactions.reduce(0, {$0 + $1.asset_quantity * ($1.type == "sell" ? -1 : 1)})
+        return self.txns.reduce(0, {$0 + $1.asset_quantity * ($1.type == "sell" ? -1 : 1)})
     }
     
     var totalFees:Float{
-        return self.transactions.reduce(0, {$0 + $1.fee})
+        return self.txns.reduce(0, {$0 + $1.fee})
     }
     
     var AssetHeadKeys:[String]{
@@ -161,7 +160,7 @@ extension TransactionDetailsView{
     }
     
     var AssetHeadValue:[String:Float]{
-        return ["Value (bought)":self.totalBoughtValue,"Value (now)":self.currentValue,"Profit":self.profit,"Fees":self.totalFees,"Txns": Float(self.transactions.count)]
+        return ["Value (bought)":self.totalBoughtValue,"Value (now)":self.currentValue,"Profit":self.profit,"Fees":self.totalFees,"Txns": Float(self.txns.count)]
     }
     
 }

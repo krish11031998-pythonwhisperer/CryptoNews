@@ -41,7 +41,7 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .home
+    @Published private var _tab:Tabs = .profile
     @Published var _addButtonPressed:Bool = false
     @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedLink:URL? = nil

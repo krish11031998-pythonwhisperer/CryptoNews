@@ -95,7 +95,8 @@ struct CurrencyPriceSummaryView: View {
         }
         .animation(.easeInOut)
         .padding(10)
-        .frame(width: self.width,height: self.height * 0.2, alignment: .center)
+        .frame(width: self.width, alignment: .center)
+        .frame(maxHeight:self.height * 0.2)
         .background(BlurView.thinDarkBlur)
         .clipContent(clipping: .roundClipping)
     }
