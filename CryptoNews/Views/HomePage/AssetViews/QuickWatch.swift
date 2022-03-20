@@ -15,30 +15,7 @@ struct QuickWatch: View {
         self.assets = assets
         self.width = width
     }
-    
-//    
-//    @ViewBuilder func rowAsset(asset:CrybseAsset,w: CGFloat) -> some View{
-//        if let price = asset.Price{
-//            let changeColor = asset.Change > 0 ? Color.green : asset.Change < 0 ? Color.red : Color.white
-//            HStack(alignment: .center, spacing: 20) {
-//                CurrencySymbolView(currency: asset.Currency,width: 30)
-//                MainText(content: asset.Currency, fontSize: 16, color: .white, fontWeight: .medium)
-//                Spacer()
-//                MainText(content: price.ToMoney(), fontSize: 16, color: .white, fontWeight: .semibold)
-//                PercentChangeView(value: asset.Change,type: "small")
-//            }
-//            .padding(.vertical,10)
-//            .padding(.horizontal,5)
-//            .buttonify(type: .shadow){
-//                if self.context.selectedAsset != asset{
-//                    self.context.selectedAsset = asset
-//                }
-//            }
-//            .frame(width: w, alignment: .topLeading)
-//            .borderCard(color: Color(hex: asset.Color) , clipping: .roundClipping)
-//        }
-//    }
-//    
+
     var body: some View {
         Container(heading: "Quick Watch", headingColor: .white, headingDivider: true, width: self.width,spacing: 20) { w in
             ForEach(Array(self.assets.enumerated()), id:\.offset) { _asset in
@@ -47,13 +24,6 @@ struct QuickWatch: View {
             }
         }
         .basicCard()
-        .onPreferenceChange(AssetPreferenceKey.self) { newAsset in
-            setWithAnimation {
-                if self.context.selectedAsset != newAsset{
-                    self.context.selectedAsset = newAsset
-                }
-            }
-        }
     }
 }
 
@@ -93,7 +63,7 @@ struct QuickAssetInfoCard:View{
                 }
             }
             .frame(width: w, alignment: .topLeading)
-            .borderCard(color: Color(hex: asset.Color) , clipping: .roundClipping)
+            .borderCard(color: Color.white.opacity(0.5) , clipping: .roundClipping)
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
