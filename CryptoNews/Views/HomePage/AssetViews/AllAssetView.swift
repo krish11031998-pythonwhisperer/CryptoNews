@@ -61,6 +61,11 @@ struct AllAssetView: View {
         Container(width: totalWidth) { w in
             PortfolioSummary(width: w,height: totalHeight * 0.2)
                 .borderCard(color: .white, clipping: .roundClipping)
+//                .buttonify {
+//                    if !self.context.showPortfolio{
+//                        self.context.showPortfolio.toggle()
+//                    }
+//                }
             QuickWatch(assets:  self.coins(type: "all"), width: w)
         }
     }

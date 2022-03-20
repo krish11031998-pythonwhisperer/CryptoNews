@@ -41,13 +41,15 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .profile
+    @Published private var _tab:Tabs = .home
     @Published var _addButtonPressed:Bool = false
     @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedLink:URL? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedVideo:CrybseVideoData? = nil
     @Published private var _selectedSymbol:String? = nil
+    @Published private var _showPortfolio:Bool = false
+    @Published private var _assetOverTime:CrybseAssetOverTime? = nil
     @Published private var _addTxn:Bool = false
     @Published private var _addPost:Bool = false
     @Published private var _prev_tab:Tabs = .none
@@ -109,6 +111,17 @@ extension ContextData{
         }
     }
     
+    var assetOverTime:CrybseAssetOverTime{
+        get{
+            return self._assetOverTime ?? .init()
+        }
+        
+        set{
+            setWithAnimation {
+                self._assetOverTime = newValue
+            }
+        }
+    }
     
     var prev_tab:Tabs{
         get{
@@ -224,7 +237,6 @@ extension ContextData{
             DispatchQueue.main.async {
                 withAnimation(.easeInOut) {
                     self._addPost = newValue
-//                    self.tab = .none
                 }
             }
         }
@@ -251,6 +263,24 @@ extension ContextData{
         set{
             setWithAnimation {
                 self._user = newValue
+            }
+        }
+    }
+    
+    var showPortfolio:Bool{
+        get{
+            return self._showPortfolio
+        }
+        
+        set{
+            setWithAnimation {
+                self._showPortfolio = newValue
+                
+            }
+            if newValue && self.showTab{
+                self.showTab = false
+            }else if !newValue && !self.showTab{
+                self.showTab = true
             }
         }
     }

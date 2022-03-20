@@ -106,7 +106,7 @@ extension CrybseView{
             .transition(.slideInOut)
             .background(Color.AppBGColor)
             .edgesIgnoringSafeArea(.all)
-            .zIndex(2)
+            .zIndex(self.context.showPortfolio ? 3 : 2)
         }
         
         if let post = self.context.selectedPost{
@@ -120,6 +120,15 @@ extension CrybseView{
 
         if self.context.addPost{
             CrybsePostMainView()
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(Color.AppBGColor)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
+        
+        if self.context.showPortfolio{
+            PortfolioMain()
                 .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(Color.AppBGColor)

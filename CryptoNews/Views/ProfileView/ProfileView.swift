@@ -28,7 +28,7 @@ extension ProfileView{
     }
     
     var trackedAssets:[CrybseAsset]{
-        return self.context.userAssets.trackedAssets
+        return self.context.userAssets.trackedAssets.sorted(by: {$0.Rank < $1.Rank})
     }
     
     @ViewBuilder func portfoliocards(_ w:CGFloat) -> some View{
@@ -166,7 +166,8 @@ extension ProfileView{
                 .padding(.vertical)
             ForEach(Array(self.trackedAssets.enumerated()),id:\.offset) { _trackedAsset in
                 let asset = _trackedAsset.element
-                QuickAssetInfoCard(asset: asset,showValue: true, w: w)
+                QuickAssetInfoCard(asset: asset,showValue: true,value: (asset.Value/self.assetColorValuePairs.values.reduce(0, {$0 + $1})).ToDecimals() + "%", w: w)
+                    .background(Color(hex: asset.Color).clipContent(clipping: .roundClipping))
             }
         }
     }

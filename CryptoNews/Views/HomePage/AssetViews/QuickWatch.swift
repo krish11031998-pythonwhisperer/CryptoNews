@@ -31,17 +31,19 @@ struct QuickWatch: View {
 struct QuickAssetInfoCard:View{
     @EnvironmentObject var context:ContextData
     var showValue:Bool
+    var value:String? = nil
     var asset:CrybseAsset
     var w: CGFloat
     
-    init(asset:CrybseAsset,showValue:Bool = false,w:CGFloat){
+    init(asset:CrybseAsset,showValue:Bool = false,value:String? = nil,w:CGFloat){
         self.asset = asset
         self.w = w
+        self.value = value
         self.showValue = showValue
     }
     
-    var NumericalValue:Float?{
-        return self.showValue ? self.asset.value : self.asset.Price
+    var NumericalValue:String?{
+        return self.value ?? (self.showValue ? self.asset.value : self.asset.Price)?.ToMoney()
     }
     
     var body: some View{
@@ -50,7 +52,7 @@ struct QuickAssetInfoCard:View{
                 CurrencySymbolView(currency: asset.Currency,width: 30)
                 MainText(content: asset.Currency, fontSize: 16, color: .white, fontWeight: .medium)
                 Spacer()
-                MainText(content: value.ToMoney(), fontSize: 16, color: .white, fontWeight: .semibold)
+                MainText(content: value, fontSize: 16, color: .white, fontWeight: .semibold)
                 if !self.showValue{
                     PercentChangeView(value: asset.Change,type: "small")
                 }

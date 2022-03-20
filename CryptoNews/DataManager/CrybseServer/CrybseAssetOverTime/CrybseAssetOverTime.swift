@@ -14,7 +14,7 @@ struct CrybseAssetOverTimeResponse:Codable{
     var success:Bool
 }
 
-struct CrybseAssetOverTime:Codable{
+struct CrybseAssetOverTime:Codable,Equatable{
     var currentPortfolioValue:Float?
     var portfolioTimeline:[Float]?
     var profit:Float?

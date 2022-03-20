@@ -13,12 +13,14 @@ struct PortfolioSummary: View {
     @StateObject var aotAPI:CrybseAssetOverTimeManager = .init()
     var width:CGFloat
     var height:CGFloat
+    var showAsContainer:Bool
     var assetCancellable:AnyCancellable? = nil
     @State var choosenPrice:Int = -1
     
-    init(width:CGFloat = totalWidth - 20,height:CGFloat = totalHeight * 0.2){
+    init(width:CGFloat = totalWidth - 20,height:CGFloat = totalHeight * 0.2,showAsContainer:Bool = true){
         self.width = width
         self.height = height
+        self.showAsContainer = showAsContainer
     }
     
     var assets:CrybseAssets{
@@ -97,6 +99,34 @@ struct PortfolioSummary: View {
         let chartSize:CGSize = .init(width: w, height: totalHeight * 0.175)
         if let portfolioValueTimeline = self.assetOverTime?.portfolioTimeline{            
             CurveChart(data: portfolioValueTimeline, choosen: self.$choosenPrice, interactions: true, size: chartSize,bg: .clear, lineColor: nil, chartShade: true)
+            if self.showAsContainer{
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 10) {
+                        ForEach(Array(self.TrackedAssets.enumerated()),id:\.offset){ _asset in
+                            let asset = _asset.element
+                            HStack(alignment: .center, spacing: 10) {
+                                CurrencySymbolView(currency: asset.Currency, width: 15  )
+                                MainSubHeading(heading: asset.Currency, subHeading: asset.Profit.ToMoney(), headingSize: 15, subHeadingSize: 15,headColor: .white, subHeadColor: asset.Profit == 0 ? .white : asset.Profit > 0 ? .green : .red, orientation: .horizontal, headingWeight: .medium, bodyWeight: .semibold, spacing: 15, alignment: .center)
+                            }
+                            .padding(7.5)
+                            .basicCard()
+                            .borderCard(color: Color.white, clipping: .roundClipping)
+                        }
+                    }
+                    .padding(.horizontal,5)
+                    .padding(.vertical)
+                }
+                MainText(content: "View Portfolio", fontSize: 10, color: .white, fontWeight: .medium)
+                    .padding(7.5)
+                    .basicCard()
+                    .borderCard(color: .white, clipping: .roundClipping)
+                    .buttonify {
+                        if !self.context.showPortfolio{
+                            self.context.showPortfolio.toggle()
+                        }
+                    }
+
+            }
         }else{
             Color.clear.frame(width: 0, height: 0, alignment: .center)
         }
@@ -106,7 +136,6 @@ struct PortfolioSummary: View {
         if let _ = self.assetOverTime{
             self.header
             self.portfolioValueOverTimeSummaryDetails(w: w)
-            //            self.assetsView
         }else{
             ProgressView()
                 .frame(width: w, height: totalHeight * 0.2, alignment: .center)
@@ -114,16 +143,12 @@ struct PortfolioSummary: View {
     }
     
     var body: some View {
-        Container(heading: "Portfolio", headingColor: .white, headingDivider: true, width: self.width, verticalPadding:15) { w in
+        Container(heading: self.showAsContainer ? "Portfolio" : nil, headingColor: .white, headingDivider: true, width: self.width, verticalPadding:15) { w in
             self.mainBody(w: w)
-//            self.assetsView
         }
-        
-        .basicCard()
+        .basicCard(background: self.showAsContainer ? BlurView.thinDarkBlur.anyViewWrapper() : Color.clear.anyViewWrapper())
         .onAppear(perform: self.onAppear)
-        .onReceive(self.context.userAssets.objectWillChange) { _ in
-            print("(DEBUG) Change in the userAsset Data")
-        }
+
     }
 }
 
@@ -177,7 +202,8 @@ struct PortfolioSummaryView:View{
             }else{
                 ProgressView()
             }
-        }.onAppear(perform: self.assetAPI.getAssets)
+        }
+        .onAppear(perform: self.assetAPI.getAssets)
     }
     
 }
