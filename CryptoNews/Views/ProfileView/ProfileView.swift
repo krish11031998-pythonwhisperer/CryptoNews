@@ -14,7 +14,8 @@ struct ProfileView: View {
             Container(width: totalWidth) { w in
                 self.userInfo(w: w)
 //                self.userAccount(w:w)
-                self.portfoliocards(w)
+//                self.portfoliocards(w)
+                self.pointsAccumulator(w)
                 self.userActivity(w: w)
             }.padding(.vertical,50)
         }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
@@ -30,34 +31,42 @@ extension ProfileView{
     var trackedAssets:[CrybseAsset]{
         return self.context.userAssets.trackedAssets.sorted(by: {$0.Rank < $1.Rank})
     }
-    
-    @ViewBuilder func portfoliocards(_ w:CGFloat) -> some View{
-        if !self.trackedAssets.isEmpty{
-            Container(heading: "Portfolio", width: w, ignoreSides: true) { _ in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: 10) {
-                        ForEach(Array(self.trackedAssets.enumerated()), id:\.offset) { _asset in
-                            let asset = _asset.element
-                            let idx = _asset.offset
-                            PortfolioCard(asset: asset, w: w * 0.65,h: totalHeight * 0.2)
-                                .padding(.leading,idx == 0 ? 15 : 0)
-                                .padding(.trailing,idx == self.trackedAssets.count - 1 ? 15 : 0)
-                        }
-                    }
-                }
-                self.cryptoCurrencyInvestments(.init(width: w, height: totalHeight * 0.15))
-            }.basicCard()
-        }else{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-        }
-    }
-    
+        
     @ViewBuilder func UserinfoGridEl (key:String) -> some View{
         if let value = self.user.userInfo[key]{
             MainSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 14,headColor: .white.opacity(0.75),subHeadColor: .white, alignment: .center)
         }else{
             Color.clear
         }
+    }
+    
+    var userActivity:[String:Float]{
+        return ["Reactions":50,"Likes":40,"Shares":20,"Polls":10]
+    }
+    
+    @ViewBuilder func pointsAccumulator(_ w:CGFloat) -> some View{
+        Container(heading: "Points Accumulator (Today)",width: w) { inner_w in
+            HStack(alignment: .center, spacing: 10) {
+                MainSubHeading(heading: "150", subHeading: "Points", headingSize: 35, subHeadingSize: 20, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 7.5, alignment: .center)
+                Spacer()
+                //Include Timer
+                MainText(content: "Include Timer", fontSize: 15, color: .white, fontWeight: .medium)
+            }
+            HStack(alignment: .center, spacing: 10) {
+                ForEach(Array(self.userActivity.keys.sorted().enumerated()), id: \.offset) { _key in
+                    let key = _key.element
+                    let idx = _key.offset
+                    if let value = self.userActivity[key]{
+                        if idx != 0{
+                            Spacer()
+                        }
+                        MainSubHeading(heading: key, subHeading: "\(value)", headingSize: 13, subHeadingSize: 20,headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,alignment: .center)
+                        
+                    }
+                }
+            }.frame(width: inner_w, alignment: .center)
+        }
+        .basicCard()
     }
     
     @ViewBuilder func imageBGView(_ w:CGFloat) -> AnyView{
@@ -90,8 +99,6 @@ extension ProfileView{
         .frame(width: w, alignment: .center)
         .basicCard()
         .borderCard(color: .white, clipping: .roundClipping)
-                            
-        
     }
     
     var SocialMetricsKeys:[String]{
