@@ -13,9 +13,9 @@ struct ProfileView: View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(width: totalWidth) { w in
                 self.userInfo(w: w)
-//                self.userAccount(w:w)
-//                self.portfoliocards(w)
-                self.pointsAccumulator(w)
+//                ProfileUser(width: w)
+                ProfileUser(width: w)
+                PointAccumulatorView(w: w)
                 self.userActivity(w: w)
             }.padding(.vertical,50)
         }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
@@ -40,35 +40,6 @@ extension ProfileView{
         }
     }
     
-    var userActivity:[String:Float]{
-        return ["Reactions":50,"Likes":40,"Shares":20,"Polls":10]
-    }
-    
-    @ViewBuilder func pointsAccumulator(_ w:CGFloat) -> some View{
-        Container(heading: "Points Accumulator (Today)",width: w) { inner_w in
-            HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: "150", subHeading: "Points", headingSize: 35, subHeadingSize: 20, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 7.5, alignment: .center)
-                Spacer()
-                //Include Timer
-                MainText(content: "Include Timer", fontSize: 15, color: .white, fontWeight: .medium)
-            }
-            HStack(alignment: .center, spacing: 10) {
-                ForEach(Array(self.userActivity.keys.sorted().enumerated()), id: \.offset) { _key in
-                    let key = _key.element
-                    let idx = _key.offset
-                    if let value = self.userActivity[key]{
-                        if idx != 0{
-                            Spacer()
-                        }
-                        MainSubHeading(heading: key, subHeading: "\(value)", headingSize: 13, subHeadingSize: 20,headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,alignment: .center)
-                        
-                    }
-                }
-            }.frame(width: inner_w, alignment: .center)
-        }
-        .basicCard()
-    }
-    
     @ViewBuilder func imageBGView(_ w:CGFloat) -> AnyView{
         let h = totalHeight * 0.2
         let dp_h = w * 0.3
@@ -76,7 +47,7 @@ extension ProfileView{
             ImageView(img:UIImage(named: "bgImage"),width: w,height: h,contentMode: .fill,alignment: .topLeading)
             HStack(alignment: .center, spacing: 110) {
                 Spacer()
-                MainText(content: self.context.user.user?.location ?? "London , UK", fontSize: 15, color: .white, fontWeight: .medium)
+                MainText(content: self.context.user.user?.location ?? "Dubai , UAE", fontSize: 15, color: .white, fontWeight: .medium)
                     .padding(7.5)
                     .basicCard()
             }
@@ -94,8 +65,8 @@ extension ProfileView{
                 .padding(.bottom, w * 0.15)
             MainSubHeading(heading: self.user.name ?? "Name" , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .white.opacity(0.75), alignment: .center)
             InfoGrid(info: self.user.userInfoKeys, width: w, viewPopulator: self.UserinfoGridEl(key:))
-                .padding(.bottom,20)
         }
+        .padding(.bottom,20)
         .frame(width: w, alignment: .center)
         .basicCard()
         .borderCard(color: .white, clipping: .roundClipping)

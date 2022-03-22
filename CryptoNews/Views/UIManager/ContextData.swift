@@ -56,7 +56,7 @@ class ContextData:ObservableObject{
     @Published var loggedIn:LoginState = .undefined
     @Published private var _user:User = .init()
     @Published private var _userAssets:CrybseAssets = .init()
-    @Published var notification:NotificationModel = NotificationModel()
+    @Published var notification:NotificationModel = .init()
     @Published var bottomSwipeNotification:NotificationData = .init()
     @Namespace var animationNamespace
 

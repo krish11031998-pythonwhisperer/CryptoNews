@@ -7,7 +7,25 @@
 		<key>CryptoNews.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>11</integer>
+			<integer>23</integer>
+		</dict>
+	</dict>
+	<key>SuppressBuildableAutocreation</key>
+	<dict>
+		<key>BCBC1D7126BE7D7400B87E5C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BCBC1D8226BE7D7500B87E5C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>BCBC1D8D26BE7D7500B87E5C</key>
+		<dict>
+			<key>primary</key>
+			<true/>
 		</dict>
 	</dict>
 </dict>

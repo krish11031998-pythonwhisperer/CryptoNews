@@ -51,7 +51,7 @@ class User:ObservableObject{
                 userData?.id = user.documentID
                 self.user = userData
             }catch{
-                print("(DEBUG) Retrieving the data of the user for the given uid")
+                print("(DEBUG) Error While Retrieving the data of the user for the given uid")
             }
             
         }

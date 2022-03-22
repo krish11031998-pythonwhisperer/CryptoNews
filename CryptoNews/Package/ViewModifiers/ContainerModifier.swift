@@ -17,19 +17,28 @@ public enum Clipping:CGFloat{
 
 public struct BorderCard:ViewModifier{
     var color:Color
+    var linearGradient:LinearGradient?
     var clipping:Clipping
     
-    public init(color:Color,clipping:Clipping = .roundClipping){
+    public init(color:Color,linearGradient:LinearGradient? = nil,clipping:Clipping = .roundClipping){
         self.color = color
         self.clipping = clipping
+        self.linearGradient = linearGradient
+    }
+    
+    @ViewBuilder var overlayBorder:some View{
+        if let safeGradient = self.linearGradient{
+            RoundedRectangle(cornerRadius: self.clipping.rawValue)
+                .stroke(safeGradient, lineWidth: 1)
+        }else{
+            RoundedRectangle(cornerRadius: self.clipping.rawValue)
+                .stroke(self.color, lineWidth: 1)
+        }
     }
     
     public func body(content: Content) -> some View {
         content
-            .overlay(
-                RoundedRectangle(cornerRadius: self.clipping.rawValue)
-                    .stroke(self.color, lineWidth: 1)
-            )
+            .overlay(self.overlayBorder)
     }
     
 }
@@ -169,8 +178,8 @@ public extension View{
         self.modifier(BasicCard(size: size,background: background))
     }
     
-    func borderCard(color:Color = .clear,clipping:Clipping = .roundClipping) -> some View{
-        self.modifier(BorderCard(color: color, clipping: clipping))
+    func borderCard(color:Color = .clear,gradient:LinearGradient? = nil,clipping:Clipping = .roundClipping) -> some View{
+        self.modifier(BorderCard(color: color,linearGradient: gradient, clipping: clipping))
     }
     
     func blobify(size:CGSize? = nil,color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
