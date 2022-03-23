@@ -12,7 +12,7 @@ struct LatestRedditPost: View {
     @StateObject var redditAPI:CrybseRedditAPI = .init(subReddit: "cryptocurrency")
     var width:CGFloat
     var height:CGFloat
-    init(width:CGFloat = totalWidth,height:CGFloat = totalHeight * 0.45,currencies:[String]){
+    init(width:CGFloat = totalWidth,height:CGFloat = totalHeight * 0.275,currencies:[String]){
         self.width = width
         self.height = height
     }

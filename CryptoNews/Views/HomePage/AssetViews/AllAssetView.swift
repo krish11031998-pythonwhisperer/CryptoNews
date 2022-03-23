@@ -66,7 +66,7 @@ struct AllAssetView: View {
 //                        self.context.showPortfolio.toggle()
 //                    }
 //                }
-            QuickWatch(assets:  self.coins(type: "all"), width: w)
+//            QuickWatch(assets:  self.coins(type: "all"), width: w)
         }
     }
     

@@ -42,12 +42,20 @@ class CrybseAssets:ObservableObject,Codable{
         }
     }
     
-    var Profit:Float{
+    var ProfitValue:Float{
         var profit:Float = 0.0
         if let assetValues = self.assets?.values.compactMap({$0.Value}){
             profit = assetValues.reduce(0, {$0 + $1})
         }
-        return profit/self.TotalCurrentValue
+        return profit
+    }
+    
+    var Profit:Float{
+        return self.ProfitValue/self.TotalCurrentValue
+    }
+    
+    var InvestedValue:Float{
+        return self.TotalCurrentValue - self.ProfitValue
     }
     
     var TotalCurrentValue:Float{
@@ -314,6 +322,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     }
     
 }
+ 
 
 class CrybseCoin:ObservableObject,Codable{
     init(){}

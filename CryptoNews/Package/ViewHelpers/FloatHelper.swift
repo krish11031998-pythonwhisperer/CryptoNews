@@ -55,6 +55,14 @@ public extension Float{
         return convertToMoneyNumber(value: num)
     }
     
+    func ToPrettyMoney() -> String{
+        let num = self
+        if num <= 1000000{
+            return "$\(String(format: "%.2f", num))"
+        }else{
+            return convertToMoneyNumber(value: num)
+        }
+    }
     
     func ToDecimals() -> String{
         return convertToDecimals(value: self)

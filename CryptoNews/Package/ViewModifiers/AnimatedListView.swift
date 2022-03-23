@@ -51,6 +51,7 @@ struct AnimatedListView<Content:View>: View {
                 let idx = _data.offset
                 self.viewGen(data)
                     .animatedAppearance(idx:idx)
+                    .overlay(self.listObserver(idx: idx))
             }
         }
     }

@@ -15,9 +15,79 @@ struct PortfolioMain: View {
         self.assets = assets
         self.width = width
     }
+        
+    var body: some View {
+        StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+            PortfolioSummary(width: size.width, height: size.height, showAsContainer: false)
+        }, innerView: {
+            Container(ignoreSides: true) { w in
+                self.portfoliocards(w)
+                self.cryptoCurrencyInvestments(.init(width: w, height: totalHeight * 0.15))
+                self.InvestmentsSummary(w)
+            }
+            .frame(width: self.width, alignment: .topLeading)
+            .padding(.vertical,20)
+        }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
+        
+        
+    }
+}
+
+extension PortfolioMain{
     
     var trackedAssets:[CrybseAsset]{
         return self.context.userAssets.trackedAssets.sorted(by: {$0.Rank < $1.Rank})
+    }
+    
+    func onClose(){
+        if self.context.showPortfolio{
+            self.context.showPortfolio.toggle()
+        }
+    }
+    
+    var profitableAsset:CrybseAsset?{
+        return self.context.userAssets.trackedAssets.sorted(by: {$0.Profit > $1.Profit}).first
+    }
+    
+    var leastProfitableAsset:CrybseAsset?{
+        return self.context.userAssets.trackedAssets.sorted(by: {$0.Profit > $1.Profit}).last
+    }
+    
+    @ViewBuilder func assetInvestmentSummary(heading:String,asset:CrybseAsset,inner_w:CGFloat) -> some View{
+        HStack(alignment: .center, spacing: 10) {
+            MainText(content: asset.coinData?.Name ?? asset.Currency, fontSize: 22.5, color: .white, fontWeight: .medium)
+                .makeAdjacentView(orientation:.horizontal,position: .left) {
+                    CurrencySymbolView(currency: asset.Currency,width:40)
+                }
+            Spacer()
+            MoneyTextView(value: asset.Profit,coloredText: true)
+        }
+        .padding(.top,7.5)
+        .frame(width: inner_w, alignment: .center)
+        .makeAdjacentView(orientation: .vertical, alignment: .leading, position: .top) {
+            MainText(content: heading, fontSize: 13.5, color: .white.opacity(0.5), fontWeight: .semibold)
+        }
+    }
+    
+    @ViewBuilder func InvestmentsSummary(_ width:CGFloat) -> some View{
+        Container(heading: "Investment Summary", headingColor: .white,headingDivider: true, headingSize: 18, width: width) { inner_w in
+            
+            MainSubHeading(heading: "Invested Capital", subHeading: self.context.userAssets.InvestedValue.ToPrettyMoney(), headingSize: 13.5, subHeadingSize: 22.5, headColor: .white.opacity(0.5), subHeadColor: .white, headingWeight: .semibold, bodyWeight: .medium)
+            
+            if let profitableAsset = self.profitableAsset{
+                self.assetInvestmentSummary(heading:"Most Profitable Asset",asset: profitableAsset,inner_w: inner_w)
+                    .padding(.vertical,5)
+            }
+            
+            if let leastProfitableAsset = self.leastProfitableAsset{
+                self.assetInvestmentSummary(heading:"Least Profitable Asset",asset: leastProfitableAsset,inner_w: inner_w)
+                    .padding(.vertical,5)
+            }
+            
+//            if let
+//
+        }
+        .animatedAppearance()
     }
     
     var assetColorValuePairs:[Color:Float]{
@@ -38,7 +108,7 @@ struct PortfolioMain: View {
                 QuickAssetInfoCard(asset: asset,showValue: true,value: (asset.Value * 100/self.assetColorValuePairs.values.reduce(0, {$0 + $1})).ToDecimals() + "%", w: w)
                     .background(Color(hex: asset.Color).clipContent(clipping: .roundClipping))
             }
-        }
+        }.animatedAppearance()
     }
     
     @ViewBuilder func portfoliocards(_ w:CGFloat) -> some View{
@@ -56,39 +126,15 @@ struct PortfolioMain: View {
                     }
                 }
             }.animatedAppearance()
-            self.cryptoCurrencyInvestments(.init(width: w, height: totalHeight * 0.15))
-                .animatedAppearance()
-            //            }.basicCard()
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
     }
-    
-    func onClose(){
-        if self.context.showPortfolio{
-            self.context.showPortfolio.toggle()
-        }
-    }
-    
-    var body: some View {
-        StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
-            PortfolioSummary(width: size.width, height: size.height, showAsContainer: false)
-        }, innerView: {
-            Container(ignoreSides: true) { w in
-                self.portfoliocards(w)
-            }
-            .frame(width: self.width, alignment: .topLeading)
-            .padding(.top,20)
-        }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
-        
-        
-    }
 }
-
 
 struct PortfolioAssetPreview:View{
     @StateObject var crybseAssetsAPI:CrybseAssetsAPI
-    init(currencies: [String] = ["LTC","XRP","DOT"],uid:String){
+    init(currencies: [String] = ["LTC","XRP","DOT","AVAX"],uid:String){
         self._crybseAssetsAPI = .init(wrappedValue: .init(symbols:currencies,uid: uid))
     }
     
@@ -125,7 +171,7 @@ struct PortfolioMain_Previews: PreviewProvider {
         ScrollView {
             PortfolioAssetPreview(uid:"jV217MeUYnSMyznDQMBgoNHfMvH2")
                 .environmentObject(PortfolioMain_Previews.contextData)
-        }.ignoresSafeArea()
+        }
         
     }
 }

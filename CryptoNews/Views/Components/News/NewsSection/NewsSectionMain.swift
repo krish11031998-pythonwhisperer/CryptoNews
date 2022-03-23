@@ -33,6 +33,8 @@ struct NewsSectionMain: View {
             HStack(alignment: .center, spacing: 15){
                 ForEach(Array(feed.enumerated()),id:\.offset){ _feed in
                     self.autoTimeCardViewGen(_feed.element, width: w)
+                        .padding(.leading,_feed.offset == 0 ? 15 : 0)
+                        .padding(.trailing, _feed.offset == feed.count - 1 ? 15 : 0)
                 }
             }
         }
@@ -64,17 +66,16 @@ struct NewsSectionMain: View {
         }
     }
     
-    func slenderCards(w:CGFloat) -> some View{
-        HStack(alignment: .center, spacing: 10) {
+    func slenderCards(w width:CGFloat) -> some View{
+        Container(width:width,ignoreSides: false,orientation: .horizontal){ w in
             ForEach(Array(self.data[(self.data.count - 2)...].enumerated()),id:\.offset){ _data in
                 let data = _data.element
-                
                 NewsCard(news: data, size: .init(width: w * 0.5 - 5, height: self.cardHeight * 0.75))
                     .buttonify {
                         self.onTapHandler(data: data)
                     }
             }
-        }.frame(width: w, alignment: .center)
+        }
     }
     
     var moreCards:some View{
@@ -89,7 +90,7 @@ struct NewsSectionMain: View {
     var body: some View {
         Group{
             if !self.data.isEmpty{
-                Container(heading: "News Highlights",ignoreSides: false) { w in
+                Container(heading: "News Highlights",ignoreSides: true) { w in
                     self.autoTimedCards(w: w)
                     self.slenderCards(w: w)
                 }

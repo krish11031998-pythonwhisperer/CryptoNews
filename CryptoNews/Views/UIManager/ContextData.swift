@@ -41,7 +41,7 @@ enum LoginState{
 
 class ContextData:ObservableObject{
     @Published var showTab:Bool = true
-    @Published private var _tab:Tabs = .profile
+    @Published private var _tab:Tabs = .home
     @Published var _addButtonPressed:Bool = false
     @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedLink:URL? = nil
@@ -156,10 +156,12 @@ extension ContextData{
         set{
             setWithAnimation {
                 self._selectedCurrency = newValue
-                self.showTab = newValue != nil ? false : true
-                if newValue == nil && self.tab == .none{
-                    self.tab = self.prev_tab
-                    print("(DEBUG) Changing the tab to prev_tab")
+                if !self.showPortfolio{
+                    self.showTab = newValue != nil ? false : true
+                    if newValue == nil && self.tab == .none{
+                        self.tab = self.prev_tab
+                        print("(DEBUG) Changing the tab to prev_tab")
+                    }
                 }
             }
             DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)){

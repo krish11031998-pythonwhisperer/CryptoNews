@@ -41,7 +41,8 @@ struct TransactionDetailsView: View {
 
     var body: some View {
         self.SummaryView
-        self.SummaryDetailView
+//        self.SummaryDetailView
+        self.CryptoSummaryView
         self.TxnTypesView
         self.transactionList
         TabButton(width: width, height: 50, title: "Add Txn", textColor: .white) {
@@ -97,15 +98,21 @@ extension TransactionDetailsView{
     }
     
     
-    
-    var SummaryDetailView:some View{
-        HStack(alignment: .center, spacing: 15){
-            MainSubHeading(heading: "Profit", subHeading: self.profit.ToMoney(), headingSize: 15, subHeadingSize: 18, headColor: .white, subHeadColor: self.profit > 0 ? .green : .red, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,spacing: 15, titleLine: true, alignment: .leading)
-            Spacer()
-            MainSubHeading(heading: "Value(Bought)", subHeading: self.totalBoughtValue.ToMoney(), headingSize: 15, subHeadingSize: 18, headColor: .white, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,spacing: 15, titleLine: true, alignment: .leading)
-            Spacer()
-            MainSubHeading(heading: "Value(Now)", subHeading: self.currentValue.ToMoney(), headingSize: 15, subHeadingSize: 18, headColor: .white, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,spacing: 15, titleLine: true, alignment: .leading)
-        }.padding(20).basicCard()
+    var CryptoSummaryView:some View{
+        let keyValue:[String:Float] = ["Invested":self.totalBoughtValue,"Now":self.currentValue,"Profit":self.profit]
+        return Container(width: self.width) { _ in
+            ForEach(keyValue.keys.sorted(),id:\.self) { key in
+                if let value = keyValue[key]{
+                    MoneyTextView(value: value,size: 20,coloredText: key == "Profit")
+                        .makeAdjacentView(position: .top) {
+                            MainText(content: key, fontSize: 17.5, color: .white, fontWeight: .medium)
+                                .maskView {
+                                    Color.mainBGColor
+                                }
+                        }
+                }
+            }
+        }.basicCard()
     }
     
     var TxnTypesView:some View{

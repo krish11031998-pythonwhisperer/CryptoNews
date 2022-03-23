@@ -30,6 +30,8 @@ struct HomePage: View {
             NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
                 .animatedAppearance()
             self.pollView
+            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
+                .animatedAppearance()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

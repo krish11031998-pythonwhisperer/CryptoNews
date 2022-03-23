@@ -83,6 +83,8 @@
 		EF33D7B127E9B92C007B9F9F /* MaskModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF33D7B027E9B92C007B9F9F /* MaskModifier.swift */; };
 		EF33D7B327E9C190007B9F9F /* TextAdjacentButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF33D7B227E9C190007B9F9F /* TextAdjacentButton.swift */; };
 		EF33D7B527E9C9D4007B9F9F /* TextModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF33D7B427E9C9D4007B9F9F /* TextModifier.swift */; };
+		EF33D7B727EA2870007B9F9F /* PositionalModifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF33D7B627EA2870007B9F9F /* PositionalModifier.swift */; };
+		EF33D7B927EA2C1B007B9F9F /* MoneyTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF33D7B827EA2C1B007B9F9F /* MoneyTextView.swift */; };
 		EF42CCA427863D0B00DE27E1 /* PortfolioMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCA327863D0B00DE27E1 /* PortfolioMain.swift */; };
 		EF42CCA627863DF500DE27E1 /* PortfolioAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCA527863DF500DE27E1 /* PortfolioAsset.swift */; };
 		EF42CCAC2787381E00DE27E1 /* CryptoPostCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCAB2787381E00DE27E1 /* CryptoPostCardView.swift */; };
@@ -309,6 +311,8 @@
 		EF33D7B027E9B92C007B9F9F /* MaskModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaskModifier.swift; sourceTree = "<group>"; };
 		EF33D7B227E9C190007B9F9F /* TextAdjacentButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextAdjacentButton.swift; sourceTree = "<group>"; };
 		EF33D7B427E9C9D4007B9F9F /* TextModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextModifier.swift; sourceTree = "<group>"; };
+		EF33D7B627EA2870007B9F9F /* PositionalModifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PositionalModifier.swift; sourceTree = "<group>"; };
+		EF33D7B827EA2C1B007B9F9F /* MoneyTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoneyTextView.swift; sourceTree = "<group>"; };
 		EF42CCA327863D0B00DE27E1 /* PortfolioMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioMain.swift; sourceTree = "<group>"; };
 		EF42CCA527863DF500DE27E1 /* PortfolioAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioAsset.swift; sourceTree = "<group>"; };
 		EF42CCAB2787381E00DE27E1 /* CryptoPostCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoPostCardView.swift; sourceTree = "<group>"; };
@@ -1090,6 +1094,7 @@
 				EF7A7FB827DB57DF00B6081D /* BackgroundImageShadowView.swift */,
 				EF7A7FB927DB57DF00B6081D /* InfoGrid.swift */,
 				EF7A7FBA27DB57DF00B6081D /* TimerBlobs.swift */,
+				EF33D7B827EA2C1B007B9F9F /* MoneyTextView.swift */,
 			);
 			path = CustomComponents;
 			sourceTree = "<group>";
@@ -1123,6 +1128,7 @@
 				EF33D7B027E9B92C007B9F9F /* MaskModifier.swift */,
 				EF33D7B227E9C190007B9F9F /* TextAdjacentButton.swift */,
 				EF33D7B427E9C9D4007B9F9F /* TextModifier.swift */,
+				EF33D7B627EA2870007B9F9F /* PositionalModifier.swift */,
 			);
 			path = ViewModifiers;
 			sourceTree = "<group>";
@@ -1483,6 +1489,7 @@
 				EFC9A28E2771B122005CDEFC /* AllAssetView.swift in Sources */,
 				EF7A801427DB57DF00B6081D /* ShadowModifier.swift in Sources */,
 				BC305F0B26D820CD00826AB4 /* AssetAPI.swift in Sources */,
+				EF33D7B727EA2870007B9F9F /* PositionalModifier.swift in Sources */,
 				EF7A7FF527DB57DF00B6081D /* LazyScrollView.swift in Sources */,
 				BC06AE5227578850006F00DE /* CrybPostData.swift in Sources */,
 				BCE861BF2747F9DA00F0E8C2 /* NewsFeed.swift in Sources */,
@@ -1575,6 +1582,7 @@
 				EF7A7FDF27DB57DF00B6081D /* FloatHelper.swift in Sources */,
 				EF7A7FF027DB57DF00B6081D /* StylisticHeaderView.swift in Sources */,
 				BCBCACC926FFE1C800E76436 /* NewsCard.swift in Sources */,
+				EF33D7B927EA2C1B007B9F9F /* MoneyTextView.swift in Sources */,
 				EF6BA088278F8127000DA7D2 /* CrybseCoinsAPI.swift in Sources */,
 				EF7A801D27DB58F400B6081D /* SceneKitViewRepresentable.swift in Sources */,
 				EF7A802127DB58F400B6081D /* AssetThumbnailGenerator.swift in Sources */,
