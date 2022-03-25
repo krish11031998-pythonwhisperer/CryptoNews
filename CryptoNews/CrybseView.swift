@@ -127,8 +127,8 @@ extension CrybseView{
                 .zIndex(2)
         }
         
-        if self.context.showPortfolio{
-            PortfolioMain()
+        if let safeAssetOverTime = self.context.assetOverTime,self.context.showPortfolio{
+            PortfolioMain(assetOverTime:safeAssetOverTime)
                 .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(Color.AppBGColor)

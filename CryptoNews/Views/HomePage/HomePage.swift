@@ -25,10 +25,14 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             AllAssetView().asyncContainer()
                 .animatedAppearance()
+            if let assets = self.context.userAssets.trackedAssets{
+                SocialFeedSummaryView(assets: assets.compactMap({$0.Currency}), width: totalWidth)
+            }
             LatestRedditPost(currencies: self.currencies).asyncContainer()
                 .animatedAppearance()
             NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
                 .animatedAppearance()
+
             self.pollView
             QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
                 .animatedAppearance()

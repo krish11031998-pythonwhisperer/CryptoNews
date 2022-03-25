@@ -63,8 +63,9 @@ struct QuickAssetInfoCard:View{
                 self.context.selectedAsset = asset
             }
         }
-        .borderCard(color: Color.white.opacity(0.5) , clipping: .roundClipping)
         .frame(width: w, alignment: .center)
+        .borderCard(color: Color.white.opacity(0.5) , clipping: .roundClipping)
+        
     }
     
     var assetInfoView:some View{

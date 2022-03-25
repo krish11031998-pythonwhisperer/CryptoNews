@@ -12,6 +12,29 @@ class News:Codable{
     var data:[AssetNewsData]?
 }
 
+
+typealias CrybseSocialData = AssetNewsData
+
+class CrybseSocialHighlightResponse:Codable{
+    var data:[CrybseSocialData]?
+    var success:Bool
+    var err:String?
+    
+    static func parseHighlightsFromData(data:Data) -> Array<CrybseSocialData>?{
+        let decoder = JSONDecoder()
+        var socialData:Array<CrybseSocialData>? = nil
+        do{
+            let response = try decoder.decode(CrybseSocialHighlightResponse.self, from: data)
+            if let result = response.data, response.success{
+                socialData = result
+            }
+        }catch{
+            print("(DEBUG) Error while decoding Highlight Response : ",error.localizedDescription)
+        }
+        return socialData
+    }
+}
+
 class AssetNewsData:Identifiable,Codable{
     
     init(){}
@@ -67,6 +90,10 @@ class AssetNewsData:Identifiable,Codable{
         }else{
             return nil
         }
+    }
+    
+    var isTweet:Bool{
+        return self.type == "twitter"
     }
 }
 

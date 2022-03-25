@@ -9,16 +9,18 @@ import SwiftUI
 
 struct PortfolioMain: View {
     @EnvironmentObject var context:ContextData
+    var assetOverTime:CrybseAssetOverTime?
     var assets:[CrybseAsset]
     var width:CGFloat
-    init(assets:[CrybseAsset] = [],width:CGFloat = totalWidth){
+    init(assetOverTime:CrybseAssetOverTime? = nil,assets:[CrybseAsset] = [],width:CGFloat = totalWidth){
+        self.assetOverTime = assetOverTime
         self.assets = assets
         self.width = width
     }
         
     var body: some View {
         StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
-            PortfolioSummary(width: size.width, height: size.height, showAsContainer: false)
+            PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
         }, innerView: {
             Container(ignoreSides: true) { w in
                 self.portfoliocards(w)

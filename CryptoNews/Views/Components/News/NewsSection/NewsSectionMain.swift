@@ -70,7 +70,7 @@ struct NewsSectionMain: View {
         Container(width:width,ignoreSides: false,orientation: .horizontal){ w in
             ForEach(Array(self.data[(self.data.count - 2)...].enumerated()),id:\.offset){ _data in
                 let data = _data.element
-                NewsCard(news: data, size: .init(width: w * 0.5 - 5, height: self.cardHeight * 0.75))
+                NewsCard(news: data, size: .init(width: w * 0.5, height: self.cardHeight * 0.75))
                     .buttonify {
                         self.onTapHandler(data: data)
                     }

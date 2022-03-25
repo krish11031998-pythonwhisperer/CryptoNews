@@ -11,6 +11,22 @@ class CrybseVideoResponse:Codable{
     var data:Array<CrybseVideoData>?
     var err:String?
     var success:Bool
+    
+    static func parseVideoDataFromData(data:Data) -> Array<CrybseVideoData>?{
+        let decoder = JSONDecoder()
+        var videos:Array<CrybseVideoData>?
+        
+        do{
+            let response = try decoder.decode(CrybseVideoResponse.self, from: data)
+            if let safeVideos = response.data, response.success{
+                videos = safeVideos
+            }
+            
+        }catch{
+            print("(DEBUG) Error while trying to parse the CrybseVideoResponse : ",error.localizedDescription)
+        }
+        return videos
+    }
 }
 
 class CrybseVideoAPI:CrybseAPI{

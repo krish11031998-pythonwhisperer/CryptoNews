@@ -111,9 +111,9 @@ extension ContextData{
         }
     }
     
-    var assetOverTime:CrybseAssetOverTime{
+    var assetOverTime:CrybseAssetOverTime?{
         get{
-            return self._assetOverTime ?? .init()
+            return self._assetOverTime
         }
         
         set{

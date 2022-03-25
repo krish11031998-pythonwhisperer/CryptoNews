@@ -8,11 +8,124 @@
 import SwiftUI
 import Combine
 
+class CarouselNode{
+    var data:Any? = nil
+    var next:CarouselNode? = nil
+    var prev:CarouselNode? = nil
+    
+    init(data:Any? = nil,next:CarouselNode? = nil,prev:CarouselNode? = nil){
+        self.data = data
+        self.next = next
+        self.prev = prev
+    }
+    
+    func addNextNode(node:CarouselNode){
+        if self.next != nil{
+            self.next = node
+        }
+    }
+    
+    func addPrevNode(node:CarouselNode){
+        if self.prev != nil{
+            self.prev = node
+        }
+    }
+}
+
+class CarouselNodeList{
+    var head:CarouselNode? = nil
+    var cyclic:Bool
+    var count:Int = 0
+    
+    init(head:CarouselNode? = nil,data:[Any]? = nil,cyclic:Bool = false){
+        self.head = head
+        self.cyclic = cyclic
+        if let safeData = data{
+            self.createNodeList(data: safeData)
+            self.count = safeData.count
+        }
+        
+    }
+    
+    func createNodeList(data:[Any]){
+        for dataPoint in data{
+            self.insertNode(data: dataPoint)
+        }
+        if self.cyclic{
+            self.linkFirstAndLast()
+        }
+    }
+    
+    func insertNode(data:Any?,node _node:CarouselNode? = nil){
+        let computed_node:CarouselNode? = _node ?? data != nil ? .init(data: data) : nil
+        guard let node = computed_node else {return}
+        if self.head == nil{
+            self.head = node
+        }else{
+            var current = self.head
+            while current?.next != nil{
+                current = current?.next
+            }
+            current?.next = node
+        }
+    }
+    
+    func linkFirstAndLast(){
+        var current = self.head
+        while current?.next != nil{
+            current = current?.next
+            print(current?.data)
+        }
+        current?.next = self.head
+        print("Linked current : current.data : \(current?.data) -> current.next : \(current?.next?.data)")
+    }
+    
+    func forwardNode(){
+        if self.head?.next != nil{
+            self.head = self.head?.next
+        }
+    }
+
+    
+    func findHeadWithIdx(idx:Int) -> CarouselNode?{
+        var current = self.head
+        var count:Int = 0
+        while count != idx && (self.cyclic || (!self.cyclic && current?.next != nil)){
+            current = current?.next
+            count += 1
+        }
+        return current
+    }
+    
+    func getList(fromDataPoint idx:Int? = nil) -> [Any]{
+        var count = 0
+        var current:CarouselNode?
+        var listData:[Any] = []
+        
+        if let safeIdx = idx{
+            current = self.findHeadWithIdx(idx: self.count + safeIdx - (self.count/2))
+        }else{
+            current = self.head
+        }
+        
+        while count < self.count{
+            if let safeData = current?.data{
+                listData.append(safeData)
+            }
+            current = current?.next
+            count += 1
+        }
+        
+        return listData
+        
+    }
+}
+
+
 public struct SlideZoomInOutView<T:View>: View {
     @State var time:Int = 0
     @StateObject var SP:swipeParams
     @State var reset:Bool = false
-    
     @ViewBuilder var viewGen:(Any,CGSize) -> T
     var onTap:((Int) -> Void)?
     var data:[Any]
@@ -42,6 +155,10 @@ public struct SlideZoomInOutView<T:View>: View {
         let scale = midX < thres || midX > (1 - thres) ? 1 - 0.2 * CGFloat(perc) : 1
         return scale
     }
+    
+//    var data:[Any]{
+//        return self.carouselList.getList(fromDataPoint: self.SP.swiped)
+//    }
 
     @ViewBuilder func Card(data:Any,size _size:CGSize) -> some View{
         let view = GeometryReader{g in
@@ -150,8 +267,9 @@ public struct SlideZoomInOutView<T:View>: View {
             ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
                 let data = _data.element
                 let idx = _data.offset
+                let idxOff = self.SP.swiped
                 
-                if (idx >= self.SP.swiped - 1 && idx <= self.SP.swiped + 1) || self.reset{
+                if (idx >=  idxOff - 1 && idx <= idxOff + 1) || self.reset{
                     self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
                 }
                 
@@ -166,6 +284,7 @@ public struct SlideZoomInOutView<T:View>: View {
             self.mainBodywithoutHeaders
         }
     }
+
     
     public var body: some View {
         self.mainBody
@@ -182,13 +301,13 @@ public struct SlideZoomInOutView<T:View>: View {
 }
 
 
-//struct FancyScrollViewPreview:PreviewProvider{
-//
-//    static var previews: some View{
-//        FancyHScroll(data: Array(0...10), size: CardSize.slender,scrollable: true) { idx in
-//            Container(heading: "\(idx)", width: CardSize.slender.width, ignoreSides: false, horizontalPadding: 10, verticalPadding: 10) { _ in
-//                MainText(content: "\(idx)", fontSize: 15)
-//            }.basicCard(size: CardSize.slender)
-//        }
-//    }
-//}
+struct FancyScrollViewPreview:PreviewProvider{
+
+    static var previews: some View{
+        SlideZoomInOutView(data: Array(0...10), size: CardSize.slender,scrollable: true) { idx,size in
+            Container(heading: "\(idx)", width: CardSize.slender.width, ignoreSides: false, horizontalPadding: 10, verticalPadding: 10) { _ in
+                MainText(content: "\(idx)", fontSize: 15)
+            }.basicCard(size: CardSize.slender)
+        }
+    }
+}

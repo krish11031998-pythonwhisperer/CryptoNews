@@ -15,32 +15,35 @@ struct PortfolioSummary: View {
     var height:CGFloat
     var showAsContainer:Bool
     var assetCancellable:AnyCancellable? = nil
+    @State var assetOverTime:CrybseAssetOverTime? = nil
     @State var choosenPrice:Int = -1
     
-    init(width:CGFloat = totalWidth - 20,height:CGFloat = totalHeight * 0.2,showAsContainer:Bool = true){
+    init(assetOverTime:CrybseAssetOverTime? = nil,width:CGFloat = totalWidth - 20,height:CGFloat = totalHeight * 0.2,showAsContainer:Bool = true){
         self.width = width
         self.height = height
         self.showAsContainer = showAsContainer
+        self._assetOverTime = .init(wrappedValue: assetOverTime)
     }
     
     var assets:CrybseAssets{
         return self.context.userAssets
     }
     
-    
-    var assetOverTime:CrybseAssetOverTime?{
-        return self.aotAPI.assetOverTime
-    }
-    
     func onAppear(){
         guard let uid = self.context.user.user?.uid else {return}
-        if self.aotAPI.assetOverTime == nil{
-            self.aotAPI.getPortfolioOverTime(uid: uid)
+        if self.assetOverTime == nil{
+            CrybseAssetOverTimeManager.shared.getPortfolioOverTime(uid: uid) { data in
+                if let safeAssetOverTime = CrybseAssetOverTime.parseCrybseAssetOverTime(data: data){
+                    setWithAnimation {
+                        self.assetOverTime = safeAssetOverTime
+                    }
+                }
+            }
         }
     }
     
     var header:some View{
-        HStack(alignment: .center, spacing: 10) {
+        Container(width:self.width,verticalPadding: 0,orientation: .horizontal, aligment: .center, spacing: 10) { w in
             if let currentValue = self.assetOverTime?.currentPortfolioValue{
                 MainSubHeading(heading: "Current Portfolio Value", subHeading:currentValue.ToMoney(), headingSize: 15, subHeadingSize: 25, headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 10, alignment: .leading)
             }
@@ -48,7 +51,6 @@ struct PortfolioSummary: View {
             if let change = self.assetOverTime?.change{
                 PercentChangeView(value: (change * 100), type: "large")
             }
-            
         }
     }
         
@@ -95,38 +97,47 @@ struct PortfolioSummary: View {
         }
     }
     
+    @ViewBuilder var portfolioHoldingProfitSummary:some View{
+        if self.showAsContainer{
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(alignment: .center, spacing: 10) {
+                    ForEach(Array(self.TrackedAssets.enumerated()),id:\.offset){ _asset in
+                        let asset = _asset.element
+                        HStack(alignment: .center, spacing: 10) {
+                            CurrencySymbolView(currency: asset.Currency, width: 15  )
+                            MainSubHeading(heading: asset.Currency, subHeading: asset.Profit.ToMoney(), headingSize: 15, subHeadingSize: 15,headColor: .white, subHeadColor: asset.Profit == 0 ? .white : asset.Profit > 0 ? .green : .red, orientation: .horizontal, headingWeight: .medium, bodyWeight: .semibold, spacing: 15, alignment: .center)
+                        }
+                        .padding(7.5)
+                        .basicCard()
+                        .borderCard(color: Color.white, clipping: .roundClipping)
+                    }
+                }.padding(.horizontal)
+                    .padding(.vertical,10)
+            }
+            MainText(content: "View Portfolio", fontSize: 10, color: .white, fontWeight: .medium)
+                .padding(7.5)
+                .basicCard()
+                .borderCard(color: .white, clipping: .roundClipping)
+                .padding(.horizontal)
+                .padding(.vertical,5)
+                .buttonify {
+                    if self.context.assetOverTime != self.assetOverTime{
+                        self.context.assetOverTime = self.assetOverTime
+                    }
+                    if !self.context.showPortfolio{
+                        self.context.showPortfolio.toggle()
+                    }
+                }
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+
+    }
+    
     @ViewBuilder func portfolioValueOverTimeSummaryDetails(w:CGFloat) -> some View{
         let chartSize:CGSize = .init(width: w, height: totalHeight * 0.175)
         if let portfolioValueTimeline = self.assetOverTime?.portfolioTimeline{            
             CurveChart(data: portfolioValueTimeline, choosen: self.$choosenPrice, interactions: true, size: chartSize,bg: .clear, lineColor: nil, chartShade: true)
-            if self.showAsContainer{
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(alignment: .center, spacing: 10) {
-                        ForEach(Array(self.TrackedAssets.enumerated()),id:\.offset){ _asset in
-                            let asset = _asset.element
-                            HStack(alignment: .center, spacing: 10) {
-                                CurrencySymbolView(currency: asset.Currency, width: 15  )
-                                MainSubHeading(heading: asset.Currency, subHeading: asset.Profit.ToMoney(), headingSize: 15, subHeadingSize: 15,headColor: .white, subHeadColor: asset.Profit == 0 ? .white : asset.Profit > 0 ? .green : .red, orientation: .horizontal, headingWeight: .medium, bodyWeight: .semibold, spacing: 15, alignment: .center)
-                            }
-                            .padding(7.5)
-                            .basicCard()
-                            .borderCard(color: Color.white, clipping: .roundClipping)
-                        }
-                    }
-                    .padding(.horizontal,5)
-                    .padding(.vertical)
-                }
-                MainText(content: "View Portfolio", fontSize: 10, color: .white, fontWeight: .medium)
-                    .padding(7.5)
-                    .basicCard()
-                    .borderCard(color: .white, clipping: .roundClipping)
-                    .buttonify {
-                        if !self.context.showPortfolio{
-                            self.context.showPortfolio.toggle()
-                        }
-                    }
-
-            }
         }else{
             Color.clear.frame(width: 0, height: 0, alignment: .center)
         }
@@ -135,7 +146,11 @@ struct PortfolioSummary: View {
     @ViewBuilder func mainBody(w:CGFloat) -> some View{
         if let _ = self.assetOverTime{
             self.header
-            self.portfolioValueOverTimeSummaryDetails(w: w)
+            Container(width: w,verticalPadding: 0) { inner_w in
+                self.portfolioValueOverTimeSummaryDetails(w: inner_w)
+            }
+            self.portfolioHoldingProfitSummary
+            
         }else{
             ProgressView()
                 .frame(width: w, height: totalHeight * 0.2, alignment: .center)
@@ -143,9 +158,9 @@ struct PortfolioSummary: View {
     }
     
     var body: some View {
-        Container(heading: self.showAsContainer ? "Portfolio" : nil, headingColor: .white, headingDivider: true, width: self.width, verticalPadding:15) { w in
+        Container(heading: self.showAsContainer ? "Portfolio" : nil, headingColor: .white, headingDivider: true, width: self.width,ignoreSides: true, verticalPadding:15) { w in
             self.mainBody(w: w)
-        }
+        }.padding(.top,15)
         .basicCard(background: self.showAsContainer ? BlurView.thinDarkBlur.anyViewWrapper() : Color.clear.anyViewWrapper())
         .onAppear(perform: self.onAppear)
 
