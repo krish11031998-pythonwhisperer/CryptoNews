@@ -21,15 +21,17 @@ enum PostCardBG{
 
 
 struct PostCard: View {
+    
     @EnvironmentObject var context:ContextData
     var cardType:PostCardType
-    var data:AssetNewsData
+    var data:CrybseTweet
     var size:CGSize
     var font_color:Color
     var const_size:Bool
     var isButton:Bool
     var bg:PostCardBG
-    init(cardType:PostCardType,data:AssetNewsData,size:CGSize,bg:PostCardBG = .dark,font_color:Color? = nil,const_size:Bool = false,isButton:Bool = true){
+    
+    init(cardType:PostCardType,data:CrybseTweet,size:CGSize,bg:PostCardBG = .dark,font_color:Color? = nil,const_size:Bool = false,isButton:Bool = true){
         self.cardType = cardType
         self.data = data
         self.size = size
@@ -50,9 +52,9 @@ struct PostCard: View {
     }
     
     @ViewBuilder var card:some View{
-        Container(width:self.size.width,verticalPadding: 15){ w in
+        Container(width:self.size.width,verticalPadding: 15,spacing:10){ w in
             self.Header(width:w)
-            self.Body(w: w)
+            self.Body(w: w,h:self.height * 0.6)
             if self.const_size{
                 Spacer(minLength: 0)
             }
@@ -63,14 +65,14 @@ struct PostCard: View {
 
     
     var body: some View {
-        if self.data.body != nil || self.data.title != nil{
+        if self.data.text != nil{
             if self.isButton{
                 self.card
-                .buttonify {
-                    if let urlStr = self.data.url, let url = URL(string:urlStr){
-                        self.context.selectedLink = url
+                    .buttonify {
+                        if self.context.selectedTweet != self.data{
+                            self.context.selectedTweet = self.data
+                        }
                     }
-                }
             }else{
                 self.card
             }
@@ -83,55 +85,63 @@ struct PostCard: View {
 
 extension PostCard{
     
+    var height:CGFloat{
+        return self.size.height - 30
+    }
+    
     @ViewBuilder func Header(width w:CGFloat) -> some View{
-        HStack(alignment: .center, spacing: 15) {
-            ImageView(url: data.profile_image, width: 25, height: 25, contentMode: .fill, alignment: .center)
-                .clipContent(clipping: .circleClipping)
-            MainSubHeading(heading: "@\(data.twitter_screen_name ?? "Tweet")", subHeading: "\(Date(timeIntervalSince1970: .init(data.time ?? 0)).stringDate())", headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
-            Spacer()
-            if let currency = data.symbol{
-                MainText(content: currency, fontSize: 12,color: .white,fontWeight: .bold)
-                    .blobify(color: AnyView(BlurView.thinDarkBlur), clipping: .roundCornerMedium)
+        if let user = self.data.user{
+            HStack(alignment: .center, spacing: 15) {
+                ImageView(url: user.profile_image_url, width: 45, height: 45, contentMode: .fill, alignment: .center)
+                    .clipContent(clipping: .circleClipping)
+                MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:data.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
+                Spacer()
             }
-        }.frame(width: w, alignment: .topLeading)
+            .frame(width: w, alignment: .topLeading)
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+        
         
     }
 
     @ViewBuilder func Footer(width w:CGFloat) -> some View{
-        VStack(alignment: .center, spacing: 10){
+        VStack(alignment: .center, spacing: 5){
             Divider().frame(width: w,height:5, alignment: .center)
             HStack(alignment: .center, spacing: 10) {
-                SystemButton(b_name: "suit.heart", b_content: "\(data.likes ?? 0)", color: font_color, haveBG:false,bgcolor: font_color) {
+                SystemButton(b_name: "suit.heart", b_content: "\(data.Like)", color: font_color, haveBG:false,bgcolor: font_color) {
                     print("Pressed Like")
                 }
-                SystemButton(b_name: "arrow.2.squarepath", b_content: "\(data.shares ?? 0.0)", color: font_color, haveBG:false, bgcolor: font_color) {
+                SystemButton(b_name: "arrow.2.squarepath", b_content: "\(data.Retweet)", color: font_color, haveBG:false, bgcolor: font_color) {
                     print("Pressed Share")
                 }
                 Spacer()
-                if let sentiment = self.data.sentiment{
-                    let color = sentiment > 3 ? Color.green : sentiment < 3 ? Color.red : Color.gray
-                    let emoji = sentiment > 3 ? "😁" : sentiment < 3 ? "😓" : "😐"
-                    HStack(alignment: .center, spacing: 2.5) {
-                        MainText(content: "\(emoji) ", fontSize: 12,color: self.font_color)
-                        MainText(content: String(format: "%.1f", sentiment), fontSize: 12, color: .white,fontWeight: .semibold)
-                    }.padding(7.5)
-                        .padding(.horizontal,2.5)
-                        .background(color.overlay(BlurView(style: .systemThinMaterial)))
-                        .clipShape(Capsule())
-                    
-                }
+                self.sentimentView
             }
-            .frame(width: w, alignment: .leading)
         }
+        .frame(width: w, alignment: .leading)
+    }
+    
+    @ViewBuilder var sentimentView:some View{
+        let color = self.data.Sentiment > 3 ? Color.green : self.data.Sentiment < 3 ? Color.red : Color.gray
+        let emoji = self.data.Sentiment > 3 ? "😁" : self.data.Sentiment < 3 ? "😓" : "😐"
+        HStack(alignment: .center, spacing: 2.5) {
+            MainText(content: "\(emoji) ", fontSize: 12,color: self.font_color)
+            MainText(content: String(format: "%.1f", self.data.Sentiment), fontSize: 12, color: .white,fontWeight: .semibold)
+        }.padding(7.5)
+            .padding(.horizontal,2.5)
+            .background(color.overlay(BlurView(style: .systemThinMaterial)))
+            .clipShape(Capsule())
     }
     
     @ViewBuilder func Body(w:CGFloat,h:CGFloat = .zero) -> some View{
-        let (content,_) = (self.data.body ?? self.data.title ?? "No Text").containsURL()
-        let textView = MainText(content: content, fontSize: 14, color: self.font_color,fontWeight: .regular,style: .heading)
+//        let (content,_) = self.data.Text.containsURL()
+        let textView = MainText(content: self.data.Text, fontSize: 14, color: self.font_color,fontWeight: .regular,style: .heading)
             .multilineTextAlignment(.leading)
         if self.const_size{
             textView
                 .truncationMode(.tail)
+                .fixedSize(horizontal: false, vertical: true)
         }else{
             textView
         }

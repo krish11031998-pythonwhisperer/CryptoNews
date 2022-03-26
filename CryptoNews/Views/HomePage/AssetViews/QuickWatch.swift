@@ -34,12 +34,14 @@ struct QuickAssetInfoCard:View{
     var showValue:Bool
     var value:String? = nil
     var asset:CrybseAsset
+    var bg:AnyView? = nil
     var w: CGFloat
     
-    init(asset:CrybseAsset,showValue:Bool = false,value:String? = nil,w:CGFloat){
+    init(asset:CrybseAsset,bg:AnyView? = nil,showValue:Bool = false,value:String? = nil,w:CGFloat){
         self.asset = asset
         self.w = w
         self.value = value
+        self.bg = bg
         self.showValue = showValue
     }
     
@@ -58,14 +60,13 @@ struct QuickAssetInfoCard:View{
                 PercentChangeView(value: asset.Change,type: "small")
             }
         }
-        .buttonify(type: .shadow){
+        .frame(width: w, alignment: .center)
+        .buttonify(type: .shadow,bg: self.bg){
             if self.context.selectedAsset != asset{
                 self.context.selectedAsset = asset
             }
         }
-        .frame(width: w, alignment: .center)
         .borderCard(color: Color.white.opacity(0.5) , clipping: .roundClipping)
-        
     }
     
     var assetInfoView:some View{
@@ -77,8 +78,6 @@ struct QuickAssetInfoCard:View{
                 CurveChart(data: sparkline,interactions: false, size: .init(width: inner_w, height: 75), bg: .clear, lineColor: chartColor)
             }
         }
-//        .background(Color(hex: self.asset.Color))
-//        .clipContent(clipping: .roundClipping)
     }
     
     var body: some View{
@@ -90,8 +89,9 @@ struct QuickAssetInfoCard:View{
     }
 }
 
-//struct QuickWatch_Previews: PreviewProvider {
-//    static var previews: some View {
-//        QuickWatch()
-//    }
-//}
+struct QuickWatch_Previews: PreviewProvider {
+    static var previews: some View {
+        QuickWatch(assets: [.init(currency: "AVAX")], width: totalWidth - 30)
+            .background(Color.black.ignoresSafeArea())
+    }
+}

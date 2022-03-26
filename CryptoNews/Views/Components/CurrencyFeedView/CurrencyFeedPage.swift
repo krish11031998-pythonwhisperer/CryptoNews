@@ -35,10 +35,11 @@ struct CurrencyFeedPage: View {
         if !self.data.isEmpty{
             LazyScrollView(data: self.data.map({$0 as Any}),embedScrollView: false) { data in
                 if let data = data as? AssetNewsData{
-                    if self.type == .feed{
-                        let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-                        PostCard(cardType: cardType, data: data, size: .init(width: width, height: totalHeight * 0.3), const_size: false)
-                    }else if self.type == .news{
+//                    if self.type == .feed{
+//                        let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
+//                        PostCard(cardType: cardType, data: data, size: .init(width: width, height: totalHeight * 0.3), const_size: false)
+//                    }
+                    if self.type == .news{
                         NewsStandCard(news: data)
                     }
                     

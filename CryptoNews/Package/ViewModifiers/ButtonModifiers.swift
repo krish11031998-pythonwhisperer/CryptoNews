@@ -37,11 +37,13 @@ public struct SpringButton:ViewModifier{
 
 public struct ShadowSpringButton:ViewModifier{
     var withShadow:Bool
+    var bg:AnyView? = nil
     var handleTap:(() -> Void)
     
-    public init(withShadow:Bool = true,handler:@escaping () -> Void){
+    public init(withShadow:Bool = true,bg:AnyView? = nil,handler:@escaping () -> Void){
         self.withShadow = withShadow
         self.handleTap = handler
+        self.bg = bg
     }
     
     public func body(content: Content) -> some View {
@@ -53,7 +55,7 @@ public struct ShadowSpringButton:ViewModifier{
             content
                 .contentShape(Rectangle())
         }
-        .shadowButton(withShadow: self.withShadow)
+        .shadowButton(withShadow: self.withShadow,bg: self.bg)
 
     }
 }
@@ -87,9 +89,11 @@ public struct SpringButtonModifier:ButtonStyle{
 
 public struct ShadowButtonModifier:ButtonStyle{
     var withShadow:Bool
+    var bg:AnyView? = nil
     
-    public init(withShadow:Bool = true){
+    public init(withShadow:Bool = true,bg:AnyView? = nil){
         self.withShadow = withShadow
+        self.bg = bg
     }
     
     var color:Color{
@@ -102,19 +106,21 @@ public struct ShadowButtonModifier:ButtonStyle{
                 .scaleEffect(isPressed ? 1.05 : 1)
 //            Color.white
         }else{
-            Color.clear
-                .scaleEffect(isPressed ? 1.05 : 1)
+            if let bg = self.bg{
+                bg.scaleEffect(isPressed ? 1.05 : 1)
+            }else{
+                Color.clear.scaleEffect(isPressed ? 1.05 : 1)
+            }
         }
     }
     
     public func makeBody(configuration: Configuration) -> some View {
         let isPressed = configuration.isPressed
         configuration.label
-            .padding(5)
             .scaleEffect(isPressed ? 0.95 : 1)
             .opacity(isPressed ? 0.95 : 1)
             .background(self.background(isPressed: isPressed))
-            .clipContent(clipping: .roundCornerMedium)
+            .clipContent(clipping: .roundClipping)
             .shadow(color: self.color, radius: isPressed ? 1.5 : 0, x: 0, y: 0)
             
     }
@@ -181,15 +187,15 @@ public extension View{
         self.buttonStyle(SpringButtonModifier(withBG: withBG,clipping: clipping))
     }
     
-    func shadowButton(withShadow:Bool) -> some View{
-        self.buttonStyle(ShadowButtonModifier(withShadow: withShadow))
+    func shadowButton(withShadow:Bool,bg:AnyView? = nil) -> some View{
+        self.buttonStyle(ShadowButtonModifier(withShadow: withShadow,bg: bg))
     }
     
-    @ViewBuilder func buttonify(type:ButtonType = .spring,withBG:Bool = false,clipping:Clipping = .clipped,handler:@escaping () -> Void) -> some View{
+    @ViewBuilder func buttonify(type:ButtonType = .spring,bg:AnyView? = nil,withBG:Bool = false,clipping:Clipping = .clipped,handler:@escaping () -> Void) -> some View{
         if type == .spring{
             self.modifier(SpringButton(withBG: withBG,clipping: clipping,handleTap: handler))
         }else if type == .shadow{
-            self.modifier(ShadowSpringButton(withShadow: withBG, handler: handler))
+            self.modifier(ShadowSpringButton(withShadow: withBG,bg: bg, handler: handler))
         }
         
     }

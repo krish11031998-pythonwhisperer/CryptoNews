@@ -18,24 +18,25 @@ struct HomePage: View {
         return self.context.user.user?.watching ?? ["BTC","LTC","ETH","XRP"]
     }
     
+    var watchedAsset:[String]{
+        return self.context.userAssets.trackedAssets.compactMap({$0.Currency})
+    }
+    
     
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
-            
             Spacer().frame(height: 50)
-            AllAssetView().asyncContainer()
+//            AllAssetView().asyncContainer()
+//                .animatedAppearance()
+            self.SocialFeedSummary
                 .animatedAppearance()
-            if let assets = self.context.userAssets.trackedAssets{
-                SocialFeedSummaryView(assets: assets.compactMap({$0.Currency}), width: totalWidth)
-            }
-            LatestRedditPost(currencies: self.currencies).asyncContainer()
-                .animatedAppearance()
-            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
-                .animatedAppearance()
-
-            self.pollView
-            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
-                .animatedAppearance()
+//            LatestRedditPost(currencies: self.currencies).asyncContainer()
+//                .animatedAppearance()
+//            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
+//                .animatedAppearance()
+//            self.pollView
+//            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
+//                .animatedAppearance()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
@@ -53,6 +54,14 @@ extension HomePage{
     
     var pollData:Array<CrybsePollData>{
         Array(1...5).compactMap({CrybsePollData(question: "Question \($0)")})
+    }
+    
+    @ViewBuilder var SocialFeedSummary:some View{
+        if !self.watchedAsset.isEmpty{
+            SocialFeedSummaryView(assets: self.watchedAsset, width: totalWidth)
+        }else{
+            SocialFeedSummaryView(width: totalWidth)
+        }
     }
     
     @ViewBuilder var pollView:some View{

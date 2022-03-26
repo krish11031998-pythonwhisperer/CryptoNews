@@ -85,9 +85,6 @@ extension PortfolioMain{
                 self.assetInvestmentSummary(heading:"Least Profitable Asset",asset: leastProfitableAsset,inner_w: inner_w)
                     .padding(.vertical,5)
             }
-            
-//            if let
-//
         }
         .animatedAppearance()
     }
@@ -107,8 +104,7 @@ extension PortfolioMain{
                 .padding(.vertical)
             ForEach(Array(self.trackedAssets.enumerated()),id:\.offset) { _trackedAsset in
                 let asset = _trackedAsset.element
-                QuickAssetInfoCard(asset: asset,showValue: true,value: (asset.Value * 100/self.assetColorValuePairs.values.reduce(0, {$0 + $1})).ToDecimals() + "%", w: w)
-                    .background(Color(hex: asset.Color).clipContent(clipping: .roundClipping))
+                QuickAssetInfoCard(asset: asset,bg: Color(hex: asset.Color).anyViewWrapper(),showValue: true,value: (asset.Value * 100/self.assetColorValuePairs.values.reduce(0, {$0 + $1})).ToDecimals() + "%", w: w)
             }
         }.animatedAppearance()
     }

@@ -46,6 +46,7 @@ class ContextData:ObservableObject{
     @Published private var _selectedCurrency:CrybseAsset? = nil
     @Published private var _selectedLink:URL? = nil
     @Published private var _selectedPost:CrybPostData? = nil
+    @Published private var _selectedTweet:CrybseTweet? = nil
     @Published private var _selectedVideo:CrybseVideoData? = nil
     @Published private var _selectedSymbol:String? = nil
     @Published private var _showPortfolio:Bool = false
@@ -265,6 +266,18 @@ extension ContextData{
         set{
             setWithAnimation {
                 self._user = newValue
+            }
+        }
+    }
+    
+    var selectedTweet:CrybseTweet?{
+        get{
+            return self._selectedTweet
+        }
+        
+        set{
+            setWithAnimation {
+                self._selectedTweet = newValue
             }
         }
     }
