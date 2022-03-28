@@ -26,17 +26,17 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-//            AllAssetView().asyncContainer()
-//                .animatedAppearance()
-//            self.SocialFeedSummary
-//                .animatedAppearance()
+            AllAssetView().asyncContainer()
+                .animatedAppearance()
+            self.SocialFeedSummary
+                .animatedAppearance()
             LatestRedditPost(width:totalWidth,height:totalHeight * 0.3,currencies: self.currencies).asyncContainer()
                 .animatedAppearance()
-//            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
-//                .animatedAppearance()
-//            self.pollView
-//            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
-//                .animatedAppearance()
+            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
+                .animatedAppearance()
+            self.pollView
+            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
+                .animatedAppearance()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
