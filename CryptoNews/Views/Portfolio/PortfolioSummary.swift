@@ -128,6 +128,8 @@ struct PortfolioSummary: View {
                         self.context.showPortfolio.toggle()
                     }
                 }
+        }else if self.aotAPI.loading{
+            ProgressView()
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
@@ -151,9 +153,11 @@ struct PortfolioSummary: View {
             }
             self.portfolioHoldingProfitSummary
             
-        }else{
+        }else if self.aotAPI.loading{
             ProgressView()
                 .frame(width: w, height: totalHeight * 0.2, alignment: .center)
+        }else{
+            MainText(content: "No Portfolio Holding", fontSize: 15, color: .white, fontWeight: .medium)
         }
     }
     

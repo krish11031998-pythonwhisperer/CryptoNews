@@ -8,51 +8,27 @@
 import Foundation
 
 enum CrybseTwitterEndpoints:String{
-    case tweetDetails = "twitter/tweet"
-    case tweetsFromUser = "twitter/tweets/user"
-    case tweetsSearch = "twitter/search"
+    case tweetDetails = "tweet"
+    case tweetsFromUser = "tweets/user"
+    case tweetsSearch = "search"
 }
 
-class CrybseTwitterAPI:CrybseAPI{
+class CrybseTwitterAPI:CrybseAssetSocialsAPI{
     
-    @Published var tweets:CrybseTweets? = nil
-    
-    var endpoint:CrybseTwitterEndpoints
-    var queries:[URLQueryItem]?
-    
-    init(endpoint:CrybseTwitterEndpoints,queries:[URLQueryItem]? = nil){
-        self.endpoint = endpoint
-        self.queries = queries
+    init(endpoint:CrybseTwitterEndpoints = .tweetDetails,queries:[String:Any]? = nil){
+        super.init(type: .twitter, endpoint: endpoint.rawValue, queryItems: queries)
     }
     
+    static var shared:CrybseTwitterAPI = .init()
     
-    var request:URLRequest?{
-        self.requestBuilder(path: self.endpoint.rawValue, queries: self.queries)
+    var tweets:[CrybseTweet]?{
+        self.data as? [CrybseTweet]
     }
     
-    override func parseData(url: URL, data: Data) {
-        if let tweets = CrybseTweets.parseTweetsFromData(data: data) {
-            setWithAnimation {
-                self.tweets = tweets
-            }
-        }
-        
-        if self.loading{
-            setWithAnimation {
-                self.loading.toggle()
-            }
-        }
-    }
-    
-    func getTweets(endpoint:CrybseTwitterEndpoints? = nil,queries:[URLQueryItem]? = nil,completion:((Data) -> Void)? = nil){
-        var request:URLRequest? = self.request
-        if let safeEndPoint = endpoint, let safeQueries = queries {
-            request = self.requestBuilder(path: safeEndPoint.rawValue, queries: safeQueries)
-        }
-        print("(DEBUG) Twitter URL : ",request?.url?.absoluteString)
-        self.getData(request: request, completion: completion)
-        
+    func getTweets(endpoint:CrybseTwitterEndpoints? = nil,queryItems:[String:Any]? = nil,completion:((Data?) -> Void)? = nil){
+        self.getAssetSocialData(type: .twitter, endpoint: endpoint?.rawValue, queryItems: queryItems, completion: completion)
         
     }
     
 }
+

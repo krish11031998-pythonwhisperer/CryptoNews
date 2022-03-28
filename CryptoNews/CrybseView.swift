@@ -135,6 +135,15 @@ extension CrybseView{
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
         }
+        
+        if let safeTweet = self.context.selectedTweet{
+            TweetDetailMainView(tweet: safeTweet)
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(Color.AppBGColor)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
     
     }
     

@@ -12,7 +12,6 @@
 		B604296EF35B5328FC78F538 /* Pods_CryptoNews.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E420CC55E1502BDA8A86DBFC /* Pods_CryptoNews.framework */; };
 		BC01BA0626F60AF900557EB7 /* MarkersView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC01BA0526F60AF900557EB7 /* MarkersView.swift */; };
 		BC06AE5227578850006F00DE /* CrybPostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC06AE5127578850006F00DE /* CrybPostData.swift */; };
-		BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */; };
 		BC1C614B2719CE68006AD9C8 /* AddTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC1C614A2719CE68006AD9C8 /* AddTransactionView.swift */; };
 		BC2267A626DA5C830058315E /* VideoCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC2267A526DA5C830058315E /* VideoCard.swift */; };
 		BC27E4EA2725FCA800E47CA2 /* CurrencyFeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC27E4E92725FCA800E47CA2 /* CurrencyFeedView.swift */; };
@@ -38,7 +37,6 @@
 		BCB5BE0427514A1F00EA0394 /* NotificationModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5BE0327514A1F00EA0394 /* NotificationModel.swift */; };
 		BCB5BE062751F3FD00EA0394 /* NotificationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB5BE052751F3FD00EA0394 /* NotificationView.swift */; };
 		BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */; };
-		BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7835326C181C0009D5822 /* LatestTweets.swift */; };
 		BCB7836426C66CE9009D5822 /* PostCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCB7836326C66CE9009D5822 /* PostCard.swift */; };
 		BCBBD14D2756CC7F002CBECE /* CrybPostCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBBD14C2756CC7F002CBECE /* CrybPostCard.swift */; };
 		BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCBC1D7526BE7D7400B87E5C /* CryptoNewsApp.swift */; };
@@ -105,6 +103,8 @@
 		EF4FE23A27ADCD8700296BD5 /* CrybsePollData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4FE23927ADCD8700296BD5 /* CrybsePollData.swift */; };
 		EF4FE23C27AE6E4800296BD5 /* CrybsePostMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4FE23B27AE6E4800296BD5 /* CrybsePostMainView.swift */; };
 		EF4FF91E27BE5BF8001E2BD2 /* PortfolioSummary.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF4FF91D27BE5BF8001E2BD2 /* PortfolioSummary.swift */; };
+		EF51131327F047E70074812E /* TweetDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF51131227F047E70074812E /* TweetDetailView.swift */; };
+		EF51131527F064450074812E /* CustomWrappedTextHStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF51131427F064450074812E /* CustomWrappedTextHStack.swift */; };
 		EF5F456F278E6325008EC5EB /* CrybsePostData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F456D278E6325008EC5EB /* CrybsePostData.swift */; };
 		EF5F4570278E6325008EC5EB /* CrybsePostAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF5F456E278E6325008EC5EB /* CrybsePostAPI.swift */; };
 		EF64A3C727AD3F9C00628487 /* DynamicHeightContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF64A3C627AD3F9C00628487 /* DynamicHeightContainer.swift */; };
@@ -233,7 +233,6 @@
 		7BF8A61F81D5A4EA47865B57 /* Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig"; path = "Target Support Files/Pods-CryptoNews-CryptoNewsUITests/Pods-CryptoNews-CryptoNewsUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		BC01BA0526F60AF900557EB7 /* MarkersView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarkersView.swift; sourceTree = "<group>"; };
 		BC06AE5127578850006F00DE /* CrybPostData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybPostData.swift; sourceTree = "<group>"; };
-		BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfluentialTweets.swift; sourceTree = "<group>"; };
 		BC1C614A2719CE68006AD9C8 /* AddTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionView.swift; sourceTree = "<group>"; };
 		BC2267A526DA5C830058315E /* VideoCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoCard.swift; sourceTree = "<group>"; };
 		BC27E4E92725FCA800E47CA2 /* CurrencyFeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyFeedView.swift; sourceTree = "<group>"; };
@@ -259,7 +258,6 @@
 		BCB5BE0327514A1F00EA0394 /* NotificationModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationModel.swift; sourceTree = "<group>"; };
 		BCB5BE052751F3FD00EA0394 /* NotificationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationView.swift; sourceTree = "<group>"; };
 		BCB7835126C18111009D5822 /* AutoTimeCardsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AutoTimeCardsView.swift; sourceTree = "<group>"; };
-		BCB7835326C181C0009D5822 /* LatestTweets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestTweets.swift; sourceTree = "<group>"; };
 		BCB7836326C66CE9009D5822 /* PostCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PostCard.swift; sourceTree = "<group>"; };
 		BCBBD14C2756CC7F002CBECE /* CrybPostCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybPostCard.swift; sourceTree = "<group>"; };
 		BCBC1D7226BE7D7400B87E5C /* CryptoNews.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CryptoNews.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -337,6 +335,8 @@
 		EF4FE23927ADCD8700296BD5 /* CrybsePollData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePollData.swift; sourceTree = "<group>"; };
 		EF4FE23B27AE6E4800296BD5 /* CrybsePostMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePostMainView.swift; sourceTree = "<group>"; };
 		EF4FF91D27BE5BF8001E2BD2 /* PortfolioSummary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioSummary.swift; sourceTree = "<group>"; };
+		EF51131227F047E70074812E /* TweetDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweetDetailView.swift; sourceTree = "<group>"; };
+		EF51131427F064450074812E /* CustomWrappedTextHStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomWrappedTextHStack.swift; sourceTree = "<group>"; };
 		EF5F456D278E6325008EC5EB /* CrybsePostData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybsePostData.swift; sourceTree = "<group>"; };
 		EF5F456E278E6325008EC5EB /* CrybsePostAPI.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybsePostAPI.swift; sourceTree = "<group>"; };
 		EF64A3C627AD3F9C00628487 /* DynamicHeightContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DynamicHeightContainer.swift; sourceTree = "<group>"; };
@@ -585,9 +585,8 @@
 		BCB7834F26C180E5009D5822 /* Tweets */ = {
 			isa = PBXGroup;
 			children = (
-				BCB7835326C181C0009D5822 /* LatestTweets.swift */,
 				BCB7836326C66CE9009D5822 /* PostCard.swift */,
-				BC18CC0426D6CADB00F01228 /* InfluentialTweets.swift */,
+				EF51131227F047E70074812E /* TweetDetailView.swift */,
 			);
 			path = Tweets;
 			sourceTree = "<group>";
@@ -595,6 +594,7 @@
 		BCB7835026C180F7009D5822 /* Components */ = {
 			isa = PBXGroup;
 			children = (
+				BCB7834F26C180E5009D5822 /* Tweets */,
 				BCBC1DD026BF3C1B00B87E5C /* News */,
 				BCB7835A26C31855009D5822 /* Reddit */,
 				BCF98BA326D980FB00C45562 /* Youtube */,
@@ -714,8 +714,6 @@
 		BCBC1DA026BE7DFD00B87E5C /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				EF33D7AB27E73D29007B9F9F /* New Group */,
-				BCB7834F26C180E5009D5822 /* Tweets */,
 				EF42CCA227863CF400DE27E1 /* Portfolio */,
 				BCBBD14A2756CC52002CBECE /* Crybse */,
 				BCB5BE00275149FE00EA0394 /* InAppNotifications */,
@@ -870,13 +868,6 @@
 				EF1CC5CB277F47050010D9CA /* CrybseAssetsAPI.swift */,
 			);
 			path = CrybseAsset;
-			sourceTree = "<group>";
-		};
-		EF33D7AB27E73D29007B9F9F /* New Group */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "New Group";
 			sourceTree = "<group>";
 		};
 		EF33D7BA27EB27AC007B9F9F /* SocialFeedSummary */ = {
@@ -1129,6 +1120,7 @@
 				EF7A7FB927DB57DF00B6081D /* InfoGrid.swift */,
 				EF7A7FBA27DB57DF00B6081D /* TimerBlobs.swift */,
 				EF33D7B827EA2C1B007B9F9F /* MoneyTextView.swift */,
+				EF51131427F064450074812E /* CustomWrappedTextHStack.swift */,
 			);
 			path = CustomComponents;
 			sourceTree = "<group>";
@@ -1530,6 +1522,7 @@
 				BC06AE5227578850006F00DE /* CrybPostData.swift in Sources */,
 				BCE861BF2747F9DA00F0E8C2 /* NewsFeed.swift in Sources */,
 				BC27E4EA2725FCA800E47CA2 /* CurrencyFeedView.swift in Sources */,
+				EF51131327F047E70074812E /* TweetDetailView.swift in Sources */,
 				BCF31F9E27596E2500690E04 /* CrybPostMainView.swift in Sources */,
 				BC1C614B2719CE68006AD9C8 /* AddTransactionView.swift in Sources */,
 				EFB1349827B960A500F381A3 /* RedditPostCard.swift in Sources */,
@@ -1587,7 +1580,6 @@
 				EF7A7FEE27DB57DF00B6081D /* CircleChart.swift in Sources */,
 				EF7A800E27DB57DF00B6081D /* TransitionModifiers.swift in Sources */,
 				EF757C6127A719F600F957BC /* CrybseCoinPrice.swift in Sources */,
-				BCB7835426C181C0009D5822 /* LatestTweets.swift in Sources */,
 				BCB7835226C18111009D5822 /* AutoTimeCardsView.swift in Sources */,
 				EF8BE63A27C865DB00877234 /* CurrencyPriceSummaryView.swift in Sources */,
 				EF7A7FFF27DB57DF00B6081D /* PercentChangeView.swift in Sources */,
@@ -1630,7 +1622,6 @@
 				BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */,
 				EF33D7AD27E87C26007B9F9F /* PointAccumulatorView.swift in Sources */,
 				EF7A7FCE27DB57DF00B6081D /* URLExtension.swift in Sources */,
-				BC18CC0526D6CADB00F01228 /* InfluentialTweets.swift in Sources */,
 				EFF195B4277CED7A0081368F /* CrybseCoinSocialData.swift in Sources */,
 				BCE861B1273C63DC00F0E8C2 /* User.swift in Sources */,
 				EF33D7BF27EB2CB9007B9F9F /* CrybseAssetSocials.swift in Sources */,
@@ -1675,6 +1666,7 @@
 				BCF31F9C2758D67000690E04 /* CrybPostDetailView.swift in Sources */,
 				BCE861B5273C714500F0E8C2 /* ProfileData.swift in Sources */,
 				EF4FE23527AD779700296BD5 /* AddPoll.swift in Sources */,
+				EF51131527F064450074812E /* CustomWrappedTextHStack.swift in Sources */,
 				EF65DBAC27B27DB2008AB1D4 /* LatestRedditPost.swift in Sources */,
 				BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */,
 				BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */,

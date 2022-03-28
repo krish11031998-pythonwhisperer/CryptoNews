@@ -29,6 +29,10 @@ class CrybseAssetOverTimeManager:CrybseAPI{
             setWithAnimation {
                 self.assetOverTime = assetOverTime
             }
+            
+            if self.loading{
+                self.loading.toggle()
+            }
         }
     }
     

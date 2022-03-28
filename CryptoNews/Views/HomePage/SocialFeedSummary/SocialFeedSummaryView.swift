@@ -14,12 +14,12 @@ struct SocialFeedSummaryView: View {
     var width:CGFloat
     
     init(assets:[String]? = nil,keyword:String = "Cryptocurrency",width:CGFloat){
-        var query:[URLQueryItem] = [URLQueryItem(name: "language", value: "en")]
+        var query:[String:Any] = ["language": "en"]
         if let safeAsset = assets{
             let entities = safeAsset.reduce("", {$0 == "" ? $1 : "\($0),\($1)"})
-            query.append(.init(name: "entity", value: entities))
+            query["entity"] = entities
         }else{
-            query.append(.init(name: "keyword", value: keyword))
+            query["keyword"] = keyword
         }
         
         self._tweetAPI = .init(wrappedValue:.init(endpoint: .tweetsSearch, queries: query))
@@ -48,10 +48,18 @@ struct SocialFeedSummaryView: View {
         }
     }
     
+    func onTap(idx:Int){
+        if let safeTweet = self.tweetAPI.tweets?[idx]{
+            if self.context.selectedTweet != safeTweet{
+                self.context.selectedTweet = safeTweet
+            }
+        }
+    }
+    
     @ViewBuilder var SocialSummayView:some View{
         if let socialFeed = self.tweetAPI.tweets{
             Container(heading: "Social Feed Summary", width: self.width) { inner_w in
-                SlideZoomInOutView(data: socialFeed,timeLimit: 10,size: self.cardSize(w: inner_w), scrollable: true,viewGen:self.cardBuilder(_:_:))
+                SlideZoomInOutView(data: socialFeed,timeLimit: 10,size: self.cardSize(w: inner_w), scrollable: true,onTap: self.onTap(idx:),viewGen:self.cardBuilder(_:_:))
             }
         }else if self.tweetAPI.loading{
             ProgressView()

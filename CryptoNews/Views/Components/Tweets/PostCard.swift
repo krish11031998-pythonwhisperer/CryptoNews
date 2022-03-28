@@ -102,7 +102,6 @@ extension PostCard{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
         
-        
     }
 
     @ViewBuilder func Footer(width w:CGFloat) -> some View{
@@ -140,8 +139,8 @@ extension PostCard{
             .multilineTextAlignment(.leading)
         if self.const_size{
             textView
-                .truncationMode(.tail)
-                .fixedSize(horizontal: false, vertical: true)
+//                .truncationMode(.tail)
+//                .fixedSize(horizontal: false, vertical: true)
         }else{
             textView
         }

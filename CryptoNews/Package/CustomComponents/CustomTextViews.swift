@@ -24,7 +24,7 @@ public struct MainText: View {
     var addBG:Bool
     var padding:CGFloat
     
-    public init(content:String,fontSize:CGFloat,color:Color = .white, fontWeight:Font.Weight = .thin,style:TextStyle = .normal,addBG:Bool = false,padding:CGFloat = 10){
+    public init(content:String,fontSize:CGFloat,color:Color = .white, fontWeight:Font.Weight = .thin,style:TextStyle = .normal,addBG:Bool = false,padding:CGFloat = 0){
         self.content = content.stripSpaces().removeEndLine()
         self.fontSize = fontSize
         self.color = color
@@ -40,9 +40,10 @@ public struct MainText: View {
         var oppColor:Color
         var padding:CGFloat
         func body(content: Content) -> some View {
+            
             content
-                .padding(.all,addBG ? self.padding : 0)
-                .background(addBG ? self.oppColor : .clear)
+                .padding(.all,self.padding)
+                .background(self.addBG ? BlurView.thinDarkBlur.anyViewWrapper() : Color.clear.anyViewWrapper())
                 .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
         }
         

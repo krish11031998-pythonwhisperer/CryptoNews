@@ -28,10 +28,10 @@ struct HomePage: View {
             Spacer().frame(height: 50)
 //            AllAssetView().asyncContainer()
 //                .animatedAppearance()
-            self.SocialFeedSummary
-                .animatedAppearance()
-//            LatestRedditPost(currencies: self.currencies).asyncContainer()
+//            self.SocialFeedSummary
 //                .animatedAppearance()
+            LatestRedditPost(width:totalWidth,height:totalHeight * 0.3,currencies: self.currencies).asyncContainer()
+                .animatedAppearance()
 //            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
 //                .animatedAppearance()
 //            self.pollView

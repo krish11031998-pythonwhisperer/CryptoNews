@@ -8,7 +8,13 @@
 import Foundation
 
 class CrybseTweetsResponse:Codable{
-    var data:[CrybseTweet]?
+    var data:CrybseTweets?
+    var success:Bool
+    var error:String?
+}
+
+class CrybseTweetResponse:Codable{
+    var data:CrybseTweet?
     var success:Bool
     var error:String?
 }
@@ -59,9 +65,41 @@ class CrybseTweet:Codable,Equatable{
     var Sentiment:Float{
         return self.sentiment ?? 3.0
     }
+    
+    var Entities:[String]{
+        var allEntities:[String] = []
+        if let safeHashTag = self.entity?.hashtags{
+            allEntities.append(contentsOf: safeHashTag.compactMap({$0.tag}))
+        }
+        
+        if let safeCashTag = self.entity?.cashtags{
+            allEntities.append(contentsOf: safeCashTag.compactMap({$0.tag}))
+        }
+        
+        return allEntities
+    }
+    
+    static func parseTweetFromData(data:Data) -> CrybseTweet?{
+        var tweet:CrybseTweet? = nil
+        let decoder = JSONDecoder()
+        
+        do{
+            let response = try decoder.decode(CrybseTweetResponse.self, from: data)
+            tweet = response.data
+        }catch{
+            print("(DEBUG) There was an error while trying to parse the tweet from the Data : ",error.localizedDescription)
+        }
+        
+        return tweet
+    }
 }
 
-typealias CrybseTweets = [CrybseTweet]
+//typealias CrybseTweets = [CrybseTweet]
+
+class CrybseTweets:Codable{
+    var tweets:[CrybseTweet]?
+    var next_token:String?
+}
 
 extension CrybseTweets{
     
@@ -119,7 +157,7 @@ class CrybseTweetURLEntity:Codable{
     var url:String
     var expanded_url:String
     var display_url:String
-    var image:[EntityImage]?
+    var images:[EntityImage]?
     var title:String
     var description:String
     var unwound_url:String
