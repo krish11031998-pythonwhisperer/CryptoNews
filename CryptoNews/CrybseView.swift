@@ -89,6 +89,17 @@ extension CrybseView{
     }
     
     @ViewBuilder var hoverView:some View{
+        
+        if let safeAssetOverTime = self.context.assetOverTime,self.context.showPortfolio,self.context.selectedAsset == nil{
+            PortfolioMain(assetOverTime:safeAssetOverTime)
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(Color.AppBGColor)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
+        
+        
         if let url = self.context.selectedLink{
             WebModelView(url: url, close: self.closeLink)
                 .transition(.slideInOut)
@@ -127,15 +138,7 @@ extension CrybseView{
                 .zIndex(2)
         }
         
-        if let safeAssetOverTime = self.context.assetOverTime,self.context.showPortfolio{
-            PortfolioMain(assetOverTime:safeAssetOverTime)
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(Color.AppBGColor)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-        
+
         if let safeTweet = self.context.selectedTweet{
             TweetDetailMainView(tweet: safeTweet)
                 .environmentObject(self.context)
