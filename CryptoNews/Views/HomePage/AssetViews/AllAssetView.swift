@@ -15,19 +15,7 @@ struct AllAssetView: View {
     var assets:CrybseAssets{
         return self.context.userAssets
     }
-    
-    func coins(type:String = "all") -> [CrybseAsset]{
-        var assets:[CrybseAsset] = []
-        if type == "tracked"{
-            assets = self.assets.trackedAssets
-        }else if type == "watching"{
-            assets = self.assets.watchingAssets
-        }else{
-            assets = self.assets.watchingAssets + self.assets.trackedAssets
-        }
-        return assets.sorted(by: {$0.Rank < $1.Rank})
-    }
-    
+
     func updateAssetPrices(){
         print("(DEBUG) Currencies : ",self.context.Currencies)
         if self.context.Currencies.count  > 0{
@@ -37,24 +25,6 @@ struct AllAssetView: View {
                 }
             }
         }
-    }
-    
-    func portfolioCardViews(w:CGFloat) -> [AnyView]{
-        return self.coins(type: "tracked").sorted(by: {$0.Rank < $1.Rank}).compactMap({AnyView(PortfolioCard(asset:$0, w: w * 0.65,h:totalHeight * 0.65))})
-    }
-    
-    var portfolioViews:some View{
-        Container(heading: "Portfolio", headingColor: .white,ignoreSides: true) { inner_w in
-            ScrollZoomInOutView(cardSize: .init(width: inner_w * 0.5, height: totalHeight * 0.45), views: self.portfolioCardViews(w: inner_w),leading: true,centralize: true)
-        }
-    }
-
-    func watchListCardSize(_ inner_w:CGFloat) -> CGSize{
-        return .init(width: inner_w * 0.5, height: totalHeight * 0.3)
-    }
-    
-    func watchListViews(size:CGSize) -> [AnyView]{
-        return self.coins(type: "watching").compactMap({AnyView(PriceCard(coin: $0, size: size))})
     }
 
     @ViewBuilder var mainBody:some View{

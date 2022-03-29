@@ -121,7 +121,7 @@ extension CurrencyDetailView{
         return self.socialData?.Videos ?? []
     }
     
-    var Tweets:[AssetNewsData]{
+    var Tweets:[CrybseTweet]{
         return self.socialData?.Tweets ?? []
     }
     
@@ -226,11 +226,11 @@ extension CurrencyDetailView{
         let width = w ?? self.size.width
         switch(type){
             case .Tweet:
-//                if let post = data as? AssetNewsData{
-//                    PostCard(cardType: .Tweet, data: post, size: .init(width: width, height: self.size.height),bg: .light, const_size: false)
-//                }else{
+                if let post = data as? CrybseTweet{
+                    PostCard(cardType: .Tweet, data: post, size: .init(width: width, height: self.size.height),bg: .light, const_size: false)
+                }else{
                     Color.clear
-//                }
+                }
                 
             case .News:
                 NewsStandCard(news: data,size:.init(width: width, height: totalHeight * 0.25))

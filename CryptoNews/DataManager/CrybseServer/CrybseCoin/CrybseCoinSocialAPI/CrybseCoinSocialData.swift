@@ -23,7 +23,7 @@ class CrybseCoinDataResponse:Codable{
 
 
 class CrybseCoinSocialData:ObservableObject,Codable{
-    @Published var tweets: Array<AssetNewsData>?
+    @Published var tweets: Array<CrybseTweet>?
     @Published var metaData:CrybseCoinMetaData?
     @Published var timeSeriesData:Array<CryptoCoinOHLCVPoint>?
     @Published var prices:CrybseCoinPrices?
@@ -57,7 +57,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        tweets = try container.decode(Array<AssetNewsData>?.self, forKey: .tweets)
+        tweets = try container.decode(Array<CrybseTweet>?.self, forKey: .tweets)
         metaData = try container.decode(CrybseCoinMetaData?.self, forKey: .metaData)
         timeSeriesData = try container.decode(Array<CryptoCoinOHLCVPoint>?.self, forKey: .timeSeriesData)
         news = try container.decode(Array<AssetNewsData>?.self, forKey: .news)
@@ -109,7 +109,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         return coinData
     }
     
-    var Tweets: Array<AssetNewsData>{
+    var Tweets: Array<CrybseTweet>{
         get{
             return self.tweets ?? []
         }

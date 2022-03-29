@@ -92,7 +92,7 @@ extension PostCard{
     @ViewBuilder func Header(width w:CGFloat) -> some View{
         if let user = self.data.user{
             HStack(alignment: .center, spacing: 15) {
-                ImageView(url: user.profile_image_url, width: 45, height: 45, contentMode: .fill, alignment: .center)
+                ImageView(url: user.profile_image_url, width: 30, height: 30, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
                 MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:data.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
                 Spacer()

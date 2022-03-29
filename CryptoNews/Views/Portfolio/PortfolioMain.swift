@@ -29,9 +29,8 @@ struct PortfolioMain: View {
             }
             .frame(width: self.width, alignment: .topLeading)
             .padding(.vertical,20)
+            
         }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
-        
-        
     }
 }
 

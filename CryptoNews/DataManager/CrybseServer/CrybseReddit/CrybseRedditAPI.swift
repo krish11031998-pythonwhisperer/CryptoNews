@@ -16,7 +16,6 @@ class CrybseRedditAPI:CrybseAssetSocialsAPI{
     
     var posts:CrybseRedditPosts{
         if let redditPosts = self.data as? CrybseRedditPosts{
-            print("(DEBUG) RedditPosts : ",redditPosts)
             return redditPosts
         }else{
             return []

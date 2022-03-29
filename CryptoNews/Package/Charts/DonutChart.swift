@@ -75,12 +75,14 @@ struct DonutChart: View {
             }
         }
         .rotationEffect(.init(degrees: -90))
-        .frame(width: self.diameter,alignment: .center)
+        .padding()
+//        .padding()
+//        .frame(width: self.diameter + 30,height: self.diameter + 30,alignment: .center)
     }
 }
 
 struct DonutChart_Previews: PreviewProvider {
     static var previews: some View {
-        DonutChart(lineWidth:22.5,valueColorPair: [Color.red:14,Color.blue:6,Color.black:8])
+        DonutChart(diameter:totalWidth * 0.75,lineWidth:22.5,valueColorPair: [Color.red:14,Color.blue:6,Color.black:8])
     }
 }

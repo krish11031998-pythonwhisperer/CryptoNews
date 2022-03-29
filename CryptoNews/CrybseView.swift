@@ -90,7 +90,7 @@ extension CrybseView{
     
     @ViewBuilder var hoverView:some View{
         
-        if let safeAssetOverTime = self.context.assetOverTime,self.context.showPortfolio,self.context.selectedAsset == nil{
+        if self.context.showPortfolio,let safeAssetOverTime = self.context.assetOverTime,self.context.selectedAsset == nil{
             PortfolioMain(assetOverTime:safeAssetOverTime)
                 .environmentObject(self.context)
                 .transition(.slideInOut)

@@ -91,7 +91,7 @@ struct CurrencyView:View{
     }
     
     
-    var tweets:[AssetNewsData]?{
+    var tweets:[CrybseTweet]?{
         return self.coinAPI.coinData?.Tweets
     }
     
@@ -102,14 +102,13 @@ struct CurrencyView:View{
     
     @ViewBuilder func feedView(w:CGFloat) -> some View{
         if let feed = self.tweets{
-//            LazyScrollView(data: feed,embedScrollView: false,stopLoading: true) { data in
-//                if let data = data as? AssetNewsData{
-//                    let cardType:PostCardType = data.twitter_screen_name != nil ? .Tweet : .Reddit
-//                    PostCard(cardType: cardType, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
-//                }
-//            }
-//            .onPreferenceChange(RefreshPreference.self) { reload in
-//            }
+            LazyScrollView(data: feed,embedScrollView: false,stopLoading: true) { data in
+                if let data = data as? CrybseTweet{
+                    PostCard(cardType: .Tweet, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
+                }
+            }
+            .onPreferenceChange(RefreshPreference.self) { reload in
+            }
         }else if self.coinAPI.loading{
             ProgressView().frame(width: w, alignment: .center)
         }else{
