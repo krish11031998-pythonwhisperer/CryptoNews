@@ -24,7 +24,8 @@ struct PortfolioMain: View {
         }, innerView: {
             Container(ignoreSides: true) { w in
                 self.portfoliocards(w)
-                self.cryptoCurrencyInvestments(.init(width: w, height: totalHeight * 0.15))
+                PortfolioBreakdown(asset: self.context.userAssets.trackedAssets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.15),selectedCardSize: .init(width: w * 0.45, height: totalHeight * 0.225))
+                    .animatedAppearance()
                 self.InvestmentsSummary(w)
             }
             .frame(width: self.width, alignment: .topLeading)
@@ -35,6 +36,8 @@ struct PortfolioMain: View {
 }
 
 extension PortfolioMain{
+    
+
     
     var trackedAssets:[CrybseAsset]{
         return self.context.userAssets.trackedAssets.sorted(by: {$0.Rank < $1.Rank})
@@ -86,26 +89,6 @@ extension PortfolioMain{
             }
         }
         .animatedAppearance()
-    }
-    
-    var assetColorValuePairs:[Color:Float]{
-        var colorValuePairs:[Color:Float] = [:]
-        for asset in self.context.userAssets.trackedAssets{
-            colorValuePairs[Color(hex: asset.Color)] = asset.Value
-        }
-        return colorValuePairs
-    }
-    
-    func cryptoCurrencyInvestments(_ size:CGSize) -> some View{
-        let h = size.height
-        return Container(heading:"Holdings Breakdown",headingSize: 18,width: size.width,ignoreSides: false, orientation: .vertical, alignment: .center){ w in
-            DonutChart(diameter: h,valueColorPair: self.assetColorValuePairs)
-                .padding(.vertical)
-            ForEach(Array(self.trackedAssets.enumerated()),id:\.offset) { _trackedAsset in
-                let asset = _trackedAsset.element
-                QuickAssetInfoCard(asset: asset,bg: Color(hex: asset.Color).anyViewWrapper(),showValue: true,value: (asset.Value * 100/self.assetColorValuePairs.values.reduce(0, {$0 + $1})).ToDecimals() + "%", w: w)
-            }
-        }.animatedAppearance()
     }
     
     @ViewBuilder func portfoliocards(_ w:CGFloat) -> some View{

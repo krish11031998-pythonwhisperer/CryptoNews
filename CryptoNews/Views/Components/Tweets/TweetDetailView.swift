@@ -34,6 +34,7 @@ extension TweetDetailView{
     @ViewBuilder func innerView(inner_w:CGFloat) -> some View{
         self.Header(width: inner_w)
         self.Body(w: inner_w)
+        self.attachmentsView(w: inner_w)
         self.urlAttachment(w: inner_w)
         self.EntitySection(w: inner_w)
         self.Footer(width: inner_w)
@@ -47,23 +48,46 @@ extension TweetDetailView{
         }
     }
     
+    @ViewBuilder func largeAttachmentWithImageView(width w:CGFloat,url:CrybseTweetURLEntity) -> some View{
+        Container(width: w, ignoreSides: true,verticalPadding: 0,spacing: 0) { _ in
+            ImageView(url: url.images?.first?.url,width: w,height: totalHeight * 0.25, contentMode: .fill, alignment: .center)
+            Container(width: w) { _ in
+                MainText(content: url.title, fontSize: 15, color: .white, fontWeight: .medium)
+                    .fixedSize(horizontal: false, vertical: true)
+                MainText(content: url.description, fontSize: 13, color: .gray, fontWeight: .medium)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .lineLimit(2)
+            }
+        }
+        .basicCard()
+        .borderCard(color: .white, clipping: .roundClipping)
+        .buttonify {
+            self.context.selectedLink = .init(string: url.unwound_url)
+        }
+    }
+    
+    @ViewBuilder func attachmentsView(w:CGFloat) ->  some View{
+        if let safeAttachments = self.tweet.attachments{
+            if safeAttachments.count == 1,let first = safeAttachments.first,let img = first.preview_image_url, img != ""{
+                ImageView(url: first.preview_image_url, width: w, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundClipping)
+            }
+        }
+    }
+    
     @ViewBuilder func urlAttachment(w:CGFloat) ->  some View{
         if let firstUrl = self.tweet.entity?.urls?.first{
-            Container(width: w, ignoreSides: true,verticalPadding: 0,spacing: 0) { _ in
-                ImageView(url: firstUrl.images?.first?.url,width: w,height: totalHeight * 0.25, contentMode: .fill, alignment: .center)
-                Container(width: w) { _ in
-                    MainText(content: firstUrl.title, fontSize: 15, color: .white, fontWeight: .medium)
-                        .fixedSize(horizontal: false, vertical: true)
-                    MainText(content: firstUrl.description, fontSize: 13, color: .gray, fontWeight: .medium)
-                        .fixedSize(horizontal: false, vertical: true)
-                        .lineLimit(2)
-                }
+            if let img = firstUrl.images?.first?.url, firstUrl.title != "" && firstUrl.description != ""{
+                self.largeAttachmentWithImageView(width: w, url: firstUrl)
+            }else if firstUrl.expanded_url != ""{
+                MainText(content: firstUrl.description != "" ? firstUrl.description : firstUrl.expanded_url, fontSize: 15, color: .blue, fontWeight: .medium)
+                    .padding(.horizontal,10)
+                    .buttonify {
+                        self.context.selectedLink = .init(string: firstUrl.expanded_url)
+                    }
+            }else{
+                Color.clear.frame(width: .zero, height: .zero, alignment: .center)
             }
-            .basicCard()
-            .borderCard(color: .white, clipping: .roundClipping)
-            .buttonify {
-                self.context.selectedLink = .init(string: firstUrl.unwound_url)
-            }
+            
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }

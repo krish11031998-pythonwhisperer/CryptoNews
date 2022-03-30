@@ -187,6 +187,8 @@
 		EF81977527E519980085EE6E /* CrybseAssetOverTime.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81977427E519980085EE6E /* CrybseAssetOverTime.swift */; };
 		EF81977727E51A7C0085EE6E /* CrybseAssetOverTimeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81977627E51A7C0085EE6E /* CrybseAssetOverTimeManager.swift */; };
 		EF81977A27E679A70085EE6E /* DonutChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81977927E679A70085EE6E /* DonutChart.swift */; };
+		EF8704C027F34A6C00DB2F5B /* ZoomInScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8704BF27F34A6C00DB2F5B /* ZoomInScrollView.swift */; };
+		EF8704C227F4BA9200DB2F5B /* PortfolioBreakdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8704C127F4BA9200DB2F5B /* PortfolioBreakdown.swift */; };
 		EF8BE63227C1024200877234 /* Forum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF8BE63127C1024200877234 /* Forum-Regular.ttf */; };
 		EF8BE63A27C865DB00877234 /* CurrencyPriceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63927C865DB00877234 /* CurrencyPriceSummaryView.swift */; };
 		EF8BE63D27CAD08900877234 /* VideoSectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */; };
@@ -419,6 +421,8 @@
 		EF81977427E519980085EE6E /* CrybseAssetOverTime.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseAssetOverTime.swift; sourceTree = "<group>"; };
 		EF81977627E51A7C0085EE6E /* CrybseAssetOverTimeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseAssetOverTimeManager.swift; sourceTree = "<group>"; };
 		EF81977927E679A70085EE6E /* DonutChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChart.swift; sourceTree = "<group>"; };
+		EF8704BF27F34A6C00DB2F5B /* ZoomInScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomInScrollView.swift; sourceTree = "<group>"; };
+		EF8704C127F4BA9200DB2F5B /* PortfolioBreakdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioBreakdown.swift; sourceTree = "<group>"; };
 		EF8BE63127C1024200877234 /* Forum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Forum-Regular.ttf"; sourceTree = "<group>"; };
 		EF8BE63927C865DB00877234 /* CurrencyPriceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPriceSummaryView.swift; sourceTree = "<group>"; };
 		EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionCard.swift; sourceTree = "<group>"; };
@@ -901,6 +905,7 @@
 				EF42CCA327863D0B00DE27E1 /* PortfolioMain.swift */,
 				EF42CCA527863DF500DE27E1 /* PortfolioAsset.swift */,
 				EF4FF91D27BE5BF8001E2BD2 /* PortfolioSummary.swift */,
+				EF8704C127F4BA9200DB2F5B /* PortfolioBreakdown.swift */,
 			);
 			path = Portfolio;
 			sourceTree = "<group>";
@@ -1121,6 +1126,7 @@
 				EF7A7FBA27DB57DF00B6081D /* TimerBlobs.swift */,
 				EF33D7B827EA2C1B007B9F9F /* MoneyTextView.swift */,
 				EF51131427F064450074812E /* CustomWrappedTextHStack.swift */,
+				EF8704BF27F34A6C00DB2F5B /* ZoomInScrollView.swift */,
 			);
 			path = CustomComponents;
 			sourceTree = "<group>";
@@ -1574,6 +1580,7 @@
 				EF42CCB027873A1D00DE27E1 /* CrybseCrybotPredictionView.swift in Sources */,
 				EFB3528927A6ADA400D6430B /* CrybseCoinAPI.swift in Sources */,
 				EF7A7FEB27DB57DF00B6081D /* CurveChart.swift in Sources */,
+				EF8704C027F34A6C00DB2F5B /* ZoomInScrollView.swift in Sources */,
 				EF33D7BC27EB2C23007B9F9F /* SocialFeedSummaryView.swift in Sources */,
 				EF7A802027DB58F400B6081D /* ModelLoader.swift in Sources */,
 				EF8BE63F27CAD09A00877234 /* VideoSectionView.swift in Sources */,
@@ -1690,6 +1697,7 @@
 				EF7A7FF127DB57DF00B6081D /* RefreshTimerView.swift in Sources */,
 				BCBC1D7626BE7D7400B87E5C /* CryptoNewsApp.swift in Sources */,
 				EF7A7FD727DB57DF00B6081D /* MultipartFormData.swift in Sources */,
+				EF8704C227F4BA9200DB2F5B /* PortfolioBreakdown.swift in Sources */,
 				EFFD060827E36C6400BEA5A8 /* AnimatedListView.swift in Sources */,
 				EF7A7FFB27DB57DF00B6081D /* TextComponent.swift in Sources */,
 				BC64592527119E2C00BAECBC /* CurrencySummaryView.swift in Sources */,

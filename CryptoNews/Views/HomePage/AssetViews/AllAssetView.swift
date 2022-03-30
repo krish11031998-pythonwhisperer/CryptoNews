@@ -10,7 +10,7 @@ import Combine
 
 struct AllAssetView: View {
     @EnvironmentObject var context:ContextData
-    var timer = Timer.TimerPublisher(interval: 150, runLoop: .main, mode: .common).autoconnect()
+//    var timer = Timer.TimerPublisher(interval: 150, runLoop: .main, mode: .common).autoconnect()
         
     var assets:CrybseAssets{
         return self.context.userAssets
@@ -36,9 +36,9 @@ struct AllAssetView: View {
     
     var body: some View {
         self.mainBody
-            .onReceive(self.timer) { _ in
-                self.context.userAssets.updateAssetPrices()
-            }
+//            .onReceive(self.timer) { _ in
+//                self.context.userAssets.updateAssetPrices()
+//            }
     }
 }
 
