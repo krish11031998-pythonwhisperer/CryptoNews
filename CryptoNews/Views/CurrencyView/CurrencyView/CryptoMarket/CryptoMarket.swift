@@ -51,8 +51,12 @@ struct CryptoMarket: View {
     var body: some View {
         Container(heading: self.heading, width: totalWidth,ignoreSides: true) { w in
             ZStack{
-                if let views = self.view{
-                    ScrollZoomInOutView(cardSize: size,views: views,leading: leadingPadding)
+                if !self.MAPI.data.isEmpty{
+                    ScrollZoomInOutView(cardSize: size, viewData: self.MAPI.data, leading: true) { data, size in
+                        if let safeCardData = data as? CoinMarketData{
+                            CryptoMarketCard(data: safeCardData,size: size,rank: .zero)
+                        }
+                    }
                 }else{
                     ProgressView()
                 }

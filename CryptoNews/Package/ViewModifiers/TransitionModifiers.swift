@@ -25,6 +25,7 @@ public struct SlidingZoomInOut:ViewModifier{
     var cardSize:CGSize
     var centralize:Bool
     @State var centralize_container:Bool = false
+    @State var scale:CGFloat = 1
     
     public init(g:GeometryProxy? = nil,cardSize:CGSize,centralize:Bool){
         self.g = g
@@ -34,12 +35,9 @@ public struct SlidingZoomInOut:ViewModifier{
     
     func scaleGen(g:GeometryProxy) -> CGFloat{
         let midX = g.frame(in: .global).midX
-        let diff = abs(midX - (totalWidth * 0.5))/totalWidth
-        let diff_percent = (diff > 0.25 ? 1 : diff/0.25)
-        let scale = 1 - 0.075 * diff_percent
-        if self.centralize{
-            self.computeCenter(g: g)
-        }
+        let diff = abs(midX - halfTotalWidth)/halfTotalWidth
+//        let diff_percent = (diff > 0.25 ? 1 : diff/0.25)
+        let scale = 1 - 0.075 * diff
         return scale
     }
     
@@ -52,16 +50,18 @@ public struct SlidingZoomInOut:ViewModifier{
             }
         }
     }
+
     
     @ViewBuilder func mainBody(content: Content) -> some View{
         if let g = self.g{
-            let scale = self.scaleGen(g: g)
-            content.scaleEffect(scale)
+            content
+                .scaleEffect(self.scaleGen(g: g))
         }else{
-            GeometryReader{g -> AnyView in
-                let scale = self.scaleGen(g: g)
-                return AnyView(content.scaleEffect(scale))
-            }.frame(width: self.cardSize.width, height: self.cardSize.height * 1.1, alignment: .center)
+            GeometryReader { g -> AnyView in
+                content
+                    .scaleEffect(self.scaleGen(g: g))
+                    .anyViewWrapper()
+            }.frame(width: self.cardSize.width, height: self.cardSize.height * 1.2, alignment: .center)
         }
     }
     

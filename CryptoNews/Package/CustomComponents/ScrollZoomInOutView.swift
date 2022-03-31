@@ -16,38 +16,19 @@ public class CentralizePreference:PreferenceKey{
     }
 }
 
-public struct ScrollZoomInOutView: View {
+public struct ScrollZoomInOutView<T:View>: View {
     var cardSize:CGSize
-    var views:Array<AnyView>
+    var cardViewGen:(Any,CGSize) -> T
+    var viewsData:[Any]
     @State var idx:Int = -1
     @StateObject var scrollViewHelper = ScrollViewHelper()
-    var centralize:Bool = false
     var leading:Bool
     
-    public init(cardSize:CGSize = CardSize.slender,views:Array<AnyView>,leading:Bool = true,centralize:Bool = false){
+    public init(cardSize:CGSize = CardSize.slender,viewData:[Any],leading:Bool = true,@ViewBuilder viewGen:@escaping (Any,CGSize) -> T){
         self.cardSize = cardSize
-        self.views = views
+        self.viewsData = viewData
+        self.cardViewGen = viewGen
         self.leading = leading
-        self.centralize = centralize
-    }
-
-    @ViewBuilder func viewGen(view:AnyView,idx:Int,scrollProxy:ScrollViewProxy? = nil) -> some View{
-        if self.centralize{
-            view
-                .id(idx)
-                .slideZoomInOut(cardSize:cardSize, centralize: self.centralize)
-                .onPreferenceChange(CentralizePreference.self) { val in
-                    if val{
-                        DispatchQueue.main.async {
-                            self.idx = idx
-                        }
-                    }
-                }
-        }else{
-            view
-                .id(idx)
-                .slideZoomInOut(cardSize:cardSize, centralize: self.centralize)
-        }
     }
     
     var halfCardWidth:CGFloat{
@@ -56,11 +37,10 @@ public struct ScrollZoomInOutView: View {
     
     func mainScrollBody(scrollProxy:ScrollViewProxy? = nil) -> some View{
         HStack(alignment: .center, spacing: 15){
-            ForEach(Array(self.views.enumerated()),id: \.offset){ _view in
-                let idx = _view.offset
-                let view = _view.element
-                self.viewGen(view: view, idx: idx , scrollProxy: scrollProxy)
-                    .padding(.leading,idx == 0 ? 15 : 0)
+            ForEach(Array(self.viewsData.enumerated()),id: \.offset){ _view in
+                let data = _view.element
+                self.cardViewGen(data, self.cardSize)
+                    .slideZoomInOut(cardSize: cardSize)
             }
         }
         .padding(.leading, self.leading ? halfCardWidth : 0)
@@ -68,16 +48,8 @@ public struct ScrollZoomInOutView: View {
     }
     
     public var body: some View {
-        if self.centralize{
-            ScrollViewReader { scrollProxy in
-                ScrollView(.horizontal, showsIndicators: false) {
-                    self.mainScrollBody(scrollProxy: scrollProxy)
-                }
-            }.frame(width:totalWidth,height: cardSize.height,alignment: .leading)
-        }else{
-            ScrollView(.horizontal, showsIndicators: false) {
-                self.mainScrollBody()
-            }
+        ScrollView(.horizontal, showsIndicators: false) {
+            self.mainScrollBody()
         }
     }
 }

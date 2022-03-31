@@ -43,7 +43,19 @@ struct HomePage: View {
     
     var body: some View {
         ZStack(alignment: .center){
-            self.mainView
+//            self.mainView
+            ZoomInScrollView(data: [Color.red,Color.blue,Color.yellow,Color.gray,Color.green]) { data, size in
+                
+                if let color = data as? Color{
+                    Rectangle()
+                        .fill(color)
+                        .clipContent(clipping: .roundClipping)
+                }else{
+                    Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+                }
+                
+            }
+
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
     }

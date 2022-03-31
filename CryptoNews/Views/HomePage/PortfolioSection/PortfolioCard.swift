@@ -12,7 +12,7 @@ struct PortfolioCard: View {
     @ObservedObject var asset:CrybseAsset
     @State var price:Float = .zero
     @State var switchView:Bool = false
-    @State var priceColor:Color = .black
+    @State var priceColor:Color = .white
     var w:CGFloat
     var h:CGFloat
     
@@ -26,18 +26,17 @@ struct PortfolioCard: View {
     }
     
     var innerViewSize:CGSize{
-        return .init(width: w, height: h)
+        return .init(width: w, height: h - 20)
     }
     
     func assetHeaderInfo(w:CGFloat) -> some View{
-        Container(width:w,ignoreSides: false ,horizontalPadding: 7.5,verticalPadding: 0) { _ in
-            HStack(alignment: .center, spacing: 10) {
-                MainText(content: self.asset.Currency, fontSize: 25, color: .black,fontWeight: .medium)
-                Spacer()
-                CurrencySymbolView(currency: self.asset.Currency, width: 30)
-                    .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 0)
-            }
-        }.frame(width: w, alignment: .center)
+        let h = self.innerViewSize.height * 0.2
+        return Container(width:w,ignoreSides: true,orientation: .horizontal) { _ in
+            MainText(content: self.asset.Currency, fontSize: 25, color: .white,fontWeight: .medium)
+            Spacer()
+            CurrencySymbolView(currency: self.asset.Currency, width: 30)
+                .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 0)
+        }.frame(width: w,height:h, alignment: .center)
     }
     
     var coinStats:[String:String]{
@@ -61,11 +60,12 @@ struct PortfolioCard: View {
     }
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
+        let h = self.innerViewSize.height * 0.6
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: self.priceColor, orientation: .vertical, alignment: .topLeading)
+                MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .white, orientation: .vertical, alignment: .topLeading)
                 Spacer()
-                MainText(content: "#\(self.asset.Rank)", fontSize: 12, color: .black, fontWeight: .semibold)
+                MainText(content: "#\(self.asset.Rank)", fontSize: 12, color: .white, fontWeight: .semibold)
                     .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
             }
             .frame(width: inner_w,height: h * 0.25, alignment: .topLeading)
@@ -75,36 +75,27 @@ struct PortfolioCard: View {
             }else{
                 MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
             }
-        }.frame(width: inner_w, height: self.innerViewSize.height, alignment: .topLeading)
+        }.frame(width: inner_w, height: h, alignment: .topLeading)
     }
-    
-    @ViewBuilder func moreInfoSummary(_ inner_w:CGFloat) -> some View{
-        VStack{
-            ForEach(Array(self.financialSummaryKeyValues.keys.sorted().enumerated()),id: \.offset){ _key in
-                let key = _key.element
-                let idx = _key.offset
-                let value = self.financialSummaryKeyValues[key] ?? "No Value"
-                
-                HStack(alignment: .center, spacing: 10) {
-                    MainText(content: key+":", fontSize: 15, color: .gray, fontWeight: .semibold)
-                    Spacer()
-                    MainText(content: value, fontSize: 18, color: .black, fontWeight: .medium)
-                }
-                .frame(width: inner_w, alignment: .leading)
-                if idx < self.financialSummaryKeyValues.count - 1{
-                    Divider().frame(width: 15, alignment: .topLeading)
-                }
-            }
-        }.frame(width: inner_w,height: self.innerViewSize.height, alignment: .topLeading)
-    }
-    
-    
+
     func handleOnTap(){
         if self.context.selectedAsset?.Currency != self.asset.Currency{
             setWithAnimation {
                 self.context.selectedAsset = self.asset
             }
         }
+    }
+    
+    var percent:Float{
+        let total = self.context.userAssets.trackedAssets.reduce(0, {$0 + $1.Value})
+        return (self.asset.Value/total) * 100
+    }
+    
+    func footer(_ inner_w:CGFloat) -> some View{
+        Container(width: inner_w, ignoreSides: true, orientation: .horizontal,spacing: 0) { _  in
+            MainText(content: self.percent.ToDecimals() + "%", fontSize: 15, color: .gray, fontWeight: .medium)
+            MainText(content: " of your holdings", fontSize: 13, color: .gray, fontWeight: .regular)
+        }.frame(width: inner_w, height: self.innerViewSize.height * 0.2, alignment: .center)
     }
     
     func updatePrice(_ newPrice:Float?){
@@ -129,33 +120,6 @@ struct PortfolioCard: View {
         }
     }
     
-    func dynamicInnerView(w:CGFloat) -> some View{
-        return ZStack(alignment: .center) {
-            if !self.switchView{
-                self.summaryViewGenerator(heading: "Market Summary",w: w, innerView: self.marketSummary(_:))
-                    .opacity(!self.switchView ? 1 : 0)
-            }else{
-                self.summaryViewGenerator(heading: "Financial Summary",w:w, innerView: self.moreInfoSummary(_:))
-                    .opacity(self.switchView ? 1 : 0)
-                    .rotation3DEffect(.degrees(-180), axis: (x: 0.5,y:0.0,z:0.0))
-            }
-        }
-        .frame(width: w, alignment: .center)
-        .flipRotation(rotate: $switchView)
-        
-    }
-    
-    func footerView(w:CGFloat) -> some View{
-        let buttonText = self.switchView ? "←" : "Quick Info  →"
-        return HStack(alignment: .center, spacing: 10) {
-            TabButton(title: buttonText, fontSize: 7.5, textColor: .white, flexible: true) {
-                self.switchView.toggle()
-            }
-            Spacer()
-            TabButton(title: "More  →", fontSize: 7.5, textColor: .white, flexible: true,action: self.handleOnTap)
-        }.padding(.horizontal,7.5)
-    }
-    
     func updateAsset(_ newAsset:CrybseAsset) {
         guard let selectedAsset = self.context.selectedAsset, selectedAsset.Currency == self.asset.Currency && self.asset.Currency == newAsset.Currency else {return}
         if self.asset.Price != selectedAsset.Price{
@@ -173,16 +137,19 @@ struct PortfolioCard: View {
     
     
     var body: some View {
-        Container(width: w, horizontalPadding: 7.5, verticalPadding: 15, orientation: .vertical,spacing:10) { w in
+        Container(width: w, horizontalPadding: 10, verticalPadding: 10, orientation: .vertical,spacing:0) { w in
             self.assetHeaderInfo(w: w)
-            self.dynamicInnerView(w: w)
-            self.footerView(w: w)
+            self.marketSummary(w)
+            self.footer(w)
         }
-        .frame(width: w, alignment: .center)
-        .background(mainLightBGView.overlay(BlurView.thinLightBlur.opacity(0.25)))
-        .clipContent(clipping: .roundClipping)
+        .frame(width: w,height: self.h, alignment: .center)
+        .basicCard(size: .init(width: w, height: h))
+        .borderCard(color: .init(hex: self.asset.Color))
+        .padding(.top,5)
+        .buttonify(handler: self.handleOnTap)
         .onReceive(self.asset.coinData!.$price, perform: self.updatePrice(_:))
         .onChange(of: self.priceColor, perform: self.resetPriceColor(_:))
+        
         
     }
 }

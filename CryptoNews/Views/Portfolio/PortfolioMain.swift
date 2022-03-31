@@ -23,8 +23,8 @@ struct PortfolioMain: View {
             PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
         }, innerView: {
             Container(ignoreSides: true) { w in
-                self.portfoliocards(w)
-                PortfolioBreakdown(asset: self.context.userAssets.trackedAssets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.15),selectedCardSize: .init(width: w * 0.45, height: totalHeight * 0.225))
+//                self.portfoliocards(w)
+                PortfolioBreakdown(asset: self.context.userAssets.trackedAssets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.225))
                     .animatedAppearance()
                 self.InvestmentsSummary(w)
             }
