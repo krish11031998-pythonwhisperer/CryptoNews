@@ -28,34 +28,22 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             AllAssetView().asyncContainer()
                 .animatedAppearance()
-            self.SocialFeedSummary
-                .animatedAppearance()
-            LatestRedditPost(width:totalWidth,height:totalHeight * 0.3,currencies: self.currencies).asyncContainer()
-                .animatedAppearance()
-            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
-                .animatedAppearance()
-            self.pollView
-            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
-                .animatedAppearance()
+//            self.SocialFeedSummary
+//                .animatedAppearance()
+//            LatestRedditPost(width:totalWidth,height:totalHeight * 0.3,currencies: self.currencies).asyncContainer()
+//                .animatedAppearance()
+//            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
+//                .animatedAppearance()
+//            self.pollView
+//            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
+//                .animatedAppearance()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
     
     var body: some View {
         ZStack(alignment: .center){
-//            self.mainView
-            ZoomInScrollView(data: [Color.red,Color.blue,Color.yellow,Color.gray,Color.green]) { data, size in
-                
-                if let color = data as? Color{
-                    Rectangle()
-                        .fill(color)
-                        .clipContent(clipping: .roundClipping)
-                }else{
-                    Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-                }
-                
-            }
-
+            self.mainView
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
     }

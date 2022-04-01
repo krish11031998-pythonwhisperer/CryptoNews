@@ -50,11 +50,11 @@ struct ZoomInScrollView<T:View>: View {
     @State var centralIdx:Int = .zero
     var centralizeStart:Bool
     var axis:Axis
-    var viewGen:(Any,CGSize) -> T
+    var viewGen:(Any,CGSize,Bool) -> T
     var cardSize:CGSize
     var selectedCardSize:CGSize
     
-    init(data:[Any],axis:Axis = .horizontal,centralizeStart:Bool = true,size:CGSize = .init(width: 300, height: 300),selectedCardSize:CGSize = .init(width: 300, height: 450),@ViewBuilder viewGen: @escaping (Any,CGSize) -> T){
+    init(data:[Any],axis:Axis = .horizontal,centralizeStart:Bool = true,size:CGSize = .init(width: 300, height: 300),selectedCardSize:CGSize = .init(width: 300, height: 450),@ViewBuilder viewGen: @escaping (Any,CGSize,Bool) -> T){
         self.viewGen = viewGen
         self.cardSize = size
         self.selectedCardSize = selectedCardSize
@@ -108,13 +108,11 @@ struct ZoomInScrollView<T:View>: View {
                 self.components[idx].updatePositionalValue(value: self.axis == .horizontal ? midX : midY)
             }
             
-            return self.viewGen(data,.init(width: size.width, height: size.height))
+            return self.viewGen(data,.init(width: size.width, height: size.height),self.centralIdx == idx)
                 .slideZoomInOut(g:g,cardSize: size)
-
                 .anyViewWrapper()
         }
-        .frame(width: size.width, height: size.height, alignment: .center)
-//        .padding(scale != 1 ? 15 : 0)
+        .frame(width: size.width, height: size.height * 1.1, alignment: .center)
         .padding(.leading,leadPadding * 0.5)
         .padding(.trailing,trailingPadding * 0.5)
         .padding(.top,topPadding * 0.5)
@@ -218,7 +216,7 @@ struct ZoomInScrollView<T:View>: View {
 
 struct ZoomInScrollView_Previews: PreviewProvider {
     static var previews: some View {
-        ZoomInScrollView(data: [Color.red,Color.blue,Color.yellow,Color.gray,Color.green],axis: .horizontal) { data, size in
+        ZoomInScrollView(data: [Color.red,Color.blue,Color.yellow,Color.gray,Color.green],axis: .horizontal) { data, size, _ in
             
             if let color = data as? Color{
                 Rectangle()

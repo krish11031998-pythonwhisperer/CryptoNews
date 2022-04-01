@@ -13,14 +13,16 @@ struct PortfolioCard: View {
     @State var price:Float = .zero
     @State var switchView:Bool = false
     @State var priceColor:Color = .white
+    var selected:Bool
     var w:CGFloat
     var h:CGFloat
     
-    init(asset:CrybseAsset,w:CGFloat = .zero,h:CGFloat = totalHeight * 0.25){
+    init(asset:CrybseAsset,w:CGFloat = .zero,h:CGFloat = totalHeight * 0.25,selected:Bool = false){
         self.asset = asset
         if let safePrice = asset.Price{
             self._price = .init(wrappedValue: safePrice)
         }
+        self.selected = selected
         self.h = h
         self.w = w
     }
@@ -46,12 +48,12 @@ struct PortfolioCard: View {
         ]
     }
     
-    var financialSummaryKeyValues:[String:String]{
+    var financialSummaryKeyValues:[String:(String,Color)]{
         return [
-                "Market Cap":(self.asset.MarketCap).ToMoney(),
-                "Value":self.asset.Value.ToMoney(),
-                "Profit":self.asset.Profit.ToMoney(),
-                "Asset Quantity":self.asset.CoinTotal.ToDecimals()
+            "Value":(self.asset.Value.ToMoney(),.white),
+            "Profit":(abs(self.asset.Profit).ToMoney(),self.asset.Profit > 0 ? .green : self.asset.Profit < 0 ? .red : .white),
+            "Quantity":(self.asset.CoinTotal.ToDecimals(),.white),
+            "HODL Ratio":(self.percent.ToDecimals() + "%",.init(hex: self.asset.Color))
         ]
     }
     
@@ -60,18 +62,17 @@ struct PortfolioCard: View {
     }
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
-        let h = self.innerViewSize.height * 0.6
-        VStack(alignment: .leading, spacing: 10) {
-            HStack(alignment: .center, spacing: 10) {
+        let h = self.innerViewSize.height * (self.selected ? 0.5 : 0.6) - 5
+        VStack(alignment: .leading, spacing: 0) {
+            Container(width: inner_w,ignoreSides: true,verticalPadding: 0, orientation: .horizontal) { _ in
                 MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .white, orientation: .vertical, alignment: .topLeading)
                 Spacer()
                 MainText(content: "#\(self.asset.Rank)", fontSize: 12, color: .white, fontWeight: .semibold)
                     .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
             }
-            .frame(width: inner_w,height: h * 0.25, alignment: .topLeading)
-            
+            .frame(width: inner_w,height: h * 0.4, alignment: .topLeading)
             if let sparkline = self.asset.coinData?.Sparkline{
-                CurveChart(data: sparkline,interactions: false, size: .init(width: inner_w, height: h * 0.75 - 10), bg: .clear)
+                CurveChart(data: sparkline,interactions: false, size: .init(width: inner_w, height: h * 0.6), bg: .clear)
             }else{
                 MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
             }
@@ -91,11 +92,22 @@ struct PortfolioCard: View {
         return (self.asset.Value/total) * 100
     }
     
-    func footer(_ inner_w:CGFloat) -> some View{
-        Container(width: inner_w, ignoreSides: true, orientation: .horizontal,spacing: 0) { _  in
-            MainText(content: self.percent.ToDecimals() + "%", fontSize: 15, color: .gray, fontWeight: .medium)
-            MainText(content: " of your holdings", fontSize: 13, color: .gray, fontWeight: .regular)
-        }.frame(width: inner_w, height: self.innerViewSize.height * 0.2, alignment: .center)
+    @ViewBuilder func footer(_ inner_w:CGFloat) -> some View{
+        if self.selected{
+            LazyVGrid(columns: [.init(.adaptive(minimum: inner_w * 0.5 - 5, maximum: inner_w * 0.5), spacing: 10, alignment: .center)], alignment: .center, spacing: 10) {
+                ForEach(self.financialSummaryKeyValues.keys.sorted(),id:\.self){ key in
+                    if let value = self.financialSummaryKeyValues[key]{
+                        MainSubHeading(heading: key, subHeading: value.0, headingSize: 12, subHeadingSize: 13.5, headColor: .white.opacity(0.5), subHeadColor: value.1, orientation: .vertical, headingWeight: .regular, bodyWeight: .medium, spacing: 2.5, alignment: .center)
+                    }
+                }
+            }.frame(width: inner_w, height: self.innerViewSize.height * 0.3, alignment: .center)
+        }else{
+            Container(width: inner_w, ignoreSides: true, orientation: .horizontal,spacing: 5) { _  in
+                MainText(content: self.percent.ToDecimals() + "%", fontSize: 15, color: .gray, fontWeight: .medium)
+                MainText(content: " of your holdings", fontSize: 13, color: .gray, fontWeight: .regular)
+            }.frame(width: inner_w, height: self.innerViewSize.height * 0.2, alignment: .center)
+        }
+        
     }
     
     func updatePrice(_ newPrice:Float?){
@@ -136,21 +148,23 @@ struct PortfolioCard: View {
     }
     
     
+    var activateBG:AnyView{
+        return self.selected ? Color.linearGradient(colors: [Color(hex: self.asset.Color),Color.clear,Color.clear], start: .topLeading, end: .bottomTrailing).anyViewWrapper() : Color.clear.anyViewWrapper()
+    }
+    
+    
     var body: some View {
         Container(width: w, horizontalPadding: 10, verticalPadding: 10, orientation: .vertical,spacing:0) { w in
             self.assetHeaderInfo(w: w)
             self.marketSummary(w)
             self.footer(w)
         }
-        .frame(width: w,height: self.h, alignment: .center)
-        .basicCard(size: .init(width: w, height: h))
+        .basicCard(background:self.activateBG)
         .borderCard(color: .init(hex: self.asset.Color))
-        .padding(.top,5)
         .buttonify(handler: self.handleOnTap)
         .onReceive(self.asset.coinData!.$price, perform: self.updatePrice(_:))
         .onChange(of: self.priceColor, perform: self.resetPriceColor(_:))
-        
-        
+        .padding(.top,5)
     }
 }
 

@@ -78,13 +78,14 @@ struct PortfolioBreakdown: View {
      
     var body: some View {
         Container(heading:"Holdings Breakdown",headingSize: 18,width: self.width,ignoreSides: true, orientation: .vertical, alignment: .center){ w in
-            DonutChart(diameter: totalHeight * 0.3,valueColorPair: self.assetColorValuePairs)
+            DonutChart(selectedColor: Color(hex:self.assets.sorted(by: {$0.Rank < $1.Rank})[self.idx].Color),diameter: totalHeight * 0.3,valueColorPair: self.assetColorValuePairs)
                 .padding(.vertical)
-            ScrollZoomInOutView(cardSize: self.size, viewData: self.assets, leading: true) { data, size in
+            ZoomInScrollView(data: self.assets, axis: .horizontal, centralizeStart: true, size: self.size, selectedCardSize: .init(width: self.size.width, height: self.size.height * 1.5)) { data, size, selected  in
                 if let safeAsset = data as? CrybseAsset{
-                    PortfolioCard(asset: safeAsset, w: self.size.width,h: self.size.height)
+                    PortfolioCard(asset: safeAsset,w: size.width, h: size.height, selected: selected)
                 }
-            }.animatedAppearance()
+            }
+            .animatedAppearance()
                 
         }.onPreferenceChange(SelectedCentralCardPreferenceKey.self) { idx in
             if self.idx != idx{

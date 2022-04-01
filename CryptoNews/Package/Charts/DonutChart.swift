@@ -10,11 +10,13 @@ import SwiftUI
 struct DonutChart: View {
     
     var valueColorPair:[Color:Float] = [:]
+    var selectedColor:Color? = nil
     var value:[Float]? = nil
     var diameter:CGFloat
     var lineWidth:CGFloat
     
-    init(diameter:CGFloat = totalWidth - 30,lineWidth:CGFloat = 20,valueColorPair:[Color:Float]? = nil,value:[Float]? = nil){
+    init(selectedColor:Color? = nil,diameter:CGFloat = totalWidth - 30,lineWidth:CGFloat = 20,valueColorPair:[Color:Float]? = nil,value:[Float]? = nil){
+        self.selectedColor = selectedColor
         self.diameter = diameter
         self.lineWidth = lineWidth
         if let safeValueColorPair = valueColorPair{
@@ -56,9 +58,10 @@ struct DonutChart: View {
                 .stroke(Color.gray, lineWidth: self.lineWidth)
                 .frame(width: self.diameter,height:self.diameter,alignment: .center)
             if let firstColor = self.donutChartValue.first?.key{
+                let chartColor = self.selectedColor != nil ? self.selectedColor! == firstColor ? firstColor : .black : firstColor
                 Circle()
                     .trim(from: 0, to: 1)
-                    .stroke(firstColor, lineWidth: self.lineWidth)
+                    .stroke(chartColor, lineWidth: self.lineWidth)
                     .animation(.easeInOut)
                     .frame(width: self.diameter,height:self.diameter, alignment: .center)
             }
@@ -66,11 +69,14 @@ struct DonutChart: View {
                 ForEach(Array(1..<self.donutChartValue.count),id:\.self){ idx in
                     let color = self.donutChartValue[idx].key
                     let value = CGFloat(1 - self.valueForIdx(idx)/total)
+                    let chartColor = self.selectedColor != nil ? self.selectedColor! == color ? color : .black : color
+                    
                     Circle()
                         .trim(from: 0, to: value)
-                        .stroke(color, lineWidth: self.lineWidth)
+                        .stroke(chartColor, lineWidth: self.lineWidth)
                         .animation(.easeInOut)
                         .frame(width: self.diameter,height:self.diameter, alignment: .center)
+                    
                 }
             }
         }
