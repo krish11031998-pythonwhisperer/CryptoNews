@@ -8,10 +8,10 @@
 import Foundation
 
 enum CrybseAssetSocialType:String{
-    case socialHighlights = "getAssetSocialSummary"
     case reddit = "reddit"
     case twitter = "twitter"
     case youtube = "coin/youtube"
+    case socialHighlights = "socialHighlights"
 }
 
 
@@ -43,7 +43,7 @@ class CrybseAssetSocialsAPI:CrybseAPI{
     
     
     func request(type:CrybseAssetSocialType? = nil,endpoint:String? = nil,queryItems:[String:Any]? = nil) -> URLRequest?{
-        let safeQueryItems = queryItems != nil ? queryItems!.compactMap({$1 as? String != nil ? URLQueryItem(name: $0, value: $1 as? String) : nil}) : self.query
+        let safeQueryItems = queryItems != nil ? self.queryBuilder(queries: queryItems!) : self.query
         return self.requestBuilder(path: self.path(type: type, endpoint: endpoint), queries: safeQueryItems)
     }
     
@@ -62,13 +62,13 @@ class CrybseAssetSocialsAPI:CrybseAPI{
                     if let safeYoutubeFeed = CrybseVideoResponse.parseVideoDataFromData(data: data){
                         self.data = safeYoutubeFeed
                     }
-            case .twitter:
-                if let safeTweetsResponse = CrybseTweets.parseTweetsFromData(data: data),let safeTweets = safeTweetsResponse.tweets{
-                    self.data = safeTweets
-                    if let safeNextToken = safeTweetsResponse.next_token{
-                        self.nextPageToken = safeNextToken
+                case .twitter:
+                    if let safeTweetsResponse = CrybseTweets.parseTweetsFromData(data: data),let safeTweets = safeTweetsResponse.tweets{
+                        self.data = safeTweets
+                        if let safeNextToken = safeTweetsResponse.next_token{
+                            self.nextPageToken = safeNextToken
+                        }
                     }
-                }
             }
             
             if self.loading{

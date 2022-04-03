@@ -27,7 +27,8 @@ struct PriceCard: View {
     }
     
     var coin:CrybseCoin{
-        return self.coinAsset.coinData ?? .init()
+//        return self.coinAsset.coinData ?? .init()
+        return coinAsset.CoinData
     }
     
     var prices:[Float]{

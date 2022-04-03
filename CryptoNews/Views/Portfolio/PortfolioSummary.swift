@@ -69,7 +69,7 @@ struct PortfolioSummary: View {
             }.frame(width: width, alignment: .topLeading)
     
             
-            if let sparkline = asset.coinData?.Sparkline{
+            if let sparkline = asset.CoinData.Sparkline{
                 CurveChart(data: sparkline, interactions: false, size: .init(width: width, height: 100),bg: .clear,chartShade: true)
             }
         }
@@ -194,7 +194,7 @@ struct PortfolioSummaryAssetCard:View{
             }.frame(width: width, alignment: .topLeading)
     
             
-            if let sparkline = asset.coinData?.Sparkline{
+            if let sparkline = asset.CoinData.Sparkline{
                 CurveChart(data: sparkline, interactions: false, size: .init(width: width, height: 100),bg: .clear,chartShade: true)
             }
         }.padding()

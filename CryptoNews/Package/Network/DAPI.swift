@@ -89,19 +89,15 @@ public class DAPI:ObservableObject,DataParsingProtocol{
     }
     
     public func parseQueryItems(queryItems: inout[URLQueryItem],key:String,query:Any){
-        var finalQuery:[URLQueryItem] = []
         if let value = query as? String{
-            finalQuery.append(.init(name: key, value: value))
+            queryItems.append(.init(name: key, value: value))
         }else if let values = query as? [String]{
-            finalQuery = values.compactMap({.init(name: "\(key)=", value: $0)})
+            queryItems.append(contentsOf: values.compactMap({.init(name: key, value: $0)}))
         }else if let value = query as? Int{
-            finalQuery.append(.init(name: key, value: "\(value)"))
+            queryItems.append(.init(name: key, value: "\(value)"))
         }else{
             return
         }
-        
-        queryItems.append(contentsOf: finalQuery)
-
     }
     
     public func queryBuilder(queries:[String:Any]) -> [URLQueryItem]{

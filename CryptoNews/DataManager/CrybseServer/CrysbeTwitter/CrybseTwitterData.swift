@@ -154,25 +154,49 @@ class CrybseTweetEntity:Codable{
 }
 
 class CrybseTweetURLEntity:Codable{
-    var url:String
-    var expanded_url:String
-    var display_url:String
+    var url:String?
+    var expanded_url:String?
+    var display_url:String?
     var images:[EntityImage]?
-    var title:String
-    var description:String
-    var unwound_url:String
+    var title:String?
+    var description:String?
+    var unwound_url:String?
+    
+    var Title:String{
+        return self.title ?? ""
+    }
+    
+    var Description:String{
+        return self.description ?? ""
+    }
+    
+    var Unwound_URL:String{
+        return self.unwound_url ?? ""
+    }
+    
+    var DisplayURL:String{
+        return self.display_url ?? ""
+    }
+    
+    var ExpandedURL:String{
+        return self.expanded_url ?? ""
+    }
+    
+    var URL:String{
+        return self.url ?? ""
+    }
 }
 
 class EntityImage:Codable{
-    var url:String
+    var url:String?
 }
 
 class TweetHashTag:Codable{
-    var tag:String
+    var tag:String?
 }
 
 class TweetEntityAnnotation:Codable{
-    var probability:Float
-    var `type`:String
-    var normalized_text:String
+    var probability:Float?
+    var `type`:String?
+    var normalized_text:String?
 }

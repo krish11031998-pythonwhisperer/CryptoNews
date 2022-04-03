@@ -9,27 +9,18 @@ import SwiftUI
 
 struct SocialFeedSummaryView: View {
     @EnvironmentObject var context:ContextData
-//    @StateObject var assetFeedManager:CrybseAssetSocialsAPI
-    @StateObject var tweetAPI:CrybseTwitterAPI
+    @State var idx:Int = .zero
+    @StateObject var socialHightlights:CrybseSocialHighlightsAPI
     var width:CGFloat
     
     init(assets:[String]? = nil,keyword:String = "Cryptocurrency",width:CGFloat){
-        var query:[String:Any] = ["language": "en"]
-        if let safeAsset = assets{
-            let entities = safeAsset.reduce("", {$0 == "" ? $1 : "\($0),\($1)"})
-            query["entity"] = entities
-        }else{
-            query["keyword"] = keyword
-        }
-        
-        self._tweetAPI = .init(wrappedValue:.init(endpoint: .tweetsSearch, queries: query))
-        
+        self._socialHightlights = .init(wrappedValue: .init(assets: assets ?? []))
         self.width = width
     }
     
     func onAppear(){
-        if self.tweetAPI.tweets == nil{
-            self.tweetAPI.getTweets()
+        if self.socialHightlights.socialHightlight == nil{
+            self.socialHightlights.getSocialHighlights()
         }
         
     }
@@ -40,28 +31,52 @@ struct SocialFeedSummaryView: View {
     
     @ViewBuilder func cardBuilder(_ data:Any,_ size:CGSize) -> some View{
         if let safeData = data as? CrybseTweet{
-//            if safeData.isTweet{
-                PostCard(cardType: .Tweet, data: safeData, size: size, bg: .light, const_size: true,isButton: false)
-//            }else{
-//                NewsCard(news: safeData, size: size)
-//            }
+            PostCard(cardType: .Tweet, data: safeData, size: size, bg: .light, const_size: true,isButton: false)
+        }else if let safeReddit = data as? CrybseRedditData{
+            RedditPostCard(width: size.width, size: size, redditPost: safeReddit, const_size: true)
         }
+    }
+    
+    var socialData:[Any]?{
+        var data:[Any]? = nil
+        if let safeTweet = self.socialHightlights.socialHightlight?.Tweets,!safeTweet.isEmpty{
+            if data == nil{
+                data = []
+            }
+            data?.append(contentsOf:safeTweet)
+        }
+        
+        if let safeReddit = self.socialHightlights.socialHightlight?.Reddit,!safeReddit.isEmpty{
+            if data == nil{
+                data = []
+            }
+            data?.append(contentsOf: safeReddit)
+        }
+        
+        return data
     }
     
     func onTap(idx:Int){
-        if let safeTweet = self.tweetAPI.tweets?[idx]{
-            if self.context.selectedTweet != safeTweet{
-                self.context.selectedTweet = safeTweet
-            }
-        }
+//        if let safeTweet = self.socialData?[idx] as? CrybseTweet{
+//            if self.context.selectedTweet != safeTweet{
+//                self.context.selectedTweet = safeTweet
+//            }
+//        }else if let safeReddit = self.socialData?[idx] as? CrybseRedditData{
+////            if self.context.sele != safeTweet{
+////                self.context.selectedTweet = safeTweet
+////            }
+//        }
+//        if let safe
     }
-    
+
     @ViewBuilder var SocialSummayView:some View{
-        if let socialFeed = self.tweetAPI.tweets{
+        if let socialFeed = self.socialData{
             Container(heading: "Social Feed Summary", width: self.width) { inner_w in
                 SlideZoomInOutView(data: socialFeed,timeLimit: 10,size: self.cardSize(w: inner_w), scrollable: true,onTap: self.onTap(idx:),viewGen:self.cardBuilder(_:_:))
+                    .basicCard()
             }
-        }else if self.tweetAPI.loading{
+            
+        }else if self.socialHightlights.loading{
             ProgressView()
                 .frame(width:self.cardSize().width,height:self.cardSize().height,alignment:.center)
                 .clipContent(clipping: .roundClipping)

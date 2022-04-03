@@ -92,8 +92,8 @@ struct RedditCardTester:View{
     @StateObject var RAPI:CrybseRedditAPI
     var size:CGSize
     
-    init(subReddit:String,size:CGSize = .zero){
-        self._RAPI = .init(wrappedValue: .init(subReddit: subReddit))
+    init(search:String,size:CGSize = .zero){
+        self._RAPI = .init(wrappedValue: .init(search: search))
         self.size = size
     }
     
@@ -127,7 +127,7 @@ struct RedditCardTester:View{
 
 struct RedditPostCard_Previews: PreviewProvider {
     static var previews: some View {
-        RedditCardTester(subReddit: "bitcoin",size: .init(width: totalWidth - 30, height: RedditPostCardSize.small.rawValue) )
+        RedditCardTester(search: "bitcoin",size: .init(width: totalWidth - 30, height: RedditPostCardSize.small.rawValue) )
             .background(Color.mainBGColor.frame(width: totalWidth, height: totalHeight, alignment: .center).ignoresSafeArea())
     }
 }

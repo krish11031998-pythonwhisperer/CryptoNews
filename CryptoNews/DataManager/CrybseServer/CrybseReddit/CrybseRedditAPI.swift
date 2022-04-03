@@ -9,10 +9,13 @@ import Foundation
 
 class CrybseRedditAPI:CrybseAssetSocialsAPI{
     
-    init(subReddit:String?,limit:Int = 10){
-        super.init(type: .reddit, queryItems: [ "subreddit":subReddit ?? "","limit":"\(limit)"])
+    init(subReddit:String? = nil,search:String = "",after:String? = nil,before:String? = nil,time:String = "day",sort:String = "hot",limit:Int = 10){
+        let queryItems:[String:Any] = ["subreddit":subReddit,"search":search,"after":after,"before":before,"limit":"\(limit)","time":time,"sort":sort]
+        super.init(type: .reddit, queryItems: queryItems)
     }
     
+    
+    static var shared:CrybseRedditAPI = .init()
     
     var posts:CrybseRedditPosts{
         if let redditPosts = self.data as? CrybseRedditPosts{
@@ -23,8 +26,8 @@ class CrybseRedditAPI:CrybseAssetSocialsAPI{
     }
     
     
-    func getRedditPosts(subReddit:String? = nil,limit:Int = 10,completion:((Data?) -> Void)? = nil){
-        self.getAssetSocialData(type: .reddit, queryItems: subReddit != nil ? ["subreddit":subReddit ?? "","limit":"\(limit)"] : nil, completion: completion)
+    func getRedditPosts(subReddit:String? = nil,search:String? = nil,limit:Int = 10,completion:((Data?) -> Void)? = nil){
+        self.getAssetSocialData(type: .reddit, queryItems:  ["subreddit":subReddit,"search":search,"limit":"\(limit)"], completion: completion)
         
     }
 }

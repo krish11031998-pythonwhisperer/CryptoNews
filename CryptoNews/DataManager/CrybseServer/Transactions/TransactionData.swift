@@ -18,16 +18,56 @@ enum TransactionType:String{
 }
 
 struct Transaction:Codable{
-    var time:String
-    var type:String
-    var asset:String
-    var asset_quantity:Float
-    var asset_spot_price:Float
-    var subtotal:Float
-    var total_inclusive_price:Float
-    var fee:Float
-    var memo:String
-    var uid:String
+    var time:String?
+    var type:String?
+    var asset:String?
+    var asset_quantity:Float?
+    var asset_spot_price:Float?
+    var subtotal:Float?
+    var total_inclusive_price:Float?
+    var fee:Float?
+    var memo:String?
+    var uid:String?
+    
+    var Time:String{
+        return self.time ?? ""
+    }
+    
+    var TxnType:String{
+        return self.type ?? ""
+    }
+    
+    var Asset:String{
+        return self.asset ?? ""
+    }
+    
+    var Asset_Quantity:Float{
+        return self.asset_quantity ?? 0.0
+    }
+    
+    var Asset_Spot_Price:Float{
+        return self.asset_spot_price ?? 0.0
+    }
+    
+    var Subtotal:Float{
+        return self.subtotal ?? 0.0
+    }
+    
+    var Total_Inclusive_Price:Float{
+        return self.total_inclusive_price ?? 0.0
+    }
+    
+    var Fee:Float{
+        return self.fee ?? 0.0
+    }
+    
+    var Memo:String{
+        return self.memo ?? ""
+    }
+    
+    var Uid:String{
+        return self.uid ?? ""
+    }
     
     static var empty:Transaction = .init(time: "", type: "", asset: "", asset_quantity: 0, asset_spot_price: 0, subtotal: 0, total_inclusive_price: 0, fee: 0, memo: "",uid: "")
     
@@ -35,7 +75,7 @@ struct Transaction:Codable{
         let dateFormatter = DateFormatter()
         dateFormatter.locale = Locale(identifier: "en_US_POSIX") // set locale to reliable US_POSIX
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
-        guard let date = dateFormatter.date(from: time) else {return Date()}
+        guard let date = dateFormatter.date(from: Time) else {return Date()}
         return date
     }
     
@@ -50,7 +90,7 @@ struct Transaction:Codable{
     
     var symbol:String?{
         get{
-            let asset = asset.lowercased()
+            let asset = Asset.lowercased()
             return asset
         }
         set{
@@ -75,8 +115,8 @@ struct Transaction:Codable{
     }
     
     func parseToPortfolioData() -> PortfolioData{
-        var value_now = self.asset_quantity * self.asset_spot_price
-        return .init(type:self.type,crypto_coins: Double(self.asset_quantity), value_usd: value_now,profit: value_now - self.subtotal, fee: self.fee,totalfee: self.total_inclusive_price, currentPrice: 0)
+        var value_now = self.Asset_Quantity * self.Asset_Spot_Price
+        return .init(type:self.type,crypto_coins: Double(self.Asset_Quantity), value_usd: value_now,profit: value_now - self.Subtotal, fee: self.Fee,totalfee: self.Total_Inclusive_Price, currentPrice: 0)
     }
     
 }

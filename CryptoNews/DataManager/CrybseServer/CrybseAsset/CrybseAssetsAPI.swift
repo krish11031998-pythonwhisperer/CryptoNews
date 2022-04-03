@@ -63,6 +63,7 @@ class CrybseAssetsAPI:CrybseAPI{
         self.symbols = symbols
         self.uid = uid
         guard let url = self.url else {return}
+        print("(DEBUG) Request => ",url.absoluteString)
         self.getData(_url: url) { data in
             completion(CrybseAssets.parseAssetsFromData(data: data))
         }

@@ -45,7 +45,7 @@ struct CurrencyView:View{
         self._assetData = .init(wrappedValue: asset)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(crypto: asset.Currency, coinUID: asset.coinData?.uuid ?? "", fiat: "USD",name:asset.coinData?.Name ?? ""))
+        self._coinAPI = .init(wrappedValue: .init(crypto: asset.Currency, coinUID: asset.CoinData.uuid ?? "", fiat: "USD",name:asset.CoinData.Name))
     }
     
       
@@ -211,7 +211,7 @@ struct CurrencyView:View{
                 case .feed:
                     self.feedView(w: w)
                 case .txns:
-                    TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.Currency, currencyCurrentPrice: self.assetData.coinData?.Price ?? 0,width: w)
+                    TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.Currency, currencyCurrentPrice: self.assetData.CoinData.Price,width: w)
                 case .news:
                     self.newsView(w: w)
                 case .reddit:

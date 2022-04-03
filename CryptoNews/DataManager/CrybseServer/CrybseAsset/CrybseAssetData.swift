@@ -82,9 +82,9 @@ class CrybseAssets:ObservableObject,Codable{
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        assets = try container.decode([String:CrybseAsset]?.self, forKey: .assets)
-        tracked = try container.decode([String]?.self, forKey: .tracked)
-        watching = try container.decode([String]?.self, forKey: .watching)
+        assets = try container.decodeIfPresent([String:CrybseAsset].self, forKey: .assets)
+        tracked = try container.decodeIfPresent([String].self, forKey: .tracked)
+        watching = try container.decodeIfPresent([String].self, forKey: .watching)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -98,13 +98,13 @@ class CrybseAssets:ObservableObject,Codable{
         let decoder = JSONDecoder()
         do{
             let res = try decoder.decode(CrybseAssetsResponse.self, from: data)
-            if let data = res.data, res.success{
+            if res.success,let data = res.data{
                 coinData = data
             }else{
-                print("(DEBUG) Error while trying to get the CrybseCoinData : ")
+                print("(DEBUG) Error while trying to get the CrybseAssets : ")
             }
         }catch{
-            print("(DEBUG) Error while trying to parse the CrybseCoinDataResponse : ",error.localizedDescription)
+            print("(DEBUG) Error while trying to parse the CrybseAssetsResponse : ",error.localizedDescription)
         }
         
         return coinData
@@ -113,11 +113,11 @@ class CrybseAssets:ObservableObject,Codable{
     func updateAsset(sym:String,txn:Transaction){
         let asset = self.assets?[sym] ?? .init(currency: sym)
         asset.Txns.append(txn)
-        asset.Value += txn.subtotal
-        asset.CoinTotal += txn.asset_quantity
-        if let price = asset.coinData?.Price{
-            asset.Profit += Float((txn.asset_quantity * price - txn.subtotal)/txn.subtotal)/Float(asset.Txns.count)
-        }
+        asset.Value += txn.Subtotal
+        asset.CoinTotal += txn.Asset_Quantity
+//        if let price = asset.coinData?.Price{
+        asset.Profit += Float((txn.Asset_Quantity * 1.0 - txn.Subtotal)/txn.Subtotal)/Float(asset.Txns.count)
+//        }
         self.assets?[sym] = asset
         if let _ = self.assets?[sym]{
             if !self.Tracked.contains(sym) && self.Watching.contains(sym){
@@ -145,10 +145,11 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     static func == (lhs: CrybseAsset, rhs: CrybseAsset) -> Bool {
         let currencyCondition = lhs.Currency == rhs.Currency
         let txnCondition = lhs.txns?.count == rhs.txns?.count
-        let coinDataCondition = lhs.coinData?.Price == rhs.coinData?.Price
+//        let coinDataCondition = lhs.coinData?.Price == rhs.coinData?.Price
         let coinCondition = lhs.coin?.TimeseriesData.last?.time == rhs.coin?.TimeseriesData.last?.time
         
-        return currencyCondition || txnCondition || coinCondition || coinDataCondition
+//        return currencyCondition || txnCondition || coinCondition || coinDataCondition
+        return currencyCondition || txnCondition || coinCondition
     }
     
     @Published var currency:String?
@@ -189,12 +190,13 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        value = try container.decode(Float?.self, forKey: .value)
-        profit = try container.decode(Float?.self, forKey: .profit)
-        coinTotal = try container.decode(Float?.self, forKey: .coinTotal)
-        currency = try container.decode(String?.self, forKey: .currency)
-        txns = try container.decode(Array<Transaction>?.self, forKey: .txns)
-        coinData = try container.decode(CrybseCoin?.self, forKey: .coinData)
+        value = try container.decodeIfPresent(Float.self, forKey: .value)
+        profit = try container.decodeIfPresent(Float.self, forKey: .profit)
+        coinTotal = try container.decodeIfPresent(Float.self, forKey: .coinTotal)
+        currency = try container.decodeIfPresent(String.self, forKey: .currency)
+        txns = try container.decodeIfPresent(Array<Transaction>.self, forKey: .txns)
+        coinData = try container.decodeIfPresent(CrybseCoin.self, forKey: .coinData)
+        coin = try container.decodeIfPresent(CrybseCoinSocialData.self,forKey: .coin)
     }
 
     func encode(to encoder: Encoder) throws {
@@ -210,8 +212,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     
     var Price:Float?{
         get{
-            return self.coinData?.price
-        }
+            return self.coinData?.price        }
         
         set{
             self.coinData?.price = newValue
@@ -325,6 +326,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
  
 
 class CrybseCoin:ObservableObject,Codable{
+
     init(){}
 
    @Published var uuid:String?
@@ -333,7 +335,6 @@ class CrybseCoin:ObservableObject,Codable{
    @Published var description:String?
    @Published var color:String?
    @Published var iconUrl:String?
-   @Published var _24hVolume:Float?
    @Published var marketCap:Float?
    @Published var price:Float?
    @Published var tier:Int?
@@ -372,20 +373,20 @@ class CrybseCoin:ObservableObject,Codable{
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        uuid = try container.decode(String?.self, forKey: .uuid)
-        symbol = try container.decode(String?.self, forKey: .symbol)
-        name = try container.decode(String?.self, forKey: .name)
-        color = try container.decode(String?.self, forKey: .color)
-        iconUrl = try container.decode(String?.self, forKey: .iconUrl)
-        marketCap = try container.decode(Float?.self, forKey: .marketCap)
-        price = try container.decode(Float?.self, forKey: .price)
-        tier = try container.decode(Int?.self, forKey: .tier)
-        change = try container.decode(Float?.self, forKey: .change)
-        rank = try container.decode(Int?.self, forKey: .rank)
-        sparkline = try container.decode([Float]?.self, forKey: .sparkline)
-        lowVolume = try container.decode(Bool?.self, forKey: .lowVolume)
-        coinrankingUrl = try container.decode(String?.self, forKey: .coinrankingUrl)
-        btcPrice = try container.decode(Float?.self, forKey: .btcPrice)
+        uuid = try container.decodeIfPresent(String.self, forKey: .uuid)
+        symbol = try container.decodeIfPresent(String.self, forKey: .symbol)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        color = try container.decodeIfPresent(String.self, forKey: .color)
+        iconUrl = try container.decodeIfPresent(String.self, forKey: .iconUrl)
+        marketCap = try container.decodeIfPresent(Float.self, forKey: .marketCap)
+        price = try container.decodeIfPresent(Float.self, forKey: .price)
+        tier = try container.decodeIfPresent(Int.self, forKey: .tier)
+        change = try container.decodeIfPresent(Float.self, forKey: .change)
+        rank = try container.decodeIfPresent(Int.self, forKey: .rank)
+        sparkline = try container.decodeIfPresent([Float].self, forKey: .sparkline)
+        lowVolume = try container.decodeIfPresent(Bool.self, forKey: .lowVolume)
+        coinrankingUrl = try container.decodeIfPresent(String.self, forKey: .coinrankingUrl)
+        btcPrice = try container.decodeIfPresent(Float.self, forKey: .btcPrice)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -396,7 +397,6 @@ class CrybseCoin:ObservableObject,Codable{
         try container.encode(description, forKey: .description)
         try container.encode(color, forKey: .color)
         try container.encode(iconUrl, forKey: .iconUrl)
-        try container.encode(_24hVolume, forKey: ._24hVolume)
         try container.encode(marketCap, forKey: .marketCap)
         try container.encode(price, forKey: .price)
         try container.encode(tier, forKey: .tier)
@@ -515,9 +515,9 @@ class CrybseCoinMetaData:ObservableObject,Codable{
         
         required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            confirmed = try container.decode(Bool?.self, forKey: .confirmed)
-            total = try container.decode(Float?.self, forKey: .total)
-            circulating = try container.decode(Float?.self, forKey: .circulating)
+            confirmed = try container.decodeIfPresent(Bool.self, forKey: .confirmed)
+            total = try container.decodeIfPresent(Float.self, forKey: .total)
+            circulating = try container.decodeIfPresent(Float.self, forKey: .circulating)
         }
         
         func encode(to encoder: Encoder) throws {
@@ -543,9 +543,9 @@ class CrybseCoinMetaData:ObservableObject,Codable{
         
         required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            name = try container.decode(String?.self, forKey: .name)
-            type = try container.decode(String?.self, forKey: .type)
-            url = try container.decode(String?.self, forKey: .url)
+            name = try container.decodeIfPresent(String.self, forKey: .name)
+            type = try container.decodeIfPresent(String.self, forKey: .type)
+            url = try container.decodeIfPresent(String.self, forKey: .url)
         }
         
         func encode(to encoder: Encoder) throws {
@@ -572,8 +572,8 @@ class CrybseCoinMetaData:ObservableObject,Codable{
         
         required init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
-            price = try container.decode(Float?.self, forKey: .price)
-            timestamp = try container.decode(Double?.self, forKey: .timestamp)
+            price = try container.decodeIfPresent(Float.self, forKey: .price)
+            timestamp = try container.decodeIfPresent(Double.self, forKey: .timestamp)
         }
         
         func encode(to encoder: Encoder) throws {
@@ -634,24 +634,24 @@ class CrybseCoinMetaData:ObservableObject,Codable{
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        uuid = try container.decode(String?.self, forKey: .uuid)
-        symbol = try container.decode(String?.self, forKey: .symbol)
-        name = try container.decode(String?.self, forKey: .name)
-        description = try container.decode(Array<CrybseCoinDescription>?.self, forKey: .description)
-        color = try container.decode(String?.self, forKey: .color)
-        iconUrl = try container.decode(String?.self, forKey: .iconUrl)
-        supply = try container.decode(CoinSupply?.self, forKey: .supply)
-        links = try container.decode([CoinLink?]?.self, forKey: .links)
-        dailyVolume = try container.decode(Float?.self, forKey: .dailyVolume)
-        allTimeHigh = try container.decode(CoinAllTimeHigh?.self, forKey: .allTimeHigh)
-        numberOfMarkets = try container.decode(Int?.self, forKey: .numberOfMarkets)
-        numberOfExchanges = try container.decode(Int?.self, forKey: .numberOfExchanges)
-        marketCap = try container.decode(Float?.self, forKey: .marketCap)
-        price = try container.decode(Float?.self, forKey: .price)
-        change = try container.decode(Float?.self, forKey: .change)
-        rank = try container.decode(Int?.self, forKey: .rank)
-        sparkline = try container.decode([Float]?.self, forKey: .sparkline)
-        coinrankingUrl = try container.decode(String?.self, forKey: .coinrankingUrl)
+        uuid = try container.decodeIfPresent(String.self, forKey: .uuid)
+        symbol = try container.decodeIfPresent(String.self, forKey: .symbol)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        description = try container.decodeIfPresent(Array<CrybseCoinDescription>.self, forKey: .description)
+        color = try container.decodeIfPresent(String.self, forKey: .color)
+        iconUrl = try container.decodeIfPresent(String.self, forKey: .iconUrl)
+        supply = try container.decodeIfPresent(CoinSupply.self, forKey: .supply)
+        links = try container.decodeIfPresent([CoinLink?].self, forKey: .links)
+        dailyVolume = try container.decodeIfPresent(Float.self, forKey: .dailyVolume)
+        allTimeHigh = try container.decodeIfPresent(CoinAllTimeHigh.self, forKey: .allTimeHigh)
+        numberOfMarkets = try container.decodeIfPresent(Int.self, forKey: .numberOfMarkets)
+        numberOfExchanges = try container.decodeIfPresent(Int.self, forKey: .numberOfExchanges)
+        marketCap = try container.decodeIfPresent(Float.self, forKey: .marketCap)
+        price = try container.decodeIfPresent(Float.self, forKey: .price)
+        change = try container.decodeIfPresent(Float.self, forKey: .change)
+        rank = try container.decodeIfPresent(Int.self, forKey: .rank)
+        sparkline = try container.decodeIfPresent([Float].self, forKey: .sparkline)
+        coinrankingUrl = try container.decodeIfPresent(String.self, forKey: .coinrankingUrl)
     }
     
     func encode(to encoder: Encoder) throws {

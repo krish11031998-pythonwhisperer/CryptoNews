@@ -52,9 +52,9 @@ extension TweetDetailView{
         Container(width: w, ignoreSides: true,verticalPadding: 0,spacing: 0) { _ in
             ImageView(url: url.images?.first?.url,width: w,height: totalHeight * 0.25, contentMode: .fill, alignment: .center)
             Container(width: w) { _ in
-                MainText(content: url.title, fontSize: 15, color: .white, fontWeight: .medium)
+                MainText(content: url.Title, fontSize: 15, color: .white, fontWeight: .medium)
                     .fixedSize(horizontal: false, vertical: true)
-                MainText(content: url.description, fontSize: 13, color: .gray, fontWeight: .medium)
+                MainText(content: url.Description, fontSize: 13, color: .gray, fontWeight: .medium)
                     .fixedSize(horizontal: false, vertical: true)
                     .lineLimit(2)
             }
@@ -62,7 +62,7 @@ extension TweetDetailView{
         .basicCard()
         .borderCard(color: .white, clipping: .roundClipping)
         .buttonify {
-            self.context.selectedLink = .init(string: url.unwound_url)
+            self.context.selectedLink = .init(string: url.Unwound_URL)
         }
     }
     
@@ -79,10 +79,10 @@ extension TweetDetailView{
             if let img = firstUrl.images?.first?.url, firstUrl.title != "" && firstUrl.description != ""{
                 self.largeAttachmentWithImageView(width: w, url: firstUrl)
             }else if firstUrl.expanded_url != ""{
-                MainText(content: firstUrl.description != "" ? firstUrl.description : firstUrl.expanded_url, fontSize: 15, color: .blue, fontWeight: .medium)
+                MainText(content: firstUrl.Description != "" ? firstUrl.Description : firstUrl.ExpandedURL, fontSize: 15, color: .blue, fontWeight: .medium)
                     .padding(.horizontal,10)
                     .buttonify {
-                        self.context.selectedLink = .init(string: firstUrl.expanded_url)
+                        self.context.selectedLink = .init(string: firstUrl.ExpandedURL)
                     }
             }else{
                 Color.clear.frame(width: .zero, height: .zero, alignment: .center)
@@ -107,7 +107,6 @@ extension TweetDetailView{
             HStack(alignment: .center, spacing: 15) {
                 ImageView(url: user.profile_image_url, width: 45, height: 45, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
-//                MainText(content: , fontSize: 12.5, color: .white, fontWeight: .medium)
                 MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:
                                 self.tweet.id ?? "Id", headingSize: 12.5, subHeadingSize: 10, headColor: .white, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular,spacing: 0, alignment: .leading)
                 Spacer()
@@ -155,10 +154,12 @@ struct TweetDetailMainView:View{
     @EnvironmentObject var context:ContextData
     var tweet_id:String? = nil
     @State var tweet:CrybseTweet? = nil
+    var enableOnClose:Bool
     
-    init(tweet:CrybseTweet? = nil,tweet_id:String = "1507635970430189570"){
+    init(tweet:CrybseTweet? = nil,tweet_id:String = "1507635970430189570",enableOnClose:Bool = true){
         self._tweet = .init(initialValue: tweet)
         self.tweet_id = tweet_id
+        self.enableOnClose = enableOnClose
     }
     
     func onAppear(){
@@ -173,8 +174,6 @@ struct TweetDetailMainView:View{
                 }
                 
             }
-        }else{
-            print(self.tweet)
         }
     }
     
@@ -184,24 +183,29 @@ struct TweetDetailMainView:View{
         }
     }
     
+    @ViewBuilder func innerView(w:CGFloat) -> some View{
+        if let safeTweet = self.tweet{
+            TweetDetailView(tweet: safeTweet, width: w)
+        }else if CrybseTwitterAPI.shared.loading {
+            ProgressView()
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+    
     var body: some View{
         
-        ZStack(alignment: .center) {
+        ZStack(alignment: .topLeading) {
             Color.AppBGColor
-                .frame(width: totalWidth, height: totalHeight, alignment: .center)
             ScrollView(.vertical, showsIndicators: false) {
-                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose) { w in
-                    if let safeTweet = self.tweet{
-                        TweetDetailView(tweet: safeTweet, width: w)
-                    }else if CrybseTwitterAPI.shared.loading {
-                        ProgressView()
-                    }else{
-                        Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-                    }
+                if self.enableOnClose{
+                    Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose,innerView: self.innerView(w:))
+                }else{
+                    Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,innerView: self.innerView(w:))
                 }
             }
         }.onAppear(perform: self.onAppear)
-            .frame(width: totalWidth, height: totalHeight, alignment: .center)
+            .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
             .ignoresSafeArea()
         
     }

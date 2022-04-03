@@ -160,7 +160,7 @@ extension CurrencyDetailView{
       
     var profit:Float{
         if self.choosen != -1,let selectedPrice = self.Prices[self.choosen].price{
-            return self.assetData.txns?.map({$0.asset_quantity * (selectedPrice - $0.asset_spot_price)}).reduce(0, {$0 == 0 ? $1 : $0 + $1}) ?? self.assetData.Profit
+            return self.assetData.txns?.map({$0.Asset_Quantity * (selectedPrice - $0.Asset_Spot_Price)}).reduce(0, {$0 == 0 ? $1 : $0 + $1}) ?? self.assetData.Profit
         }
         return self.assetData.Profit
     }

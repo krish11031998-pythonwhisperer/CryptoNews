@@ -109,7 +109,6 @@ struct ZoomInScrollView<T:View>: View {
             }
             
             return self.viewGen(data,.init(width: size.width, height: size.height),self.centralIdx == idx)
-                .slideZoomInOut(g:g,cardSize: size)
                 .anyViewWrapper()
         }
         .frame(width: size.width, height: size.height * 1.1, alignment: .center)

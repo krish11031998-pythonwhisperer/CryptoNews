@@ -61,11 +61,7 @@ class CrybseRedditData:Codable{
     var Subreddit_name_prefixed:String{
         return self.subreddit_name_prefixed ?? ""
     }
-    
-//    var URL:String{
-//        return self.url ?? ""
-//    }
-    
+        
     var URLStr:String{
         return self.url ?? ""
     }

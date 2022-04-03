@@ -31,11 +31,11 @@ struct CurrencyPriceSummaryView: View {
             Spacer()
             CurrencySymbolView(currency: self.asset.Currency,width: 50)
             Spacer()
-//            if self.refresh{
-//                ProgressView().frame(width: 50, alignment: .center)
-//            }else{
-//                RefreshTimerView(timeLimit: 300, refresh: $refresh)
-//            }
+            if self.refresh{
+                ProgressView().frame(width: 50, alignment: .center)
+            }else{
+                RefreshTimerView(timeLimit: 300, refresh: $refresh)
+            }
             
         }.frame(width: self.width,height:self.height * 0.2, alignment: .center)
     }
@@ -46,8 +46,7 @@ struct CurrencyPriceSummaryView: View {
     }
     
     var color:Color?{
-        guard let color = self.asset.coinData?.Color else {return nil}
-        return Color(hex: color)
+        return Color(hex: self.asset.CoinData.Color)
     }
     
     var timeSpan:Int{

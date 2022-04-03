@@ -59,7 +59,7 @@ extension PortfolioMain{
     
     @ViewBuilder func assetInvestmentSummary(heading:String,asset:CrybseAsset,inner_w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
-            MainText(content: asset.coinData?.Name ?? asset.Currency, fontSize: 22.5, color: .white, fontWeight: .medium)
+            MainText(content: asset.CoinData.Name, fontSize: 22.5, color: .white, fontWeight: .medium)
                 .makeAdjacentView(orientation:.horizontal,position: .left) {
                     CurrencySymbolView(currency: asset.Currency,width:40)
                 }

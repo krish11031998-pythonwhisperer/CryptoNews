@@ -57,15 +57,15 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        tweets = try container.decode(Array<CrybseTweet>?.self, forKey: .tweets)
-        metaData = try container.decode(CrybseCoinMetaData?.self, forKey: .metaData)
-        timeSeriesData = try container.decode(Array<CryptoCoinOHLCVPoint>?.self, forKey: .timeSeriesData)
-        news = try container.decode(Array<AssetNewsData>?.self, forKey: .news)
-        tradingSignals = try container.decode(CrybseTradingSignalsData?.self, forKey: .tradingSignals)
-        prices = try container.decode(CrybseCoinPrices?.self, forKey: .prices)
-        additionalInfo = try container.decode(CrybseCoinAdditionalData?.self, forKey: .additionalInfo)
-        youtube = try container.decode(CrybseVideosData?.self, forKey: .youtube)
-        reddit = try container.decode(CrybseRedditPosts?.self, forKey: .reddit)
+        tweets = try container.decodeIfPresent(Array<CrybseTweet>.self, forKey: .tweets)
+        metaData = try container.decodeIfPresent(CrybseCoinMetaData.self, forKey: .metaData)
+        timeSeriesData = try container.decodeIfPresent(Array<CryptoCoinOHLCVPoint>.self, forKey: .timeSeriesData)
+        news = try container.decodeIfPresent(Array<AssetNewsData>.self, forKey: .news)
+        tradingSignals = try container.decodeIfPresent(CrybseTradingSignalsData.self, forKey: .tradingSignals)
+        prices = try container.decodeIfPresent(CrybseCoinPrices.self, forKey: .prices)
+        additionalInfo = try container.decodeIfPresent(CrybseCoinAdditionalData.self, forKey: .additionalInfo)
+        youtube = try container.decodeIfPresent(CrybseVideosData.self, forKey: .youtube)
+        reddit = try container.decodeIfPresent(CrybseRedditPosts.self, forKey: .reddit)
     }
     
     func encode(to encoder: Encoder) throws {

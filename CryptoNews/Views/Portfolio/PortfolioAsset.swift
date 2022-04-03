@@ -59,7 +59,7 @@ struct PortfolioAsset: View {
 extension PortfolioAsset{
     
     var name:String{
-        self.asset.coinData?.Name ?? ""
+        self.asset.CoinData.Name ?? ""
     }
     
     var change:(String,Color){

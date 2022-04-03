@@ -71,7 +71,7 @@ struct QuickAssetInfoCard:View{
     
     var assetInfoView:some View{
         Container(width:w,horizontalPadding: 10, verticalPadding: 10, orientation: .horizontal){ inner_w in
-            if let sparkline = self.asset.coinData?.sparkline{
+            if let sparkline = self.asset.CoinData.Sparkline{
                 let firstPrice = sparkline.first ?? 0
                 let lastestPrice = sparkline.last ?? 0
                 let chartColor:Color = lastestPrice > firstPrice ? .green :  lastestPrice < firstPrice ? .red : .white

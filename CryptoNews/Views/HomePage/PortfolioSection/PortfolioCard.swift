@@ -71,7 +71,7 @@ struct PortfolioCard: View {
                     .blobify(color: AnyView(Color.clear), clipping: .roundCornerMedium)
             }
             .frame(width: inner_w,height: h * 0.4, alignment: .topLeading)
-            if let sparkline = self.asset.coinData?.Sparkline{
+            if let sparkline = self.asset.CoinData.Sparkline{
                 CurveChart(data: sparkline,interactions: false, size: .init(width: inner_w, height: h * 0.6), bg: .clear)
             }else{
                 MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
@@ -162,7 +162,7 @@ struct PortfolioCard: View {
         .basicCard(background:self.activateBG)
         .borderCard(color: .init(hex: self.asset.Color))
         .buttonify(handler: self.handleOnTap)
-        .onReceive(self.asset.coinData!.$price, perform: self.updatePrice(_:))
+        .onReceive(self.asset.CoinData.$price, perform: self.updatePrice(_:))
         .onChange(of: self.priceColor, perform: self.resetPriceColor(_:))
         .padding(.top,5)
     }
