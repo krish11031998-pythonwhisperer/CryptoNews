@@ -19,19 +19,21 @@ struct PortfolioMain: View {
     }
         
     var body: some View {
-        StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
-            PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
-        }, innerView: {
-            Container(ignoreSides: true) { w in
-//                self.portfoliocards(w)
-                PortfolioBreakdown(asset: self.context.userAssets.trackedAssets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.225))
-                    .animatedAppearance()
-                self.InvestmentsSummary(w)
-            }
-            .frame(width: self.width, alignment: .topLeading)
-            .padding(.vertical,20)
-            
-        }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
+        if self.context.selectedAsset == nil{
+            StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+                PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
+            }, innerView: {
+                Container(ignoreSides: true) { w in
+    //                self.portfoliocards(w)
+                    PortfolioBreakdown(asset: self.context.userAssets.trackedAssets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.225))
+                        .animatedAppearance()
+                    self.InvestmentsSummary(w)
+                }
+                .frame(width: self.width, alignment: .topLeading)
+                .padding(.vertical,20)
+                
+            }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
+        }
     }
 }
 

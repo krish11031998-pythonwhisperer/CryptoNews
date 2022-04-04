@@ -32,7 +32,7 @@ struct CurrencySymbolView: View {
     }
     
     var img_url:String{
-        let str = "https://cryptoicon-api.vercel.app/api/icon/\(currency.lowercased())"
+        let str = "https://cryptoicons.org/api/icon/\(currency.lowercased())/\(self.size.rawValue)"
         return url ?? str
     }
     
