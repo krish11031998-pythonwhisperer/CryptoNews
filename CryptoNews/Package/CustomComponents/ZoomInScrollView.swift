@@ -93,13 +93,8 @@ struct ZoomInScrollView<T:View>: View {
         }
     }
     
-    @ViewBuilder func cardBuilder(data:Any,idx:Int) -> some View{
-        let size = self.dynamicCardSize(idx: idx)
-        let leadPadding = self.centralizeStart && self.axis == .horizontal && idx == 0 ? totalWidth - size.width : 0
-        let trailingPadding = self.centralizeStart && self.axis == .horizontal && idx == self.components.count - 1 ? totalWidth - size.width : 0
-        let topPadding = self.centralizeStart && self.axis == .vertical && idx == 0 ? totalHeight - size.height : 0
-        let bottomPadding = self.centralizeStart && self.axis == .vertical && idx == self.components.count - 1 ? totalHeight - size.height : 0
-        GeometryReader{ g -> AnyView in
+    @ViewBuilder func geometryObserver(idx:Int) -> some View{
+        GeometryReader{ g -> Color in
 
             let midX = g.frame(in: .global).midX
             let midY = g.frame(in: .global).midY
@@ -108,10 +103,19 @@ struct ZoomInScrollView<T:View>: View {
                 self.components[idx].updatePositionalValue(value: self.axis == .horizontal ? midX : midY)
             }
             
-            return self.viewGen(data,.init(width: size.width, height: size.height),self.centralIdx == idx)
-                .anyViewWrapper()
-        }
-        .frame(width: size.width, height: size.height * 1.1, alignment: .center)
+            return Color.clear
+        }.frame(width: .zero, height: .zero, alignment: .center)
+    }
+    
+    @ViewBuilder func cardBuilder(data:Any,idx:Int) -> some View{
+        let size = self.dynamicCardSize(idx: idx)
+        let leadPadding = self.centralizeStart && self.axis == .horizontal && idx == 0 ? totalWidth - size.width : 0
+        let trailingPadding = self.centralizeStart && self.axis == .horizontal && idx == self.components.count - 1 ? totalWidth - size.width : 0
+        let topPadding = self.centralizeStart && self.axis == .vertical && idx == 0 ? totalHeight - size.height : 0
+        let bottomPadding = self.centralizeStart && self.axis == .vertical && idx == self.components.count - 1 ? totalHeight - size.height : 0
+        
+        self.viewGen(data,size,self.centralIdx == idx)
+        .background(self.geometryObserver(idx: idx))
         .padding(.leading,leadPadding * 0.5)
         .padding(.trailing,trailingPadding * 0.5)
         .padding(.top,topPadding * 0.5)
@@ -146,6 +150,7 @@ struct ZoomInScrollView<T:View>: View {
                     
                     self.cardBuilder(data: component.data, idx: idx)
                         .id(idx)
+                    
                 }
             }
         }else{
@@ -202,7 +207,6 @@ struct ZoomInScrollView<T:View>: View {
                 lowestIdx = count
             }
         }
-        print("(DEBUG) Lowest idx : ",lowestIdx)
         return lowestIdx
     }
     

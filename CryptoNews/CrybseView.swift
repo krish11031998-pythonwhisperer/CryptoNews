@@ -147,6 +147,15 @@ extension CrybseView{
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
         }
+        
+        if let socialHighlights = self.context.socialHighlightsData as? [Any]{
+            SocialFeedSummaryExpandedView(data: socialHighlights)
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(Color.AppBGColor)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
     
     }
     

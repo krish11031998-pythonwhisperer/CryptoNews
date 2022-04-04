@@ -16,7 +16,6 @@ struct TweetDetailView:View{
     init(tweet:CrybseTweet,width:CGFloat){
         self.width = width
         self.tweet = tweet
-        print("(DEBUG) tweet id : ",tweet.id ?? "tweet_id")
     }
     
     
@@ -95,9 +94,8 @@ extension TweetDetailView{
     }
     
     
-    @ViewBuilder func Body(w:CGFloat) -> some View{
-        MainText(content: self.tweet.Text, fontSize: 14, color: .white,fontWeight: .regular,style: .heading,addBG: false ,padding: 10)
-
+    func Body(w:CGFloat) -> some View{
+        return MainText(content: self.tweet.Text, fontSize: 14, color: .white,fontWeight: .regular,style: .heading,addBG: false ,padding: 10)
             .frame(width: w, alignment: .topLeading)
         
     }
@@ -195,19 +193,14 @@ struct TweetDetailMainView:View{
     
     var body: some View{
         
-        ZStack(alignment: .topLeading) {
-            Color.AppBGColor
-            ScrollView(.vertical, showsIndicators: false) {
-                if self.enableOnClose{
-                    Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose,innerView: self.innerView(w:))
-                }else{
-                    Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,innerView: self.innerView(w:))
-                }
+        ScrollView(.vertical, showsIndicators: false) {
+            if self.enableOnClose{
+                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose,innerView: self.innerView(w:))
+            }else{
+                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,innerView: self.innerView(w:))
             }
-        }.onAppear(perform: self.onAppear)
-            .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
-            .ignoresSafeArea()
-        
+        }
+        .onAppear(perform: self.onAppear)
     }
 }
 

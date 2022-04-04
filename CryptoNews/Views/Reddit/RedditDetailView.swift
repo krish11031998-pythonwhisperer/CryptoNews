@@ -71,24 +71,19 @@ struct RedditDetailMainView:View {
     }
     
     var body: some View{
-        ZStack(alignment:.center){
-//            Color.AppBGColor
-            Color.clear
-            ScrollView(.vertical, showsIndicators: false) {
-                if self.enableOnClose{
-                    Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose) { w in
-                        RedditDetailView(reddit: self.redditData, width: w)
-                    }
-                }else{
-                    Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50) { w in
-                        RedditDetailView(reddit: self.redditData, width: w)
-                    }
+        ScrollView(.vertical, showsIndicators: false) {
+            if self.enableOnClose{
+                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose) { w in
+                    RedditDetailView(reddit: self.redditData, width: w)
                 }
-                
+            }else{
+                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50) { w in
+                    RedditDetailView(reddit: self.redditData, width: w)
+                }
             }
+            
         }
-        .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
-        .ignoresSafeArea()
+        
     }
 }
 

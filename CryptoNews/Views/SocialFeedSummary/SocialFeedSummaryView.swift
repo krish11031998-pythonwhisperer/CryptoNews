@@ -57,16 +57,9 @@ struct SocialFeedSummaryView: View {
     }
     
     func onTap(idx:Int){
-//        if let safeTweet = self.socialData?[idx] as? CrybseTweet{
-//            if self.context.selectedTweet != safeTweet{
-//                self.context.selectedTweet = safeTweet
-//            }
-//        }else if let safeReddit = self.socialData?[idx] as? CrybseRedditData{
-////            if self.context.sele != safeTweet{
-////                self.context.selectedTweet = safeTweet
-////            }
-//        }
-//        if let safe
+        if self.context.socialHighlightsData == nil{
+            self.context.socialHighlightsData = self.socialData
+        }
     }
 
     @ViewBuilder var SocialSummayView:some View{

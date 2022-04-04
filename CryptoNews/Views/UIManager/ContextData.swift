@@ -55,6 +55,7 @@ class ContextData:ObservableObject{
     @Published private var _addTxn:Bool = false
     @Published private var _addPost:Bool = false
     @Published private var _prev_tab:Tabs = .none
+    @Published private var _socialHighlightsData:Any? = nil
     @Published var loggedIn:LoginState = .undefined
     @Published private var _user:User = .init()
     @Published private var _userAssets:CrybseAssets = .init()
@@ -186,6 +187,19 @@ extension ContextData{
                     self._selectedSymbol = newValue
                     self.showTab = newValue != nil ? false : true
                 }
+            }
+        }
+    }
+    
+    var socialHighlightsData:Any?{
+        get{
+            return self._socialHighlightsData
+        }
+        
+        
+        set{
+            setWithAnimation {
+                self._socialHighlightsData = newValue
             }
         }
     }

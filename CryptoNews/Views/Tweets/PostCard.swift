@@ -134,16 +134,11 @@ extension PostCard{
     }
     
     @ViewBuilder func Body(w:CGFloat,h:CGFloat = .zero) -> some View{
-//        let (content,_) = self.data.Text.containsURL()
+        
         let textView = MainText(content: self.data.Text, fontSize: 14, color: self.font_color,fontWeight: .regular,style: .heading)
             .multilineTextAlignment(.leading)
-        if self.const_size{
-            textView
-//                .truncationMode(.tail)
-//                .fixedSize(horizontal: false, vertical: true)
-        }else{
-            textView
-        }
+        
+        textView
         
     }
 }

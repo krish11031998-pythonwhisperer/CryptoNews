@@ -41,8 +41,7 @@ struct HomePage: View {
     
     var body: some View {
         ZStack(alignment: .center){
-//            self.mainView
-            RedditDetailViewTester()
+            self.mainView
         }.frame(width: totalWidth,height: totalHeight, alignment: .center)
         .edgesIgnoringSafeArea(.all)
     }
