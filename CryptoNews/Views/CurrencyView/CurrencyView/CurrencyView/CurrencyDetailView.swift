@@ -68,7 +68,6 @@ extension CurrencyDetailView{
                 self.redditContainer
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
-//            self.onClose?()
             self.onClose?()
             
         }

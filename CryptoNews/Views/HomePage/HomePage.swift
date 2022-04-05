@@ -56,7 +56,7 @@ extension HomePage{
     
     @ViewBuilder var SocialFeedSummary:some View{
         if !self.watchedAsset.isEmpty{
-            SocialFeedSummaryView(assets: self.watchedAsset, width: totalWidth)
+            SocialFeedSummaryView(assets: self.context.userAssets.watchingAssets.compactMap({$0.coinData?.Name}), width: totalWidth)
         }else{
             SocialFeedSummaryView(width: totalWidth)
         }

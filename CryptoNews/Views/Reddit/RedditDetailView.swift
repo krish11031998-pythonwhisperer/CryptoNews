@@ -34,7 +34,15 @@ struct RedditDetailView: View {
     
     @ViewBuilder func headerView(w:CGFloat) -> some View{
         if !self.reddit.Title.isEmpty{
-            MainText(content: self.reddit.Title, fontSize: 17.5, color: .white, fontWeight: .semibold)
+            Container(width: w, ignoreSides: true,verticalPadding: 0) { inner_w in
+                HStack(alignment: .center, spacing: 10) {
+                    MainText(content: self.reddit.Author, fontSize: 17.5, color: .white, fontWeight: .medium)
+                    Spacer()
+                    MainText(content: self.reddit.Subreddit_name_prefixed, fontSize: 12.5, color: .white, fontWeight: .medium)
+                        .blobify(clipping:.roundClipping)
+                }
+                MainText(content: self.reddit.Title, fontSize: 17.5, color: .white, fontWeight: .semibold)
+            }
         }
     }
     
@@ -94,8 +102,8 @@ struct RedditDetailViewTester:View{
     
     func onAppear(){
         if self.redditData == nil{
-            CrybseRedditAPI.shared.getRedditPosts(search: "AVAX", limit: 1) { data in
-                if let safeData = data,let safeRedditData = CrybseRedditPosts.parseFromData(data: safeData)?.first{
+            CrybseRedditAPI.shared.getRedditPosts(search: "AVAX", limit: 10) { data in
+                if let safeData = data,let safeRedditData = CrybseRedditPosts.parseFromData(data: safeData)?.last{
                     setWithAnimation {
                         self.redditData = safeRedditData
                     }

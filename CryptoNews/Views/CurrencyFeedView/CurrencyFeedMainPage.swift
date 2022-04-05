@@ -27,8 +27,6 @@ struct CurrencyFeedMainPage: View {
                 return "Reddit"
             case .news:
                 return "News"
-            default:
-                return ""
         }
     }
     

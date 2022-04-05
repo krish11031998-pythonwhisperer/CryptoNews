@@ -71,10 +71,10 @@ public struct LazyScrollView<T:View>: View {
                 self.viewGen(0)
             }
             
-            if !self.stopLoading{
-                self.reloadContainer
-                    .padding(.bottom,200)
-            }
+//            if !self.stopLoading{
+//                self.reloadContainer
+//                    .padding(.bottom,200)
+//            }
         }
         .preference(key: RefreshPreference.self, value: self.reloadNow)
     }
