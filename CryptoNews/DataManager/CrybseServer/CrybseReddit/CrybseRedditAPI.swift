@@ -26,8 +26,10 @@ class CrybseRedditAPI:CrybseAssetSocialsAPI{
     }
     
     
-    func getRedditPosts(subReddit:String? = nil,search:String? = nil,limit:Int = 10,completion:((Data?) -> Void)? = nil){
-        self.getAssetSocialData(type: .reddit, queryItems:  ["subreddit":subReddit,"search":search,"limit":"\(limit)"], completion: completion)
-        
+    func getRedditPosts(subReddit:String? = nil,search:String? = nil,after:String? = nil,before:String? = nil,limit:Int = 10,completion:((Data?) -> Void)? = nil){
+        self.getAssetSocialData(type: .reddit, queryItems:  ["subreddit":subReddit,"search":search,"after":after,"before":before,"limit":"\(limit)"], completion: completion)
+        if self.loading{
+            self.loading.toggle()
+        }
     }
 }

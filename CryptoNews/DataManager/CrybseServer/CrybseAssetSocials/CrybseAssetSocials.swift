@@ -12,6 +12,7 @@ enum CrybseAssetSocialType:String{
     case twitter = "twitter"
     case youtube = "coin/youtube"
     case socialHighlights = "socialHighlights"
+    case none = ""
 }
 
 
@@ -23,7 +24,8 @@ class CrybseAssetSocialsAPI:CrybseAPI{
     var endpoint:String? = nil
     var queryItems:[String:Any]?
     
-    init(type:CrybseAssetSocialType,endpoint:String? = nil,queryItems:[String:Any]?){
+    
+    init(type:CrybseAssetSocialType = .none,endpoint:String? = nil,queryItems:[String:Any]?){
         self.type = type
         self.endpoint = endpoint
         self.queryItems = queryItems
@@ -69,6 +71,8 @@ class CrybseAssetSocialsAPI:CrybseAPI{
                             self.nextPageToken = safeNextToken
                         }
                     }
+                default:
+                    print("(DEBUG) Invalid type")
             }
             
             if self.loading{

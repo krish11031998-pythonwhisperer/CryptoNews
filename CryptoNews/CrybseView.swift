@@ -80,7 +80,7 @@ extension CrybseView{
     
     var infoFeedView:some View{
         SlideTabView {
-            return [AnyView(CrybPostMainView()),AnyView(CurrencyFeedMainPage(type: .feed)),AnyView(CurrencyFeedMainPage(type: .news))]
+            [FeedPageType.twitter,FeedPageType.reddit,FeedPageType.news].compactMap({CurrencyFeedMainPage(type: $0).anyViewWrapper()})
         }.environmentObject(self.context)
     }
         
