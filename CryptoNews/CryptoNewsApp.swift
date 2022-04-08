@@ -8,14 +8,18 @@
 import SwiftUI
 import FirebaseCore
 import FirebaseAuth
+import SDWebImage
+import SDWebImageSVGCoder
+
 
 @main
 struct CryptoNewsApp: App {
     @StateObject var context: ContextData = .init()
     @State var loading:Bool = false
-    var timer = Timer.TimerPublisher(interval: 60, runLoop: .main, mode: .common).autoconnect()
+//    var timer = Timer.TimerPublisher(interval: 60, runLoop: .main, mode: .common).autoconnect()
     init(){
         FirebaseApp.configure()
+        setUpDependencies()
     }
     
    func onAppear(){
@@ -47,6 +51,10 @@ struct CryptoNewsApp: App {
         }
     }
     
+    func setUpDependencies() {
+        SDImageCodersManager.shared.addCoder(SDImageSVGCoder.shared)
+    }
+    
     
     var mainView:some View{
         Group{
@@ -69,6 +77,7 @@ struct CryptoNewsApp: App {
         }
         .onAppear(perform: self.onAppear)
         .onReceive(self.context.user.$user, perform: self.fetchAssets(_:))
+//        .environment(\.managedObjectContext, persistenceController.container.viewContext)
     }
     
     var body: some Scene {

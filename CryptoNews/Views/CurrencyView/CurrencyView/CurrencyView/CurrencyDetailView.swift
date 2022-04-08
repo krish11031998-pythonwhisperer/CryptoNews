@@ -209,11 +209,22 @@ extension CurrencyDetailView{
     }
     
     @ViewBuilder var infoSection:some View{
-        if let _ = self.socialData?.MetaData,let additionalInfo = self.assetData.coin?.additionalInfo{
-            Container(heading: "About",headingSize: headingFontSize, width: self.size.width,horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
-                MainText(content: "What is \(self.assetData.Currency)", fontSize: 17.5, color: .white, fontWeight: .medium).frame(width: w, alignment: .leading)
-                MainText(content: additionalInfo.description ?? "", fontSize: 15, color: .white, fontWeight: .regular).frame(width: w, alignment: .leading)
+        if let metaData = self.socialData?.MetaData{
+            Container(heading: "What is \(self.assetData.CoinData.Name)",headingSize: headingFontSize, width: self.size.width) { w in
+                Container(width:w){ _ in
+                    if let description = metaData.description?.first{
+                        let header = description.header
+                        let body = description.body
+                                            
+                        if let body = body{
+                            MainText(content: body, fontSize: 15, color: .white, fontWeight: .medium)
+                                .lineLimit(5)
+                                .truncationMode(.tail)
+                        }
+                    }
+                }.borderCard()
             }
+            
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }

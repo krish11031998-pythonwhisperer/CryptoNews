@@ -44,7 +44,7 @@ class CrybseAssets:ObservableObject,Codable{
     
     var ProfitValue:Float{
         var profit:Float = 0.0
-        if let assetValues = self.assets?.values.compactMap({$0.Value}){
+        if let assetValues = self.assets?.values.compactMap({$0.Profit}){
             profit = assetValues.reduce(0, {$0 + $1})
         }
         return profit
@@ -436,6 +436,10 @@ class CrybseCoin:ObservableObject,Codable{
         return self.change ?? 0.0
     }
     
+    var SymbolIconURL:String{
+        return self.iconUrl ?? ""
+    }
+    
 }
 
 class CrybseCoinDescription:Codable{
@@ -467,6 +471,11 @@ class CrybseCoinAdditionalData:Codable{
         var thumbnail:String?
     }
     
+    class CrybseDescription:Codable{
+        var header:String?
+        var body:String?
+    }
+    
     
     var id:String?
     var name:String?
@@ -475,7 +484,7 @@ class CrybseCoinAdditionalData:Codable{
     var is_new:Bool?
     var is_active:Bool?
     var type:String?
-    var description:String?
+    var description:[CrybseDescription]?
     var open_source:Bool?
     var started_at:String?
     var development_status:String?

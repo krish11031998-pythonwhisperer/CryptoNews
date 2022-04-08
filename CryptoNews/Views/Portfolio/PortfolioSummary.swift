@@ -58,7 +58,7 @@ struct PortfolioSummary: View {
         VStack(alignment: .leading, spacing: 10) {
             HStack(alignment: .center, spacing: 10) {
                 VStack(alignment: .center, spacing: 10) {
-                    CurrencySymbolView(currency: asset.Currency, width:25)
+                    CurrencySymbolView(url:asset.CoinData.SymbolIconURL, width:25)
                     MainText(content: asset.Currency, fontSize: 12.5, color: .black, fontWeight: .medium)
                 }
                 Spacer()

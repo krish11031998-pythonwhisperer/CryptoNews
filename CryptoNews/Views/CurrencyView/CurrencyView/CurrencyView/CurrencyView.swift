@@ -102,8 +102,8 @@ struct CurrencyView:View{
     
     @ViewBuilder func feedView(w:CGFloat) -> some View{
         if let feed = self.tweets{
-            LazyScrollView(data: feed,embedScrollView: false,stopLoading: true) { data in
-                if let data = data as? CrybseTweet{
+            ForEach(Array(feed.enumerated()),id:\.offset) { _data in
+                if let data = _data.element as? CrybseTweet{
                     PostCard(cardType: .Tweet, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
                 }
             }
@@ -200,7 +200,7 @@ struct CurrencyView:View{
         if self.showSection == .none{
             self.innerView(w: totalWidth - 10)
         }else{
-            ProgressView()
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
     }
     

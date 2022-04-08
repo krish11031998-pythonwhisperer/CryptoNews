@@ -91,7 +91,7 @@ extension CrybseView{
     @ViewBuilder var hoverView:some View{
         
         if self.context.showPortfolio,let safeAssetOverTime = self.context.assetOverTime{
-            PortfolioMain(assetOverTime:safeAssetOverTime)
+            PortfolioMain(assetOverTime:safeAssetOverTime,assets: self.context.userAssets.trackedAssets)
                 .environmentObject(self.context)
                 .transition(.slideInOut)
                 .background(Color.AppBGColor)

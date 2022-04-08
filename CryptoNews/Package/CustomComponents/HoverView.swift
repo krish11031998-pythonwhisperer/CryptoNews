@@ -22,10 +22,9 @@ public struct HoverView<T:View>:View{
     public var body: some View{
         ScrollView(.vertical, showsIndicators: false) {
             Container(heading: heading, width: totalWidth,onClose: onClose){ w in
-                    self.inner_view(w)
+                self.inner_view(w)
             }
             .padding(.top,50)
-            
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
         .slideRightLeft()

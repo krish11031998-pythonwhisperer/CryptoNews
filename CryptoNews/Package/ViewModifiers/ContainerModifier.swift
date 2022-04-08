@@ -178,7 +178,7 @@ public extension View{
         self.modifier(BasicCard(size: size,background: background))
     }
     
-    func borderCard(color:Color = .clear,gradient:LinearGradient? = nil,clipping:Clipping = .roundClipping) -> some View{
+    func borderCard(color:Color = .white,gradient:LinearGradient? = nil,clipping:Clipping = .roundClipping) -> some View{
         self.modifier(BorderCard(color: color,linearGradient: gradient, clipping: clipping))
     }
     

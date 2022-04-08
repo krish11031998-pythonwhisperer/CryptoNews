@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -91,6 +91,8 @@
 		EF420A6727F86B680008BDD8 /* CrybseSocialHighlightAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF420A6627F86B680008BDD8 /* CrybseSocialHighlightAPI.swift */; };
 		EF420A6927F9DCD60008BDD8 /* SocialFeedSummaryExpandedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF420A6827F9DCD60008BDD8 /* SocialFeedSummaryExpandedView.swift */; };
 		EF420A6B27F9DDE10008BDD8 /* RedditDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF420A6A27F9DDE10008BDD8 /* RedditDetailView.swift */; };
+		EF420A6E27FE16480008BDD8 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = EF420A6D27FE16480008BDD8 /* SDWebImageSwiftUI */; };
+		EF420A7127FE174C0008BDD8 /* SDWebImageSVGCoder in Frameworks */ = {isa = PBXBuildFile; productRef = EF420A7027FE174C0008BDD8 /* SDWebImageSVGCoder */; };
 		EF42CCA427863D0B00DE27E1 /* PortfolioMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCA327863D0B00DE27E1 /* PortfolioMain.swift */; };
 		EF42CCA627863DF500DE27E1 /* PortfolioAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCA527863DF500DE27E1 /* PortfolioAsset.swift */; };
 		EF42CCAC2787381E00DE27E1 /* CryptoPostCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCAB2787381E00DE27E1 /* CryptoPostCardView.swift */; };
@@ -460,6 +462,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EF420A7127FE174C0008BDD8 /* SDWebImageSVGCoder in Frameworks */,
+				EF420A6E27FE16480008BDD8 /* SDWebImageSwiftUI in Frameworks */,
 				B604296EF35B5328FC78F538 /* Pods_CryptoNews.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1311,6 +1315,10 @@
 			dependencies = (
 			);
 			name = CryptoNews;
+			packageProductDependencies = (
+				EF420A6D27FE16480008BDD8 /* SDWebImageSwiftUI */,
+				EF420A7027FE174C0008BDD8 /* SDWebImageSVGCoder */,
+			);
 			productName = CryptoNews;
 			productReference = BCBC1D7226BE7D7400B87E5C /* CryptoNews.app */;
 			productType = "com.apple.product-type.application";
@@ -1385,6 +1393,10 @@
 				Base,
 			);
 			mainGroup = BCBC1D6926BE7D7400B87E5C;
+			packageReferences = (
+				EF420A6C27FE16480008BDD8 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */,
+				EF420A6F27FE174C0008BDD8 /* XCRemoteSwiftPackageReference "SDWebImageSVGCoder" */,
+			);
 			productRefGroup = BCBC1D7326BE7D7400B87E5C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -2055,6 +2067,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		EF420A6C27FE16480008BDD8 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+		EF420A6F27FE174C0008BDD8 /* XCRemoteSwiftPackageReference "SDWebImageSVGCoder" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SDWebImage/SDWebImageSVGCoder";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		EF420A6D27FE16480008BDD8 /* SDWebImageSwiftUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF420A6C27FE16480008BDD8 /* XCRemoteSwiftPackageReference "SDWebImageSwiftUI" */;
+			productName = SDWebImageSwiftUI;
+		};
+		EF420A7027FE174C0008BDD8 /* SDWebImageSVGCoder */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = EF420A6F27FE174C0008BDD8 /* XCRemoteSwiftPackageReference "SDWebImageSVGCoder" */;
+			productName = SDWebImageSVGCoder;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BCBC1D6A26BE7D7400B87E5C /* Project object */;
 }

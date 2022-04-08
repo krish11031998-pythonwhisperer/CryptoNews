@@ -7,6 +7,9 @@
 
 import SwiftUI
 import UIKit
+import SDWebImage
+import SDWebImageSVGCoder
+import SDWebImageSwiftUI
 
 public struct StandardImage:ViewModifier{
     var size:CGSize
@@ -29,6 +32,21 @@ public extension Image{
     func standardImageView(size:CGSize,contentMode:ContentMode) -> some View{
         return self.resizable().modifier(StandardImage(size: size, contentMode: contentMode))
     }
+}
+
+
+public struct SVGImage:View{
+    var imgURLString:String
+    
+//    init(imgURLString:String,width:CGFloat,height:CGFloat){
+    init(imgURLString:String){
+        self.imgURLString = imgURLString
+    }
+    
+    public var body: some View{
+        WebImage(url: URL(string: self.imgURLString), context: [.imageThumbnailPixelSize : CGSize.zero])
+    }
+    
 }
 
 public struct ImageView:View{
@@ -92,7 +110,13 @@ public struct ImageView:View{
     }
     
     @ViewBuilder var imgUIImageView:some View{
-        if let img = mainImg{
+        if let url = self.url,url.contains("svg"){
+            WebImage(url: URL(string: url), context: [.imageThumbnailPixelSize : CGSize.zero])
+                .resizable()
+                .aspectRatio(contentMode: .fill)
+                .frame(width: self.width, height: self.height, alignment: .center)
+                .imageSpring()
+        }else if let img = mainImg{
             Image(uiImage: img)
                 .standardImageView(size: self.imgSize, contentMode: .fill)
         }else{
@@ -103,7 +127,7 @@ public struct ImageView:View{
 
     func imgView(w _w:CGFloat? = nil,h _h:CGFloat? = nil) -> some View{
         return ZStack(alignment: .center) {
-//            BlurView(style: .dark)
+            
             self.imgUIImageView
             if self.heading != nil{
                 lightbottomShadow.frame(width: self.width, height: self.imgSize.height, alignment: .center)
@@ -167,6 +191,6 @@ public struct ImageView:View{
 
 struct ImageViewPreview:PreviewProvider{
     static var previews: some View{
-        ImageView(url: "https://www.coindesk.com/resizer/2ZTTTqx35W5zdkJmkQdJf8a8w6E=/800x600/cloudfront-us-east-1.images.arcpublishing.com/coindesk/UN4BNCYGXVEP7ILZNLYQ5GEF5Q.jpg",width: 300, height: 300, contentMode: .fill, alignment: .center)
+        ImageView(url: "https://cdn.coinranking.com/Sy33Krudb/btc.svg",width: 300, height: 300)
     }
 }

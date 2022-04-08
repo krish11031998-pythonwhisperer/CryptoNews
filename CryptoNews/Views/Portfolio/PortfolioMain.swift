@@ -24,13 +24,14 @@ struct PortfolioMain: View {
                 PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
             }, innerView: {
                 Container(ignoreSides: true) { w in
-    //                self.portfoliocards(w)
-                    PortfolioBreakdown(asset: self.context.userAssets.trackedAssets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.225))
+                    self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
+                    self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
+                    PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.225))
                         .animatedAppearance()
-                    self.InvestmentsSummary(w)
+                    
                 }
                 .frame(width: self.width, alignment: .topLeading)
-                .padding(.vertical,20)
+                .padding(.vertical,50)
                 
             }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
         }
@@ -75,22 +76,56 @@ extension PortfolioMain{
         }
     }
     
+    @ViewBuilder func infoBlock<T:View>(heading:String,width:CGFloat,@ViewBuilder innerView: @escaping (CGFloat) -> T) -> some View{
+        Container(heading: heading, headingDivider: false, headingSize: 22.5, width: width,ignoreSides: false,aligment: .center) { inner_w in
+            innerView(inner_w)
+        }.animatedAppearance()
+    }
+    
     @ViewBuilder func InvestmentsSummary(_ width:CGFloat) -> some View{
-        Container(heading: "Investment Summary", headingColor: .white,headingDivider: true, headingSize: 18, width: width) { inner_w in
-            
+        Container(width: width) { w in
             MainSubHeading(heading: "Invested Capital", subHeading: self.context.userAssets.InvestedValue.ToPrettyMoney(), headingSize: 13.5, subHeadingSize: 22.5, headColor: .white.opacity(0.5), subHeadColor: .white, headingWeight: .semibold, bodyWeight: .medium)
             
             if let profitableAsset = self.profitableAsset{
-                self.assetInvestmentSummary(heading:"Most Profitable Asset",asset: profitableAsset,inner_w: inner_w)
+                self.assetInvestmentSummary(heading:"Most Profitable Asset",asset: profitableAsset,inner_w: w)
                     .padding(.vertical,5)
             }
             
             if let leastProfitableAsset = self.leastProfitableAsset{
-                self.assetInvestmentSummary(heading:"Least Profitable Asset",asset: leastProfitableAsset,inner_w: inner_w)
+                self.assetInvestmentSummary(heading:"Least Profitable Asset",asset: leastProfitableAsset,inner_w: w)
                     .padding(.vertical,5)
             }
         }
-        .animatedAppearance()
+        .frame(width: width, alignment: .center)
+        .borderCard(color:.white,clipping: .roundClipping)
+    }
+    
+    @ViewBuilder func TopThreeMovers(_ width:CGFloat) -> some View{
+        if self.assets.count >= 3{
+            Container(width: width,aligment: .center,spacing:0) { inner_w in
+                ForEach(Array(self.assets.sorted(by: {abs($0.Change) > abs($1.Change)})[0...2].enumerated()),id:\.offset){ _asset in
+                    let asset = _asset.element
+                    let idx = _asset.offset
+                    Group{
+                        if idx != 0{
+                            Rectangle()
+                                .foregroundColor(.white.opacity(0.2))
+                                .frame(width: inner_w - 30,height: 2.5)
+                        }
+                        Container(width:inner_w,orientation: .horizontal){w in
+                            
+                            MainText(content: "\(idx+1)", fontSize: 30, color: .white.opacity(0.45), fontWeight: .semibold)
+                            MainText(content: asset.Currency, fontSize: 20, color: .white, fontWeight: .medium)
+                            Spacer()
+                            PercentChangeView(value: asset.Change)
+                        }
+
+                    }
+                }
+            }
+            .borderCard(color:.white,clipping: .roundClipping)
+//            .padding(.horizontal,15)
+        }
     }
     
     @ViewBuilder func portfoliocards(_ w:CGFloat) -> some View{
