@@ -20,8 +20,8 @@ struct NewsStandCard: View {
 
     
     @ViewBuilder var mainText:some View{
-        if let data = self.news as? AssetNewsData{
-            MainSubHeading(heading: data.publisher ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+        if let data = self.news as? CrybseNews{
+            MainSubHeading(heading: data.source_name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
         }else if let data = self.news as? CryptoNews{
             MainSubHeading(heading: data.source_info?.name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
                 .lineLimit(2)
@@ -33,8 +33,8 @@ struct NewsStandCard: View {
             self.mainText
                 .frame(height: h, alignment: .topLeading)
             Spacer()
-            if let data = self.news as? AssetNewsData{
-                ImageView(url: data.image, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+            if let data = self.news as? CrybseNews{
+                ImageView(url: data.ImageURL, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
             }else if let data = self.news as? CryptoNews{
                 ImageView(url: data.imageurl,width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
             }else{
@@ -46,8 +46,8 @@ struct NewsStandCard: View {
     
     func footer(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .center, spacing: 5) {
-            if let data = self.news as? AssetNewsData{
-                MainText(content: data.date.stringDate(), fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+            if let data = self.news as? CrybseNews{
+                MainText(content: data.Date, fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             }else if let data = self.news as? CryptoNews,let epochTime = data.published_on, let time = Date(timeIntervalSince1970: Double(epochTime)){
                 MainText(content: "\(time.stringDate())",fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             }
@@ -81,7 +81,7 @@ struct NewsStandCard: View {
 
     var body: some View {
         Button {
-            if let news = self.news as? AssetNewsData,let urlStr = news.url, let url = URL(string: urlStr){
+            if let news = self.news as? CrybseNews,let urlStr = news.news_url, let url = URL(string: urlStr){
                 self.context.selectedLink = url
             }else if let cryptoNews = self.news as? CryptoNews,let urlStr = cryptoNews.url, let url = URL(string: urlStr){
                 self.context.selectedLink = url
@@ -96,28 +96,31 @@ struct NewsStandCard: View {
 
 struct NewsStand:View{
     var width:CGFloat
-    @StateObject var MAPI:FeedAPI
+    @StateObject var newsAPI:CrybseNewsAPI
     @State var showMoreView:Bool = false
     init(currency:[String] = ["BTC"],width:CGFloat = totalWidth){
-        self._MAPI = .init(wrappedValue: .init(currency: currency, sources: ["news"], type: .Chronological, limit: 5, page: 0))
+        self._newsAPI = .init(wrappedValue: .init(tickers: currency.reduce("", {$0 == "" ? $1 : $0 + "," + $1})))
         self.width = width
     }
     
     func onAppear(){
-        if self.MAPI.FeedData.isEmpty{
-            self.MAPI.getAssetInfo()
+        if self.newsAPI.newsList == nil{
+            self.newsAPI.getNews()
         }
     }
     
+    var NewsList:CrybseNewsList{
+        return self.newsAPI.newsList ?? []
+    }
     
     var body: some View{
         ZStack(alignment:.top){
-            if self.MAPI.FeedData.isEmpty{
+            if self.NewsList.isEmpty{
                 ProgressView()
             }else{
                 VStack(alignment: .center, spacing: 10) {
-                    ForEach(self.MAPI.FeedData) { data in
-                        NewsStandCard(news: data,size: .init(width: width, height: 225))
+                    ForEach(Array(self.NewsList.enumerated()),id:\.offset) { _data in
+                        NewsStandCard(news: _data.element,size: .init(width: width, height: 225))
                     }
                     TabButton(width: width, title: "Load More", action: {
                         withAnimation(.easeInOut) {

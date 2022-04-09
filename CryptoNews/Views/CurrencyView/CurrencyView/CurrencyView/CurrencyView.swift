@@ -95,7 +95,7 @@ struct CurrencyView:View{
         return self.coinAPI.coinData?.Tweets
     }
     
-    var news:[AssetNewsData]?{
+    var news:[CrybseNews]?{
         return self.coinAPI.coinData?.News
     }
     

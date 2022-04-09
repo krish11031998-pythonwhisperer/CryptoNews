@@ -66,7 +66,6 @@
 		BCE861B1273C63DC00F0E8C2 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861B0273C63DC00F0E8C2 /* User.swift */; };
 		BCE861B5273C714500F0E8C2 /* ProfileData.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861B4273C714500F0E8C2 /* ProfileData.swift */; };
 		BCE861BD2742D7A100F0E8C2 /* NewsSectionMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861BC2742D7A100F0E8C2 /* NewsSectionMain.swift */; };
-		BCE861BF2747F9DA00F0E8C2 /* NewsFeed.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861BE2747F9DA00F0E8C2 /* NewsFeed.swift */; };
 		BCE861C3274D6E9200F0E8C2 /* NotificationTestView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */; };
 		BCF31F9C2758D67000690E04 /* CrybPostDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF31F9B2758D67000690E04 /* CrybPostDetailView.swift */; };
 		BCF31F9E27596E2500690E04 /* CrybPostMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF31F9D27596E2500690E04 /* CrybPostMainView.swift */; };
@@ -93,6 +92,8 @@
 		EF420A6B27F9DDE10008BDD8 /* RedditDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF420A6A27F9DDE10008BDD8 /* RedditDetailView.swift */; };
 		EF420A6E27FE16480008BDD8 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = EF420A6D27FE16480008BDD8 /* SDWebImageSwiftUI */; };
 		EF420A7127FE174C0008BDD8 /* SDWebImageSVGCoder in Frameworks */ = {isa = PBXBuildFile; productRef = EF420A7027FE174C0008BDD8 /* SDWebImageSVGCoder */; };
+		EF420A742800FCD90008BDD8 /* CrybseNewsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF420A732800FCD90008BDD8 /* CrybseNewsData.swift */; };
+		EF420A762800FE060008BDD8 /* CrybseNewsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF420A752800FE060008BDD8 /* CrybseNewsAPI.swift */; };
 		EF42CCA427863D0B00DE27E1 /* PortfolioMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCA327863D0B00DE27E1 /* PortfolioMain.swift */; };
 		EF42CCA627863DF500DE27E1 /* PortfolioAsset.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCA527863DF500DE27E1 /* PortfolioAsset.swift */; };
 		EF42CCAC2787381E00DE27E1 /* CryptoPostCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF42CCAB2787381E00DE27E1 /* CryptoPostCardView.swift */; };
@@ -200,7 +201,7 @@
 		EF8BE63D27CAD08900877234 /* VideoSectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */; };
 		EF8BE63F27CAD09A00877234 /* VideoSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */; };
 		EF8BE64127CD7ADB00877234 /* CrybsePostReactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE64027CD7ADB00877234 /* CrybsePostReactionView.swift */; };
-		EFAB19CB2792C4FB00AABDC8 /* CrybseNewsData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */; };
+		EFAB19CB2792C4FB00AABDC8 /* CrybseNewsDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CA2792C4FB00AABDC8 /* CrybseNewsDataModel.swift */; };
 		EFAB19CD2792C54600AABDC8 /* CrybseCoinOHLCV.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */; };
 		EFAB19CF27952CDF00AABDC8 /* CrybsePrices.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */; };
 		EFAC17D0275EADD9000A768D /* AddCrybPost.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFAC17CF275EADD9000A768D /* AddCrybPost.swift */; };
@@ -301,7 +302,6 @@
 		BCE861B0273C63DC00F0E8C2 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		BCE861B4273C714500F0E8C2 /* ProfileData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileData.swift; sourceTree = "<group>"; };
 		BCE861BC2742D7A100F0E8C2 /* NewsSectionMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsSectionMain.swift; sourceTree = "<group>"; };
-		BCE861BE2747F9DA00F0E8C2 /* NewsFeed.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsFeed.swift; sourceTree = "<group>"; };
 		BCE861C2274D6E9200F0E8C2 /* NotificationTestView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationTestView.swift; sourceTree = "<group>"; };
 		BCF31F9B2758D67000690E04 /* CrybPostDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybPostDetailView.swift; sourceTree = "<group>"; };
 		BCF31F9D27596E2500690E04 /* CrybPostMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybPostMainView.swift; sourceTree = "<group>"; };
@@ -331,6 +331,8 @@
 		EF420A6627F86B680008BDD8 /* CrybseSocialHighlightAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseSocialHighlightAPI.swift; sourceTree = "<group>"; };
 		EF420A6827F9DCD60008BDD8 /* SocialFeedSummaryExpandedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialFeedSummaryExpandedView.swift; sourceTree = "<group>"; };
 		EF420A6A27F9DDE10008BDD8 /* RedditDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditDetailView.swift; sourceTree = "<group>"; };
+		EF420A732800FCD90008BDD8 /* CrybseNewsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsData.swift; sourceTree = "<group>"; };
+		EF420A752800FE060008BDD8 /* CrybseNewsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsAPI.swift; sourceTree = "<group>"; };
 		EF42CCA327863D0B00DE27E1 /* PortfolioMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioMain.swift; sourceTree = "<group>"; };
 		EF42CCA527863DF500DE27E1 /* PortfolioAsset.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioAsset.swift; sourceTree = "<group>"; };
 		EF42CCAB2787381E00DE27E1 /* CryptoPostCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CryptoPostCardView.swift; sourceTree = "<group>"; };
@@ -438,7 +440,7 @@
 		EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionCard.swift; sourceTree = "<group>"; };
 		EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionView.swift; sourceTree = "<group>"; };
 		EF8BE64027CD7ADB00877234 /* CrybsePostReactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePostReactionView.swift; sourceTree = "<group>"; };
-		EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsData.swift; sourceTree = "<group>"; };
+		EFAB19CA2792C4FB00AABDC8 /* CrybseNewsDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseNewsDataModel.swift; sourceTree = "<group>"; };
 		EFAB19CC2792C54600AABDC8 /* CrybseCoinOHLCV.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinOHLCV.swift; sourceTree = "<group>"; };
 		EFAB19CE27952CDF00AABDC8 /* CrybsePrices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybsePrices.swift; sourceTree = "<group>"; };
 		EFAC17CF275EADD9000A768D /* AddCrybPost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCrybPost.swift; sourceTree = "<group>"; };
@@ -780,7 +782,6 @@
 		BCBC1DD026BF3C1B00B87E5C /* News */ = {
 			isa = PBXGroup;
 			children = (
-				BCE861BE2747F9DA00F0E8C2 /* NewsFeed.swift */,
 				BCE861BB2742D77F00F0E8C2 /* NewsSection */,
 				BC645938271786FF00BAECBC /* NewsStand */,
 				BCBC1DD126BF3C2600B87E5C /* RecentNewsCard */,
@@ -920,6 +921,15 @@
 				EF420A6627F86B680008BDD8 /* CrybseSocialHighlightAPI.swift */,
 			);
 			path = SocialHighlights;
+			sourceTree = "<group>";
+		};
+		EF420A722800FCB10008BDD8 /* CrybseNewsAPI */ = {
+			isa = PBXGroup;
+			children = (
+				EF420A732800FCD90008BDD8 /* CrybseNewsData.swift */,
+				EF420A752800FE060008BDD8 /* CrybseNewsAPI.swift */,
+			);
+			path = CrybseNewsAPI;
 			sourceTree = "<group>";
 		};
 		EF42CCA227863CF400DE27E1 /* Portfolio */ = {
@@ -1231,7 +1241,7 @@
 		EFAB19C92792C4E200AABDC8 /* CrybseNews */ = {
 			isa = PBXGroup;
 			children = (
-				EFAB19CA2792C4FB00AABDC8 /* CrybseNewsData.swift */,
+				EFAB19CA2792C4FB00AABDC8 /* CrybseNewsDataModel.swift */,
 			);
 			path = CrybseNews;
 			sourceTree = "<group>";
@@ -1269,6 +1279,7 @@
 		EFF195B1277CED7A0081368F /* CrybseServer */ = {
 			isa = PBXGroup;
 			children = (
+				EF420A722800FCB10008BDD8 /* CrybseNewsAPI */,
 				EF420A6327F86B3F0008BDD8 /* SocialHighlights */,
 				EF33D7C127EE2262007B9F9F /* CrysbeTwitter */,
 				EF33D7BD27EB2CA3007B9F9F /* CrybseAssetSocials */,
@@ -1558,7 +1569,6 @@
 				EF33D7B727EA2870007B9F9F /* PositionalModifier.swift in Sources */,
 				EF7A7FF527DB57DF00B6081D /* LazyScrollView.swift in Sources */,
 				BC06AE5227578850006F00DE /* CrybPostData.swift in Sources */,
-				BCE861BF2747F9DA00F0E8C2 /* NewsFeed.swift in Sources */,
 				BC27E4EA2725FCA800E47CA2 /* CurrencyFeedView.swift in Sources */,
 				EF51131327F047E70074812E /* TweetDetailView.swift in Sources */,
 				BCF31F9E27596E2500690E04 /* CrybPostMainView.swift in Sources */,
@@ -1665,6 +1675,7 @@
 				EF7A7FCE27DB57DF00B6081D /* URLExtension.swift in Sources */,
 				EFF195B4277CED7A0081368F /* CrybseCoinSocialData.swift in Sources */,
 				BCE861B1273C63DC00F0E8C2 /* User.swift in Sources */,
+				EF420A742800FCD90008BDD8 /* CrybseNewsData.swift in Sources */,
 				EF33D7BF27EB2CB9007B9F9F /* CrybseAssetSocials.swift in Sources */,
 				BCD8CA0127245E06004BD59E /* TabBarMain.swift in Sources */,
 				EF65DBB127B43EC6008AB1D4 /* CrybseVideoAPI.swift in Sources */,
@@ -1713,7 +1724,7 @@
 				EF65DBAC27B27DB2008AB1D4 /* LatestRedditPost.swift in Sources */,
 				BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */,
 				BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */,
-				EFAB19CB2792C4FB00AABDC8 /* CrybseNewsData.swift in Sources */,
+				EFAB19CB2792C4FB00AABDC8 /* CrybseNewsDataModel.swift in Sources */,
 				EF7A7FE027DB57DF00B6081D /* ColorHelper.swift in Sources */,
 				EF33D7B327E9C190007B9F9F /* TextAdjacentButton.swift in Sources */,
 				EF7A7FEF27DB57DF00B6081D /* DiamondChart.swift in Sources */,
@@ -1724,6 +1735,7 @@
 				BCAD1609271F5BCF0020F6A8 /* CurrencySymbolView.swift in Sources */,
 				EF64A3C727AD3F9C00628487 /* DynamicHeightContainer.swift in Sources */,
 				BC2267A626DA5C830058315E /* VideoCard.swift in Sources */,
+				EF420A762800FE060008BDD8 /* CrybseNewsAPI.swift in Sources */,
 				EF8BE63D27CAD08900877234 /* VideoSectionCard.swift in Sources */,
 				BC305F0F26D829A700826AB4 /* CryptoCoinCard.swift in Sources */,
 				EF4FE23027AD719600296BD5 /* CrybsePostPoll.swift in Sources */,

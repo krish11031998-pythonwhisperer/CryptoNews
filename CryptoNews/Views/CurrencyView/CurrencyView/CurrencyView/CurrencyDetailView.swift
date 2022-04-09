@@ -108,7 +108,7 @@ extension CurrencyDetailView{
         return self.Prices.last ?? .init()
     }
     
-    var News:[AssetNewsData]{
+    var News:[CrybseNews]{
         return self.socialData?.News ?? []
     }
     

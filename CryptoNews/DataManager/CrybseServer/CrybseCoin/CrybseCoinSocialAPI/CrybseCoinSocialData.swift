@@ -27,7 +27,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var metaData:CrybseCoinMetaData?
     @Published var timeSeriesData:Array<CryptoCoinOHLCVPoint>?
     @Published var prices:CrybseCoinPrices?
-    @Published var news:Array<AssetNewsData>?
+    @Published var news:Array<CrybseNews>?
     @Published var tradingSignals:CrybseTradingSignalsData?
     @Published var additionalInfo:CrybseCoinAdditionalData?
     @Published var youtube:CrybseVideosData?
@@ -60,7 +60,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         tweets = try container.decodeIfPresent(Array<CrybseTweet>.self, forKey: .tweets)
         metaData = try container.decodeIfPresent(CrybseCoinMetaData.self, forKey: .metaData)
         timeSeriesData = try container.decodeIfPresent(Array<CryptoCoinOHLCVPoint>.self, forKey: .timeSeriesData)
-        news = try container.decodeIfPresent(Array<AssetNewsData>.self, forKey: .news)
+        news = try container.decodeIfPresent(Array<CrybseNews>.self, forKey: .news)
         tradingSignals = try container.decodeIfPresent(CrybseTradingSignalsData.self, forKey: .tradingSignals)
         prices = try container.decodeIfPresent(CrybseCoinPrices.self, forKey: .prices)
         additionalInfo = try container.decodeIfPresent(CrybseCoinAdditionalData.self, forKey: .additionalInfo)
@@ -139,7 +139,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         }
     }
     
-    var News:Array<AssetNewsData>{
+    var News:Array<CrybseNews>{
         get{
             return self.news ?? []
         }

@@ -9,21 +9,23 @@ import SwiftUI
 
 struct NewsSectionMain: View {
     @EnvironmentObject var context:ContextData
-    @StateObject var newsFeed:FeedAPI
+//    @StateObject var newsFeed:FeedAPI
+    @StateObject var newsAPI:CrybseNewsAPI
     var cardHeight:CGFloat
     
     init(currency:String? = nil,currencies:[String]? = nil,limit:Int = 10,cardHeight:CGFloat = 450){
-        self._newsFeed = .init(wrappedValue: .init(currency: currencies ?? [currency ?? "BTC"], sources: ["news"], type: .Chronological, limit: limit, page: 0))
+//        self._newsFeed = .init(wrappedValue: .init(currency: currencies ?? [currency ?? "BTC"], sources: ["news"], type: .Chronological, limit: limit, page: 0))
+        self._newsAPI = .init(wrappedValue: .init(tickers: currencies?.reduce("", {$0 != "" ? $0 + "," + $1 : $1})))
         self.cardHeight = cardHeight
     }
     
-    var data:[AssetNewsData]{
-        return self.newsFeed.FeedData
+    var data:CrybseNewsList{
+        return self.newsAPI.newsList ?? []
     }
     
     func onAppear(){
         if self.data.isEmpty{
-            self.newsFeed.getAssetInfo()
+            self.newsAPI.getNews()
         }
     }
     
@@ -40,21 +42,21 @@ struct NewsSectionMain: View {
         }
     }
     
-    func onTapHandler(data:AssetNewsData){
-        self.context.selectedLink = data.URL
+    func onTapHandler(data:CrybseNews){
+        self.context.selectedLink = URL(string: data.NewsURL)
     }
     
     func onTapHandle(_ idx:Int){
         if idx >= 0 && idx < self.data.count{
             let data = self.data[idx]
-            if context.selectedLink?.absoluteString != data.url{
-                self.context.selectedLink = URL(string: data.url ?? "")
+            if context.selectedLink?.absoluteString != data.news_url{
+                self.context.selectedLink = URL(string: data.news_url ?? "")
             }
         }
     }
     
     @ViewBuilder func autoTimeCardViewGen(_ data:Any,width:CGFloat) -> some View{
-        if let data = data as? AssetNewsData{
+        if let data = data as? CrybseNews{
             NewsCard(news: data, size: .init(width: width * 0.75, height: self.cardHeight))
                 .buttonify {
                     self.onTapHandler(data: data)
@@ -87,20 +89,23 @@ struct NewsSectionMain: View {
         }.frame(width: totalWidth, alignment: .center)
     }
     
-    var body: some View {
-        Group{
-            if !self.data.isEmpty{
-                Container(heading: "News Highlights",ignoreSides: true) { w in
-                    self.autoTimedCards(w: w)
-                    self.slenderCards(w: w)
-                }
-            }else if self.newsFeed.loading{
-                ProgressView()
-                    .frame(width: totalWidth, alignment: .center)
-            }else{
-                Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+    
+    @ViewBuilder var innerBody:some View{
+        if !self.data.isEmpty{
+            Container(heading: "News Highlights",ignoreSides: true) { w in
+                self.autoTimedCards(w: w)
+                self.slenderCards(w: w)
             }
-        }.onAppear(perform: self.onAppear)
+        }else if self.newsAPI.loading{
+            ProgressView()
+                .frame(width: totalWidth, alignment: .center)
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
+        }
+    }
+    var body: some View {
+        self.innerBody
+            .onAppear(perform: self.onAppear)
     }
 }
 

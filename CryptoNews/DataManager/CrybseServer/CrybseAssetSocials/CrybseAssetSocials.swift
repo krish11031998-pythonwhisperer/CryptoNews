@@ -12,6 +12,7 @@ enum CrybseAssetSocialType:String{
     case twitter = "twitter"
     case youtube = "coin/youtube"
     case socialHighlights = "socialHighlights"
+    case news = "news"
     case none = ""
 }
 

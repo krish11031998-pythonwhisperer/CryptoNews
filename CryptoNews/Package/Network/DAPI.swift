@@ -134,7 +134,6 @@ public class DAPI:ObservableObject,DataParsingProtocol{
     }
     
     public func CallCompletionHandler(url:URL,data:Data,completion:((Data) -> Void)){
-//        DataCache.shared[url] = data
         completion(data)
         DispatchQueue.main.async {
             self.loading = false
