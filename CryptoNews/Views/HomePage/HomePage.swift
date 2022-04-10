@@ -29,16 +29,16 @@ struct HomePage: View {
             AllAssetView()
                 .asyncContainer()
                 .animatedAppearance()
-//            self.SocialFeedSummary
-//                .asyncContainer()
-//                .animatedAppearance()
-//            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
-//                .asyncContainer()
-//                .animatedAppearance()
-//            self.pollView
-//            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
-//                .asyncContainer()
-//                .animatedAppearance()
+            self.SocialFeedSummary
+                .asyncContainer()
+                .animatedAppearance()
+            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
+                .asyncContainer()
+                .animatedAppearance()
+            self.pollView
+            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
+                .asyncContainer()
+                .animatedAppearance()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
