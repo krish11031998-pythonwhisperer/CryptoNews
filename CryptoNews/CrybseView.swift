@@ -35,7 +35,7 @@ struct CrybseView: View {
 extension CrybseView{
     
     var tabs:[Tabs]{
-        [.home,.search,.info,.profile,.currency,.txn,.post]
+        [.home,.search,.portfolio,.info,.profile]
     }
     
     func closeLink(){
@@ -74,7 +74,16 @@ extension CrybseView{
             case .search: SearchMainPage().environmentObject(self.context)
             case .info: self.infoFeedView
             case .profile: ProfileView().environmentObject(self.context)
+            case .portfolio : self.portfolioView
             default: Color.clear
+        }
+    }
+    
+    @ViewBuilder var portfolioView:some View{
+        if self.context.userAssets.trackedAssets.isEmpty{
+            MainText(content: "You have no portfolio Assets", fontSize: 15)
+        }else{
+            PortfolioMain(assetOverTime: self.context.assetOverTime, assets: self.context.userAssets.trackedAssets)
         }
     }
     

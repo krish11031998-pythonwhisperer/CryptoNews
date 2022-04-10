@@ -150,7 +150,6 @@ struct ZoomInScrollView<T:View>: View {
                     
                     self.cardBuilder(data: component.data, idx: idx)
                         .id(idx)
-                    
                 }
             }
         }else{

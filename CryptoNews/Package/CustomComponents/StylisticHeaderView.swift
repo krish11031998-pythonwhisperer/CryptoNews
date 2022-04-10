@@ -13,13 +13,22 @@ struct StylisticHeaderView<HeaderView:View,InnerView:View>: View {
     var innerView:InnerView
     var baseNavBarHeight:CGFloat
     var minimumNavBarHeight:CGFloat
-    var onClose:() -> Void
+    var onClose:(() -> Void)?
     var bg:AnyView
     var heading:String
     var subHeading:String
     @State var offset:CGFloat = .zero
     
-    init(heading:String = "Title",subHeading:String = "SubTitle",baseNavBarHeight:CGFloat = totalHeight * 0.4, minimumNavBarHeight:CGFloat = totalHeight * 0.15,@ViewBuilder headerView:@escaping (CGSize) -> HeaderView,@ViewBuilder innerView:@escaping () -> InnerView,bg:AnyView = Color.AppBGColor.anyViewWrapper(),onClose:@escaping () -> Void){
+    init(
+        heading:String = "Title",
+         subHeading:String = "SubTitle",
+        baseNavBarHeight:CGFloat = totalHeight * 0.4,
+        minimumNavBarHeight:CGFloat = totalHeight * 0.15,
+        @ViewBuilder headerView:@escaping (CGSize) -> HeaderView,
+        @ViewBuilder innerView:@escaping () -> InnerView,
+        bg:AnyView = Color.AppBGColor.anyViewWrapper(),
+        onClose:(() -> Void)? = nil
+    ){
         self.heading = heading
         self.subHeading = subHeading
         self.headerView = headerView
@@ -35,11 +44,12 @@ struct StylisticHeaderView<HeaderView:View,InnerView:View>: View {
     }
         
     var largeHeaderView:some View{
-        let height = self.offset < self.minimumNavBarHeight ? self.minimumNavBarHeight : self.offset > self.baseNavBarHeight ? self.baseNavBarHeight : self.offset
-        let mainHeaderHeight = self.offset - self.minimumNavBarHeight - 30 > 0 ? self.offset - self.minimumNavBarHeight - 30 : 0
+        let height = (self.offset < self.minimumNavBarHeight ? self.minimumNavBarHeight : self.offset >= self.baseNavBarHeight ? self.baseNavBarHeight : self.offset) - 30
+        let mainHeaderHeight = self.offset - self.minimumNavBarHeight > 0 ? self.offset - self.minimumNavBarHeight : 0
         let scaleFactor = abs(mainHeaderHeight)/(self.mainHeaderViewHeight - 30)
         let scale = scaleFactor > 1 ? 1 : scaleFactor < 0 ? 0 : scaleFactor
         let opacity = scale
+        
         return Container(width: totalWidth,verticalPadding: 15,spacing: 0) { inner_w in
             self.navBarView(scale:scale,showTitle: false)
             self.headerView(.init(width: inner_w, height: self.mainHeaderViewHeight - 30))
@@ -47,8 +57,9 @@ struct StylisticHeaderView<HeaderView:View,InnerView:View>: View {
                 .scaleEffect(scale)
                 .opacity(opacity)
                 .animation(.easeInOut, value: height)
+                .background(Color.red)
         }
-        .frame(width: totalWidth,height: height, alignment: .center)
+        .frame(width: totalWidth,height: height + 30, alignment: .center)
         .background(Color.AppBGColor)
         .clipContent(clipping: .roundCornerMedium)
  
@@ -84,14 +95,19 @@ extension StylisticHeaderView{
             self.backButton.opacity(0)
         }
         .padding(.bottom,10)
-        .frame(height: self.minimumNavBarHeight, alignment: .bottomLeading)
+        .frame(height: self.minimumNavBarHeight * (self.onClose == nil ? (1 - scale) : 1), alignment: .bottomLeading)
     }
     
-    var backButton:some View{
-        SystemButton(b_name: "chevron.left", color: .black, haveBG: true) {
-            print("Back Pressed")
-            self.onClose()
+    @ViewBuilder var backButton:some View{
+        if let safeCloseButton = self.onClose{
+            SystemButton(b_name: "chevron.left", color: .black, haveBG: true) {
+                print("Back Pressed")
+                safeCloseButton()
+            }
+        }else{
+            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
+        
     }
 
 

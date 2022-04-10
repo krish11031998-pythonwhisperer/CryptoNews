@@ -36,9 +36,6 @@ struct AllAssetView: View {
     
     var body: some View {
         self.mainBody
-//            .onReceive(self.timer) { _ in
-//                self.context.userAssets.updateAssetPrices()
-//            }
     }
 }
 

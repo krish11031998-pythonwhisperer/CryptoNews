@@ -14,13 +14,14 @@ enum Tabs:String,Hashable{
     case info = "eyeglasses"
     case feed = "TwitterIcon"
     case news = "newspaper.fill"
-    case add = "plus.circle"
+//    case add = "plus.circle"
     case txn = "doc"
     case post = "message"
     case currency
     case reddit = "RedditIcon"
     case search = "magnifyingglass"
     case profile = "person.fill"
+    case portfolio = "waveform"
     case none
 }
 

@@ -36,6 +36,9 @@ struct PortfolioSummary: View {
                 if let safeAssetOverTime = CrybseAssetOverTime.parseCrybseAssetOverTime(data: data){
                     setWithAnimation {
                         self.assetOverTime = safeAssetOverTime
+                        if self.context.assetOverTime == nil{
+                            self.context.assetOverTime = safeAssetOverTime
+                        }
                     }
                 }
             }
@@ -127,8 +130,8 @@ struct PortfolioSummary: View {
                     if self.context.assetOverTime != self.assetOverTime{
                         self.context.assetOverTime = self.assetOverTime
                     }
-                    if !self.context.showPortfolio{
-                        self.context.showPortfolio.toggle()
+                    if self.context.tab != .portfolio{
+                        self.context.tab = .portfolio
                     }
                 }
                 .anyViewWrapper()

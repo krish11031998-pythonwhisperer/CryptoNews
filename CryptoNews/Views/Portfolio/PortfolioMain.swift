@@ -19,7 +19,7 @@ struct PortfolioMain: View {
     }
         
     var body: some View {
-        if self.context.selectedAsset == nil{
+//        if self.context.selectedAsset == nil{
             StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
                 PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
             }, innerView: {
@@ -33,8 +33,8 @@ struct PortfolioMain: View {
                 .frame(width: self.width, alignment: .topLeading)
                 .padding(.vertical,50)
                 
-            }, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onClose)
-        }
+            }, bg: Color.AppBGColor.anyViewWrapper())
+//        }
     }
 }
 
