@@ -57,7 +57,6 @@ struct StylisticHeaderView<HeaderView:View,InnerView:View>: View {
                 .scaleEffect(scale)
                 .opacity(opacity)
                 .animation(.easeInOut, value: height)
-                .background(Color.red)
         }
         .frame(width: totalWidth,height: height + 30, alignment: .center)
         .background(Color.AppBGColor)
