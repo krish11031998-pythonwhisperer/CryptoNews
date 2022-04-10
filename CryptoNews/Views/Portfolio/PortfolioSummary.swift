@@ -89,7 +89,7 @@ struct PortfolioSummary: View {
     }
     
     @ViewBuilder func portfolioValueOverTimeSummaryDetails(w:CGFloat) -> some View{
-        let chartSize:CGSize = .init(width: w, height: self.height * (self.showAsContainer ? 0.4 : 0.75))
+        let chartSize:CGSize = .init(width: w, height: self.height * (self.showAsContainer ? 0.5 : 0.75))
         if let portfolioValueTimeline = self.assetOverTime?.portfolioTimeline{            
             CurveChart(data: portfolioValueTimeline, choosen: self.$choosenPrice, interactions: true, size: chartSize,bg: .clear, lineColor: nil, chartShade: true)
         }else{
@@ -107,7 +107,7 @@ struct PortfolioSummary: View {
                 Container(width:w,ignoreSides: true,verticalPadding: 0,spacing: 5){ _ in
                     self.portfolioHoldingProfitSummary
                 }
-                .frame(width: w, height: self.height * 0.35, alignment: .center)
+                .frame(width: w, height: self.height * 0.25, alignment: .center)
             }
         }else if CrybseAssetOverTimeManager.shared.loading{
             ProgressView()

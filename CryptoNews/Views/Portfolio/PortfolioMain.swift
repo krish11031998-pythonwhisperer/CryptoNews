@@ -26,7 +26,7 @@ struct PortfolioMain: View {
                 Container(ignoreSides: true) { w in
                     self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
                     self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
-                    PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.45, height: totalHeight * 0.225))
+                    PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.125))
                         .animatedAppearance()
                     
                 }
@@ -136,7 +136,7 @@ extension PortfolioMain{
                         ForEach(Array(self.trackedAssets.enumerated()), id:\.offset) { _asset in
                             let asset = _asset.element
                             let idx = _asset.offset
-                            PortfolioCard(asset: asset, w: w * 0.65,h: totalHeight * 0.2)
+                            PortfolioCard(asset: asset, w: w * 0.65,chartHeight: totalHeight * 0.1)
                                 .padding(.leading,idx == 0 ? 15 : 0)
                                 .padding(.trailing,idx == self.trackedAssets.count - 1 ? 15 : 0)
                         }

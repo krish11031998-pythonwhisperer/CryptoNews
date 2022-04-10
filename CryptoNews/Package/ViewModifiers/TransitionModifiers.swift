@@ -51,17 +51,26 @@ public struct SlidingZoomInOut:ViewModifier{
         }
     }
 
+    var scrollObserver:some View{
+        GeometryReader{g -> Color in
+            
+            DispatchQueue.main.async {
+                self.scale = self.scaleGen(g: g)
+            }
+            
+            return .clear
+        }
+
+    }
     
     @ViewBuilder func mainBody(content: Content) -> some View{
         if let g = self.g{
             content
                 .scaleEffect(self.scaleGen(g: g))
         }else{
-            GeometryReader { g -> AnyView in
-                content
-                    .scaleEffect(self.scaleGen(g: g))
-                    .anyViewWrapper()
-            }.frame(width: self.cardSize.width, height: self.cardSize.height * 1.2, alignment: .center)
+            content
+                .scaleEffect(self.scale)
+                .background(self.scrollObserver)
         }
     }
     

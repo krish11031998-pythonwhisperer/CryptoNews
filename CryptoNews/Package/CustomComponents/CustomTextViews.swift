@@ -13,6 +13,19 @@ public enum TextStyle:String{
     case monospaced = ""
 }
 
+struct CustomFontModifier:ViewModifier{
+    var addBG:Bool
+    var oppColor:Color
+    var padding:CGFloat
+    func body(content: Content) -> some View {
+        
+        content
+            .padding(.all,self.padding)
+            .background(self.addBG ? BlurView.thinDarkBlur.anyViewWrapper() : Color.clear.anyViewWrapper())
+            .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
+    }
+    
+}
 
 public struct MainText: View {
     var content:String
@@ -33,20 +46,6 @@ public struct MainText: View {
         self.fontWeight = fontWeight
         self.addBG = addBG
         self.padding = padding
-    }
-    
-    struct CustomFontModifier:ViewModifier{
-        var addBG:Bool
-        var oppColor:Color
-        var padding:CGFloat
-        func body(content: Content) -> some View {
-            
-            content
-                .padding(.all,self.padding)
-                .background(self.addBG ? BlurView.thinDarkBlur.anyViewWrapper() : Color.clear.anyViewWrapper())
-                .clipShape(RoundedRectangle(cornerRadius: addBG ? 20 : 0))
-        }
-        
     }
     
     var oppColor:Color{

@@ -14,11 +14,13 @@ struct PortfolioCard: View {
     @State var switchView:Bool = false
     @State var priceColor:Color = .white
     var selected:Bool
+    var chartSize:CGSize = .zero
     var w:CGFloat
     var h:CGFloat
     
-    init(asset:CrybseAsset,w:CGFloat = .zero,h:CGFloat = totalHeight * 0.25,selected:Bool = false){
+    init(asset:CrybseAsset,w:CGFloat = .zero, chartHeight h:CGFloat = totalHeight * 0.25,selected:Bool = false){
         self.asset = asset
+        self.chartSize  = .init(width: w * 0.5, height: h * 0.5)
         if let safePrice = asset.Price{
             self._price = .init(wrappedValue: safePrice)
         }
@@ -27,23 +29,21 @@ struct PortfolioCard: View {
         self.w = w
     }
     
-    var innerViewSize:CGSize{
-        return .init(width: w - 30, height: h - 30)
-    }
-    
     func assetHeaderInfo(w:CGFloat) -> some View{
-        let h = self.innerViewSize.height * 0.2
-        return Container(width:w,ignoreSides: true,orientation: .horizontal) { _ in
-            MainText(content: self.asset.Currency, fontSize: 25, color: .white,fontWeight: .medium)
-            Spacer()
-            if self.selected{
-                Color(hex: self.asset.Color)
-                    .frame(width: 30, height: 30, alignment: .center)
-                    .clipContent(clipping: .circleClipping)
-                    .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 0)
+        return
+        Container(width:w,ignoreSides: true,verticalPadding: 0,spacing: 0){ _ in
+            Container(width:w,ignoreSides: true,verticalPadding: 0,orientation: .horizontal) { _ in
+                MainText(content: self.asset.Currency, fontSize: 25, color: .white,fontWeight: .medium)
+                Spacer()
+                if self.selected{
+                    Color(hex: self.asset.Color)
+                        .frame(width: 30, height: 30, alignment: .center)
+                        .clipContent(clipping: .circleClipping)
+                        .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 0)
+                }
             }
-                
-        }.frame(width: w,height:h, alignment: .center)
+            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .white, orientation: .vertical, alignment: .topLeading)
+        }
     }
     
     var coinStats:[String:String]{
@@ -67,15 +67,10 @@ struct PortfolioCard: View {
     }
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
-        let h = self.innerViewSize.height * (self.selected ? 0.5 : 0.6) - 5
+        let h = self.h
         VStack(alignment: .leading, spacing: 0) {
-            Container(width: inner_w,ignoreSides: true,verticalPadding: 0, orientation: .horizontal) { _ in
-                MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .white, orientation: .vertical, alignment: .topLeading)
-                Spacer()
-            }
-            .frame(width: inner_w,height: h * 0.4, alignment: .topLeading)
             if let sparkline = self.asset.CoinData.Sparkline{
-                CurveChart(data: Array(sparkline[(sparkline.count - 10)...]),interactions: false, size: .init(width: inner_w, height: h * 0.6), bg: .clear)
+                CurveChart(data: Array(sparkline[(sparkline.count - 10)...]),interactions: false, size: .init(width: inner_w, height: h), bg: .clear)
             }else{
                 MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
             }
@@ -96,7 +91,7 @@ struct PortfolioCard: View {
     }
     
     @ViewBuilder func footer(_ inner_w:CGFloat) -> some View{
-        Container(width: inner_w, ignoreSides: true) { w in
+        Container(width: inner_w, ignoreSides: true,verticalPadding: 0) { w in
             if self.selected{
                 MainText(content: self.asset.Value.ToPrettyMoney(), fontSize: 18, color: .white, fontWeight: .semibold)
                     .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .right) {
@@ -167,7 +162,7 @@ struct PortfolioCard: View {
             self.marketSummary(w)
             self.footer(w)
         }
-        .basicCard(size:.init(width: self.w, height:self.h),background:self.activateBG.anyViewWrapper())
+        .basicCard(background:self.activateBG.anyViewWrapper())
         .borderCard(color: .init(hex: self.asset.Color))
         .buttonify(handler: self.handleOnTap)
         .onReceive(self.asset.CoinData.$price, perform: self.updatePrice(_:))
