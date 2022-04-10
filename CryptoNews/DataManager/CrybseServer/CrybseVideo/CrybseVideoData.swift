@@ -31,17 +31,20 @@ extension CrybseVideosData{
 
 class CrybseVideoData:Codable{
     
-    init(id:CrybseVideoId? = nil){
+    init(id:CrybseVideoId? = nil,imgURL:String? = nil){
         self.id = id
+        self.imgURL = imgURL
     }
     
     class CrybseVideoId:Codable{
         
-        init(videoId:String?){
+        init(videoId:String?,title:String? = nil){
             self.videoId = videoId
+            self.title = title
         }
         
         var kind:String?
+        var title:String?
         var videoId:String?
     }
     
@@ -69,12 +72,13 @@ class CrybseVideoData:Codable{
     }
     
     var kind:String?
+    var imgURL:String?
     var etag:String?
     var id:CrybseVideoId?
     var snippet:CrybseVideoSnippet?
     
     var thumbnail:String?{
-        return self.snippet?.thumbnails?.high?.url ?? "https://i.ytimg.com/vi/OLORVyBHhHI/hqdefault.jpg"
+        return self.imgURL ?? self.snippet?.thumbnails?.high?.url
     }
     
     var thumbnailHeight:CGFloat?{
@@ -89,8 +93,7 @@ class CrybseVideoData:Codable{
     }
     
     var title:String{
-        self.snippet?.title ?? "XRP Will Replace Bitcoin by 2024! (The TRUTH About XRP vs. BITCOIN!)"
+        self.id?.title ?? self.snippet?.title ?? "No Title"
     }
     
-    static var test:CrybseVideoData = .init(id: .init(videoId: "OLORVyBHhHI"))
 }

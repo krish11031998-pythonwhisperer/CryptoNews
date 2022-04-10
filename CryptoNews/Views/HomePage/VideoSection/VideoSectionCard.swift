@@ -47,8 +47,8 @@ struct VideoSectionCard: View {
     }
 }
 
-struct VideoSectionCard_Previews: PreviewProvider {
-    static var previews: some View {
-        VideoSectionCard(video: CrybseVideoData.test, size: .init(width: totalWidth * 0.8, height: totalHeight * 0.35))
-    }
-}
+//struct VideoSectionCard_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VideoSectionCard(video: CrybseVideoData.test, size: .init(width: totalWidth * 0.8, height: totalHeight * 0.35))
+//    }
+//}

@@ -10,6 +10,8 @@ import Foundation
 class CrybseSocialHighlights:Codable{
     var tweets:[CrybseTweet]?
     var reddit:[CrybseRedditData]?
+    var videos:[CrybseNews]?
+    var news:[CrybseNews]?
     
     var Tweets:[CrybseTweet]{
         return self.tweets ?? []
@@ -17,6 +19,14 @@ class CrybseSocialHighlights:Codable{
     
     var Reddit:[CrybseRedditData]{
         return self.reddit ?? []
+    }
+    
+    var Video:[CrybseNews]{
+        return self.videos ?? []
+    }
+    
+    var News:[CrybseNews]{
+        return self.news ?? []
     }
 }
 

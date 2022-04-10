@@ -69,9 +69,9 @@ public struct Container<T:View>: View {
         orientation:Axis = .vertical,
         alignment:Alignment = .center,
         onClose:(() -> Void)? = nil,
-        rightView: (() -> AnyView)? = nil,
         spacing:CGFloat = 15,
         lazyLoad:Bool = false,
+        rightView: (() -> AnyView)? = nil,
         @ViewBuilder innerView: @escaping (CGFloat) -> T
     ){
         self.heading = heading

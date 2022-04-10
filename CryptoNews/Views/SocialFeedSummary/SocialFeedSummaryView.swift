@@ -34,6 +34,13 @@ struct SocialFeedSummaryView: View {
             PostCard(cardType: .Tweet, data: safeData, size: size, bg: .light, const_size: true,isButton: false)
         }else if let safeReddit = data as? CrybseRedditData{
             RedditPostCard(width: size.width, size: size, redditPost: safeReddit, const_size: true)
+        }else if let safeNews = data as? CrybseNews{
+            if safeNews.type?.lowercased() == "video",let safeVideoId = safeNews.VideoID{
+                VideoCard(data: .init(id: .init(videoId: safeVideoId,title: safeNews.title),imgURL: safeNews.image_url), size: size,smallCard: true)
+            }else{
+                NewsCard(news: safeNews, size: size)
+            }
+            
         }
     }
     
@@ -51,6 +58,20 @@ struct SocialFeedSummaryView: View {
                 data = []
             }
             data?.append(contentsOf: safeReddit)
+        }
+        
+        if let safeNews = self.socialHightlights.socialHightlight?.News, !safeNews.isEmpty{
+            if data == nil{
+                data = []
+            }
+            data?.append(contentsOf: safeNews)
+        }
+        
+        if let safeVideo = self.socialHightlights.socialHightlight?.Video, !safeVideo.isEmpty{
+            if data == nil{
+                data = []
+            }
+            data?.append(contentsOf: safeVideo)
         }
         
         return data

@@ -37,6 +37,18 @@ class CrybseNews:Codable{
         self.date ?? ""
     }
     
+    var VideoID:String?{
+        if let safeType = self.type,
+           let safeNewsURL = self.news_url,
+           let safeVideoID = safeNewsURL.split(separator: "=").last,
+           safeType.lowercased() == "video"
+        {
+            return String(safeVideoID)
+        }else{
+            return nil
+        }
+    }
+    
 }
 
 typealias CrybseNewsList = Array<CrybseNews>

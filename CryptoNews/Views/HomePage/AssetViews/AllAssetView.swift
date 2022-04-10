@@ -29,7 +29,7 @@ struct AllAssetView: View {
 
     @ViewBuilder var mainBody:some View{
         Container(width: totalWidth) { w in
-            PortfolioSummary(width: w,height: totalHeight * 0.2)
+            PortfolioSummary(width: w,height: totalHeight * 0.25)
                 .borderCard(color: .white, clipping: .roundClipping)
         }
     }

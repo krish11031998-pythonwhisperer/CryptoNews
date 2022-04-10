@@ -10,7 +10,6 @@ import youtube_ios_player_helper
 
 struct VideoCard: View {
     @State var playerState:YTPlayerState
-//    var data:AssetNewsData
     var data:CrybseVideoData
     var size:CGSize
     var smallCard:Bool
@@ -101,10 +100,10 @@ struct VideoCard: View {
     }
 }
 
-struct VideoCard_Previews: PreviewProvider {
-    static var previews: some View {
-        VideoCard(data: CrybseVideoData.test, size: .init(width: totalWidth - 50, height: 350),smallCard: false)
-            .frame(width: totalWidth, height: totalHeight, alignment: .center)
-            .background(Color.mainBGColor.ignoresSafeArea())
-    }
-}
+//struct VideoCard_Previews: PreviewProvider {
+//    static var previews: some View {
+//        VideoCard(data: CrybseVideoData.test, size: .init(width: totalWidth - 50, height: 350),smallCard: false)
+//            .frame(width: totalWidth, height: totalHeight, alignment: .center)
+//            .background(Color.mainBGColor.ignoresSafeArea())
+//    }
+//}
