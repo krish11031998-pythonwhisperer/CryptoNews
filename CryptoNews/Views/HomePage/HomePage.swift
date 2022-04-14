@@ -32,9 +32,6 @@ struct HomePage: View {
             self.SocialFeedSummary
                 .asyncContainer()
                 .animatedAppearance()
-            NewsSectionMain(currencies: self.currencies, limit: 10, cardHeight: totalHeight * 0.35)
-                .asyncContainer()
-                .animatedAppearance()
             self.pollView
             QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
                 .asyncContainer()
@@ -60,7 +57,7 @@ extension HomePage{
     
     @ViewBuilder var SocialFeedSummary:some View{
         if !self.watchedAsset.isEmpty{
-            SocialFeedSummaryView(assets: self.context.userAssets.watchingAssets.compactMap({$0.coinData?.Name}), width: totalWidth)
+            SocialFeedSummaryView(assets: self.context.userAssets.trackedAssets.compactMap({$0.Currency}), width: totalWidth)
         }else{
             SocialFeedSummaryView(width: totalWidth)
         }

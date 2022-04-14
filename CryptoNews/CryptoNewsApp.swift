@@ -16,7 +16,7 @@ import SDWebImageSVGCoder
 struct CryptoNewsApp: App {
     @StateObject var context: ContextData = .init()
     @State var loading:Bool = false
-//    var timer = Timer.TimerPublisher(interval: 60, runLoop: .main, mode: .common).autoconnect()
+    
     init(){
         FirebaseApp.configure()
         setUpDependencies()
