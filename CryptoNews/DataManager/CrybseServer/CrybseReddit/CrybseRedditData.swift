@@ -13,7 +13,11 @@ class CrybseRedditResponse:Codable{
     var success:Bool
 }
 
-class CrybseRedditData:Codable{
+class CrybseRedditData:Codable,Equatable{
+    static func == (lhs: CrybseRedditData, rhs: CrybseRedditData) -> Bool {
+        return lhs.id == rhs.id
+    }
+    
     var id:String?
     var name:String?
     var created_utc:String?
@@ -35,7 +39,11 @@ class CrybseRedditData:Codable{
     }
     
     var SelfText:String{
-        return self.selftext ?? ""
+        if let text = self.selftext{
+            return text.split(separator: "\n").reduce("", {$0 == "" ? String($1) : $0 + "\n\n" + String($1)})
+        }else{
+            return ""
+        }
     }
     
     var Likes:Int{

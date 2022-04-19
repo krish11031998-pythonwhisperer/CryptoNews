@@ -14,7 +14,6 @@ enum Tabs:String,Hashable{
     case info = "eyeglasses"
     case feed = "TwitterIcon"
     case news = "newspaper.fill"
-//    case add = "plus.circle"
     case txn = "doc"
     case post = "message"
     case currency
@@ -48,6 +47,7 @@ class ContextData:ObservableObject{
     @Published private var _selectedLink:URL? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedTweet:CrybseTweet? = nil
+    @Published private var _selectedRedditPost:CrybseRedditData? = nil 
     @Published private var _showSocialHighlights:Bool = false
     @Published private var _selectedVideo:CrybseVideoData? = nil
     @Published private var _selectedSymbol:String? = nil
@@ -294,6 +294,30 @@ extension ContextData{
         set{
             setWithAnimation {
                 self._selectedTweet = newValue
+                if let safeTweet = newValue {
+                    print("(DEBUG) safeTweet : ",safeTweet.id)
+                    self.showTab = false
+                }else{
+                    self.showTab = true
+                }
+            }
+        }
+    }
+    
+    var selectedReddit:CrybseRedditData?{
+        get{
+            return self._selectedRedditPost
+        }
+        
+        set{
+            setWithAnimation {
+                self._selectedRedditPost = newValue
+                if let safeReddit = newValue {
+                    print("(DEBUG) safeReddit : ",safeReddit.Permalink)
+                    self.showTab = false
+                }else{
+                    self.showTab = true
+                }
             }
         }
     }

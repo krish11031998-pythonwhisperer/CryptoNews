@@ -25,10 +25,9 @@ class CrybseCoinDataResponse:Codable{
 class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var tweets: Array<CrybseTweet>?
     @Published var metaData:CrybseCoinMetaData?
-    @Published var timeSeriesData:Array<CryptoCoinOHLCVPoint>?
+//    @Published var timeSeriesData:Array<CryptoCoinOHLCVPoint>?
     @Published var prices:CrybseCoinPrices?
-    @Published var news:Array<CrybseNews>?
-    @Published var tradingSignals:CrybseTradingSignalsData?
+    @Published var news:CrybseNewsList?
     @Published var additionalInfo:CrybseCoinAdditionalData?
     @Published var youtube:CrybseVideosData?
     @Published var reddit:CrybseRedditPosts?
@@ -48,7 +47,6 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         case metaData
         case timeSeriesData
         case news
-        case tradingSignals
         case prices
         case additionalInfo
         case youtube
@@ -59,9 +57,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tweets = try container.decodeIfPresent(Array<CrybseTweet>.self, forKey: .tweets)
         metaData = try container.decodeIfPresent(CrybseCoinMetaData.self, forKey: .metaData)
-        timeSeriesData = try container.decodeIfPresent(Array<CryptoCoinOHLCVPoint>.self, forKey: .timeSeriesData)
-        news = try container.decodeIfPresent(Array<CrybseNews>.self, forKey: .news)
-        tradingSignals = try container.decodeIfPresent(CrybseTradingSignalsData.self, forKey: .tradingSignals)
+//        timeSeriesData = try container.decodeIfPresent(Array<CryptoCoinOHLCVPoint>.self, forKey: .timeSeriesData)
+//        news = try container.decodeIfPresent(CrybseNewsList.self, forKey: .news)
         prices = try container.decodeIfPresent(CrybseCoinPrices.self, forKey: .prices)
         additionalInfo = try container.decodeIfPresent(CrybseCoinAdditionalData.self, forKey: .additionalInfo)
         youtube = try container.decodeIfPresent(CrybseVideosData.self, forKey: .youtube)
@@ -72,25 +69,24 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(tweets, forKey: .tweets)
         try container.encode(metaData, forKey: .metaData)
-        try container.encode(timeSeriesData, forKey: .timeSeriesData)
-        try container.encode(news, forKey: .news)
-        try container.encode(tradingSignals, forKey: .tradingSignals)
+//        try container.encode(timeSeriesData, forKey: .timeSeriesData)
+//        try container.encode(news, forKey: .news)
         try container.encode(prices,forKey: .prices)
         try container.encode(additionalInfo,forKey: .additionalInfo)
         try container.encode(reddit,forKey: .reddit)
         try container.encode(youtube,forKey: .youtube)
     }
     
-    var TimeSeriesData:[CryptoCoinOHLCVPoint]{
-        get{
-            return self.TimeseriesData
-        }
-        
-        set{
-            self.TimeseriesData = newValue
-        }
-        
-    }
+//    var TimeSeriesData:[CryptoCoinOHLCVPoint]{
+//        get{
+//            return self.TimeseriesData
+//        }
+//
+//        set{
+//            self.TimeseriesData = newValue
+//        }
+//
+//    }
     
     static func parseCoinDataFromData(data:Data) -> CrybseCoinSocialData?{
         var coinData:CrybseCoinSocialData? = nil
@@ -128,17 +124,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
             self.metaData = newValue
         }
     }
-    
-    var TimeseriesData:Array<CryptoCoinOHLCVPoint>{
-        get{
-            return self.timeSeriesData ?? []
-        }
         
-        set{
-            self.timeSeriesData = newValue
-        }
-    }
-    
     var News:Array<CrybseNews>{
         get{
             return self.news ?? []
@@ -171,13 +157,4 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         }
     }
     
-    var TradingSignals:CrybseTradingSignalsData{
-        get{
-            return self.tradingSignals ?? .init()
-        }
-        
-        set{
-            self.tradingSignals = newValue
-        }
-    }
 }

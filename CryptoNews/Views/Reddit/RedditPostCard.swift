@@ -12,15 +12,18 @@ enum RedditPostCardSize:CGFloat{
 }
 
 struct RedditPostCard: View {
+    @EnvironmentObject var context:ContextData
     var redditPost:CrybseRedditData
     var width:CGFloat
     var size:CGSize = .zero
     var const_size:Bool = false
+    var isButton:Bool
     
-    init(width:CGFloat,size:CGSize = .zero,redditPost:CrybseRedditData,const_size:Bool = false){
+    init(width:CGFloat,size:CGSize = .zero,redditPost:CrybseRedditData,const_size:Bool = false,isButton:Bool = true){
         self.redditPost = redditPost
         self.width = width
         self.size = size
+        self.isButton = isButton
         self.const_size = const_size
     }
     
@@ -37,7 +40,6 @@ struct RedditPostCard: View {
         if self.size.height != .zero{
             self.mainBody(w: size.width)
                 .truncationMode(.tail)
-//                .frame(height: (size.height * 0.8 - 60), alignment: .topLeading)
         }else{
             self.mainBody(w: size.width)
         }
@@ -73,8 +75,7 @@ struct RedditPostCard: View {
         }.frame(width: w, alignment: .leading)
     }
     
-    var body: some View {
-        
+    var mainBody:some View{
         Container(width: self.width,verticalPadding: 15,spacing: 10) { w in
             self.Header(w: w)
             self.MainBody(size: .init(width: w, height: size.height))
@@ -85,6 +86,19 @@ struct RedditPostCard: View {
             self.Footer(w: w)
         }
         .basicCard(size:self.const_size ?  self.size : .zero)
+    }
+    
+    var body: some View {
+        if self.isButton{
+            self.mainBody
+                .buttonify {
+                    if self.context.selectedReddit != self.redditPost{
+                        self.context.selectedReddit = self.redditPost
+                    }
+                }
+        }else{
+            self.mainBody
+        }
     }
 }
 

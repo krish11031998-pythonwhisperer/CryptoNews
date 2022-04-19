@@ -76,6 +76,9 @@ struct RedditDetailMainView:View {
     
     func onClose(){
         print("(DEBUG) onClose On RedditDetailMainView")
+        if self.context.selectedReddit != nil{
+            self.context.selectedReddit = nil
+        }
     }
     
     var body: some View{

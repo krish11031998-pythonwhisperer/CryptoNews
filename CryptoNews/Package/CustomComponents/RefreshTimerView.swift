@@ -6,15 +6,17 @@
 //
 
 import SwiftUI
+import Combine
 
 public struct RefreshTimerView: View {
     @State var timeCounter:Int = 0
     @Binding var refresh:Bool
     var timeLimit:Int
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    let timer:Publishers.Autoconnect<Timer.TimerPublisher>
     
     public init(timeLimit:Int = 30,refresh:Binding<Bool> = .constant(false)){
         self.timeLimit = timeLimit
+        self.timer  = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
         self._refresh = refresh
     }
     

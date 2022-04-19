@@ -15,16 +15,25 @@ struct QuickWatch: View {
         self.assets = assets
         self.width = width
     }
+    
+    
+    var quickWatchassets:[CrybseAsset]{
+        let asset = self.assets.sorted(by: {$0.Rank < $1.Rank})
+        if asset.count <= 5{
+            return assets
+        }else{
+            return Array(assets[0...4])
+        }
+    }
 
     var body: some View {
         Container(heading: "Quick Watch", headingColor: .white, headingDivider: true, width: self.width,spacing: 20) { w in
-            ForEach(Array(self.assets.sorted(by: {$0.Rank < $1.Rank}).enumerated()), id:\.offset) { _asset in
+            ForEach(Array(self.quickWatchassets.enumerated()), id:\.offset) { _asset in
                 let asset = _asset.element
                 QuickAssetInfoCard(asset: asset, w: w)
                     .animatedAppearance(idx: _asset.offset)
             }
         }
-//        .basicCard()
     }
 }
 
@@ -52,7 +61,7 @@ struct QuickAssetInfoCard:View{
     func quickInfoAssetCard(value:String) -> some View{
 
         Container(width:w,horizontalPadding: 10,verticalPadding: 10,orientation: .horizontal){ _ in
-            CurrencySymbolView(currency: asset.Currency,width: 30)
+            CurrencySymbolView(url: asset.CoinData.iconUrl,width: 30)
             MainText(content: asset.Currency, fontSize: 16, color: .white, fontWeight: .medium)
             Spacer()
             MainText(content: value, fontSize: 16, color: .white, fontWeight: .semibold)

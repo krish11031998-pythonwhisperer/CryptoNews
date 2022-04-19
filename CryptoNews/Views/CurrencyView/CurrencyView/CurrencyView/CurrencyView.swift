@@ -54,15 +54,16 @@ struct CurrencyView:View{
         if self.assetData.coin == nil{
             self.coinAPI.getCoinData()
             self.loading.toggle()
-        }else if let _ = self.assetData.coin?.prices{
+        }else if self.assetData.coin != nil,let name = self.assetData.coin?.MetaData.Name.lowercased(){
             self.loading.toggle()
-            CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: self.assetData.coin?.MetaData.Name.lowercased() ?? "xxx", interval: "m1") { price in
+            CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: name, interval: "m1") { price in
                 guard let latestPrice = price.last else {return}
                 setWithAnimation {
                     self.assetData.coin?.prices?.append(latestPrice)
                     self.loading.toggle()
                 }
             }
+
         }
     }
     

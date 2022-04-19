@@ -26,14 +26,14 @@ struct SocialFeedSummaryView: View {
     }
     
     func cardSize(w:CGFloat? = nil) -> CGSize{
-        return .init(width: w ?? self.width, height: totalHeight * 0.3)
+        return .init(width: w ?? self.width, height: totalHeight * 0.45)
     }
     
     @ViewBuilder func cardBuilder(_ data:Any,_ size:CGSize) -> some View{
         if let safeData = data as? CrybseTweet{
             PostCard(cardType: .Tweet, data: safeData, size: size, bg: .light, const_size: true,isButton: false)
         }else if let safeReddit = data as? CrybseRedditData{
-            RedditPostCard(width: size.width, size: size, redditPost: safeReddit, const_size: true)
+            RedditPostCard(width: size.width, size: size, redditPost: safeReddit, const_size: true,isButton: false)
         }else if let safeNews = data as? CrybseNews{
             if safeNews.type?.lowercased() == "video",let safeVideoId = safeNews.VideoID{
                 VideoCard(data: .init(id: .init(videoId: safeVideoId,title: safeNews.title),imgURL: safeNews.image_url), size: size,smallCard: true)

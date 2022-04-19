@@ -64,7 +64,7 @@ extension CurrencyDetailView{
                 self.CurrencySummary
                 self.infoSection
                 self.feedContainer
-                self.newsContainer
+//                self.newsContainer
                 self.redditContainer
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
@@ -273,10 +273,11 @@ extension CurrencyDetailView{
         return hr
     }
 
-    func infoViewGen(type:PostCardType) -> some View{
+    func infoViewGen(type:PostCardType) -> some View {
         let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : type == .Reddit ? "Reddit" : type  == .Youtube ? "Youtube" : "Posts"
         var data:[Any] = type == .News ? self.News : type == .Tweet ? self.Tweets : type == .Reddit ? self.Reddit : type == .Youtube ? self.Videos : []
         data = data.count < 3 ? data : Array(data[0...2])
+        
         return Container(heading: heading, headingColor: .white, headingDivider: true, headingSize: 20, width: self.size.width  ,horizontalPadding: 15, verticalPadding: 0, orientation: .vertical, aligment: .leading,lazyLoad: true) { w in
             ForEach(Array(data.enumerated()),id:\.offset) { _data in
                 let data = _data.element
@@ -302,7 +303,7 @@ extension CurrencyDetailView{
     @ViewBuilder var newsContainer:some View{
         if self.News.isEmpty{
             ProgressView()
-        }else if self.News.count >= 5{
+        }else if self.News.count >= 3{
             self.infoViewGen(type: .News)
         }
         
@@ -323,28 +324,11 @@ extension CurrencyDetailView{
             self.infoViewGen(type: .Youtube)
         }
     }
-    
-    var OHLCV:[CryptoCoinOHLCVPoint]{
-        guard let timeSeries = self.socialData?.TimeseriesData else {return []}
-        return timeSeries.count >= 10 ? Array(timeSeries[(timeSeries.count - 10)...]) : timeSeries
-    }
-    
-    
+
     var Prices:CrybseCoinPrices{
         guard let prices = self.assetData.coin?.prices else {return []}
         let length = prices.count
         return length > self.timeSpan ? Array(prices[(length - self.timeSpan)...]) : prices
-    }
-    
-    var priceInfo:some View{
-        let asset = self.choosen == -1 ? self.OHLCV.last ?? .init() : self.OHLCV[self.choosen]
-        return HStack(alignment: .top, spacing: 20){
-            MainSubHeading(heading: "Open", subHeading: convertToMoneyNumber(value: asset.open),headingSize: 12.5,subHeadingSize: 17.5)
-            MainSubHeading(heading: "Low", subHeading: convertToMoneyNumber(value: asset.low),headingSize: 12.5,subHeadingSize: 17.5)
-            MainSubHeading(heading: "High", subHeading: convertToMoneyNumber(value: asset.high),headingSize: 12.5,subHeadingSize: 17.5)
-            MainSubHeading(heading: "Close", subHeading: convertToMoneyNumber(value: asset.close),headingSize: 12.5,subHeadingSize: 17.5)
-        }.padding(.vertical)
-        .frame(width: self.size.width, height: self.size.height * 0.25, alignment: .topLeading)
     }
     
     var curveChart:some View{

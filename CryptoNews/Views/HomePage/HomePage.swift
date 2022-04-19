@@ -26,10 +26,10 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            AllAssetView()
+            self.SocialFeedSummary
                 .asyncContainer()
                 .animatedAppearance()
-            self.SocialFeedSummary
+            AllAssetView()
                 .asyncContainer()
                 .animatedAppearance()
             self.pollView

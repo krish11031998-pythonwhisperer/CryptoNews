@@ -48,6 +48,44 @@ class CrybseNews:Codable{
             return nil
         }
     }
+    enum CodingKeys:CodingKey{
+        case news_url
+        case image_url
+        case title
+        case text
+        case source_name
+        case date
+        case topic
+        case sentiment
+        case type
+        case tickers
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        news_url = try container.decodeIfPresent(String.self, forKey: .news_url)
+        image_url = try container.decodeIfPresent(String.self, forKey: .image_url)
+        text = try container.decodeIfPresent(String.self, forKey: .text)
+        source_name = try container.decodeIfPresent(String.self, forKey: .source_name)
+        date = try container.decodeIfPresent(String.self, forKey: .date)
+        topic = try container.decodeIfPresent([String].self, forKey: .topic)
+        sentiment = try container.decodeIfPresent(String.self, forKey: .sentiment)
+        type = try container.decodeIfPresent(String.self, forKey: .type)
+        tickers = try container.decodeIfPresent([String].self, forKey: .tickers)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(news_url, forKey: .news_url)
+        try container.encode(image_url, forKey: .image_url)
+        try container.encode(text, forKey: .text)
+        try container.encode(source_name,forKey: .source_name)
+        try container.encode(date,forKey: .date)
+        try container.encode(topic,forKey: .topic)
+        try container.encode(sentiment,forKey: .sentiment)
+        try container.encode(type,forKey: .type)
+        try container.encode(tickers,forKey: .tickers)
+    }
     
 }
 

@@ -165,7 +165,15 @@ extension CrybseView{
                 .edgesIgnoringSafeArea(.all)
                 .zIndex(2)
         }
-    
+        
+        if let safeRedditPost = self.context.selectedReddit{
+            RedditDetailMainView(redditData: safeRedditPost)
+                .environmentObject(self.context)
+                .transition(.slideInOut)
+                .background(Color.AppBGColor)
+                .edgesIgnoringSafeArea(.all)
+                .zIndex(2)
+        }
     }
     
     func closeAsset(){

@@ -54,7 +54,10 @@ struct PostCard: View {
     @ViewBuilder var card:some View{
         Container(width:self.size.width,verticalPadding: 15,spacing:10){ w in
             self.Header(width:w)
-            self.Body(w: w,h:self.height * 0.6)
+            self.Body(w: w)
+            if self.height >= totalHeight * 0.35,let image = self.data.media?.first?.url{
+                ImageView(url: image, width: w, height: self.height * 0.45 - 10, contentMode: .fill, alignment: .center, clipping: .roundClipping)
+            }
             if self.const_size{
                 Spacer(minLength: 0)
             }

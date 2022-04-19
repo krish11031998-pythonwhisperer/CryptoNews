@@ -29,9 +29,16 @@ class CrybseTweet:Codable,Equatable{
     var created_at:String?
     var text:String?
     var publicMetric:CrybseTweetPublicMetric?
-    var attachments:[CrybseTweetAttachment]?
+    var attachments:[CrybseTweetMedia]?
     var user:CrybseTweetUser?
-    var entity:CrybseTweetEntity?
+    var urls:[CrybseTweetURLEntity]?
+    var cashtags:[TweetHashTag]?
+    var hashtags:[TweetHashTag]?
+    var annotations:[TweetEntityAnnotation]?
+    var media:[CrybseTweetMedia]?
+    var retweetedTweet:CrybseTweet?
+    var polls:[CrybseTweetPoll]?
+    var places:[CrybseTweetPlace]?
     var sentiment:Float?
     
     var User:CrybseTweetUser{
@@ -59,7 +66,11 @@ class CrybseTweet:Codable,Equatable{
     }
     
     var Text:String{
-        return self.text ?? "No Text"
+        if let safeRetweet = self.retweetedTweet, let text = safeRetweet.text{
+            return text
+        }else{
+            return self.text ?? "No Text"
+        }
     }
     
     var Sentiment:Float{
@@ -68,11 +79,11 @@ class CrybseTweet:Codable,Equatable{
     
     var Entities:[String]{
         var allEntities:[String] = []
-        if let safeHashTag = self.entity?.hashtags{
+        if let safeHashTag = self.hashtags{
             allEntities.append(contentsOf: safeHashTag.compactMap({$0.tag}))
         }
         
-        if let safeCashTag = self.entity?.cashtags{
+        if let safeCashTag = self.cashtags{
             allEntities.append(contentsOf: safeCashTag.compactMap({$0.tag}))
         }
         
@@ -127,13 +138,14 @@ class CrybseTweetUser:Codable{
     var name:String?
 }
 
-class CrybseTweetAttachment:Codable{
+class CrybseTweetMedia:Codable{
     var public_metrics:CrybseTweetPublicMetric?
     var media_key:String?
     var duration:Int?
     var width:Int?
     var preview_image_url:String?
     var type:String?
+    var url:String?
     var height:Int?
 }
 
@@ -144,6 +156,22 @@ class CrybseTweetPublicMetric:Codable{
     var reply_count: Int?
     var like_count: Int?
     var quote_count: Int?
+}
+
+class CrybseTweetPoll:Codable{
+    var id:String?
+    var options:[CrybseTweetPollOption]?
+}
+
+class CrybseTweetPollOption:Codable{
+    var position:Int?
+    var label:String?
+    var votes:Int?
+}
+
+class CrybseTweetPlace:Codable{
+    var full_name:String?
+    var id:String?
 }
 
 class CrybseTweetEntity:Codable{

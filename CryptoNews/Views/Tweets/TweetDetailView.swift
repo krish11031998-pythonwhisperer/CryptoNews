@@ -66,19 +66,28 @@ extension TweetDetailView{
     }
     
     @ViewBuilder func attachmentsView(w:CGFloat) ->  some View{
-        if let safeAttachments = self.tweet.attachments{
-            if safeAttachments.count == 1,let first = safeAttachments.first,let img = first.preview_image_url, img != ""{
-                ImageView(url: first.preview_image_url, width: w, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundClipping)
+        if let safeMedia = self.tweet.media{
+            if safeMedia.count == 1,let firstMedia = safeMedia.first{
+                ImageView(url: firstMedia.url, width: w, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundCornerMedium)
+            }else if safeMedia.count > 1{
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack(alignment: .center, spacing: 10) {
+                        ForEach(Array(safeMedia.enumerated()),id:\.offset){ _media in
+                            let media = _media.element
+                            ImageView(url: media.url, width: width * 0.75, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundCornerMedium)
+                        }
+                    }
+                }
             }
         }
     }
     
     @ViewBuilder func urlAttachment(w:CGFloat) ->  some View{
-        if let firstUrl = self.tweet.entity?.urls?.first{
+        if let firstUrl = self.tweet.urls?.first{
             if let img = firstUrl.images?.first?.url, firstUrl.title != "" && firstUrl.description != ""{
                 self.largeAttachmentWithImageView(width: w, url: firstUrl)
             }else if firstUrl.expanded_url != ""{
-                MainText(content: firstUrl.Description != "" ? firstUrl.Description : firstUrl.ExpandedURL, fontSize: 15, color: .blue, fontWeight: .medium)
+                MainText(content: firstUrl.Description != "" ? firstUrl.Description : firstUrl.DisplayURL, fontSize: 15, color: .blue, fontWeight: .medium)
                     .padding(.horizontal,10)
                     .buttonify {
                         self.context.selectedLink = .init(string: firstUrl.ExpandedURL)
