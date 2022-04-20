@@ -61,7 +61,7 @@ struct QuickAssetInfoCard:View{
     func quickInfoAssetCard(value:String) -> some View{
 
         Container(width:w,horizontalPadding: 10,verticalPadding: 10,orientation: .horizontal){ _ in
-            CurrencySymbolView(url: asset.CoinData.iconUrl,width: 30)
+            CurrencySymbolView(url: asset.CoinData.image,width: 30)
             MainText(content: asset.Currency, fontSize: 16, color: .white, fontWeight: .medium)
             Spacer()
             MainText(content: value, fontSize: 16, color: .white, fontWeight: .semibold)

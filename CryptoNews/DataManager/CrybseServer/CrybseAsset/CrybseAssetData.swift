@@ -213,10 +213,10 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     
     var Price:Float?{
         get{
-            return self.coinData?.price        }
+            return self.coinData?.currentprice        }
         
         set{
-            self.coinData?.price = newValue
+            self.coinData?.currentprice = newValue
         }
         
     }
@@ -287,7 +287,7 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     
     var Color:String{
         get{
-            return self.coinData?.Color ?? "#FFFFFF"
+            return "#FFFFFF"
         }
     }
     
@@ -308,93 +308,162 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     
 }
  
+class CrybseCoinSparkline:ObservableObject,Codable{
+    var price:Array<Float>?
+    
+    enum CodingKeys:CodingKey{
+        case price
+    }
+    
+    required init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        price = try container.decodeIfPresent(Array<Float>.self, forKey: .price)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encodeIfPresent(price, forKey: .price)
+    }
+    
+}
 
 class CrybseCoin:ObservableObject,Codable{
 
     init(){}
 
-   @Published var uuid:String?
-   @Published var symbol:String?
-   @Published var name:String?
-   @Published var description:String?
-   @Published var color:String?
-   @Published var iconUrl:String?
-   @Published var marketCap:Float?
-   @Published var price:Float?
-   @Published var tier:Int?
-   @Published var change:Float?
-   @Published var rank:Int?
-   @Published var sparkline:[Float]?
-   @Published var lowVolume:Bool?
-   @Published var coinrankingUrl:String?
-   @Published var btcPrice:Float?
+    @Published var id:String?
+    @Published var symbol:String?
+    @Published var name:String?
+    @Published var image:String?
+    @Published var marketCap:Float?
+    @Published var currentprice:Float?
+    @Published var rank:Int?
+    @Published var total_volume:Float?
+    @Published var high_24h:Float?
+    @Published var low_24h:Float?
+    @Published var price_change_24h:Float?
+    @Published var price_change_percentage_24h:Float?
+    @Published var market_cap_change_24h:Float?
+    @Published var market_cap_change_percentage_24h:Float?
+    @Published var circulating_supply:Float?
+    @Published var total_supply:Float?
+    @Published var max_supply:Float?
+    @Published var ath:Float?
+    @Published var ath_change_percentage:Float?
+    @Published var ath_date:String?
+    @Published var atl:Float?
+    @Published var atl_change_percentage:Float?
+    @Published var atl_date:String?
+    @Published var last_updated:String?
+    @Published var sparkline_in_7d:CrybseCoinSparkline?
+    @Published var price_change_percentage_1h_in_currency:Float?
+    @Published var price_change_percentage_24h_in_currency:Float?
+    @Published var price_change_percentage_7d_in_currency:Float?
     
     enum CodingKeys:CodingKey{
-       case uuid
+       case id
        case symbol
-       case name
-       case description
-       case color
-       case iconUrl
-       case websiteUrl
-       case supply
-       case links
-       case _24hVolume
-       case allTimeHigh
-       case numberOfMarkets
-       case numberOfExchanges
-       case marketCap
-       case price
-       case tier
-       case change
+       case currentprice
        case rank
-       case sparkline
-       case lowVolume
-       case coinrankingUrl
-       case btcPrice
+       case name
+       case image
+       case marketCap
+       case total_volume
+       case high_24h
+       case low_24h
+       case price_change_24h
+       case price_change_percentage_24h
+       case market_cap_change_24h
+       case market_cap_change_percentage_24h
+       case circulating_supply
+       case total_supply
+       case max_supply
+       case ath
+       case ath_change_percentage
+       case ath_date
+       case atl
+       case atl_change_percentage
+       case atl_date
+       case last_updated
+       case price_change_percentage_1h_in_currency
+       case price_change_percentage_24h_in_currency
+       case price_change_percentage_7d_in_currency
+       case sparkline_in_7d
     }
     
     
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        uuid = try container.decodeIfPresent(String.self, forKey: .uuid)
+        id = try container.decodeIfPresent(String.self, forKey: .id)
+        currentprice = try container.decodeIfPresent(Float.self, forKey: .currentprice)
         symbol = try container.decodeIfPresent(String.self, forKey: .symbol)
-        name = try container.decodeIfPresent(String.self, forKey: .name)
-        color = try container.decodeIfPresent(String.self, forKey: .color)
-        iconUrl = try container.decodeIfPresent(String.self, forKey: .iconUrl)
-        marketCap = try container.decodeIfPresent(Float.self, forKey: .marketCap)
-        price = try container.decodeIfPresent(Float.self, forKey: .price)
-        tier = try container.decodeIfPresent(Int.self, forKey: .tier)
-        change = try container.decodeIfPresent(Float.self, forKey: .change)
         rank = try container.decodeIfPresent(Int.self, forKey: .rank)
-        sparkline = try container.decodeIfPresent([Float].self, forKey: .sparkline)
-        lowVolume = try container.decodeIfPresent(Bool.self, forKey: .lowVolume)
-        coinrankingUrl = try container.decodeIfPresent(String.self, forKey: .coinrankingUrl)
-        btcPrice = try container.decodeIfPresent(Float.self, forKey: .btcPrice)
+        name = try container.decodeIfPresent(String.self, forKey: .name)
+        image = try container.decodeIfPresent(String.self, forKey: .image)
+        marketCap = try container.decodeIfPresent(Float.self, forKey: .marketCap)
+        total_volume = try container.decodeIfPresent(Float.self, forKey: .total_volume)
+        high_24h = try container.decodeIfPresent(Float.self, forKey: .high_24h)
+        low_24h = try container.decodeIfPresent(Float.self, forKey: .low_24h)
+        price_change_24h = try container.decodeIfPresent(Float.self, forKey: .price_change_24h)
+        price_change_percentage_24h = try container.decodeIfPresent(Float.self, forKey: .price_change_percentage_24h)
+        market_cap_change_24h = try container.decodeIfPresent(Float.self, forKey: .market_cap_change_24h)
+        market_cap_change_percentage_24h = try container.decodeIfPresent(Float.self, forKey: .market_cap_change_percentage_24h)
+        circulating_supply = try container.decodeIfPresent(Float.self, forKey: .circulating_supply)
+        total_supply = try container.decodeIfPresent(Float.self, forKey: .total_supply)
+        max_supply = try container.decodeIfPresent(Float.self, forKey: .max_supply)
+        
+        ath = try container.decodeIfPresent(Float.self, forKey: .ath)
+        ath_change_percentage = try container.decodeIfPresent(Float.self, forKey: .ath_change_percentage)
+        ath_date = try container.decodeIfPresent(String.self, forKey: .ath_date)
+        
+        atl = try container.decodeIfPresent(Float.self, forKey: .atl)
+        atl_change_percentage = try container.decodeIfPresent(Float.self, forKey: .atl_change_percentage)
+        atl_date = try container.decodeIfPresent(String.self, forKey: .atl_date)
+        
+        sparkline_in_7d = try container.decodeIfPresent(CrybseCoinSparkline.self, forKey: .sparkline_in_7d)
+        
+        price_change_percentage_1h_in_currency = try container.decodeIfPresent(Float.self, forKey: .price_change_percentage_1h_in_currency)
+        price_change_percentage_24h_in_currency = try container.decodeIfPresent(Float.self, forKey: .price_change_percentage_24h_in_currency)
+        price_change_percentage_7d_in_currency = try container.decodeIfPresent(Float.self, forKey: .price_change_percentage_7d_in_currency)
+        
     }
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(uuid, forKey: .uuid)
-        try container.encode(symbol, forKey: .symbol)
-        try container.encode(name, forKey: .name)
-        try container.encode(description, forKey: .description)
-        try container.encode(color, forKey: .color)
-        try container.encode(iconUrl, forKey: .iconUrl)
-        try container.encode(marketCap, forKey: .marketCap)
-        try container.encode(price, forKey: .price)
-        try container.encode(tier, forKey: .tier)
-        try container.encode(change, forKey: .change)
-        try container.encode(rank, forKey: .rank)
-        try container.encode(sparkline, forKey: .sparkline)
-        try container.encode(lowVolume, forKey: .lowVolume)
-        try container.encode(coinrankingUrl, forKey: .coinrankingUrl)
-        try container.encode(btcPrice, forKey: .btcPrice)
+        try container.encodeIfPresent(id, forKey: .id)
+        try container.encodeIfPresent(symbol, forKey: .symbol)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(currentprice, forKey: .currentprice)
+        try container.encodeIfPresent(marketCap, forKey: .marketCap)
+        try container.encodeIfPresent(rank, forKey: .rank)
+        try container.encodeIfPresent(total_volume, forKey: .total_volume)
+        try container.encodeIfPresent(high_24h, forKey: .high_24h)
+        try container.encodeIfPresent(low_24h, forKey: .low_24h)
+        try container.encodeIfPresent(price_change_24h, forKey: .price_change_24h)
+        try container.encodeIfPresent(price_change_percentage_24h, forKey: .price_change_percentage_24h)
+        try container.encodeIfPresent(market_cap_change_24h, forKey: .market_cap_change_24h)
+        try container.encodeIfPresent(market_cap_change_percentage_24h, forKey: .market_cap_change_percentage_24h)
+        try container.encodeIfPresent(circulating_supply, forKey: .circulating_supply)
+        try container.encodeIfPresent(total_supply, forKey: .total_supply)
+        try container.encodeIfPresent(max_supply, forKey: .max_supply)
+        try container.encodeIfPresent(ath, forKey: .ath)
+        try container.encodeIfPresent(ath_change_percentage, forKey: .ath_change_percentage)
+        try container.encodeIfPresent(ath_date, forKey: .ath_date)
+        try container.encodeIfPresent(atl, forKey: .atl)
+        try container.encodeIfPresent(atl_change_percentage, forKey: .atl_change_percentage)
+        try container.encodeIfPresent(atl_date, forKey: .atl_date)
+        try container.encodeIfPresent(atl, forKey: .atl)
+        try container.encodeIfPresent(last_updated, forKey: .last_updated)
+        try container.encodeIfPresent(sparkline_in_7d, forKey: .sparkline_in_7d)
+        try container.encodeIfPresent(price_change_percentage_1h_in_currency.self, forKey: .price_change_percentage_1h_in_currency)
+        try container.encodeIfPresent(price_change_percentage_24h_in_currency.self, forKey: .price_change_percentage_24h_in_currency)
+        try container.encodeIfPresent(price_change_percentage_7d_in_currency.self, forKey: .price_change_percentage_7d_in_currency)
+        
     }
     
-    var Description:String{
-        return self.description ?? ""
-    }
+//    var Description:String{
+//        return self.description ?? ""
+//    }
     
     var Symbol:String{
         return self.symbol ?? "XXX"
@@ -404,24 +473,25 @@ class CrybseCoin:ObservableObject,Codable{
         return self.name ?? ""
     }
     
-    var Color:String{
-        return self.color ?? ""
-    }
-    
+//    var Color:String{
+//        return ""
+//    }
+//
     var Price:Float{
-        return self.price ?? 0.0
+        return self.currentprice ?? 0.0
     }
     
     var Sparkline:[Float]{
-        return self.sparkline ?? []
+        guard let safeSparkLine = self.sparkline_in_7d?.price else {return []}
+        return safeSparkLine
     }
     
     var Change:Float{
-        return self.change ?? 0.0
+        return self.price_change_percentage_24h ?? 0.0
     }
     
     var SymbolIconURL:String{
-        return self.iconUrl ?? ""
+        return self.image ?? ""
     }
     
 }
@@ -649,28 +719,28 @@ class CrybseCoinMetaData:ObservableObject,Codable{
     
     func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
-        try container.encode(uuid, forKey: .uuid)
-        try container.encode(symbol, forKey: .symbol)
-        try container.encode(name, forKey: .name)
-        try container.encode(description, forKey: .description)
-        try container.encode(color, forKey: .color)
-        try container.encode(iconUrl, forKey: .iconUrl)
-        try container.encode(websiteUrl, forKey: .websiteUrl)
-        try container.encode(supply, forKey: .supply)
-        try container.encode(links, forKey: .links)
-        try container.encode(dailyVolume, forKey: .dailyVolume)
-        try container.encode(allTimeHigh, forKey: .allTimeHigh)
-        try container.encode(numberOfMarkets, forKey: .numberOfMarkets)
-        try container.encode(numberOfExchanges, forKey: .numberOfExchanges)
-        try container.encode(marketCap, forKey: .marketCap)
-        try container.encode(price, forKey: .price)
-        try container.encode(tier, forKey: .tier)
-        try container.encode(change, forKey: .change)
-        try container.encode(rank, forKey: .rank)
-        try container.encode(sparkline, forKey: .sparkline)
-        try container.encode(lowVolume, forKey: .lowVolume)
-        try container.encode(coinrankingUrl, forKey: .coinrankingUrl)
-        try container.encode(btcPrice, forKey: .btcPrice)
+        try container.encodeIfPresent(uuid, forKey: .uuid)
+        try container.encodeIfPresent(symbol, forKey: .symbol)
+        try container.encodeIfPresent(name, forKey: .name)
+        try container.encodeIfPresent(description, forKey: .description)
+        try container.encodeIfPresent(color, forKey: .color)
+        try container.encodeIfPresent(iconUrl, forKey: .iconUrl)
+        try container.encodeIfPresent(websiteUrl, forKey: .websiteUrl)
+        try container.encodeIfPresent(supply, forKey: .supply)
+        try container.encodeIfPresent(links, forKey: .links)
+        try container.encodeIfPresent(dailyVolume, forKey: .dailyVolume)
+        try container.encodeIfPresent(allTimeHigh, forKey: .allTimeHigh)
+        try container.encodeIfPresent(numberOfMarkets, forKey: .numberOfMarkets)
+        try container.encodeIfPresent(numberOfExchanges, forKey: .numberOfExchanges)
+        try container.encodeIfPresent(marketCap, forKey: .marketCap)
+        try container.encodeIfPresent(price, forKey: .price)
+        try container.encodeIfPresent(tier, forKey: .tier)
+        try container.encodeIfPresent(change, forKey: .change)
+        try container.encodeIfPresent(rank, forKey: .rank)
+        try container.encodeIfPresent(sparkline, forKey: .sparkline)
+        try container.encodeIfPresent(lowVolume, forKey: .lowVolume)
+        try container.encodeIfPresent(coinrankingUrl, forKey: .coinrankingUrl)
+        try container.encodeIfPresent(btcPrice, forKey: .btcPrice)
     }
     
     var WebsiteUrl:String{
@@ -713,4 +783,40 @@ class CrybseCoinMetaData:ObservableObject,Codable{
         return self.change ?? 0.0
     }
     
+}
+
+class CrybseCoinPriceMarketData:Codable{
+    var price:Float?
+    var time:String?
+    var change:Float?
+}
+
+class CrybseCoinData:Codable{
+    var id:String?
+    var symbol:String?
+    var name:String?
+    var description:String?
+    var categories:[String]?
+    var twitter_screen_name:String?
+    var subreddit_url:String?
+    var iconUrl:String?
+    var positive_sentiment:Float?
+    var negative_sentiment:Float?
+    var market_cap_rank:Int?
+    var current_price:Float?
+    var all_time_high:CrybseCoinPriceMarketData?
+    var all_time_low:CrybseCoinPriceMarketData?
+    var total_volume:Int64?
+    var high_24h:Float?
+    var low_24h:Float?
+    var price_change_24h:Float?
+    var price_change_7d: Float?
+    var price_change_14d: Float?
+    var price_change_30d: Float?
+    var price_change_60d: Float?
+    var price_change_200d: Float?
+    var price_change_1y: Float?
+    var total_supply: Float?
+    var circulating_supply: Float?
+    var sparkline:[Float]?
 }

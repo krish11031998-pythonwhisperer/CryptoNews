@@ -59,12 +59,12 @@ struct PortfolioAsset: View {
 extension PortfolioAsset{
     
     var name:String{
-        self.asset.CoinData.Name ?? ""
+        self.asset.CoinData.Name
     }
     
     var change:(String,Color){
-        let val = self.asset.CoinData.change ?? 0
-        let color = val < 0 ? Color.red : Color.green
+        let val = self.asset.CoinData.Change
+        let color = val == 0 ? Color.gray : val < 0 ? Color.red : Color.green
         return ("\(val)",color)
     }
     

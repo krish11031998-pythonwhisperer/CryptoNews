@@ -29,7 +29,7 @@ struct CurrencyPriceSummaryView: View {
         HStack(alignment: .center, spacing: 10) {
             SystemButton(b_name: "heart",b_content: "Follow",color: .white, haveBG: false, size: .init(width: 15, height: 15), bgcolor: .white, alignment: .vertical, borderedBG: false) {}
             Spacer()
-            CurrencySymbolView(url:self.asset.CoinData.iconUrl,width: 50)
+            CurrencySymbolView(url:self.asset.CoinData.image,width: 50)
             Spacer()
             if self.refresh{
                 ProgressView().frame(width: 50, alignment: .center)
@@ -46,7 +46,7 @@ struct CurrencyPriceSummaryView: View {
     }
     
     var color:Color?{
-        return Color(hex: self.asset.CoinData.Color)
+        return Color(hex: self.asset.Color)
     }
     
     var timeSpan:Int{
