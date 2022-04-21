@@ -48,8 +48,8 @@ struct PortfolioCard: View {
     
     var coinStats:[String:String]{
         return [
-                "Change":(self.asset.Change).ToDecimals()+"%",
-                "Rank":"\(self.asset.Rank)"
+            "Change":(self.asset.Change).ToDecimals()+"%",
+            "Rank":"\(self.asset.Rank)"
         ]
     }
     
