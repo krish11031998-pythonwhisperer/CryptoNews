@@ -26,25 +26,19 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            self.SocialFeedSummary
-                .asyncContainer()
-                .animatedAppearance()
             AllAssetView()
-                .asyncContainer()
                 .animatedAppearance()
-            self.pollView
-            QuickWatch(assets: self.context.userAssets.trackedAssets + self.context.userAssets.watchingAssets)
                 .asyncContainer()
+            self.SocialFeedSummary
                 .animatedAppearance()
+                .asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }
     
     var body: some View {
-        ZStack(alignment: .center){
-            self.mainView
-        }.frame(width: totalWidth,height: totalHeight, alignment: .center)
-        .edgesIgnoringSafeArea(.all)
+        self.mainView
+            .background(Color.AppBGColor)
     }
 }
 

@@ -19,22 +19,20 @@ struct PortfolioMain: View {
     }
         
     var body: some View {
-//        if self.context.selectedAsset == nil{
-            StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
-                PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
-            }, innerView: {
-                Container(ignoreSides: true) { w in
-                    self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
-                    self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
-                    PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.125))
-                        .animatedAppearance()
-                    
-                }
-                .frame(width: self.width, alignment: .topLeading)
-                .padding(.vertical,50)
+        StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+            PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
+        }, innerView: {
+            Container(ignoreSides: true) { w in
+                self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
+                self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
+                PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.125))
+                    .animatedAppearance()
                 
-            }, bg: Color.AppBGColor.anyViewWrapper())
-//        }
+            }
+            .frame(width: self.width, alignment: .topLeading)
+            .padding(.vertical,50)
+            
+        }, bg: Color.AppBGColor.anyViewWrapper())
     }
 }
 

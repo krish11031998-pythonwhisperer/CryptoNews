@@ -62,7 +62,7 @@ struct ZoomInScrollView<T:View>: View {
         self._components = .init(initialValue: data.enumerated().compactMap({.init(data: $0.element,axis:axis)}))
         let detector = CurrentValueSubject<CGFloat, Never>(0)
         self.publisher = detector
-            .debounce(for: .seconds(0.2), scheduler: DispatchQueue.main)
+            .debounce(for: .seconds(0.5), scheduler: DispatchQueue.main)
             .dropFirst()
             .eraseToAnyPublisher()
         self.detector = detector

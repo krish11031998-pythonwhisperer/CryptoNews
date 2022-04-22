@@ -200,6 +200,11 @@ extension ContextData{
         
         set{
             setWithAnimation {
+                if newValue == nil && self.tab != .none{
+                    self.tab = .none
+                }else{
+                    self.tab = self.prev_tab
+                }
                 self._socialHighlightsData = newValue
             }
         }
