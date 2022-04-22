@@ -12,10 +12,17 @@ struct SocialFeedSummaryView: View {
     @State var idx:Int = .zero
     @StateObject var socialHightlights:CrybseSocialHighlightsAPI
     var width:CGFloat
+    var height:CGFloat
     
-    init(assets:[String]? = nil,keyword:String = "Cryptocurrency",width:CGFloat){
+    init(
+        assets:[String]? = nil,
+        keyword:String = "Cryptocurrency",
+        width:CGFloat,
+        height:CGFloat = totalHeight  * 0.4
+    ){
         self._socialHightlights = .init(wrappedValue: .init(assets: assets ?? []))
         self.width = width
+        self.height = height
     }
     
     func onAppear(){
@@ -26,7 +33,7 @@ struct SocialFeedSummaryView: View {
     }
     
     func cardSize(w:CGFloat? = nil) -> CGSize{
-        return .init(width: w ?? self.width, height: totalHeight * 0.45)
+        return .init(width: w ?? self.width, height: self.height)
     }
     
     @ViewBuilder func cardBuilder(_ data:Any,_ size:CGSize) -> some View{
@@ -85,9 +92,16 @@ struct SocialFeedSummaryView: View {
 
     @ViewBuilder var SocialSummayView:some View{
         if let socialFeed = self.socialData{
-            Container(heading: "Social Feed Summary", width: self.width) { inner_w in
-                SlideZoomInOutView(data: socialFeed,timeLimit: 10,size: self.cardSize(w: inner_w), scrollable: true,onTap: self.onTap(idx:),viewGen:self.cardBuilder(_:_:))
-                    .basicCard()
+            Container(heading: "Trending Social", width: self.width) { inner_w in
+                ZoomInScrollView(data: socialFeed, axis: .horizontal, centralizeStart: true, size: self.cardSize(w: inner_w * 0.75),selectedCardSize: self.cardSize(w: inner_w * 0.75)) { data, size, _ in
+                    self.cardBuilder(data, size)
+                        .slideZoomInOut(cardSize: size)
+                        .buttonify {
+                            if self.context.socialHighlightsData == nil{
+                                self.context.socialHighlightsData = self.socialData
+                            }
+                        }
+                }
             }
             
         }else if self.socialHightlights.loading{

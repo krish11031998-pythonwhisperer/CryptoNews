@@ -8,18 +8,6 @@
 import SwiftUI
 import SceneKit
 
-public class SceneViewStates:ObservableObject{
-    @Published public var firstLoad:Bool = false
-    @Published public var gesturesEnabled:Bool = false
-    @Published public var mainSceneNode:SCNNode? = nil
-    @Published public var annotationNode:[String:SCNNode] = [:]
-    @Published public var playerNode:SCNNode? = nil
-    @Published public var addedPlayer:Bool = false
-    @Published public var location:SCNVector3? = nil
-    @Published public var prevLoc:CGPoint = .init(x: 0,y:0)
-}
-
-
 public struct SceneKitViewRepresentable:UIViewRepresentable{
     var size:CGSize
     var view:SCNView

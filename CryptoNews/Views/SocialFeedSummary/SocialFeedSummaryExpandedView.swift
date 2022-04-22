@@ -31,6 +31,7 @@ struct SocialFeedSummaryExpandedView: View {
                 }else if let reddit = data as? CrybseRedditData{
                     RedditDetailView(reddit: reddit, width: w)
                 }
+                Spacer().frame(height: totalHeight * 0.2)
             }
         }
     }

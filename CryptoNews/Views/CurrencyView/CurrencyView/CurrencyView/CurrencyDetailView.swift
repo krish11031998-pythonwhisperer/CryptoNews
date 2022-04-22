@@ -59,7 +59,7 @@ extension CurrencyDetailView{
         StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0",baseNavBarHeight: totalHeight * 0.6,minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
             CurrencyPriceSummaryView(asset: self.assetData, width: size.width, height: size.height, choosenPrice: self.$choosen, choosenInterval: self.$choosenTimeInterval, refresh: $refresh)
         }, innerView: {
-            Container(width:self.size.width,ignoreSides:true){_ in
+            Container(width:self.size.width,ignoreSides:true,lazyLoad: true){_ in
                 self.transactionHistoryView
                 self.CurrencySummary
                 self.infoSection
