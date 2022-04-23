@@ -18,7 +18,8 @@ struct CurrencySummaryView: View {
         self.size = size
     }
     var values:[String:String]{
-        return ["Market Cap":self.currency.marketCap?.ToDecimals() ?? "","Volume 24h":self.currency.dailyVolume?.ToDecimals() ?? "","Rank":String(self.currency.rank ?? 0),"Max Supply":(self.currency.Supply.total ?? 0.0).ToDecimals(),"All Time High": (self.currency.allTimeHigh?.price ?? 0.0).ToMoney(),"Circulating Supply":self.currency.Supply.circulating?.ToDecimals() ?? ""]
+//        return ["Market Cap":self.currency.mar?.ToDecimals() ?? "","Volume 24h":self.currency.dailyVolume?.ToDecimals() ?? "","Rank":String(self.currency.rank ?? 0),"Max Supply":(self.currency.Supply.total ?? 0.0).ToDecimals(),"All Time High": (self.currency.allTimeHigh?.price ?? 0.0).ToMoney(),"Circulating Supply":self.currency.Supply.circulating?.ToDecimals() ?? ""]
+        return ["Total Vol":self.currency.total_volume?.ToDecimals() ?? "","Rank":String(self.currency.market_cap_rank ?? 0),"Max Supply":(self.currency.Supply.total ?? 0.0).ToDecimals(),"All Time High": (self.currency.all_time_high?.price ?? 0.0).ToMoney(),"Circulating Supply":self.currency.Supply.circulating?.ToDecimals() ?? ""]
     }
     
     var infoKeys:[String]{

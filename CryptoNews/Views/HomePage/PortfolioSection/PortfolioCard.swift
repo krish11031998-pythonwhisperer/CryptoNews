@@ -165,7 +165,7 @@ struct PortfolioCard: View {
         .basicCard(background:self.activateBG.anyViewWrapper())
         .borderCard(color: .init(hex: self.asset.Color))
         .buttonify(handler: self.handleOnTap)
-        .onReceive(self.asset.CoinData.$currentprice, perform: self.updatePrice(_:))
+        .onReceive(self.asset.CoinData.$current_price, perform: self.updatePrice(_:))
         .onChange(of: self.priceColor, perform: self.resetPriceColor(_:))
         .padding(.top,5)
     }
