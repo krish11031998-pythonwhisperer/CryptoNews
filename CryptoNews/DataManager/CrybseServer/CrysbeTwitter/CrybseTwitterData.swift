@@ -19,6 +19,11 @@ class CrybseTweetResponse:Codable{
     var error:String?
 }
 
+class CrybseTweetReference:Codable{
+    var type:String?
+    var id:String?
+}
+
 class CrybseTweet:Codable,Equatable{
     
     static func == (lhs: CrybseTweet, rhs: CrybseTweet) -> Bool {
@@ -40,6 +45,7 @@ class CrybseTweet:Codable,Equatable{
     var polls:[CrybseTweetPoll]?
     var places:[CrybseTweetPlace]?
     var sentiment:Float?
+    var referenceTweet:CrybseTweetReference?
     
     var User:CrybseTweetUser{
         return self.user ?? .init()

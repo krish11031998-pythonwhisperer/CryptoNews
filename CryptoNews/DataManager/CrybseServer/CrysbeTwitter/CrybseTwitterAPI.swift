@@ -25,7 +25,7 @@ class CrybseTwitterAPI:CrybseAssetSocialsAPI{
         self.data as? [CrybseTweet]
     }
     
-    func getTweets(endpoint:CrybseTwitterEndpoints? = nil,queryItems:[String:Any]? = nil,completion:((Data?) -> Void)? = nil){
+    func getTweetData(endpoint:CrybseTwitterEndpoints? = nil,queryItems:[String:Any]? = nil,completion:((Data?) -> Void)? = nil){
         self.getAssetSocialData(type: .twitter, endpoint: endpoint?.rawValue, queryItems: queryItems, completion: completion)
         if self.loading{
             self.loading.toggle()

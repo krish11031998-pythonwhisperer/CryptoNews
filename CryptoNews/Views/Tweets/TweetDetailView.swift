@@ -12,10 +12,12 @@ struct TweetDetailView:View{
     @EnvironmentObject var context:ContextData
     var tweet:CrybseTweet
     var width:CGFloat = .zero
+    var isRetweet:Bool = false
     
-    init(tweet:CrybseTweet,width:CGFloat){
+    init(tweet:CrybseTweet,width:CGFloat,isRetweet:Bool = false){
         self.width = width
         self.tweet = tweet
+        self.isRetweet = isRetweet
     }
     
     
@@ -24,11 +26,22 @@ struct TweetDetailView:View{
             self.innerView(inner_w: inner_w)
         }
         .basicCard()
+        .borderCard(color: self.isRetweet ? .white.opacity(0.5) : .clear, clipping: .roundClipping)
+        .onAppear(perform: self.fetchReferenceTweet)
     }
     
 }
 
 extension TweetDetailView{
+    
+    func fetchReferenceTweet(){
+        guard let referencedTweet = self.tweet.referenceTweet,let rtID = referencedTweet.id, self.tweet.retweetedTweet == nil else {return}
+        CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id":rtID]) { data in
+            if let safeData = data, let safeTweet = CrybseTweet.parseTweetFromData(data: safeData){
+                self.tweet.retweetedTweet = safeTweet
+            }
+        }
+    }
     
     @ViewBuilder func innerView(inner_w:CGFloat) -> some View{
         self.Header(width: inner_w)
@@ -103,10 +116,13 @@ extension TweetDetailView{
     }
     
     
-    func Body(w:CGFloat) -> some View{
-        return MainText(content: self.tweet.Text, fontSize: 14, color: .white,fontWeight: .regular,style: .heading,addBG: false ,padding: 10)
-            .frame(width: w, alignment: .topLeading)
-        
+    @ViewBuilder func Body(w:CGFloat) -> some View{
+        if let retweetedTweet = self.tweet.retweetedTweet{
+            TweetDetailView(tweet: retweetedTweet, width: w, isRetweet: true)
+        }else{
+            MainText(content: self.tweet.Text, fontSize: 14, color: .white,fontWeight: .regular,style: .heading,addBG: false ,padding: 10)
+                .frame(width: w, alignment: .topLeading)
+        }
     }
     
     @ViewBuilder func Header(width w:CGFloat) -> some View{
@@ -115,7 +131,7 @@ extension TweetDetailView{
                 ImageView(url: user.profile_image_url, width: 45, height: 45, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
                 MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:
-                                self.tweet.id ?? "Id", headingSize: 12.5, subHeadingSize: 10, headColor: .white, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular,spacing: 0, alignment: .leading)
+                                self.tweet.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: .white, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular,spacing: 0, alignment: .leading)
                 Spacer()
                 ImageView(img: .init(named: "TwitterIcon"), width: 25, height: 25, contentMode: .fill, alignment: .center,clipping: .circleClipping)
             }
@@ -171,7 +187,7 @@ struct TweetDetailMainView:View{
     
     func onAppear(){
         if self.tweet == nil,let safeTweetId = self.tweet_id{
-            CrybseTwitterAPI.shared.getTweets(endpoint: .tweetDetails, queryItems: ["tweet_id": safeTweetId]) { data in
+            CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id": safeTweetId]) { data in
                 guard let safeData = data,let safeTweet = CrybseTweet.parseTweetFromData(data: safeData) else {return}
                 setWithAnimation {
                     self.tweet = safeTweet
