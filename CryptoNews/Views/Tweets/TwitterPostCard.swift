@@ -20,7 +20,7 @@ enum PostCardBG{
 }
 
 
-struct PostCard: View {
+struct TwitterPostCard: View {
     
     @EnvironmentObject var context:ContextData
     var cardType:PostCardType
@@ -86,7 +86,7 @@ struct PostCard: View {
     }
 }
 
-extension PostCard{
+extension TwitterPostCard{
     
     var height:CGFloat{
         return self.size.height - 30
