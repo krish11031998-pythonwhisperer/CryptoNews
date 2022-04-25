@@ -72,6 +72,8 @@
 		BCF98BA226D97E7000C45562 /* VideoPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA126D97E7000C45562 /* VideoPlayer.swift */; };
 		BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCF98BA426D9811300C45562 /* CryptoYoutube.swift */; };
 		EF009EA227A09FE100486B33 /* ButtonScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF009EA127A09FE100486B33 /* ButtonScrollView.swift */; };
+		EF0B587028173ED9008DD43E /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0B586F28173ED9008DD43E /* NewsDetailView.swift */; };
+		EF0B587228174709008DD43E /* VideoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0B587128174709008DD43E /* VideoDetailView.swift */; };
 		EF1CC5CC277F47050010D9CA /* CrybseAssetsAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CC5CB277F47050010D9CA /* CrybseAssetsAPI.swift */; };
 		EF1CC5CE277F471F0010D9CA /* CrybseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1CC5CD277F471F0010D9CA /* CrybseAPI.swift */; };
 		EF1D5C432784ED2B003718BA /* CrybseTimelinePrice.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF1D5C422784ED2B003718BA /* CrybseTimelinePrice.swift */; };
@@ -313,6 +315,8 @@
 		E24C6BC071A7E63C431C2F98 /* Pods-CryptoNewsTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-CryptoNewsTests.release.xcconfig"; path = "Target Support Files/Pods-CryptoNewsTests/Pods-CryptoNewsTests.release.xcconfig"; sourceTree = "<group>"; };
 		E420CC55E1502BDA8A86DBFC /* Pods_CryptoNews.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_CryptoNews.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		EF009EA127A09FE100486B33 /* ButtonScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonScrollView.swift; sourceTree = "<group>"; };
+		EF0B586F28173ED9008DD43E /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
+		EF0B587128174709008DD43E /* VideoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDetailView.swift; sourceTree = "<group>"; };
 		EF1CC5CB277F47050010D9CA /* CrybseAssetsAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseAssetsAPI.swift; sourceTree = "<group>"; };
 		EF1CC5CD277F471F0010D9CA /* CrybseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseAPI.swift; sourceTree = "<group>"; };
 		EF1D5C422784ED2B003718BA /* CrybseTimelinePrice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseTimelinePrice.swift; sourceTree = "<group>"; };
@@ -787,6 +791,7 @@
 				BCBC1DD126BF3C2600B87E5C /* RecentNewsCard */,
 				BCBC1DD926C064AA00B87E5C /* RecentNewsCarousel.swift */,
 				BCBCACC826FFE1C800E76436 /* NewsCard.swift */,
+				EF0B586F28173ED9008DD43E /* NewsDetailView.swift */,
 			);
 			path = News;
 			sourceTree = "<group>";
@@ -867,6 +872,7 @@
 				BCF98BA426D9811300C45562 /* CryptoYoutube.swift */,
 				BC2267A526DA5C830058315E /* VideoCard.swift */,
 				EFB1348F27B861C600F381A3 /* CrybseYoutubeHighlightView.swift */,
+				EF0B587128174709008DD43E /* VideoDetailView.swift */,
 			);
 			path = Youtube;
 			sourceTree = "<group>";
@@ -1624,6 +1630,7 @@
 				EF7A7FEB27DB57DF00B6081D /* CurveChart.swift in Sources */,
 				EF8704C027F34A6C00DB2F5B /* ZoomInScrollView.swift in Sources */,
 				EF33D7BC27EB2C23007B9F9F /* SocialFeedSummaryView.swift in Sources */,
+				EF0B587028173ED9008DD43E /* NewsDetailView.swift in Sources */,
 				EF7A802027DB58F400B6081D /* ModelLoader.swift in Sources */,
 				EF8BE63F27CAD09A00877234 /* VideoSectionView.swift in Sources */,
 				EF7A7FEE27DB57DF00B6081D /* CircleChart.swift in Sources */,
@@ -1636,6 +1643,7 @@
 				BCB7836426C66CE9009D5822 /* TwitterPostCard.swift in Sources */,
 				EF33D7B127E9B92C007B9F9F /* MaskModifier.swift in Sources */,
 				EF7A801227DB57DF00B6081D /* ShapeModifier.swift in Sources */,
+				EF0B587228174709008DD43E /* VideoDetailView.swift in Sources */,
 				EF7A7FE327DB57DF00B6081D /* ArrayHelper.swift in Sources */,
 				EF6C4E522781C81400AF54C8 /* TransactionData.swift in Sources */,
 				BCBC1DD326BF3C3F00B87E5C /* RecentNews.swift in Sources */,

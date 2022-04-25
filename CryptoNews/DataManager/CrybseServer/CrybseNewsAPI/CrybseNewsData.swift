@@ -37,6 +37,14 @@ class CrybseNews:Codable{
         self.date ?? ""
     }
     
+    var SourceName:String{
+        self.source_name ?? ""
+    }
+    
+    var _Type:String{
+        self.type ?? ""
+    }
+    
     var VideoID:String?{
         if let safeType = self.type,
            let safeNewsURL = self.news_url,

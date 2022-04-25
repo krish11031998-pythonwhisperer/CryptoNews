@@ -49,9 +49,17 @@ extension HomePage{
         Array(1...5).compactMap({CrybsePollData(question: "Question \($0)")})
     }
     
+    var assets:[String]{
+        return self.context.userAssets.trackedAssets.compactMap({$0.Currency})
+    }
+    
+    var keywords:[String]{
+        return self.context.userAssets.trackedAssets.compactMap({$0.CoinData.Name})
+    }
+    
     @ViewBuilder var SocialFeedSummary:some View{
         if !self.watchedAsset.isEmpty{
-            SocialFeedSummaryView(assets: self.context.userAssets.trackedAssets.compactMap({$0.Currency}), width: totalWidth,height: totalHeight * 0.35)
+            SocialFeedSummaryView(assets: self.assets,keywords: self.keywords, width: totalWidth,height: totalHeight * 0.35)
         }else{
             SocialFeedSummaryView(width: totalWidth)
         }

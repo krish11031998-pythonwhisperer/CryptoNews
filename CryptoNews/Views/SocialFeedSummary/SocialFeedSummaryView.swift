@@ -16,11 +16,12 @@ struct SocialFeedSummaryView: View {
     
     init(
         assets:[String]? = nil,
+        keywords:[String]? = nil,
         keyword:String = "Cryptocurrency",
         width:CGFloat,
         height:CGFloat = totalHeight  * 0.4
     ){
-        self._socialHightlights = .init(wrappedValue: .init(assets: assets ?? []))
+        self._socialHightlights = .init(wrappedValue: .init(assets: assets ?? [],keywords:keywords ?? []))
         self.width = width
         self.height = height
     }

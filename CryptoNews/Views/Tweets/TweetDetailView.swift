@@ -39,9 +39,7 @@ extension TweetDetailView{
         if let refTweet = self.tweet.referenceTweet,let id = refTweet.id{
             CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id": id]) { data in
                 if let safeData = data,let safeTweet = CrybseTweet.parseTweetFromData(data: safeData){
-                    setWithAnimation {
-                        self.tweet.retweetedTweet = safeTweet
-                    }
+                    self.tweet.retweetedTweet = safeTweet
                 }
             }
         }

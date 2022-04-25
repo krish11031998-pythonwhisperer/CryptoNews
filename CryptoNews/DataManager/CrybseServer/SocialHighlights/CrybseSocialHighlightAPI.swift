@@ -9,10 +9,12 @@ import Foundation
 
 class CrybseSocialHighlightsAPI:CrybseAssetSocialsAPI{
     var assets:[String]
+    var keywords:[String]
     
-    init(assets:[String]){
-        self.assets = assets
-        super.init(type: .socialHighlights, queryItems: ["asset":assets])
+    init(assets:[String]? = nil,keywords:[String]? = nil){
+        self.assets = assets ?? []
+        self.keywords = keywords ?? []
+        super.init(type: .socialHighlights, queryItems: ["asset":assets ?? [],"keyword":keywords ?? []])
     }
     
     static var shared:CrybseSocialHighlights = .init()

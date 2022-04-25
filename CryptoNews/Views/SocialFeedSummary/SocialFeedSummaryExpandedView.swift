@@ -30,6 +30,17 @@ struct SocialFeedSummaryExpandedView: View {
                     TweetDetailView(tweet: tweet, width: w)
                 }else if let reddit = data as? CrybseRedditData{
                     RedditDetailView(reddit: reddit, width: w)
+                }else if let other = data as? CrybseNews{
+                    if other._Type == "Article"{
+                        NewsDetailView(news: other,width: w)
+                            .buttonify {
+                                if self.context.selectedLink?.absoluteString != other.NewsURL{
+                                    self.context.selectedLink = .init(string: other.NewsURL)
+                                }
+                            }
+                    }else if other._Type == "Video"{
+                        VideoDetailView(video: other, width: w)
+                    }
                 }
                 Spacer().frame(height: totalHeight * 0.2)
             }.padding(.top,safeAreaInsets.top + totalHeight * 0.125)
