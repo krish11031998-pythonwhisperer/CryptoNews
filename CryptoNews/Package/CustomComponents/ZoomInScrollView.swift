@@ -50,15 +50,28 @@ struct ZoomInScrollView<T:View>: View {
     @State var centralIdx:Int = .zero
     var centralizeStart:Bool
     var axis:Axis
+    var alignment:Alignment
     var viewGen:(Any,CGSize,Bool) -> T
     var cardSize:CGSize
     var selectedCardSize:CGSize
+    var lazyLoad:Bool
     
-    init(data:[Any],axis:Axis = .horizontal,centralizeStart:Bool = true,size:CGSize = .init(width: 300, height: 300),selectedCardSize:CGSize = .init(width: 300, height: 450),@ViewBuilder viewGen: @escaping (Any,CGSize,Bool) -> T){
+    init(
+        data:[Any],
+        axis:Axis = .horizontal,
+        alignment:Alignment = .top,
+        centralizeStart:Bool = true,
+        lazyLoad:Bool = false,
+        size:CGSize = .init(width: 300, height: 300),
+        selectedCardSize:CGSize = .init(width: 300, height: 450),
+        @ViewBuilder viewGen: @escaping (Any,CGSize,Bool) -> T
+    ){
         self.viewGen = viewGen
         self.cardSize = size
         self.selectedCardSize = selectedCardSize
         self.axis = axis
+        self.alignment = alignment
+        self.lazyLoad = lazyLoad
         self._components = .init(initialValue: data.enumerated().compactMap({.init(data: $0.element,axis:axis)}))
         let detector = CurrentValueSubject<CGFloat, Never>(0)
         self.publisher = detector
@@ -141,25 +154,42 @@ struct ZoomInScrollView<T:View>: View {
         }
     }
     
+    @ViewBuilder var innerBodyBuilder:some View{
+        ForEach(Array(self.components.enumerated()), id:\.offset) { _component in
+            let component = _component.element
+            let idx = _component.offset
+            
+//            if !self.lazyLoad{
+//                self.cardBuilder(data: component.data, idx: idx)
+//                    .padding(.vertical,self.axis == .horizontal ? 15 : 0)
+//                    .padding(.horizontal,self.axis == .vertical ? 15 : 0)
+//                    .id(idx)
+//                    .asyncContainer(axis: .horizontal)
+//            }else{
+                self.cardBuilder(data: component.data, idx: idx)
+                    .padding(.vertical,self.axis == .horizontal ? 15 : 0)
+                    .padding(.horizontal,self.axis == .vertical ? 15 : 0)
+                    .id(idx)
+//            }
+
+        }
+    }
+    
     @ViewBuilder var innerView:some View{
-        if self.axis == .horizontal{
-            HStack {
-                ForEach(Array(self.components.enumerated()), id:\.offset) { _component in
-                    let component = _component.element
-                    let idx = _component.offset
-                    
-                    self.cardBuilder(data: component.data, idx: idx)
-                        .id(idx)
-                }
+        if self.lazyLoad{
+            LazyScrollView(embedScrollView:false,axis: self.axis, alignment: self.alignment, stopLoading: true) { _ in
+                self.innerBodyBuilder
             }
         }else{
-            VStack {
-                ForEach(Array(self.components.enumerated()), id:\.offset) { _component in
-                    let component = _component.element
-                    let idx = _component.offset
-                    
-                    self.cardBuilder(data: component.data, idx: idx)
-                        .id(idx)
+            if self.axis == .vertical{
+                VStack(alignment: self.alignment.horizontal) {
+                    self.innerBodyBuilder
+                        
+                }
+            }else if self.axis == .horizontal{
+                HStack(alignment: self.alignment.vertical) {
+                    self.innerBodyBuilder
+                        .asyncContainer(axis: .horizontal)
                 }
             }
         }
@@ -212,7 +242,6 @@ struct ZoomInScrollView<T:View>: View {
     var body: some View {
         self.scrollView
             .preference(key: SelectedCentralCardPreferenceKey.self, value: self.centralIdx)
-            .animation(.easeInOut)
     }
 }
 

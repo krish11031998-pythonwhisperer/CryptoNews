@@ -117,7 +117,7 @@ extension CurrencyFeedMainPage{
         switch(self.type){
             case .twitter:
                 if let tweet = data as? CrybseTweet{
-                    PostCard(cardType: .Reddit, data: tweet, size: .init(width: width, height: totalHeight * 0.3), isButton: true)
+                    TwitterPostCard(cardType: .Reddit, data: tweet, size: .init(width: width, height: totalHeight * 0.3), isButton: true)
                 }
             case .reddit:
                 if let reddit = data as? CrybseRedditData{

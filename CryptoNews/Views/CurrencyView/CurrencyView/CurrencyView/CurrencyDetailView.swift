@@ -64,7 +64,7 @@ extension CurrencyDetailView{
                 self.CurrencySummary
                 self.infoSection
                 self.feedContainer
-//                self.newsContainer
+                self.newsContainer
                 self.redditContainer
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
@@ -109,6 +109,7 @@ extension CurrencyDetailView{
     }
     
     var News:[CrybseNews]{
+        print("(DEBUG) News : ",self.socialData?.News)
         return self.socialData?.News ?? []
     }
     
@@ -227,7 +228,7 @@ extension CurrencyDetailView{
         switch(type){
             case .Tweet:
                 if let post = data as? CrybseTweet{
-                    PostCard(cardType: .Tweet, data: post, size: .init(width: width, height: self.size.height),bg: .light, const_size: false)
+                    TwitterPostCard(cardType: .Tweet, data: post, size: .init(width: width, height: self.size.height),bg: .dark, const_size: false)
                 }else{
                     Color.clear
                 }

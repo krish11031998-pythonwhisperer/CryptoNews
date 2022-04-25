@@ -158,6 +158,7 @@ public class DAPI:ObservableObject,DataParsingProtocol{
                 let url = request?.url ?? url ?? URL(string: "")!
                 if request?.httpMethod == "GET"{
                     DataCache.shared[url] = data
+                    print("Added Data to Cache Successfully!")
                 }
                 if let safeCompletion = completion {
                     self?.CallCompletionHandler(url: url, data: data, completion: safeCompletion)
@@ -193,9 +194,15 @@ public class DAPI:ObservableObject,DataParsingProtocol{
         let finalURL = request?.url ?? _url ?? .none
         if let safeURL = finalURL,let data = DataCache.shared[safeURL]{
             DispatchQueue.main.async {
-                self.loading = false
-                self.parseData(url: safeURL, data: data)
+                if let safeCompletion = completion{
+                    self.CallCompletionHandler(url: safeURL, data: data, completion: safeCompletion)
+                }
+                else{
+                    self.loading = false
+                    self.parseData(url: safeURL, data: data)
+                }
             }
+            
         }else{
             self.performDataRequest(url:_url,request: request, completion: completion)
         }

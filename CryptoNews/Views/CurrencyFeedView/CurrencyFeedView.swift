@@ -39,8 +39,6 @@ struct CurrencyFeedView<T:View>: View {
             Container(heading: self.heading, width: totalWidth) { w in
                 CurrencyCardView(width: w)
                     .onPreferenceChange(CurrencySelectorPreference.self, perform: self.handleCurrencyChange(_:))
-//                CurrencyFeedPage(w: w, symbol: currency, data: self.currency_feed_data, type: self.type, reload: self.reload)
-//                    .padding(.top,10)
                 CurrencyFeedPage(w: w, symbol: currency, data: self.data, type: self.type, viewBuilder: self.viewGen, reload: self.reload)
             }
         }

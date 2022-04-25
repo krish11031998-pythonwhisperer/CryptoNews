@@ -10,13 +10,13 @@ import SwiftUI
 struct TweetDetailView:View{
     
     @EnvironmentObject var context:ContextData
-    var tweet:CrybseTweet
+    @StateObject var tweet:CrybseTweet
     var width:CGFloat = .zero
     var isRetweet:Bool = false
     
     init(tweet:CrybseTweet,width:CGFloat,isRetweet:Bool = false){
         self.width = width
-        self.tweet = tweet
+        self._tweet = .init(wrappedValue: tweet)
         self.isRetweet = isRetweet
     }
     
@@ -27,21 +27,27 @@ struct TweetDetailView:View{
         }
         .basicCard()
         .borderCard(color: self.isRetweet ? .white.opacity(0.5) : .clear, clipping: .roundClipping)
-        .onAppear(perform: self.fetchReferenceTweet)
+        .onAppear(perform: self.fetchRetweets)
+        
     }
     
 }
 
 extension TweetDetailView{
     
-    func fetchReferenceTweet(){
-        guard let referencedTweet = self.tweet.referenceTweet,let rtID = referencedTweet.id, self.tweet.retweetedTweet == nil else {return}
-        CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id":rtID]) { data in
-            if let safeData = data, let safeTweet = CrybseTweet.parseTweetFromData(data: safeData){
-                self.tweet.retweetedTweet = safeTweet
+    func fetchRetweets(){
+        if let refTweet = self.tweet.referenceTweet,let id = refTweet.id{
+            CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id": id]) { data in
+                if let safeData = data,let safeTweet = CrybseTweet.parseTweetFromData(data: safeData){
+                    setWithAnimation {
+                        self.tweet.retweetedTweet = safeTweet
+                    }
+                }
             }
         }
+
     }
+    
     
     @ViewBuilder func innerView(inner_w:CGFloat) -> some View{
         self.Header(width: inner_w)
@@ -117,9 +123,12 @@ extension TweetDetailView{
     
     
     @ViewBuilder func Body(w:CGFloat) -> some View{
+//        if let referencedTweetId = self.tweet.referenceTweet?.id{
+//            TweetDetailMainView(tweet_id: referencedTweetId,width: w, isRetweet: true, enableOnClose: false)
+//        }
         if let retweetedTweet = self.tweet.retweetedTweet{
-            TweetDetailView(tweet: retweetedTweet, width: w, isRetweet: true)
-        }else{
+            TweetDetailView(tweet: retweetedTweet, width: w,isRetweet: true)
+        }else if self.tweet.referenceTweet == nil{
             MainText(content: self.tweet.Text, fontSize: 14, color: .white,fontWeight: .regular,style: .heading,addBG: false ,padding: 10)
                 .frame(width: w, alignment: .topLeading)
         }
@@ -178,24 +187,26 @@ struct TweetDetailMainView:View{
     var tweet_id:String? = nil
     @State var tweet:CrybseTweet? = nil
     var enableOnClose:Bool
+    var isRetweet:Bool
+    var width:CGFloat
     
-    init(tweet:CrybseTweet? = nil,tweet_id:String = "1507635970430189570",enableOnClose:Bool = true){
-        self._tweet = .init(initialValue: tweet)
+    init(tweet:CrybseTweet? = nil,tweet_id:String = "1507635970430189570",width:CGFloat = totalWidth,isRetweet:Bool = false,enableOnClose:Bool = true){
+        if let safeTweet = tweet{
+            self._tweet = .init(initialValue: safeTweet)
+        }
+        self.isRetweet = isRetweet
         self.tweet_id = tweet_id
+        self.width = width
         self.enableOnClose = enableOnClose
     }
     
     func onAppear(){
-        if self.tweet == nil,let safeTweetId = self.tweet_id{
-            CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id": safeTweetId]) { data in
+        if self.tweet == nil,let safeTweetID = self.tweet_id{
+            CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetDetails, queryItems: ["tweet_id": safeTweetID]) { data in
                 guard let safeData = data,let safeTweet = CrybseTweet.parseTweetFromData(data: safeData) else {return}
                 setWithAnimation {
                     self.tweet = safeTweet
                 }
-                if CrybseTwitterAPI.shared.loading{
-                    CrybseTwitterAPI.shared.loading.toggle()
-                }
-                
             }
         }
     }
@@ -206,26 +217,30 @@ struct TweetDetailMainView:View{
         }
     }
     
-    @ViewBuilder func innerView(w:CGFloat) -> some View{
+    @ViewBuilder var innerView:some View{
+        if self.isRetweet{
+            Container(width: self.width,horizontalPadding: 0,verticalPadding: 10,onClose: self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
+        }else{
+            ScrollView(.vertical, showsIndicators: false) {
+                Container(width: self.width,horizontalPadding: 10,verticalPadding: 50,onClose: self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
+            }
+        }
+        
+    }
+    
+    @ViewBuilder func twitterViewBuilder(w:CGFloat) -> some View{
         if let safeTweet = self.tweet{
-            TweetDetailView(tweet: safeTweet, width: w)
+            TweetDetailView(tweet: safeTweet, width: w,isRetweet: self.isRetweet)
         }else if CrybseTwitterAPI.shared.loading {
             ProgressView()
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
     }
-    
+
     var body: some View{
-        
-        ScrollView(.vertical, showsIndicators: false) {
-            if self.enableOnClose{
-                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,onClose: self.onClose,innerView: self.innerView(w:))
-            }else{
-                Container(width: totalWidth,horizontalPadding: 10,verticalPadding: 50,innerView: self.innerView(w:))
-            }
-        }
-        .onAppear(perform: self.onAppear)
+        self.innerView
+            .onAppear(perform: self.onAppear)
     }
 }
 

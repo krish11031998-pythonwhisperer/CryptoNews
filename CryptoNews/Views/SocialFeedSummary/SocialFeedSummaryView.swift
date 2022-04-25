@@ -38,7 +38,7 @@ struct SocialFeedSummaryView: View {
     
     @ViewBuilder func cardBuilder(_ data:Any,_ size:CGSize) -> some View{
         if let safeData = data as? CrybseTweet{
-            PostCard(cardType: .Tweet, data: safeData, size: size, bg: .light, const_size: true,isButton: false)
+            TwitterPostCard(cardType: .Tweet, data: safeData, size: size, bg: .dark, const_size: true,isButton: false)
         }else if let safeReddit = data as? CrybseRedditData{
             RedditPostCard(width: size.width, size: size, redditPost: safeReddit, const_size: true,isButton: false)
         }else if let safeNews = data as? CrybseNews{
@@ -92,8 +92,8 @@ struct SocialFeedSummaryView: View {
 
     @ViewBuilder var SocialSummayView:some View{
         if let socialFeed = self.socialData{
-            Container(heading: "Trending Social", width: self.width) { inner_w in
-                ZoomInScrollView(data: socialFeed, axis: .horizontal, centralizeStart: true, size: self.cardSize(w: inner_w * 0.75),selectedCardSize: self.cardSize(w: inner_w * 0.75)) { data, size, _ in
+            Container(heading: "Trending Social", width: self.width,ignoreSides: true) { inner_w in
+                ZoomInScrollView(data: socialFeed, axis: .horizontal, centralizeStart: true,lazyLoad: true, size: self.cardSize(w: inner_w - 30),selectedCardSize: self.cardSize(w: inner_w - 30)) { data, size, _ in
                     self.cardBuilder(data, size)
                         .slideZoomInOut(cardSize: size)
                         .buttonify {

@@ -19,17 +19,29 @@ struct RefreshPreference:PreferenceKey{
 public struct LazyScrollView<T:View>: View {
     var data:[Any]?
     var embedScrollView:Bool
+    var axis:Axis
+    var alignment:Alignment
     var viewGen: (Any) -> T
     @State var reloadNow:Bool = false
     var stopLoading:Bool
     var header:String?
     
-    public init(header:String? = nil,data:[Any]? = nil,embedScrollView:Bool = false,stopLoading:Bool = false,@ViewBuilder viewGen: @escaping (Any) -> T){
+    public init(
+        header:String? = nil,
+        data:[Any]? = nil,
+        embedScrollView:Bool = false,
+        axis:Axis = .vertical,
+        alignment:Alignment = .center,
+        stopLoading:Bool = false,
+        @ViewBuilder viewGen: @escaping (Any) -> T
+    ){
         self.header = header
         self.data = data
         self.stopLoading = stopLoading
         self.viewGen = viewGen
         self.embedScrollView = embedScrollView
+        self.axis = axis
+        self.alignment = alignment
     }
     
     
@@ -57,32 +69,39 @@ public struct LazyScrollView<T:View>: View {
     }
     
     
-    var refreshingView:some View{
-        LazyVStack(alignment: .center, spacing: 10) {
-            if let header = header {
-                self.headingTitle(heading: header)
-            }
-            if let data = data {
-                ForEach(Array(data.enumerated()), id:\.offset) {_data in
-                    let data = _data.element
-                    self.viewGen(data)
-                }
-            }else{
-                self.viewGen(0)
-            }
-            
-//            if !self.stopLoading{
-//                self.reloadContainer
-//                    .padding(.bottom,200)
-//            }
+    @ViewBuilder var innerBodyOfRefreshingView:some View{
+        if let header = header {
+            self.headingTitle(heading: header)
         }
-        .preference(key: RefreshPreference.self, value: self.reloadNow)
+        if let data = data {
+            ForEach(Array(data.enumerated()), id:\.offset) {_data in
+                let data = _data.element
+                self.viewGen(data)
+            }
+        }else{
+            self.viewGen(0)
+        }
+    }
+    
+    @ViewBuilder var refreshingView:some View{
+        if self.axis == .vertical{
+            LazyVStack(alignment: self.alignment.horizontal, spacing: 10) {
+                self.innerBodyOfRefreshingView
+            }
+        }else if self.axis == .horizontal{
+            LazyHStack(alignment: self.alignment.vertical, spacing: 10) {
+                self.innerBodyOfRefreshingView
+            }
+        }
+        
+        
     }
         
     public var body: some View {
         if self.embedScrollView{
             ScrollView(.vertical, showsIndicators: false) {
                 self.refreshingView
+                    .preference(key: RefreshPreference.self, value: self.reloadNow)
                     .padding(.vertical,50)
             }
         }else{

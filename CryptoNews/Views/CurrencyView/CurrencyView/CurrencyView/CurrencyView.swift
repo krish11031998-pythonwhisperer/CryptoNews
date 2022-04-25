@@ -45,7 +45,7 @@ struct CurrencyView:View{
         self._assetData = .init(wrappedValue: asset)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(crypto: asset.CoinData.id ?? "",name:asset.CoinData.Name))
+        self._coinAPI = .init(wrappedValue: .init(coinUID:asset.CoinData.id ?? "",crypto: asset.CoinData.Symbol,name:asset.CoinData.Name))
     }
     
       
@@ -105,7 +105,7 @@ struct CurrencyView:View{
         if let feed = self.tweets{
             ForEach(Array(feed.enumerated()),id:\.offset) { _data in
                 if let data = _data.element as? CrybseTweet{
-                    PostCard(cardType: .Tweet, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
+                    TwitterPostCard(cardType: .Tweet, data: data, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
                 }
             }
             .onPreferenceChange(RefreshPreference.self) { reload in

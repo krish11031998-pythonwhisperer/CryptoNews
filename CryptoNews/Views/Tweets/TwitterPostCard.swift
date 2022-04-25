@@ -63,7 +63,7 @@ struct TwitterPostCard: View {
             }
             self.Footer(width: w)
         }
-        .basicCard(size:self.const_size ? self.size : .zero,background: AnyView(self.bgView))
+        .basicCard(size:self.const_size ? self.size : .zero)
     }
 
     
@@ -97,8 +97,9 @@ extension TwitterPostCard{
             HStack(alignment: .center, spacing: 15) {
                 ImageView(url: user.profile_image_url, width: 30, height: 30, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
-                MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:data.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
+                MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:data.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: self.font_color, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
                 Spacer()
+                ImageView(img: .init(named: "TwitterIcon"), width: 25, height: 25, contentMode: .fill, alignment: .center,clipping: .circleClipping)
             }
             .frame(width: w, alignment: .topLeading)
         }else{

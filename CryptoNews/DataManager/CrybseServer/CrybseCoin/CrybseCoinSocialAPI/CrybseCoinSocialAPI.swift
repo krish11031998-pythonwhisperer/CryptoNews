@@ -12,8 +12,8 @@ class CrybseCoinSocialAPI:CrybseCoinAPI{
     
     @Published var coinData:CrybseCoinSocialData? = nil
 //    init(crypto:String,coinUID:String,fiat:String,name:String){
-    init(crypto:String,name:String){
-        super.init(type: .coinData, params: ["crypto":crypto,"cryptoName":name])
+    init(coinUID:String,crypto:String,name:String){
+        super.init(type: .coinData, params: ["coinUID":coinUID,"crypto":crypto,"cryptoName":name])
     }
     
     override func parseData(url: URL, data: Data) {

@@ -22,9 +22,6 @@ struct NewsStandCard: View {
     @ViewBuilder var mainText:some View{
         if let data = self.news as? CrybseNews{
             MainSubHeading(heading: data.source_name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
-        }else if let data = self.news as? CryptoNews{
-            MainSubHeading(heading: data.source_info?.name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
-                .lineLimit(2)
         }
     }
     

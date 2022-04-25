@@ -32,7 +32,7 @@ struct SocialFeedSummaryExpandedView: View {
                     RedditDetailView(reddit: reddit, width: w)
                 }
                 Spacer().frame(height: totalHeight * 0.2)
-            }
+            }.padding(.top,safeAreaInsets.top + totalHeight * 0.125)
         }
     }
     
@@ -63,20 +63,21 @@ struct SocialFeedSummaryExpandedView: View {
             self.context.socialHighlightsData = nil
         }
     }
-    
     var body: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Container(width: totalWidth, onClose: self.onClose) { w in
-                self.scrollIndicator(size: .init(width: w, height: 2.5))
-            }
-            .padding(.top,safeAreaInsets.top)
-            ZoomInScrollView(data: self.data, axis: .horizontal, centralizeStart: true, size: .init(width: totalWidth, height: .zero), selectedCardSize: .init(width: totalWidth, height: .zero)) { data, size, _ in
+        ZStack(alignment: .top) {
+            ZoomInScrollView(data: self.data, axis: .horizontal, centralizeStart: true,lazyLoad: true, size: .init(width: totalWidth, height: .zero), selectedCardSize: .init(width: totalWidth, height: .zero)) { data, size, _ in
                 self.pageBuilder(data: data, size: size)
             }
             .onPreferenceChange(SelectedCentralCardPreferenceKey.self) { newValue in
                 print("(DEBUG) newSelectorIndex : ",newValue)
                 self.idx = newValue
             }
+            Container(heading:"Social Highlights",headingDivider: false,width: totalWidth, onClose: self.onClose) { w in
+                self.scrollIndicator(size: .init(width: w, height: 2.5))
+            }
+            .frame(width: totalWidth, height: totalHeight * 0.125, alignment: .center)
+            .padding(.top,safeAreaInsets.top)
+            .background(BlurView.thinLightBlur)
         }
         .onAppear {
             print("(DEBUG) safeAreaInsets : ",self.safeAreaInsets)

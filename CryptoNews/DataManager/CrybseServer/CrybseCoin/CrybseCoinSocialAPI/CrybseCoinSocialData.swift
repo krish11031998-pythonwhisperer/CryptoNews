@@ -25,7 +25,6 @@ class CrybseCoinDataResponse:Codable{
 class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var tweets: Array<CrybseTweet>?
     @Published var metaData:CrybseCoinMetaData?
-//    @Published var timeSeriesData:Array<CryptoCoinOHLCVPoint>?
     @Published var prices:CrybseCoinPrices?
     @Published var news:CrybseNewsList?
     @Published var additionalInfo:CrybseCoinAdditionalData?
@@ -57,8 +56,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         let container = try decoder.container(keyedBy: CodingKeys.self)
         tweets = try container.decodeIfPresent(Array<CrybseTweet>.self, forKey: .tweets)
         metaData = try container.decodeIfPresent(CrybseCoinMetaData.self, forKey: .metaData)
-//        timeSeriesData = try container.decodeIfPresent(Array<CryptoCoinOHLCVPoint>.self, forKey: .timeSeriesData)
-//        news = try container.decodeIfPresent(CrybseNewsList.self, forKey: .news)
+        news = try container.decodeIfPresent(CrybseNewsList.self, forKey: .news)
         prices = try container.decodeIfPresent(CrybseCoinPrices.self, forKey: .prices)
         additionalInfo = try container.decodeIfPresent(CrybseCoinAdditionalData.self, forKey: .additionalInfo)
         youtube = try container.decodeIfPresent(CrybseVideosData.self, forKey: .youtube)
@@ -69,8 +67,7 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(tweets, forKey: .tweets)
         try container.encode(metaData, forKey: .metaData)
-//        try container.encode(timeSeriesData, forKey: .timeSeriesData)
-//        try container.encode(news, forKey: .news)
+        try container.encode(news, forKey: .news)
         try container.encode(prices,forKey: .prices)
         try container.encode(additionalInfo,forKey: .additionalInfo)
         try container.encode(reddit,forKey: .reddit)

@@ -51,7 +51,7 @@ extension HomePage{
     
     @ViewBuilder var SocialFeedSummary:some View{
         if !self.watchedAsset.isEmpty{
-            SocialFeedSummaryView(assets: self.context.userAssets.trackedAssets.compactMap({$0.Currency}), width: totalWidth)
+            SocialFeedSummaryView(assets: self.context.userAssets.trackedAssets.compactMap({$0.Currency}), width: totalWidth,height: totalHeight * 0.35)
         }else{
             SocialFeedSummaryView(width: totalWidth)
         }

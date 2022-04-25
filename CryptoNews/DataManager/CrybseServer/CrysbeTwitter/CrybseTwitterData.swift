@@ -24,28 +24,93 @@ class CrybseTweetReference:Codable{
     var id:String?
 }
 
-class CrybseTweet:Codable,Equatable{
+class CrybseTweet:ObservableObject,Codable,Equatable{
     
     static func == (lhs: CrybseTweet, rhs: CrybseTweet) -> Bool {
         return lhs.id == rhs.id
     }
     
-    var id:String?
-    var created_at:String?
-    var text:String?
-    var publicMetric:CrybseTweetPublicMetric?
-    var attachments:[CrybseTweetMedia]?
-    var user:CrybseTweetUser?
-    var urls:[CrybseTweetURLEntity]?
-    var cashtags:[TweetHashTag]?
-    var hashtags:[TweetHashTag]?
-    var annotations:[TweetEntityAnnotation]?
-    var media:[CrybseTweetMedia]?
-    var retweetedTweet:CrybseTweet?
-    var polls:[CrybseTweetPoll]?
-    var places:[CrybseTweetPlace]?
-    var sentiment:Float?
-    var referenceTweet:CrybseTweetReference?
+    init(){}
+    
+    @Published var id:String?
+    @Published var created_at:String?
+    @Published var text:String?
+    @Published var publicMetric:CrybseTweetPublicMetric?
+    @Published var attachments:[CrybseTweetMedia]?
+    @Published var user:CrybseTweetUser?
+    @Published var urls:[CrybseTweetURLEntity]?
+    @Published var cashtags:[TweetHashTag]?
+    @Published var hashtags:[TweetHashTag]?
+    @Published var annotations:[TweetEntityAnnotation]?
+    @Published var media:[CrybseTweetMedia]?
+    @Published var retweetedTweet:CrybseTweet?
+    @Published var polls:[CrybseTweetPoll]?
+    @Published var places:[CrybseTweetPlace]?
+    @Published var sentiment:Float?
+    @Published var referenceTweet:CrybseTweetReference?
+    
+    enum CodingKeys:CodingKey{
+        case id
+        case created_at
+        case text
+        case publicMetric
+        case attachments
+        case user
+        case urls
+        case cashtags
+        case hashtags
+        case annotations
+        case media
+        case retweetedTweet
+        case polls
+        case places
+        case sentiment
+        case referenceTweet
+    }
+    
+    required init(from decoder: Decoder) throws {
+        var container = try decoder.container(keyedBy: CodingKeys.self)
+        id = try container.decodeIfPresent(String.self, forKey: .id)
+        created_at = try container.decodeIfPresent(String.self, forKey: .created_at)
+        text = try container.decodeIfPresent(String.self, forKey: .text)
+        publicMetric = try container.decodeIfPresent(CrybseTweetPublicMetric.self, forKey: .publicMetric)
+        attachments = try container.decodeIfPresent(Array<CrybseTweetMedia>.self, forKey: .attachments)
+        user = try container.decodeIfPresent(CrybseTweetUser.self, forKey: .user)
+        urls = try container.decodeIfPresent(Array<CrybseTweetURLEntity>.self, forKey: .urls)
+        cashtags = try container.decodeIfPresent(Array<TweetHashTag>.self, forKey: .cashtags)
+        hashtags = try container.decodeIfPresent(Array<TweetHashTag>.self, forKey: .hashtags)
+        annotations = try container.decodeIfPresent(Array<TweetEntityAnnotation>.self, forKey: .annotations)
+        media = try container.decodeIfPresent(Array<CrybseTweetMedia>.self, forKey: .media)
+        
+        retweetedTweet = try container.decodeIfPresent(CrybseTweet.self, forKey: .retweetedTweet)
+        polls = try container.decodeIfPresent(Array<CrybseTweetPoll>.self, forKey: .polls)
+        places = try container.decodeIfPresent(Array<CrybseTweetPlace>.self, forKey: .places)
+        sentiment = try container.decodeIfPresent(Float.self, forKey: .sentiment)
+        referenceTweet = try container.decodeIfPresent(CrybseTweetReference.self, forKey: .referenceTweet)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = try encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(created_at, forKey: .created_at)
+        try container.encode(text, forKey: .text)
+        try container.encode(publicMetric, forKey: .publicMetric)
+        try container.encode(places,forKey: .places)
+        try container.encode(polls,forKey: .polls)
+        try container.encode(media,forKey: .media)
+        try container.encode(sentiment,forKey: .sentiment)
+        try container.encode(user,forKey: .user)
+        try container.encode(attachments,forKey: .attachments)
+        try container.encode(urls,forKey: .urls)
+        try container.encode(cashtags,forKey: .cashtags)
+        try container.encode(hashtags,forKey: .hashtags)
+        try container.encode(attachments,forKey: .attachments)
+        try container.encode(annotations,forKey: .annotations)
+        try container.encode(retweetedTweet,forKey: .retweetedTweet)
+        try container.encode(referenceTweet,forKey: .referenceTweet)
+        
+        
+    }
     
     var User:CrybseTweetUser{
         return self.user ?? .init()

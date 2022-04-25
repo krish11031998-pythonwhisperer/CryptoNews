@@ -58,7 +58,6 @@ struct PortfolioBreakdown: View {
                 MainText(content: percent, fontSize: 30, color: .gray, fontWeight: .medium)
                     .frame(width: w, alignment: .trailing)
                 if self.assets[self.idx].Currency == safeAsset.Currency{
-//                    MainText(content: "Selected", fontSize: 15, color: .white, fontWeight: .medium)
                     LazyVGrid(columns: [.init(.adaptive(minimum: w * 0.5 - 5, maximum: w * 0.5 - 5), spacing: 10)], alignment: .center, spacing: 10) {
                         ForEach(assetKeyValue.keys.sorted(), id:\.self){key in
                             if let value = assetKeyValue[key]{
@@ -96,7 +95,7 @@ struct PortfolioBreakdown: View {
         Container(heading:"Holdings Breakdown",headingDivider:false, headingSize: 20,width: self.width,ignoreSides: true, orientation: .vertical, alignment: .center){ w in
             self.chartView
                 .padding(.vertical)
-            ZoomInScrollView(data: self.arrangedAssets, axis: .horizontal, centralizeStart: true, size: self.size, selectedCardSize: .init(width: self.size.width * 1.25, height: self.size.height * 1.25)) { data, size, selected  in
+            ZoomInScrollView(data: self.arrangedAssets, axis: .horizontal,alignment: .center, centralizeStart: true, size: self.size, selectedCardSize: .init(width: self.size.width * 1.25, height: self.size.height * 1.25)) { data, size, selected  in
                 if let safeAsset = data as? CrybseAsset{
                     PortfolioCard(asset: safeAsset,w: size.width, chartHeight: size.height, selected: selected)
                         .slideZoomInOut(cardSize: size)
