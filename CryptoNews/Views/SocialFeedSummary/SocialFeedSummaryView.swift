@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
-
 struct SocialFeedSummaryView: View {
     @EnvironmentObject var context:ContextData
+    @State var viewSection:SocialMediaSummary = .None
+    @Namespace var animation
     @State var idx:Int = .zero
     @StateObject var socialHightlights:CrybseSocialHighlightsAPI
     var width:CGFloat
@@ -38,18 +39,33 @@ struct SocialFeedSummaryView: View {
     }
     
     @ViewBuilder func cardBuilder(_ data:Any,_ size:CGSize) -> some View{
-        if let safeData = data as? CrybseTweet{
-            TwitterPostCard(cardType: .Tweet, data: safeData, size: size, bg: .dark, const_size: true,isButton: false)
-        }else if let safeReddit = data as? CrybseRedditData{
-            RedditPostCard(width: size.width, size: size, redditPost: safeReddit, const_size: true,isButton: false)
-        }else if let safeNews = data as? CrybseNews{
-            if safeNews.type?.lowercased() == "video",let safeVideoId = safeNews.VideoID{
-                VideoCard(data: .init(id: .init(videoId: safeVideoId,title: safeNews.title),imgURL: safeNews.image_url), size: size,smallCard: true)
-            }else{
-                NewsCard(news: safeNews, size: size)
-            }
-            
+        if let news = data as? CrybseNews{
+            NewsSnapshot(news: news, width: size.width, height: size.height)
+        }else if let tweet = data as? CrybseTweet{
+            TweetSnapshot(tweet: tweet, width: size.width, height: size.height)
+        }else if let reddit = data as? CrybseRedditData{
+            RedditSnapshot(redditPost: reddit, width: size.width, height: size.height)
         }
+    }
+    
+    var tweets:Array<CrybseTweet>?{
+        guard let safeTweet = self.socialHightlights.socialHightlight?.Tweets else {return nil}
+        let sortedSafeTweets = safeTweet.sorted(by: {$0.SocialScore > $1.SocialScore})
+        return sortedSafeTweets.count > 5 ? Array(sortedSafeTweets[0...4]) : sortedSafeTweets
+    }
+    
+    var reddit:Array<CrybseRedditData>?{
+        guard let safeReddit = self.socialHightlights.socialHightlight?.reddit else {return nil}
+        return safeReddit.count > 5 ? Array(safeReddit[0...4]) : safeReddit
+    }
+    
+    var news:Array<CrybseNews>?{
+        guard let safeNews = self.socialHightlights.socialHightlight?.news else {return nil}
+        return safeNews.count > 5 ? Array(safeNews[0...4]) : safeNews
+    }
+    
+    var videos:Array<CrybseNews>?{
+        return self.socialHightlights.socialHightlight?.Video
     }
     
     var socialData:[Any]?{
@@ -58,28 +74,28 @@ struct SocialFeedSummaryView: View {
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeTweet)
+            data?.append(contentsOf:safeTweet.count > 3 ? Array(safeTweet[0...2]) : safeTweet)
         }
         
         if let safeReddit = self.socialHightlights.socialHightlight?.Reddit,!safeReddit.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf: safeReddit)
+            data?.append(contentsOf:safeReddit.count > 3 ? Array(safeReddit[0...2]) : safeReddit)
         }
         
         if let safeNews = self.socialHightlights.socialHightlight?.News, !safeNews.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf: safeNews)
+            data?.append(contentsOf:safeNews.count > 3 ? Array(safeNews[0...2]) : safeNews)
         }
         
         if let safeVideo = self.socialHightlights.socialHightlight?.Video, !safeVideo.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf: safeVideo)
+            data?.append(contentsOf:safeVideo.count > 3 ? Array(safeVideo[0...2]) : safeVideo)
         }
         
         return data
@@ -93,16 +109,20 @@ struct SocialFeedSummaryView: View {
 
     @ViewBuilder var SocialSummayView:some View{
         if let socialFeed = self.socialData{
-            Container(heading: "Trending Social", width: self.width,ignoreSides: true) { inner_w in
-                ZoomInScrollView(data: socialFeed, axis: .horizontal, centralizeStart: true,lazyLoad: true, size: self.cardSize(w: inner_w - 30),selectedCardSize: self.cardSize(w: inner_w - 30)) { data, size, _ in
+            Container(width: self.width,ignoreSides: false) { inner_w in
+                
+                SocialSection(data: socialFeed, section: .SocialHighlights, viewSection: .constant(.SocialHighlights), width: inner_w) { size, data in
                     self.cardBuilder(data, size)
-                        .slideZoomInOut(cardSize: size)
                         .buttonify {
-                            if self.context.socialHighlightsData == nil{
-                                self.context.socialHighlightsData = self.socialData
+                            setWithAnimation {
+                                if self.context.socialHighlightsData == nil{
+                                    self.context.socialHighlightsData = socialFeed
+                                }
                             }
                         }
                 }
+
+                
             }
             
         }else if self.socialHightlights.loading{

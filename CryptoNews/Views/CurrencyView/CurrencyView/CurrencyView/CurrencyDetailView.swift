@@ -63,14 +63,16 @@ extension CurrencyDetailView{
                 self.transactionHistoryView
                 self.CurrencySummary
                 self.infoSection
-                self.feedContainer
-                self.newsContainer
-                self.redditContainer
+                self.socialCenter
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
             self.onClose?()
             
         }
+    }
+    
+    var socialCenter:some View{
+        SocialCenterView(tweets: self.socialData?.tweets,reddits: self.socialData?.reddit,news:self.socialData?.news,width: self.size.width)
     }
     
     var headingFontSize:CGFloat{

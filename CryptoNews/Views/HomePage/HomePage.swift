@@ -26,12 +26,19 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            AllAssetView()
-                .animatedAppearance()
-                .asyncContainer()
-            self.SocialFeedSummary
-                .animatedAppearance()
-                .asyncContainer()
+            LazyVStack(alignment: .leading, spacing: 10) {
+                AllAssetView()
+//                    .animatedAppearance()
+    //                .asyncContainer()
+                self.SocialFeedSummary
+//                    .animatedAppearance()
+            }
+//            AllAssetView()
+//                .animatedAppearance()
+////                .asyncContainer()
+//            self.SocialFeedSummary
+//                .animatedAppearance()
+//                .asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

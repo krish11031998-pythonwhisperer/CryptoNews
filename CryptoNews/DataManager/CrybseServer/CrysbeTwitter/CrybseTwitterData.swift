@@ -116,6 +116,10 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
         return self.user ?? .init()
     }
     
+    var SocialScore:Int{
+        return [self.publicMetric?.like_count,self.publicMetric?.view_count,self.publicMetric?.quote_count,self.publicMetric?.reply_count,self.publicMetric?.retweet_count].compactMap({$0}).reduce(0, {$0 + $1})
+    }
+    
     var CreatedAt:String{
         if let safeStrDate = self.created_at{
             return Date.date_from_string(str_Date: safeStrDate)

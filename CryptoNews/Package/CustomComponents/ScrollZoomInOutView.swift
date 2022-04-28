@@ -64,7 +64,7 @@ class ScrollViewHelper: ObservableObject {
     
     init() {
         cancellable = AnyCancellable($currentOffset
-                                        .debounce(for: 0.2, scheduler: DispatchQueue.main)
+                                        .debounce(for: 0.05, scheduler: DispatchQueue.main)
                                         .dropFirst()
                                         .assign(to: \.offsetAtScrollEnd, on: self))
     }

@@ -129,22 +129,24 @@ public struct SlideZoomInOutView<T:View>: View {
     @ViewBuilder var viewGen:(Any,CGSize) -> T
     var onTap:((Int) -> Void)?
     var data:[Any]
+    var axis:Axis
     var timeLimit:Int
     var scrollable:Bool
     var size:CGSize
     var headers:[String]?
     var timer:Publishers.Autoconnect<Timer.TimerPublisher>
 
-    public init(data:[Any],timeLimit:Int = 10,headers:[String]? = nil,size:CGSize,scrollable:Bool = false,onTap:((Int) -> Void)? = nil,@ViewBuilder viewGen: @escaping (Any,CGSize) -> T){
+    public init(data:[Any],timeLimit:Int = 10,headers:[String]? = nil,axis:Axis = .horizontal,size:CGSize,scrollable:Bool = false,onTap:((Int) -> Void)? = nil,@ViewBuilder viewGen: @escaping (Any,CGSize) -> T){
         self.data = data
         self.timeLimit = timeLimit
-        self._SP = StateObject(wrappedValue: .init(0, data.count - 1, 50 , type: .Carousel,onTap:onTap))
+        self._SP = StateObject(wrappedValue: .init(0, data.count - 1, 50 , type: axis == .vertical ? .Stack : .Carousel,onTap:onTap))
         self.size = size
         self.headers = headers
         self.timer = Timer.publish(every: TimeInterval(timeLimit),on:.main,in:.common).autoconnect()
         self.scrollable = scrollable
         self.viewGen = viewGen
         self.onTap = onTap
+        self.axis = axis
     }
     
     func scaleEff(midX:CGFloat) -> CGFloat{
@@ -156,9 +158,6 @@ public struct SlideZoomInOutView<T:View>: View {
         return scale
     }
     
-//    var data:[Any]{
-//        return self.carouselList.getList(fromDataPoint: self.SP.swiped)
-//    }
 
     @ViewBuilder func Card(data:Any,size _size:CGSize) -> some View{
         let view = GeometryReader{g in
@@ -241,6 +240,36 @@ public struct SlideZoomInOutView<T:View>: View {
     }
     
     
+    @ViewBuilder var mainInnerBody:some View{
+        if self.axis == .horizontal{
+            HStack(alignment: .center, spacing: 0) {
+                ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
+                    let data = _data.element
+                    let idx = _data.offset
+                    let idxOff = self.SP.swiped
+                    
+                    if (idx >=  idxOff - 1 && idx <= idxOff + 1) || self.reset{
+                        self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
+                    }
+                    
+                }
+            }
+        }else if self.axis == .vertical{
+            VStack(alignment: .leading, spacing: 0) {
+                ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
+                    let data = _data.element
+                    let idx = _data.offset
+                    let idxOff = self.SP.swiped
+                    
+                    if (idx >=  idxOff - 1 && idx <= idxOff + 1) || self.reset{
+                        self.Card(data: data, size: CGSize(width: size.width, height: self.size.height))
+                    }
+                    
+                }
+            }.basicCard(size: self.size, background: Color.clear.anyViewWrapper())
+        }
+    }
+    
     var mainBodywithHeaders:some View{
         LazyVStack(alignment: .leading, spacing: 10) {
             let timeBlob_h = self.size.height * 0.1 - 5
@@ -250,14 +279,7 @@ public struct SlideZoomInOutView<T:View>: View {
             if let _ = self.headers{
                 self.headerView(h:timeBlob_h)
             }
-            HStack(alignment: .center, spacing: 0) {
-                ForEach(Array(self.data.enumerated()), id:\.offset) { _data in
-                    let data = _data.element
-                    
-                    self.Card(data: data, size: CGSize(width: size.width, height: mainView_h))
-                }
-            }
-            
+            self.mainInnerBody
             Spacer()
         }
     }
@@ -281,15 +303,20 @@ public struct SlideZoomInOutView<T:View>: View {
         if self.headers != nil{
             self.mainBodywithHeaders
         }else{
-            self.mainBodywithoutHeaders
+            self.mainInnerBody
         }
     }
 
+    var mainOffset:CGSize{
+        let off = self.SP.extraOffset + self.offset
+        return self.axis == .vertical  ? .init(width: .zero, height: off) : .init(width: off, height: .zero)
+    }
     
     public var body: some View {
         self.mainBody
             .frame(width:size.width,height: size.height, alignment: .leading)
-            .offset(x: self.SP.extraOffset + self.offset)
+//            .offset(x: self.axis == .vertical ? 0 : self.)
+            .offset(self.mainOffset)
             .onReceive(self.timer, perform: { _ in
                 withAnimation(.easeInOut) {
                     self.onReceiveTimer()
