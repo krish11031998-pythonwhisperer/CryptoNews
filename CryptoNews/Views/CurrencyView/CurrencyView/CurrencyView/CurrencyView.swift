@@ -45,7 +45,7 @@ struct CurrencyView:View{
         self._assetData = .init(wrappedValue: asset)
         self.onClose = onClose
         self.size = size
-        self._coinAPI = .init(wrappedValue: .init(coinUID:asset.CoinData.id ?? "",crypto: asset.CoinData.Symbol,name:asset.CoinData.Name))
+        self._coinAPI = .init(wrappedValue: .init(coinUID:asset.CoinData.id ?? "",crypto: asset.CoinData.Symbol.uppercased(),name:asset.CoinData.Name))
     }
     
       
@@ -253,4 +253,3 @@ struct CurrencyView:View{
         .onDisappear(perform: self.onDisappear)
     }
 }
-

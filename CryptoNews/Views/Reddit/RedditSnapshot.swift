@@ -50,14 +50,11 @@ struct RedditSnapshot: View {
     }
     
     var body: some View {
-        Container(width:self.width,horizontalPadding: 7.5,verticalPadding: 7.5){ inner_w in
+        Container(width:self.width,horizontalPadding: 10,verticalPadding: 3.5,alignment: .topLeading){ inner_w in
             self.Header(w: inner_w)
             self.mainView(w: inner_w)
-            if self.height != .zero{
-                Spacer()
-            }
         }
-        .basicCard(size: self.height == .zero ? .zero : .init(width: self.width, height: self.height), background: Color.clear.anyViewWrapper())
+//        .basicCard(size: self.height == .zero ? .zero : .init(width: self.width, height: self.height), background: Color.clear.anyViewWrapper())
     }
 }
 

@@ -63,7 +63,13 @@ extension CurrencyDetailView{
                 self.transactionHistoryView
                 self.CurrencySummary
                 self.infoSection
-                self.socialCenter
+                self.SentimentSection
+                self.EventSection
+                self.NewsSection
+                self.TweetSection
+//                self.eventsView
+//                self.newsView
+//                self.socialCenter
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
             self.onClose?()
@@ -71,8 +77,52 @@ extension CurrencyDetailView{
         }
     }
     
+    @ViewBuilder var eventsView:some View{
+        if let safeEvents = self.socialData?.events{
+            Container(width:self.size.width,verticalPadding:0){ inner_w in
+                SocialSection(data: safeEvents.count > 5 ? Array(safeEvents[0...4]) : safeEvents, section: .Events, viewSection: .constant(.Events), width: inner_w) { size, data in
+                    if let safeEvent = data as? CrybseEventData{
+                        EventSnapshot(event: safeEvent, width: size.width)
+                    }
+                }
+                MainText(content: "More", fontSize: 12, color: SectionStylings.events.color, fontWeight: .medium)
+                    .textBubble(color: SectionStylings.events.color, clipping: .roundClipping, verticalPadding: 5, horizontalPadding: 10)
+                    .frame(width: inner_w, alignment: .leading)
+            }
+        }
+    }
+    
+    @ViewBuilder var newsView:some View{
+        if let safeNews = self.socialData?.news{
+            Container(width:self.size.width,verticalPadding:0){ inner_w in
+                SocialSection(data: safeNews.count > 5 ? Array(safeNews[0...4]) : safeNews, section: .News, viewSection: .constant(.News), width: inner_w) { size, data in
+                    if let safeNews = data as? CrybseNews{
+                        NewsSnapshot(news: safeNews, width: size.width)
+                    }
+                }
+                MainText(content: "More", fontSize: 12, color: SectionStylings.news.color, fontWeight: .medium)
+                    .textBubble(color: SectionStylings.news.color, clipping: .roundClipping, verticalPadding: 5, horizontalPadding: 10)
+                    .frame(width: inner_w, alignment: .leading)
+            }
+        }
+    }
+    
+    @ViewBuilder var youtubeView:some View{
+        if let safeYoutube = self.socialData?.youtube{
+            SocialSection(data: safeYoutube.count > 5 ? Array(safeYoutube[0...4]) : safeYoutube, section: .Youtube, viewSection: .constant(.Youtube), width: self.size.width) { size, data in
+                Color.clear
+            }
+        }
+    }
+    
+    
     var socialCenter:some View{
-        SocialCenterView(tweets: self.socialData?.tweets,reddits: self.socialData?.reddit,news:self.socialData?.news,width: self.size.width)
+        SocialCenterView(
+            tweets: self.socialData?.tweets,
+            reddits: self.socialData?.reddit,
+            width: self.size.width,
+            height: totalHeight * 0.35
+        )
     }
     
     var headingFontSize:CGFloat{
@@ -99,6 +149,99 @@ extension CurrencyDetailView{
         }
     }
 
+    @ViewBuilder var NewsSection:some View{
+        if let safeNews = self.socialData?.news{
+            let news = safeNews.count > 3 ? Array(safeNews[0...2]) : safeNews
+            Container(heading: "Trending News", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width, lazyLoad: true,rightView: {
+                MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
+                    .textBubble(color: .white, clipping: .roundClipping, verticalPadding: 6.5, horizontalPadding: 10)
+                    .anyViewWrapper()
+            }) { w in
+                ForEach(Array(news.enumerated()), id: \.offset) { _news in
+                    if _news.offset != 0{
+                        RoundedRectangle(cornerRadius: 10)
+                            .fill(Color.gray)
+                            .frame(width: w,height: 1.5, alignment: .center)
+                    }
+                    NewsSnapshot(news: _news.element, width: w)
+                        .buttonify {
+                            if self.context.selectedLink?.absoluteString != _news.element.NewsURL{
+                                setWithAnimation {
+                                    self.context.selectedLink = URL(string: _news.element.NewsURL)
+                                }
+                            }
+                        }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder var TweetSection:some View{
+        if let safeTweet = self.socialData?.tweets{
+            let tweets = safeTweet.count > 5 ? Array(safeTweet[0...5]) : safeTweet
+            Container(heading: "Top Tweets", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width,ignoreSides: true, lazyLoad: false,rightView: {
+                MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
+                    .textBubble(color: .white, clipping: .roundClipping, verticalPadding: 6.5, horizontalPadding: 10)
+                    .anyViewWrapper()
+            }){ w in
+                ZoomInScrollView(data: tweets, centralizeStart: true, lazyLoad: false, size: .init(width: w * 0.8, height: totalHeight * 0.3), selectedCardSize: .init(width: w * 0.8, height: totalHeight * 0.3)) { data, size, _ in
+                    if let safeTweet = data as? CrybseTweet{
+                        TweetSnapshot(tweet: safeTweet, width: size.width, height: size.height)
+                            .frame(width: size.width, height: size.height, alignment: .topLeading)
+                            .basicCard(size: size)
+                            .borderCard(color: .white, clipping: .roundClipping)
+                            .slideZoomInOut(cardSize: size)
+                            .buttonify {
+                                if self.context.selectedTweet?.id != safeTweet.id{
+                                    setWithAnimation {
+                                        self.context.selectedTweet = safeTweet
+                                    }
+                                }
+                            }
+                    }
+                }
+                
+            }
+        }
+    }
+    
+    @ViewBuilder var SentimentSection:some View{
+        if let safeSentiment = self.socialData?.sentiment{
+            Container(heading: "Sentiments", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width,onClose: nil){w in
+                SentimentsSnapshot(sentiment: safeSentiment, width: w)
+                    .basicCard()
+                    .borderCard(color: .white, clipping: .roundClipping)
+                    .slideZoomInOut(cardSize: size)
+            }
+            
+            
+        }
+    }
+    
+    @ViewBuilder var EventSection:some View{
+        if let safeEvent = self.socialData?.events{
+            Container(heading: "Events", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width,onClose: nil) {
+                MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
+                    .textBubble(color: .white, clipping: .roundClipping, verticalPadding: 6.5, horizontalPadding: 10)
+                    .anyViewWrapper()
+            } innerView: { w in
+                ZoomInScrollView(data: safeEvent,centralizeStart: true, size: .init(width: w * 0.6, height: totalHeight * 0.35), selectedCardSize: .init(width: w * 0.6, height: totalHeight * 0.35)){ data,size,_ in
+                    
+                    if let safeEvent = data as? CrybseEventData{
+                        EventSnapshot(event: safeEvent, width: size.width, height: size.height)
+                            .frame(width: size.width, height: size.height, alignment: .topLeading)
+                            .basicCard(size: size)
+                            .borderCard(color: .white, clipping: .roundClipping)
+                            .slideZoomInOut(cardSize: size)
+                    }
+                    
+                }
+            }
+
+            
+            
+        }
+    }
     
     var choosenPriceData:CrybseCoinPrice{
         if self.choosen != -1{
@@ -139,26 +282,6 @@ extension CurrencyDetailView{
         return self.coinTotal * self.price
     }
     
-    var paginatedViews:some View{
-        var tab:[String:AnyView] = [:]
-        if !self.Tweets.isEmpty{
-            tab["Twitter"] = AnyView(self.feedContainer)
-        }
-        
-        if !self.Reddit.isEmpty{
-            tab["Reddit"] = AnyView(self.redditContainer)
-        }
-        
-        if !self.News.isEmpty{
-            tab["News"] = AnyView(self.newsContainer)
-        }
-        
-        if !self.Videos.isEmpty{
-            tab["Videos"] = AnyView(self.youtubeContainer)
-        }
-        
-        return ButtonScrollView(headerviews: tab, width: self.size.width)
-    }
       
     var profit:Float{
         if self.choosen != -1,let selectedPrice = self.Prices[self.choosen].price{
@@ -208,7 +331,6 @@ extension CurrencyDetailView{
         }else{
             TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
         }
-        
     }
     
     @ViewBuilder var infoSection:some View{
@@ -224,36 +346,7 @@ extension CurrencyDetailView{
        
     }
     
-    
-    @ViewBuilder func cardBuilder(width w:CGFloat? = nil ,type:PostCardType,data:Any) -> some View{
-        let width = w ?? self.size.width
-        switch(type){
-            case .Tweet:
-                if let post = data as? CrybseTweet{
-                    TwitterPostCard(cardType: .Tweet, data: post, size: .init(width: width, height: self.size.height),bg: .dark, const_size: false)
-                }else{
-                    Color.clear
-                }
-                
-            case .News:
-                NewsStandCard(news: data,size:.init(width: width, height: totalHeight * 0.25))
-            case .Reddit:
-                if let reddit = data as? CrybseRedditData{
-                    RedditPostCard(width: width, redditPost: reddit)
-                }else{
-                    Color.clear
-                }
-            case .Youtube:
-                if let youtube = data as? CrybseVideoData{
-                    VideoCard(data: youtube, size: .init(width: width, height: totalHeight * 0.3))
-                }else{
-                    Color.clear
-                }
-            default:
-                Color.clear.frame(width:.zero, height: .zero, alignment: .center)
-        }
-    }
-    
+
     var timeSpan:Int{
         let hr = 12
         if self.choosenTimeInterval == "3hr"{
@@ -264,58 +357,6 @@ extension CurrencyDetailView{
             return hr * 24
         }
         return hr
-    }
-
-    func infoViewGen(type:PostCardType) -> some View {
-        let heading = type == .News ? "News" : type == .Tweet ? "Tweets" : type == .Reddit ? "Reddit" : type  == .Youtube ? "Youtube" : "Posts"
-        var data:[Any] = type == .News ? self.News : type == .Tweet ? self.Tweets : type == .Reddit ? self.Reddit : type == .Youtube ? self.Videos : []
-        data = data.count < 3 ? data : Array(data[0...2])
-        
-        return Container(heading: heading, headingColor: .white, headingDivider: true, headingSize: 20, width: self.size.width  ,horizontalPadding: 15, verticalPadding: 0, orientation: .vertical, aligment: .leading,lazyLoad: true) { w in
-            ForEach(Array(data.enumerated()),id:\.offset) { _data in
-                let data = _data.element
-                self.cardBuilder(width:w,type:type,data: data)
-            }
-            TabButton(width: w, title: "Load More", action: {
-                setWithAnimation {
-                    self.showMoreSection = type == .Tweet ? .feed : type == .News ? .news : type == .Reddit ? .reddit : type == .Youtube ? .videos : .none
-                }
-            }).padding(.vertical)
-        }
-    }
-    
-    @ViewBuilder var feedContainer:some View{
-        if self.Tweets.isEmpty{
-            ProgressView()
-        }else if self.Tweets.count >= 5{
-            self.infoViewGen(type: .Tweet)
-        }
-        
-    }
-    
-    @ViewBuilder var newsContainer:some View{
-        if self.News.isEmpty{
-            ProgressView()
-        }else if self.News.count >= 3{
-            self.infoViewGen(type: .News)
-        }
-        
-    }
-    
-    @ViewBuilder var redditContainer:some View{
-        if self.Reddit.isEmpty{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-        }else{
-            self.infoViewGen(type: .Reddit)
-        }
-    }
-    
-    @ViewBuilder var youtubeContainer:some View{
-        if self.Videos.isEmpty{
-            
-        }else{
-            self.infoViewGen(type: .Youtube)
-        }
     }
 
     var Prices:CrybseCoinPrices{
@@ -365,5 +406,27 @@ extension CurrencyDetailView{
         var min = min(w,h)
         min -= min == 0 ? 0 : 35
         return CGSize(width: min , height: min)
+    }
+}
+
+
+struct CurrencyViewPreview:PreviewProvider{
+    
+    static func loadCoinData() -> CrybseAsset?{
+        guard let safeData = readJsonFile(forName: "btcCoinData"),let coinSocialData = CrybseCoinSocialData.parseCoinDataFromData(data: safeData) else {return nil}
+        let asset = CrybseAsset(currency: "BTC")
+        asset.coin = coinSocialData
+        return asset
+    }
+    
+    static var previews: some View{
+        if let safeAsset = CurrencyViewPreview.loadCoinData(){
+                CurrencyDetailView(assetData: safeAsset)
+            
+            
+        }else{
+            ProgressView()
+        }
+        
     }
 }

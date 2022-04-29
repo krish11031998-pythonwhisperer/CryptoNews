@@ -158,20 +158,10 @@ struct ZoomInScrollView<T:View>: View {
         ForEach(Array(self.components.enumerated()), id:\.offset) { _component in
             let component = _component.element
             let idx = _component.offset
-            
-//            if !self.lazyLoad{
-//                self.cardBuilder(data: component.data, idx: idx)
-//                    .padding(.vertical,self.axis == .horizontal ? 15 : 0)
-//                    .padding(.horizontal,self.axis == .vertical ? 15 : 0)
-//                    .id(idx)
-//                    .asyncContainer(axis: .horizontal)
-//            }else{
                 self.cardBuilder(data: component.data, idx: idx)
                     .padding(.vertical,self.axis == .horizontal ? 15 : 0)
                     .padding(.horizontal,self.axis == .vertical ? 15 : 0)
                     .id(idx)
-//            }
-
         }
     }
     

@@ -137,14 +137,15 @@ public struct Container<T:View>: View {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
                     self.innerView(self.innerWidth)
+                        .frame(alignment: self.alignment)
                 }
             }else if self.orientation == .horizontal{
                 LazyVStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
-                    HStack(alignment: .center, spacing: self.spacing) {
+                    HStack(alignment: self.alignment.vertical, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
-                    }
+                    }.frame(alignment: self.alignment)
                 }
             }
         }else{
@@ -153,13 +154,15 @@ public struct Container<T:View>: View {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
                     self.innerView(self.innerWidth)
+                        .frame(alignment: self.alignment)
                 }
             }else if self.orientation == .horizontal{
                 VStack(alignment: self.alignment.horizontal, spacing: self.spacing) {
                     self.headerView.frame(width:self.innerWidth,alignment: .leading)
                         .padding(.bottom,10)
-                    HStack(alignment: .center, spacing: self.spacing) {
+                    HStack(alignment: self.alignment.vertical, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
+                            .frame(alignment: self.alignment)
                     }
                 }
             }
@@ -173,7 +176,7 @@ public struct Container<T:View>: View {
                 if self.orientation == .vertical{
                     self.innerView(self.innerWidth)
                 }else if self.orientation == .horizontal{
-                    HStack(alignment: .center, spacing: self.spacing) {
+                    HStack(alignment: self.alignment.vertical, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
                     }
                 }
@@ -183,7 +186,7 @@ public struct Container<T:View>: View {
                 if self.orientation == .vertical{
                     self.innerView(self.innerWidth)
                 }else if self.orientation == .horizontal{
-                    HStack(alignment: .center, spacing: self.spacing) {
+                    HStack(alignment: self.alignment.vertical, spacing: self.spacing) {
                         self.innerView(self.innerWidth)
                     }
                 }

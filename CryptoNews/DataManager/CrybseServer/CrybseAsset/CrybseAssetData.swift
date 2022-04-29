@@ -145,11 +145,6 @@ class CrybseAsset:ObservableObject,Codable,Equatable{
     static func == (lhs: CrybseAsset, rhs: CrybseAsset) -> Bool {
         let currencyCondition = lhs.Currency == rhs.Currency
         let txnCondition = lhs.txns?.count == rhs.txns?.count
-//        let coinDataCondition = lhs.coinData?.Price == rhs.coinData?.Price
-//        let coinCondition = lhs.coin?.TimeseriesData.last?.time == rhs.coin?.TimeseriesData.last?.time
-        
-//        return currencyCondition || txnCondition || coinCondition || coinDataCondition
-//        return currencyCondition || txnCondition || coinCondition
         return currencyCondition || txnCondition
     }
     

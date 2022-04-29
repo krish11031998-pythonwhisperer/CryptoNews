@@ -14,8 +14,10 @@ struct SectionStylings:Equatable{
     
     
     static var twitter:SectionStylings = .init(name: "Tweets", color: .blue, icon: .init(named: "TwitterIcon"))
-    static var reddit:SectionStylings = .init(name: "Reddit", color: .red, icon: .init(named: "RedditIcon"))
-    static var news:SectionStylings = .init(name: "News", color: .gray, icon: nil)
+    static var reddit:SectionStylings = .init(name: "Reddit", color: .orange, icon: .init(named: "RedditIcon"))
+    static var news:SectionStylings = .init(name: "News", color: .black.opacity(0.75), icon: nil)
+    static var events:SectionStylings = .init(name: "Events", color: .black.opacity(0.75), icon:nil)
+    static var youtube:SectionStylings = .init(name: "Youtube", color: .red, icon: .init(named: "YoutubeIcon"))
     static var socialHighlights:SectionStylings = .init(name: "Social Highlights", color: .init(hex: "#002d69"), icon: nil)
 }
 
@@ -24,6 +26,8 @@ enum SocialMediaSummary{
     case News
     case Reddit
     case SocialHighlights
+    case Events
+    case Youtube
     case None
     
 }
@@ -38,8 +42,12 @@ extension SocialMediaSummary{
                 result = .reddit
             case .News:
                 result = .news
-        case .SocialHighlights:
+            case .SocialHighlights:
                 result = .socialHighlights
+            case .Events:
+                result = .events
+            case .Youtube:
+                result = .youtube
             case .None:
                 result = nil
         }
@@ -51,22 +59,29 @@ extension SocialMediaSummary{
 struct SocialCenterView: View {
     @EnvironmentObject var context:ContextData
     @State var viewSection:SocialMediaSummary = .None
-    var tweets:[CrybseTweet]? = nil
-    var reddits:[CrybseRedditData]? = nil
-    var news:[CrybseNews]? = nil
+    var tweets:[CrybseTweet]?
+    var reddits:[CrybseRedditData]?
+    var news:[CrybseNews]?
+    var events:CrybseEvents?
     var width:CGFloat
+    var height:CGFloat
     
     
     init(
         tweets:[CrybseTweet]? = nil,
         reddits:[CrybseRedditData]? = nil,
         news:[CrybseNews]? = nil,
-        width:CGFloat = totalWidth
+        events:CrybseEvents? = nil,
+        width:CGFloat = totalWidth,
+        height:CGFloat = totalHeight * 0.125
     ){
         self.tweets = tweets
         self.reddits = reddits
         self.news = news
+        self.events = events
+        self.events = events
         self.width = width
+        self.height = height
     }
     
     @ViewBuilder func tweetSection(w:CGFloat) -> some View{
@@ -74,7 +89,7 @@ struct SocialCenterView: View {
             SocialSection(data: safetweets, section: .Twitter,viewSection: $viewSection,width:w,height: totalHeight * 0.125) { size, data in
                 if let tweet = data as? CrybseTweet{
                     TweetSnapshot(tweet: tweet, width: size.width,height: size.height)
-                        .buttonify(type: .shadow, withBG: false, clipping: .roundClipping) {
+                        .buttonify(withBG: false, clipping: .roundClipping) {
                             if self.context.selectedTweet == nil || self.context.selectedTweet?.id != tweet.id {
                                 self.context.selectedTweet = tweet
                             }
@@ -91,7 +106,7 @@ struct SocialCenterView: View {
             SocialSection(data: safeNews, section: .News,viewSection: $viewSection,width:w,height: totalHeight * 0.125) { size, data in
                 if let news = data as? CrybseNews{
                     NewsSnapshot(news: news, width: size.width,height: size.height)
-                        .buttonify(type: .shadow, withBG: false, clipping: .roundClipping) {
+                        .buttonify(withBG: false, clipping: .roundClipping) {
                             if let url = news.news_url,self.context.selectedLink == nil || self.context.selectedLink?.absoluteString != url {
                                 self.context.selectedLink = .init(string: url)
                             }
@@ -106,11 +121,22 @@ struct SocialCenterView: View {
             SocialSection(data: safeReddit, section: .Reddit, viewSection: $viewSection,width:w,height: totalHeight * 0.125) { size, data in
                 if let reddit = data as? CrybseRedditData{
                     RedditSnapshot(redditPost: reddit, width: size.width,height: size.height)
-                        .buttonify(type: .shadow, withBG: false, clipping: .roundClipping) {
+                        .buttonify(withBG: false, clipping: .roundClipping) {
                             if self.context.selectedReddit == nil || self.context.selectedReddit?.id != reddit.id {
                                 self.context.selectedReddit = reddit
                             }
                         }
+                }
+            }
+        }
+    }
+    
+    
+    @ViewBuilder func eventSection(w:CGFloat) -> some View{
+        if let safeEvents = self.events{
+            SocialSection(data: safeEvents, section: .Events, viewSection: $viewSection, width: w, height: height) { size, data in
+                if let event = data as? CrybseEventData{
+                    EventSnapshot(event: event, width: size.width,height: size.height)
                 }
             }
         }
@@ -122,6 +148,7 @@ struct SocialCenterView: View {
             self.tweetSection(w: w)
             self.redditSection(w: w)
             self.newsSection(w: w)
+            self.eventSection(w:w)
         }
     }
 }
@@ -167,7 +194,7 @@ struct SocialSection<T:View>:View{
                         ImageView(img: safeIcon, width: 25, height: 25, contentMode: .fill, alignment: .center)
                     }
                 }
-                .padding()
+                .padding(10)
                 .frame(width: inner_w, alignment: .center)
                 .background(styling.color.overlay(BlurView.thinLightBlur).opacity(0.45))
                 .onTapGesture {
@@ -181,26 +208,28 @@ struct SocialSection<T:View>:View{
                 }
                 
                 if self.viewSection == section{
-                    Container(width:inner_w,spacing: 7.5,lazyLoad: true){ _w in
+                    Container(width:inner_w,ignoreSides: false,horizontalPadding: 7.5,verticalPadding: 7.5,alignment: .center,spacing: 10,lazyLoad: true){ _w in
                         ForEach(Array(data.enumerated()), id:\.offset) { _data in
-                            if _data.offset != 0{
-                                RoundedRectangle(cornerRadius: 20)
-                                    .fill(Color.white.opacity(0.45))
-                                    .frame(width: _w, height: 1, alignment: .center)
+                            Group{
+                                if _data.offset != 0{
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .fill(LinearGradient(colors: [Color.white.opacity(0.5),Color.white,Color.white,Color.white.opacity(0.5)], startPoint: .leading, endPoint: .trailing))
+                                        .frame(width: _w * 0.975, height: 1, alignment: .center)
+
+                                }
+                                viewGen(.init(width: _w, height: .zero),_data.element)
                             }
-                            viewGen(.init(width: _w, height: .zero),_data.element)
+                            
                         }
-                    }
+                    }.animation(.easeInOut,value:self.viewSection == section)
                 }else{
                     ZoomInScrollView(data: data, axis: .horizontal, alignment: .center, centralizeStart: false, lazyLoad: true, size: .init(width: inner_w, height: self.height), selectedCardSize: .init(width: inner_w, height: self.height)) { data, size, _ in
-                        Container(width:size.width){ _w in
-                            viewGen(.init(width: _w, height: size.height),data)
+                        viewGen(.init(width: size.width, height: size.height),data)
                                 .frame(width: size.width, height: size.height, alignment: .topLeading)
-                        }
                     }
                 }
             }.basicCard()
-                .borderCard(color: styling.color, clipping: .roundClipping)
+            .borderCard(color: styling.color, clipping: .roundClipping)
         }
     }
     
@@ -212,6 +241,9 @@ struct SocialSection<T:View>:View{
 
 struct SocialCenterView_Previews: PreviewProvider {
     static var previews: some View {
-        SocialCenterView()
+        RoundedRectangle(cornerRadius: 20)
+            .fill(LinearGradient(colors: [Color.white.opacity(0.5),Color.white,Color.white,Color.white.opacity(0.5)], startPoint: .leading, endPoint: .trailing))
+            .frame(width: totalWidth * 0.975, height: 1, alignment: .center)
+            .background(Color.black.frame(width: totalWidth, height: 50, alignment: .center))
     }
 }

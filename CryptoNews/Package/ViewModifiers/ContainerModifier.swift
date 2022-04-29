@@ -171,6 +171,29 @@ public struct Blob:ViewModifier{
     }
 }
 
+struct CustomTextBubble:ViewModifier{
+    var color:Color
+    var clipping:Clipping
+    var verticalPadding:CGFloat
+    var horizontalPadding:CGFloat
+    
+    init(color:Color = .white,clipping:Clipping = .roundClipping,verticalPadding:CGFloat = 10,horizontalPadding:CGFloat = 10){
+        self.color = color
+        self.clipping = clipping
+        self.horizontalPadding = horizontalPadding
+        self.verticalPadding = verticalPadding
+    }
+    
+    func body(content: Content) -> some View {
+        content
+            .padding(.vertical,verticalPadding)
+            .padding(.horizontal,horizontalPadding)
+            .background(color.overlay(BlurView.thinDarkBlur).opacity(0.5))
+            .clipContent(clipping: clipping)
+            .borderCard(color: color, clipping: clipping)
+    }
+}
+
 
 
 public extension View{
@@ -182,6 +205,9 @@ public extension View{
         self.modifier(BorderCard(color: color,linearGradient: gradient, clipping: clipping))
     }
     
+    func textBubble(color:Color = .white,clipping:Clipping = .roundClipping,verticalPadding:CGFloat = 10,horizontalPadding:CGFloat = 10) -> some View{
+        return self.modifier(CustomTextBubble(color: color, clipping: clipping, verticalPadding: verticalPadding, horizontalPadding: horizontalPadding))
+    }
     func blobify(size:CGSize? = nil,color:AnyView = AnyView(Color.clear),clipping:Clipping = .squareClipping) -> some View{
         self.modifier(Blob(size:size,color: color,clipping: clipping))
     }

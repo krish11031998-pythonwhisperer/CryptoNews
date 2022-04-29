@@ -21,11 +21,106 @@ class CrybseCoinDataResponse:Codable{
     
 }
 
+class CrybseEventData:Codable{
+    var event_name:String?
+    var event_id:String?
+    var news_items:Int?
+    var date:String?
+    var tickers:[String]?
+}
+
+typealias CrybseEvents = Array<CrybseEventData>
+
+class CrybseSentimentData:Codable{
+    
+    struct SentimentalBreakdown{
+        var name:String
+        var color:Color
+        var count:Int
+    }
+    
+    var positive:Int?
+    var negative:Int?
+    var neutral:Int?
+    var sentiment_score:Float?
+    
+    var Postive:Int{
+        return self.positive ?? 0
+    }
+    
+    var Negative:Int{
+        return self.negative ?? 0
+    }
+    
+    var Neutral:Int{
+        return self.neutral ?? 0
+    }
+    
+    var SentimentScore:Float{
+        return self.sentiment_score ?? 0.0
+    }
+    
+    var sentimentBreakdown:[SentimentalBreakdown]{
+        return [
+            SentimentalBreakdown(name: "Positive", color: .green, count: self.positive ?? 0),
+            SentimentalBreakdown(name: "Negative", color: .red, count: self.negative ?? 0),
+            SentimentalBreakdown(name: "Neutral", color: .gray, count: self.neutral ?? 0)
+        ]
+    }
+}
+
+class CrybseSentiment:Codable{
+    var total: CrybseSentimentData?
+    var timeline:[String:CrybseSentimentData]?
+    
+    var TimelineSorted:[CrybseSentimentData]?{
+        guard let timeline = timeline else {
+            return nil
+        }
+        
+        return timeline.sorted { s1, s2 in
+            func dateFormater(date:String) -> Date{
+                let outputFormatter = DateFormatter()
+                outputFormatter.dateFormat = "YYYY-MM-dd"
+                return outputFormatter.date(from: date) ?? Date()
+            }
+            
+            let s1Date = dateFormater(date: s1.key)
+            let s2Date = dateFormater(date: s2.key)
+            
+            return s1Date < s2Date
+        }.compactMap({$1})
+
+    }
+    
+    var TimelineKeysSorted:[String]?{
+        guard let timeline = timeline else {
+            return nil
+        }
+        
+        return timeline.sorted { s1, s2 in
+            func dateFormater(date:String) -> Date{
+                let outputFormatter = DateFormatter()
+                outputFormatter.dateFormat = "YYYY-MM-dd"
+                return outputFormatter.date(from: date) ?? Date()
+            }
+            
+            let s1Date = dateFormater(date: s1.key)
+            let s2Date = dateFormater(date: s2.key)
+            
+            return s1Date < s2Date
+        }.compactMap({$0.key})
+
+    }
+}
+
 
 class CrybseCoinSocialData:ObservableObject,Codable{
     @Published var tweets: Array<CrybseTweet>?
     @Published var metaData:CrybseCoinMetaData?
     @Published var prices:CrybseCoinPrices?
+    @Published var sentiment:CrybseSentiment?
+    @Published var events:CrybseEvents?
     @Published var news:CrybseNewsList?
     @Published var additionalInfo:CrybseCoinAdditionalData?
     @Published var youtube:CrybseVideosData?
@@ -50,6 +145,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         case additionalInfo
         case youtube
         case reddit
+        case sentiment
+        case events
     }
     
     required init(from decoder: Decoder) throws {
@@ -61,6 +158,8 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         additionalInfo = try container.decodeIfPresent(CrybseCoinAdditionalData.self, forKey: .additionalInfo)
         youtube = try container.decodeIfPresent(CrybseVideosData.self, forKey: .youtube)
         reddit = try container.decodeIfPresent(CrybseRedditPosts.self, forKey: .reddit)
+        sentiment = try container.decodeIfPresent(CrybseSentiment.self, forKey: .sentiment)
+        events = try container.decodeIfPresent(CrybseEvents.self, forKey: .events)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -72,18 +171,9 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         try container.encode(additionalInfo,forKey: .additionalInfo)
         try container.encode(reddit,forKey: .reddit)
         try container.encode(youtube,forKey: .youtube)
+        try container.encode(sentiment,forKey: .sentiment)
+        try container.encode(events, forKey: .events)
     }
-    
-//    var TimeSeriesData:[CryptoCoinOHLCVPoint]{
-//        get{
-//            return self.TimeseriesData
-//        }
-//
-//        set{
-//            self.TimeseriesData = newValue
-//        }
-//
-//    }
     
     static func parseCoinDataFromData(data:Data) -> CrybseCoinSocialData?{
         var coinData:CrybseCoinSocialData? = nil
@@ -132,6 +222,25 @@ class CrybseCoinSocialData:ObservableObject,Codable{
         }
     }
     
+    var Events:CrybseEvents{
+        get{
+            return self.events ?? []
+        }
+        
+        set{
+            self.events = newValue
+        }
+    }
+    
+    var Sentiment:CrybseSentiment{
+        get{
+            return self.sentiment ?? .init()
+        }
+        
+        set{
+            self.sentiment = newValue
+        }
+    }
     
     var RedditPosts:CrybseRedditPosts{
         get{

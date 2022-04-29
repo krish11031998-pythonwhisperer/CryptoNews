@@ -21,11 +21,14 @@ struct NewsSnapshot: View {
     
     
     @ViewBuilder func headerView(w:CGFloat) -> some View{
-        HStack(alignment: .top, spacing: 10) {
-            if let title = self.news.title,let publisher  = self.news.source_name{
-                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal)
+        //        HStack(alignment: .top, spacing: 0) {
+        if let title = self.news.title,let publisher  = self.news.source_name{
+            Container(width:w,horizontalPadding: 2.5,verticalPadding: 0,spacing: 5) { w in
+                MainText(content: publisher.uppercased(), fontSize: 15, color: .gray, fontWeight: .semibold)
+                MainText(content: title, fontSize: 17.5, color: .white, fontWeight: .medium)
             }
-        }.frame(width: w, alignment: .leading)
+        }
+        //        }.frame(width: w, alignment: .leading)
     }
     
     @ViewBuilder func imgView(w:CGFloat) -> some View{
@@ -57,21 +60,9 @@ struct NewsSnapshot: View {
     }
     
     var body: some View {
-        Container(width:self.width,horizontalPadding: 7.5,verticalPadding: 7.5){inner_w in
-            HStack(alignment: .top, spacing: 0){
-                self.headerView(w: inner_w * 0.55)
-                Spacer()
-                self.imgView(w: inner_w * 0.45)
-            }
-            if self.height != .zero{
-                Spacer(minLength: 0)
-            }
-        }.basicCard(size: self.height == .zero ? .zero : .init(width: self.width, height: self.height), background: Color.clear.anyViewWrapper())
+        Container(width:self.width,horizontalPadding: 0,verticalPadding: 3.5,orientation:.horizontal,alignment: .topLeading,spacing: 10){inner_w in
+            self.headerView(w: inner_w * 0.65 - 10)
+            self.imgView(w: inner_w * 0.35)
+        }
     }
 }
-
-//struct NewsSnapshot_Previews: PreviewProvider {
-//    static var previews: some View {
-//        NewsSnapshot()
-//    }
-//}
