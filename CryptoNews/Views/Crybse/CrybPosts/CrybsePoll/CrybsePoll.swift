@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CrybsePoll: View {
-    var poll:CrybsePollData
+    @StateObject var poll:CrybsePollData
     var width:CGFloat = .zero
     var height:CGFloat?
     var alertEventChange:Bool = false
@@ -17,7 +17,7 @@ struct CrybsePoll: View {
     
     init(poll:CrybsePollData,width:CGFloat,height:CGFloat? = nil,alertEventChange:Bool = false){
         self.width = width
-        self.poll = poll
+        self._poll = .init(wrappedValue: poll)
         self.height = height
         self.alertEventChange = alertEventChange
     }
@@ -27,10 +27,35 @@ struct CrybsePoll: View {
         MainText(content: self.poll.Question, fontSize: 20, color: .white, fontWeight: .medium)
     }
     
+    @ViewBuilder func backgroundSelector(option:String,width:CGFloat) -> some View{
+        let isSelected = option == self.selectedOption
+        if self.selectedOption != ""{
+            if isSelected{
+                Color.mainBGColor
+                    .frame(width: width * 0.65)
+                    .clipContent(clipping: .roundClipping)
+            }else{
+                Color.gray
+                    .opacity(0.5)
+                    .frame(width: width * 0.35)
+                    .clipContent(clipping: .roundClipping)
+            }
+        }
+    }
+    
     func optionBuilder(option:String,width:CGFloat) -> some View{
         let isSelected = option == self.selectedOption
-        let isSelectedBackground = Color.mainBGColor.frame(width:  isSelected ? width * 0.65 : 0).opacity(isSelected ? 1 : 0).clipContent(clipping: .clipped).anyViewWrapper()
-        return MainText(content: option, fontSize: 13, color: .white, fontWeight: .regular)
+        var optionRatio = self.poll.OptionRatio(option: option)
+        let isSelectedBackground = Color.mainBGColor.frame(width:  isSelected ? width * CGFloat(optionRatio) : 0).opacity(isSelected ? 1 : 0).clipContent(clipping: .clipped).anyViewWrapper()
+        return
+        
+        MainText(content: option, fontSize: 13, color: .white, fontWeight: .regular)
+            .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .right, spacing: 0, otherView: {
+                if self.selectedOption != "" {
+                    Spacer()
+                    MainText(content: optionRatio.ToDecimals(), fontSize: 13, color: .white, fontWeight: .medium, padding: 0)
+                }
+            })
         .padding()
         .frame(width: width, alignment: .leading)
         .background(isSelectedBackground,alignment: .leading)
@@ -39,7 +64,11 @@ struct CrybsePoll: View {
         .buttonify {
             if self.selectedOption != option{
                 setWithAnimation {
+                    if self.selectedOption != ""{
+                        self.poll.UpdateOptionCount(option: self.selectedOption, count: -1)
+                    }
                     self.selectedOption = option
+                    self.poll.UpdateOptionCount(option: option)
                 }
             }
         }

@@ -19,6 +19,7 @@ struct CustomWrappedTextHStack: View {
     var clipping:Clipping
     var background:Color
     var widthPadding:CGFloat
+    var onTap:((String) -> Void)?
     
     init(
         data:[String],
@@ -30,7 +31,8 @@ struct CustomWrappedTextHStack: View {
         borderColor:Color = .black,
         clipping:Clipping = .roundCornerMedium,
         background:Color = .clear,
-        widthPadding:CGFloat = 15
+        widthPadding:CGFloat = 15,
+        onTapHandle:((String) -> Void)? = nil
     ){
         self.width = width
         self.data = data
@@ -42,17 +44,30 @@ struct CustomWrappedTextHStack: View {
         self.clipping = clipping
         self.background = background
         self.widthPadding = widthPadding
+        self.onTap = onTapHandle
+    }
+    
+    @ViewBuilder func TextBubbleView(text:String) -> some View{
+        let view = MainText(content: text, fontSize: self.fontSize, color: self.fontColor, fontWeight: self.fontWeight,addBG: true, padding: self.padding)
+            .basicCard(background:self.background.anyViewWrapper())
+            .borderCard(color: self.borderColor, clipping: self.clipping)
+        if let safeHandler = self.onTap{
+            view
+                .buttonify{
+                    safeHandler(text)
+                }
+        }else{
+            view
+        }
     }
     
     var body: some View {
-        Container(width:self.width,ignoreSides: true,horizontalPadding: 0,verticalPadding: 0){ _ in
+        Container(width:self.width,ignoreSides: true,horizontalPadding: 0, verticalPadding: 0, lazyLoad: true){ _ in
             ForEach(Array(self.mutateData(targetWidth: self.width).enumerated()),id:\.offset){ _row in
                 let row = _row.element
                 HStack(alignment: .center, spacing: 10) {
                     ForEach(row, id:\.self) { rowVal in
-                        MainText(content: rowVal, fontSize: self.fontSize, color: self.fontColor, fontWeight: self.fontWeight,addBG: true, padding: self.padding)
-                            .basicCard(background:self.background.anyViewWrapper())
-                            .borderCard(color: self.borderColor, clipping: self.clipping)
+                        self.TextBubbleView(text: rowVal)
                     }
                 }
             }

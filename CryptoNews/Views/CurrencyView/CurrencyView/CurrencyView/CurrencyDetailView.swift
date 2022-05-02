@@ -36,7 +36,7 @@ struct CurrencyDetailView: View {
              
         self.assetData = assetData
         self._timeSeriesAPI = .init(wrappedValue: .init(currency: assetData.currency, limit: 1, fiat: "USD"))
-        self.size = size
+        self.size = .init(width: size.width, height: size.height)
         self.onClose = onClose
     }
     
@@ -186,10 +186,12 @@ extension CurrencyDetailView{
             }){ w in
                 ZoomInScrollView(data: tweets, centralizeStart: true, lazyLoad: false, size: .init(width: w * 0.8, height: totalHeight * 0.3), selectedCardSize: .init(width: w * 0.8, height: totalHeight * 0.3)) { data, size, _ in
                     if let safeTweet = data as? CrybseTweet{
-                        TweetSnapshot(tweet: safeTweet, width: size.width, height: size.height)
-                            .frame(width: size.width, height: size.height, alignment: .topLeading)
-                            .basicCard(size: size)
+                        TweetSnapshot(tweet: safeTweet, width: size.width - 30, height: size.height - 30)
+                            .padding(15)
+                            .frame(width: size.width - 2, height: size.height - 2, alignment: .topLeading)
+                            .basicCard(size: .init(width: size.width - 2, height: size.height - 2))
                             .borderCard(color: .white, clipping: .roundClipping)
+                            .padding(.top,1)
                             .slideZoomInOut(cardSize: size)
                             .buttonify {
                                 if self.context.selectedTweet?.id != safeTweet.id{

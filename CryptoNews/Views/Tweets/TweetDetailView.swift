@@ -22,11 +22,15 @@ struct TweetDetailView:View{
     
     
     var body:some View{
-        Container(width: self.width) { inner_w in
-            self.innerView(inner_w: inner_w)
+        Container(width:self.width,ignoreSides: true,verticalPadding: 0){ _ in
+            Container(width: self.width) { inner_w in
+                self.innerView(inner_w: inner_w)
+            }
+            .basicCard()
+            .borderCard(color: self.isRetweet ? .white.opacity(0.5) : .clear, clipping: .roundClipping)
+            self.TweetPoll(w: self.width)
         }
-        .basicCard()
-        .borderCard(color: self.isRetweet ? .white.opacity(0.5) : .clear, clipping: .roundClipping)
+        
         .onAppear(perform: self.fetchRetweets)
         
     }
@@ -43,7 +47,60 @@ extension TweetDetailView{
                 }
             }
         }
-
+    }
+    
+    @ViewBuilder func TweetPoll(w:CGFloat) -> some View{
+        Container(heading: "Polls",headingColor: .white, headingDivider: false,headingSize: 30, width: w, ignoreSides: true,horizontalPadding: 0,verticalPadding: 0) { inner_w in
+            CrybsePoll(poll: .init(question: "What is the sentiment of the tweet", options: ["Bearish","Bullish"]), width: inner_w)
+            Container(heading: "Reactions", headingColor: .white, headingDivider: false, headingSize: 20, width: inner_w) { w in
+                CustomWrappedTextHStack(data: ["Fake News","Trusted News","Overraction","Quality Analysis","Bad analysis"], width: inner_w, fontSize: 14, fontColor: .white, fontWeight: .medium, padding: 10, borderColor: .white, clipping: .roundCornerMedium, background: .clear, widthPadding: 15) { textVal in
+                    print("Clicked on : ",textVal)
+                }
+                self.ReactionsBreakdownView(w: w)
+            }.basicCard()
+        }
+        
+    }
+    
+    var reactions:[String:Float]{
+        ["Fake News":Float.random(in: 0...15),"Trusted News":Float.random(in: 0...15),"Overreaction":Float.random(in: 0...15),"Quality Reaction":Float.random(in: 0...15),"Bad analysis":Float.random(in: 0...15)]
+    }
+    
+    var reactionColors:[String:Color]{
+        ["Fake News":Color.red,"Trusted News":Color.green,"Overreaction":Color.orange,"Quality Reaction":Color.blue,"Bad analysis":Color.gray]
+    }
+    
+    var reactionMaps:[Color:Float]?{
+        var map = [Color:Float]()
+        for (reaction,r_count) in reactions{
+            if let color = reactionColors[reaction]{
+                map[color] = r_count
+            }
+        }
+        return map
+    }
+    
+    @ViewBuilder func ReactionsBreakdownView(w:CGFloat) -> some View{
+        if let safeReactionMap = self.reactionMaps{
+            DonutChart(selectedColor: nil, diameter: w * 0.45, lineWidth: 15, valueColorPair: safeReactionMap)
+                .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .right, spacing: 0) {
+                    Spacer()
+                    VStack(alignment: .leading, spacing: 10) {
+                        ForEach(Array(self.reactionColors.keys),id:\.self){ reaction in
+                            if let safeColor = self.reactionColors[reaction],let safeCount = self.reactions[reaction]{
+                                HStack(alignment: .center, spacing: 10) {
+                                    Circle()
+                                        .fill(safeColor)
+                                        .frame(width: 10, height: 10, alignment: .center)
+                                    MainText(content: reaction, fontSize: 10, color: .white, fontWeight: .medium)
+                                    MainText(content: safeCount.ToDecimals(), fontSize: 10, color: .white, fontWeight: .medium)
+                                }
+                            }
+                        }
+                    }
+                }
+        }
+        
     }
     
     
@@ -244,6 +301,15 @@ struct TweetDetailMainView:View{
 
 struct TweetDetailHelperPreviews:PreviewProvider{
     static var previews: some View{
-        TweetDetailMainView(tweet_id: "1507637541691957250")
+        if let firstTweet = CrybseSocialHighlightsAPI.loadStaticSocialHighlights()?.tweets?.first{
+            ScrollView(showsIndicators: false) {
+                TweetDetailMainView(tweet:firstTweet)
+            }
+            .background(Color.AppBGColor.ignoresSafeArea())
+            
+        }else{
+            ProgressView()
+        }
+        
     }
 }
