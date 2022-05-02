@@ -109,7 +109,7 @@ struct CurrencyPriceSummaryView: View {
     }
     
     var CoinPriceView:some View{
-        MainSubHeading(heading: self.asset.CoinData.Name, subHeading: self.SelectedPrice.ToMoney(), headingSize: 17.5, subHeadingSize: 25, headColor: .white, subHeadColor: .white, headingWeight: .medium, bodyWeight: .semibold, alignment: .center)
+        MainTextSubHeading(heading: self.asset.CoinData.Name, subHeading: self.SelectedPrice.ToMoney(), headingSize: 17.5, subHeadingSize: 25, headColor: .white, subHeadColor: .white, headingWeight: .medium, bodyWeight: .semibold, alignment: .center)
             .frame(width: self.width,height: self.height * 0.2, alignment: .center)
     }
 

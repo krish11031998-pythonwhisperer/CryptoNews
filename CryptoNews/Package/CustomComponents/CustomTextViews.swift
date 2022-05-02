@@ -65,7 +65,7 @@ public struct MainText: View {
     }
 }
 
-struct MainSubHeading:View{
+struct MainTextSubHeading:View{
     var heading:String
     var subHeading:String
     var headingSize:CGFloat

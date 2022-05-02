@@ -54,17 +54,18 @@ struct CurrencyView:View{
         if self.assetData.coin == nil{
             self.coinAPI.getCoinData()
             self.loading.toggle()
-        }else if self.assetData.coin != nil,let name = self.assetData.coin?.MetaData.Name.lowercased(){
-            self.loading.toggle()
-            CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: name, interval: "m1") { price in
-                guard let latestPrice = price.last else {return}
-                setWithAnimation {
-                    self.assetData.coin?.prices?.append(latestPrice)
-                    self.loading.toggle()
-                }
-            }
-
         }
+//        else if self.assetData.coin != nil,let name = self.assetData.coin?.MetaData.Name.lowercased(){
+//            self.loading.toggle()
+//            CrybseCoinPriceAPI.shared.refreshLatestPrices(asset: name, interval: "m1") { price in
+//                guard let latestPrice = price.last else {return}
+//                setWithAnimation {
+//                    self.assetData.coin?.prices?.append(latestPrice)
+//                    self.loading.toggle()
+//                }
+//            }
+//
+//        }
     }
     
     func onReceiveCoinData(_ coinData: CrybseCoinSocialData?){

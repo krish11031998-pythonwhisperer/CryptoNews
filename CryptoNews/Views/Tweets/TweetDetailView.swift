@@ -137,8 +137,8 @@ extension TweetDetailView{
             HStack(alignment: .center, spacing: 15) {
                 ImageView(url: user.profile_image_url, width: 45, height: 45, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
-                MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:
-                                self.tweet.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: .white, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular,spacing: 0, alignment: .leading)
+                MainTextSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:
+                                self.tweet.CreateAtDateString, headingSize: 12.5, subHeadingSize: 10, headColor: .white, subHeadColor: .gray, headingWeight: .semibold, bodyWeight: .regular,spacing: 0, alignment: .leading)
                 Spacer()
                 ImageView(img: .init(named: "TwitterIcon"), width: 25, height: 25, contentMode: .fill, alignment: .center,clipping: .circleClipping)
             }

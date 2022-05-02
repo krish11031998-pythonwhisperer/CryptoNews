@@ -25,7 +25,7 @@ struct PortfolioMain: View {
             Container(ignoreSides: true) { w in
                 self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
                 self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
-                PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.125))
+                PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.35))
                     .animatedAppearance()
                 
             }
@@ -82,7 +82,7 @@ extension PortfolioMain{
     
     @ViewBuilder func InvestmentsSummary(_ width:CGFloat) -> some View{
         Container(width: width) { w in
-            MainSubHeading(heading: "Invested Capital", subHeading: self.context.userAssets.InvestedValue.ToPrettyMoney(), headingSize: 13.5, subHeadingSize: 22.5, headColor: .white.opacity(0.5), subHeadColor: .white, headingWeight: .semibold, bodyWeight: .medium)
+            MainTextSubHeading(heading: "Invested Capital", subHeading: self.context.userAssets.InvestedValue.ToPrettyMoney(), headingSize: 13.5, subHeadingSize: 22.5, headColor: .white.opacity(0.5), subHeadColor: .white, headingWeight: .semibold, bodyWeight: .medium)
             
             if let profitableAsset = self.profitableAsset{
                 self.assetInvestmentSummary(heading:"Most Profitable Asset",asset: profitableAsset,inner_w: w)

@@ -37,7 +37,7 @@ struct BackgroundImageShadowView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(alignment: .center, spacing: 10) {
             Spacer()
-            MainSubHeading(heading: "Title", subHeading: "SubTitle", headingSize: 17.5, subHeadingSize: 13.5,headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 1, alignment: .topLeading)
+            MainTextSubHeading(heading: "Title", subHeading: "SubTitle", headingSize: 17.5, subHeadingSize: 13.5,headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 1, alignment: .topLeading)
                 .padding()
         }
         .frame(width: 250, height: 350, alignment: .leading)

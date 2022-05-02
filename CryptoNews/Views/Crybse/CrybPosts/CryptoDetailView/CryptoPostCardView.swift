@@ -34,7 +34,7 @@ extension CryptoPostCardView{
     func header(w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
             ImageView(url: self.postData.User.Img, width: w * 0.15, height: w * 0.15, contentMode: .fill, alignment: .center,clipping: .circleClipping)
-            MainSubHeading(heading: self.postData.User.UserName, subHeading: self.postData.PricePrediction.Time.stringDate(), headingSize: 15, subHeadingSize: 13, headColor: .black, subHeadColor: .gray,alignment: .leading)
+            MainTextSubHeading(heading: self.postData.User.UserName, subHeading: self.postData.PricePrediction.Time.stringDate(), headingSize: 15, subHeadingSize: 13, headColor: .black, subHeadColor: .gray,alignment: .leading)
             Spacer()
         }
     }

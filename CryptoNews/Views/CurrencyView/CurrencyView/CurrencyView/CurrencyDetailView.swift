@@ -59,7 +59,7 @@ extension CurrencyDetailView{
         StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0",baseNavBarHeight: totalHeight * 0.6,minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
             CurrencyPriceSummaryView(asset: self.assetData, width: size.width, height: size.height, choosenPrice: self.$choosen, choosenInterval: self.$choosenTimeInterval, refresh: $refresh)
         }, innerView: {
-            Container(width:self.size.width,ignoreSides:true,lazyLoad: true){_ in
+            Container(width:self.size.width,ignoreSides:true,lazyLoad: false){_ in
                 self.transactionHistoryView
                 self.CurrencySummary
                 self.infoSection
@@ -211,7 +211,6 @@ extension CurrencyDetailView{
                 SentimentsSnapshot(sentiment: safeSentiment, width: w)
                     .basicCard()
                     .borderCard(color: .white, clipping: .roundClipping)
-                    .slideZoomInOut(cardSize: size)
             }
             
             
@@ -229,7 +228,6 @@ extension CurrencyDetailView{
                     
                     if let safeEvent = data as? CrybseEventData{
                         EventSnapshot(event: safeEvent, width: size.width, height: size.height)
-                            .frame(width: size.width, height: size.height, alignment: .topLeading)
                             .basicCard(size: size)
                             .borderCard(color: .white, clipping: .roundClipping)
                             .slideZoomInOut(cardSize: size)

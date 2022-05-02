@@ -74,7 +74,7 @@ struct CrybsePostReactionView: View {
     }
     
     func ratingView(rating:CrybsePostReaction) -> some View{
-        return MainSubHeading(heading: CrybsePostReaction.buttonImg(reaction: rating), subHeading: rating.rawValue.capitalized, headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
+        return MainTextSubHeading(heading: CrybsePostReaction.buttonImg(reaction: rating), subHeading: rating.rawValue.capitalized, headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
     }
     
     @ViewBuilder func RatingViewButton(rating:CrybsePostReaction) -> some View{

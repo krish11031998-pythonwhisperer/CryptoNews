@@ -55,7 +55,7 @@ struct PortfolioSummary: View {
     
     var header:some View{
         Container(width:self.width,verticalPadding: 0,orientation: .horizontal, aligment: .center, spacing: 10) { w in
-            MainSubHeading(heading: "Current Portfolio Value", subHeading:currentValue.ToMoney(), headingSize: 20, subHeadingSize: 25, headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 10, alignment: .leading)
+            MainTextSubHeading(heading: "Current Portfolio Value", subHeading:currentValue.ToMoney(), headingSize: 20, subHeadingSize: 25, headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium, spacing: 10, alignment: .leading)
             Spacer()
             if let change = self.assetOverTime?.change{
                 PercentChangeView(value: (change * 100), type: "large")
@@ -76,7 +76,7 @@ struct PortfolioSummary: View {
                         let asset = _asset.element
                         HStack(alignment: .center, spacing: 10) {
                             CurrencySymbolView(currency: asset.Currency, width: 15 )
-                            MainSubHeading(heading: asset.Currency, subHeading: asset.Profit.ToMoney(), headingSize: 15, subHeadingSize: 15,headColor: .white, subHeadColor: asset.Profit == 0 ? .white : asset.Profit > 0 ? .green : .red, orientation: .horizontal, headingWeight: .medium, bodyWeight: .semibold, spacing: 15, alignment: .center)
+                            MainTextSubHeading(heading: asset.Currency, subHeading: asset.Profit.ToMoney(), headingSize: 15, subHeadingSize: 15,headColor: .white, subHeadColor: asset.Profit == 0 ? .white : asset.Profit > 0 ? .green : .red, orientation: .horizontal, headingWeight: .medium, bodyWeight: .semibold, spacing: 15, alignment: .center)
                         }
                         .padding(7.5)
                         .background(BlurView.thinDarkBlur.clipContent(clipping: .roundClipping))

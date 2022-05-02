@@ -30,7 +30,7 @@ struct NewsDetailView: View {
             MainText(content: title, fontSize: 22.5, color: .white, fontWeight: .medium)
         }
         HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: self.news.SourceName, subHeading: self.news.Date, headingSize: 17, subHeadingSize: 13, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 10, alignment: .topLeading)
+            MainTextSubHeading(heading: self.news.SourceName, subHeading: self.news.DateText, headingSize: 17, subHeadingSize: 13, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 10, alignment: .topLeading)
             Spacer()
             if let sentiment = self.news.sentiment{
                 let color = sentiment == "Positive" ? Color.green : sentiment == "Negative" ? Color.red : Color.gray

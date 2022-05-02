@@ -34,7 +34,7 @@ extension ProfileView{
         
     @ViewBuilder func UserinfoGridEl (key:String) -> some View{
         if let value = self.user.userInfo[key]{
-            MainSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 14,headColor: .white.opacity(0.75),subHeadColor: .white, alignment: .center)
+            MainTextSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 14,headColor: .white.opacity(0.75),subHeadColor: .white, alignment: .center)
         }else{
             Color.clear
         }
@@ -63,7 +63,7 @@ extension ProfileView{
         VStack(alignment: .center, spacing: 15) {
             self.imageBGView(w)
                 .padding(.bottom, w * 0.15)
-            MainSubHeading(heading: self.user.name ?? "Name" , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .white.opacity(0.75), alignment: .center)
+            MainTextSubHeading(heading: self.user.name ?? "Name" , subHeading: self.user.userName ?? "username123", headingSize: 15, subHeadingSize: 13, headingFont: .normal, subHeadingFont: .normal, headColor: .white, subHeadColor: .white.opacity(0.75), alignment: .center)
             InfoGrid(info: self.user.userInfoKeys, width: w, viewPopulator: self.UserinfoGridEl(key:))
         }
         .padding(.bottom,20)
@@ -87,7 +87,7 @@ extension ProfileView{
     
     @ViewBuilder func SocialinfoGridEl (key:String) -> some View{
         if let value = self.SocialMetrics[key]{
-            MainSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 20, alignment: .center)
+            MainTextSubHeading(heading: key, subHeading: value, headingSize: 12, subHeadingSize: 20, alignment: .center)
         }else{
             Color.clear
         }
@@ -169,7 +169,7 @@ extension ProfileView{
         Container(heading: "Activity", width: w, ignoreSides: false) {w in
             InfoGrid(info: self.SocialMetricsKeys, width: w) { (key) in
                 if let value = self.SocialMetrics[key]{
-                    MainSubHeading(heading: key, subHeading: value, headingSize: 15, subHeadingSize: 30, headColor: .gray, subHeadColor: .white, alignment: .center)
+                    MainTextSubHeading(heading: key, subHeading: value, headingSize: 15, subHeadingSize: 30, headColor: .gray, subHeadColor: .white, alignment: .center)
                 }else{
                     Color.clear
                 }

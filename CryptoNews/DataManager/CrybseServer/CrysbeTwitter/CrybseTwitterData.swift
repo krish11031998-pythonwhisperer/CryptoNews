@@ -120,7 +120,7 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
         return [self.publicMetric?.like_count,self.publicMetric?.view_count,self.publicMetric?.quote_count,self.publicMetric?.reply_count,self.publicMetric?.retweet_count].compactMap({$0}).reduce(0, {$0 + $1})
     }
     
-    var CreatedAt:String{
+    var CreateAtDateString:String{
         if let safeStrDate = self.created_at{
             return Date.date_from_string(str_Date: safeStrDate)
         }else{
@@ -150,6 +150,12 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
     
     var Sentiment:Float{
         return self.sentiment ?? 3.0
+    }
+    
+    var CreatedAtDate:Date{
+        guard let safeDateText = self.created_at else {return Date()}
+        let outputFormatter = DateFormatter()
+        return outputFormatter.date(from: safeDateText) ?? Date()
     }
     
     var Entities:[String]{

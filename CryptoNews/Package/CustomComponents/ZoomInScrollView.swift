@@ -159,8 +159,6 @@ struct ZoomInScrollView<T:View>: View {
             let component = _component.element
             let idx = _component.offset
                 self.cardBuilder(data: component.data, idx: idx)
-                    .padding(.vertical,self.axis == .horizontal ? 15 : 0)
-                    .padding(.horizontal,self.axis == .vertical ? 15 : 0)
                     .id(idx)
         }
     }

@@ -64,7 +64,7 @@ struct MarkerMainView:View{
                         Spacer()
                         self.percentChangeView(value: value)
                     }else{
-                        MainSubHeading(heading: key, subHeading: key == "Coin(s)" ? convertToDecimals(value:abs(value)) : convertToMoneyNumber(value: abs(value)), headingSize: 12, subHeadingSize: 20,subHeadColor: key == "Profit" ? value < 0 ? .red : .green : .white)
+                        MainTextSubHeading(heading: key, subHeading: key == "Coin(s)" ? convertToDecimals(value:abs(value)) : convertToMoneyNumber(value: abs(value)), headingSize: 12, subHeadingSize: 20,subHeadColor: key == "Profit" ? value < 0 ? .red : .green : .white)
                     }
                     
                 }
@@ -76,9 +76,9 @@ struct MarkerMainView:View{
     
     func transactionDetails(size:CGSize) -> some View{
         return HStack(alignment: .top, spacing: 20){
-            MainSubHeading(heading: "Total gas fee", subHeading: convertToMoneyNumber(value: self.data.fee), headingSize: 12, subHeadingSize: 15)
-            MainSubHeading(heading: "Total fee", subHeading: convertToMoneyNumber(value: self.data.fee), headingSize: 12, subHeadingSize: 15)
-            MainSubHeading(heading: "Total Buy Txns", subHeading: "\(self.data.totalBuys ?? 0)", headingSize: 12, subHeadingSize: 15)
+            MainTextSubHeading(heading: "Total gas fee", subHeading: convertToMoneyNumber(value: self.data.fee), headingSize: 12, subHeadingSize: 15)
+            MainTextSubHeading(heading: "Total fee", subHeading: convertToMoneyNumber(value: self.data.fee), headingSize: 12, subHeadingSize: 15)
+            MainTextSubHeading(heading: "Total Buy Txns", subHeading: "\(self.data.totalBuys ?? 0)", headingSize: 12, subHeadingSize: 15)
         }.frame(width: size.width, height: size.height, alignment: .leading)
     }
     
@@ -86,8 +86,8 @@ struct MarkerMainView:View{
         let percent:Float =  (Float(txn.crypto_coins) * self.data.currentPrice - txn.totalfee)/txn.totalfee
         let color:Color = percent < 0 ? .red : .green
         return VStack(alignment: .leading, spacing: 2.5){
-            MainSubHeading(heading: txn.type?.capitalized  ?? "Coins", subHeading: convertToDecimals(value: Float(txn.crypto_coins)), headingSize: 12, subHeadingSize: 15)
-            MainSubHeading(heading: "Value", subHeading: convertToMoneyNumber(value: txn.value_usd), headingSize: 12, subHeadingSize: 15)
+            MainTextSubHeading(heading: txn.type?.capitalized  ?? "Coins", subHeading: convertToDecimals(value: Float(txn.crypto_coins)), headingSize: 12, subHeadingSize: 15)
+            MainTextSubHeading(heading: "Value", subHeading: convertToMoneyNumber(value: txn.value_usd), headingSize: 12, subHeadingSize: 15)
             self.percentChangeView(value: percent * 100,type: "small").padding(.vertical,5)
             
         }.padding()

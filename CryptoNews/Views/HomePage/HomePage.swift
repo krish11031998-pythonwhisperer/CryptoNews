@@ -28,17 +28,8 @@ struct HomePage: View {
             Spacer().frame(height: 50)
             LazyVStack(alignment: .leading, spacing: 10) {
                 AllAssetView()
-//                    .animatedAppearance()
-    //                .asyncContainer()
                 self.SocialFeedSummary
-//                    .animatedAppearance()
             }
-//            AllAssetView()
-//                .animatedAppearance()
-////                .asyncContainer()
-//            self.SocialFeedSummary
-//                .animatedAppearance()
-//                .asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

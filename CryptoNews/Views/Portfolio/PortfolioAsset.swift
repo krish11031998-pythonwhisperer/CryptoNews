@@ -31,7 +31,7 @@ struct PortfolioAsset: View {
     func infoView(inner_w:CGFloat) -> some View{
         VStack(alignment: .leading, spacing: 10) {
             self.heading
-            MainSubHeading(heading: self.change.0, subHeading: self.assetHolding, headingSize: 13, subHeadingSize: 17, headColor: self.change.1, subHeadColor: .black, alignment: .leading)
+            MainTextSubHeading(heading: self.change.0, subHeading: self.assetHolding, headingSize: 13, subHeadingSize: 17, headColor: self.change.1, subHeadColor: .black, alignment: .leading)
         }.frame(width: inner_w, alignment: .leading)
     }
     

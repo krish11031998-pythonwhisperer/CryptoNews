@@ -38,6 +38,13 @@ class CrybseRedditData:Codable,Equatable{
         return self.title ?? ""
     }
     
+    var CreatedAtDate:Date{
+        guard let safeDate = self.created_utc else {return Date()}
+        let outputFormatter = DateFormatter()
+        return outputFormatter.date(from: safeDate) ?? Date()
+        
+    }
+    
     var SelfText:String{
         if let text = self.selftext{
             return text.split(separator: "\n").reduce("", {$0 == "" ? String($1) : $0 + "\n\n" + String($1)})

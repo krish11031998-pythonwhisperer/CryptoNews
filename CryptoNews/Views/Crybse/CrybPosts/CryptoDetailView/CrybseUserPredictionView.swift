@@ -52,11 +52,11 @@ extension CrybseUserPredictionView{
     }
     
     func chartIndicators(heading:String,subHeading:String) -> some View{
-        MainSubHeading(heading: heading, subHeading:subHeading, headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .white, alignment: .leading)
+        MainTextSubHeading(heading: heading, subHeading:subHeading, headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .white, alignment: .leading)
     }
     
     func chartLegendBox(heading:String,subHeading:String) -> some View{
-        MainSubHeading(heading: heading, subHeading: subHeading, headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
+        MainTextSubHeading(heading: heading, subHeading: subHeading, headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
             .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
     }
     

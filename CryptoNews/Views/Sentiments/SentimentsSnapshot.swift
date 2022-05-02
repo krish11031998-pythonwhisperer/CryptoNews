@@ -65,7 +65,7 @@ struct SentimentsSnapshot: View {
                 Spacer()
                 MainText(content: "\(self.SentimentSelector(value: totalSentiment.SentimentScore))", fontSize: 22.5, color: self.sentimentTotalColor, fontWeight: .semibold)
             }
-            MainSubHeading(heading: "Sentiment Score", subHeading: totalSentiment.SentimentScore.ToDecimals(), headingSize: 15, subHeadingSize: 17.5,headColor:  .white.opacity(0.85), subHeadColor: sentimentTotalColor, headingWeight: .medium, bodyWeight: .semibold)
+            MainTextSubHeading(heading: "Sentiment Score", subHeading: totalSentiment.SentimentScore.ToDecimals(), headingSize: 15, subHeadingSize: 17.5,headColor:  .white.opacity(0.85), subHeadColor: sentimentTotalColor, headingWeight: .medium, bodyWeight: .semibold)
                 .frame(width: w, alignment: .leading)
         }
     }
@@ -80,10 +80,10 @@ struct SentimentsSnapshot: View {
             CurveChart(data: timelineSentimentValue, interactions: false, size: .init(width: w, height: totalHeight * 0.175), bg: .clear, lineColor: .gray)
             HStack(alignment: .center, spacing: 10) {
                 if let highest = timelineSentimentbySentimentScore.first{
-                    MainSubHeading(heading: "Highest", subHeading: highest.ToDecimals(),headingSize: 15,subHeadingSize: 17.5,headColor: .gray.opacity(0.75),subHeadColor: self.ColorSelector(value: highest))
+                    MainTextSubHeading(heading: "Highest", subHeading: highest.ToDecimals(),headingSize: 15,subHeadingSize: 17.5,headColor: .gray.opacity(0.75),subHeadColor: self.ColorSelector(value: highest))
                 }
                 if let lowest = timelineSentimentbySentimentScore.last{
-                    MainSubHeading(heading: "Lowest", subHeading: lowest.ToDecimals(),headingSize: 15,subHeadingSize: 17.5,headColor: .gray.opacity(0.75),subHeadColor: self.ColorSelector(value: lowest))
+                    MainTextSubHeading(heading: "Lowest", subHeading: lowest.ToDecimals(),headingSize: 15,subHeadingSize: 17.5,headColor: .gray.opacity(0.75),subHeadColor: self.ColorSelector(value: lowest))
                 }
             }.frame(width: w, alignment: .leading)
         }

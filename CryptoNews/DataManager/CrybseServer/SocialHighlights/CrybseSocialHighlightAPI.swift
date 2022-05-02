@@ -30,4 +30,15 @@ class CrybseSocialHighlightsAPI:CrybseAssetSocialsAPI{
     func getSocialHighlights(type:CrybseAssetSocialType? = nil,endpoint:CrybseTwitterEndpoints? = nil,queryItems:[String:Any]? = nil,completion:((Data?) -> Void)? = nil){
         self.getAssetSocialData(type: type, endpoint: endpoint?.rawValue, queryItems: queryItems, completion: completion)
     }
+    
+    static func loadStaticSocialHighlights() -> CrybseSocialHighlights?{
+        if let safeData = readJsonFile(forName: "socialHighlights"){
+            if let safeSocialHighlights = CrybseSocialHighlightResponse.parseHighlightsFromData(data: safeData){
+                return safeSocialHighlights
+            }
+        }else{
+            print("JSON file with the name : socialHighlights is not available")
+        }
+        return nil
+    }
 }

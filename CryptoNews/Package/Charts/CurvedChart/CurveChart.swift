@@ -83,32 +83,24 @@ public struct CurveChart: View {
         
     }
     
-    func chart(width:CGFloat, height:CGFloat) -> AnyView{
-        return AnyView(GeometryReader{g in
-            
-            let w = g.size.width
-            let h = g.size.height
-            let chart_w = w * 0.95
-            let stepWidth = chart_w / CGFloat(self.data.count - 1)
-            let stepHeight = self.calcStepHeight(h: h - 40)
-
-            ZStack(alignment: .bottom){
-                self.path(size:.init(width: chart_w, height: h),step: .init(width: stepWidth, height: stepHeight))
-                    .frame(width: w, height: h, alignment: .center)
-                    .background(self.bgColor)
-                    .clipShape(RoundedRectangle(cornerRadius: 20))
-                    .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
-                    .onAppear(perform: self.onAppear)
-                if self.selected != -1 || self.choosen != -1{
-                    Rectangle()
-                        .fill(Color.white)
-                        .frame(width: 2, height: self.size.height, alignment: .leading)
-                        .offset(x: self.location.x - (w * 0.5  - 10))
-                }
-            }.frame(width: w, height: h, alignment: .leading)
-            
-        }
-        .frame(width: width, height: height, alignment: .center))
+    func chart(width:CGFloat, height:CGFloat) -> some View{
+        let chart_w = width * 0.95
+        let stepWidth = chart_w / CGFloat(self.data.count - 1)
+        let stepHeight = self.calcStepHeight(h: height - 40)
+        
+        return ZStack(alignment: .bottom){
+            self.path(size:.init(width: chart_w, height: height),step: .init(width: stepWidth, height: stepHeight))
+                .background(self.bgColor)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .shadow(color: .black.opacity(0.2), radius: 10, x: 0, y: 0)
+                .onAppear(perform: self.onAppear)
+            if self.selected != -1 || self.choosen != -1{
+                Rectangle()
+                    .fill(Color.white)
+                    .frame(width: 2, height: height, alignment: .leading)
+                    .offset(x: self.location.x - (width * 0.5  - 10))
+            }
+        }.frame(width: width, height: height, alignment: .leading)
     }
     
     
@@ -118,7 +110,6 @@ public struct CurveChart: View {
                 MainText(content: header, fontSize: 25, color: .white, fontWeight: .semibold)
                     .frame(width: size.width,alignment: .topLeading)
                 self.chart(width: size.width, height: size.height - 50)
-//                    .background(Color.red)
             }.frame(width: size.width, height: size.height, alignment: .topLeading)
         }else{
             self.chart(width: size.width, height: size.height)
@@ -194,7 +185,6 @@ extension CurveChart{
         .clipShape(RoundedRectangle(cornerRadius: 10))
         .shadow(color: .black.opacity(0.3), radius: 10, x: 0, y: 0)
         .offset(x: x_off)
-        .padding(.bottom,10)
         )
         
     }

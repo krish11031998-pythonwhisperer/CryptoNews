@@ -33,7 +33,7 @@ struct CurrencySummaryView: View {
         LazyVGrid(columns: [GridItem.init(.adaptive(minimum: self.col_w, maximum: self.col_w), spacing: 10, alignment: .topLeading)], alignment: .center, spacing: 10) {
             ForEach(self.infoKeys,id: \.self) { key in
                 let val = self.values[key] ?? "No Value"
-                MainSubHeading(heading: key, subHeading: val, headingSize: 15, subHeadingSize: 17.5,subHeadColor: .white)
+                MainTextSubHeading(heading: key, subHeading: val, headingSize: 15, subHeadingSize: 17.5,subHeadColor: .white)
             }
         }
     }

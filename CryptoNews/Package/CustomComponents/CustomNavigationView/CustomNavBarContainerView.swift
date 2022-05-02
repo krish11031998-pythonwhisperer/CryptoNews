@@ -129,7 +129,7 @@ extension CustomNavBarContainerView{
         if let title = title, self.subTitle == nil {
             MainText(content: title, fontSize: 20, color: self.fontColor, fontWeight: .medium, padding: 15)
         }else if let title = self.title, let subTitle = self.subTitle{
-            MainSubHeading(heading: title, subHeading: subTitle, headingSize: 25, subHeadingSize: 15, headColor: self.fontColor, subHeadColor: self.fontColor, orientation: .vertical, headingWeight: .medium, bodyWeight: .regular, spacing: 10, alignment: .center)
+            MainTextSubHeading(heading: title, subHeading: subTitle, headingSize: 25, subHeadingSize: 15, headColor: self.fontColor, subHeadColor: self.fontColor, orientation: .vertical, headingWeight: .medium, bodyWeight: .regular, spacing: 10, alignment: .center)
         }
     }
     

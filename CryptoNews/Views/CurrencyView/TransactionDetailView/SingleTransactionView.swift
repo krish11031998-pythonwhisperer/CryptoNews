@@ -87,16 +87,16 @@ extension SingleTransactionView{
     var txnMiscDetails:some View{
         VStack(alignment: .leading, spacing: 10) {
             if let spotPrice = self.txn.asset_spot_price,spotPrice != 0{
-                MainSubHeading(heading: "Spot Price", subHeading: convertToMoneyNumber(value: spotPrice), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+                MainTextSubHeading(heading: "Spot Price", subHeading: convertToMoneyNumber(value: spotPrice), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
             }
             if let subTotal = self.txn.subtotal, subTotal != 0{
-                MainSubHeading(heading: "Sub-Total", subHeading: convertToMoneyNumber(value: subTotal), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+                MainTextSubHeading(heading: "Sub-Total", subHeading: convertToMoneyNumber(value: subTotal), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
             }
             if let fee = self.txn.fee, fee != 0{
-                MainSubHeading(heading: "Fee", subHeading: convertToMoneyNumber(value: fee), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+                MainTextSubHeading(heading: "Fee", subHeading: convertToMoneyNumber(value: fee), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
             }
             if let total = self.txn.total_inclusive_price, total != 0{
-                MainSubHeading(heading: "Total", subHeading: convertToMoneyNumber(value: total), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
+                MainTextSubHeading(heading: "Total", subHeading: convertToMoneyNumber(value: total), headingSize: 12, subHeadingSize: 14,headingFont: .monospaced,subHeadingFont: .monospaced)
             }
         }
     }

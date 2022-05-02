@@ -75,7 +75,7 @@ extension TransactionDetailsView{
         if let value = self.AssetHeadValue[key]{
             let val = key == "Txns" ? "\(value)" : convertToMoneyNumber(value: value)
             let color:Color = key == "Profit" ? value > 0 ? .green  : .red : .white
-            MainSubHeading(heading: key, subHeading: val, headingSize: 12, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal, headColor: .gray, subHeadColor: color,alignment: .center)
+            MainTextSubHeading(heading: key, subHeading: val, headingSize: 12, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal, headColor: .gray, subHeadColor: color,alignment: .center)
         }else{
             Color.clear
         }
@@ -89,7 +89,7 @@ extension TransactionDetailsView{
             HStack(alignment: .bottom, spacing: 10) {
                 MainText(content: self.currency, fontSize: 25, color: .white, fontWeight: .semibold)
                 Spacer()
-                MainSubHeading(heading: "Coin(s)", subHeading: "\(convertToDecimals(value: self.totalCoins))",headingSize: 15, subHeadingSize: 25, headColor: .gray,subHeadColor: .white,alignment: .center)
+                MainTextSubHeading(heading: "Coin(s)", subHeading: "\(convertToDecimals(value: self.totalCoins))",headingSize: 15, subHeadingSize: 25, headColor: .gray,subHeadColor: .white,alignment: .center)
                     .aspectRatio(contentMode: .fit)
             }.frame(width: w, alignment: .center)
         }

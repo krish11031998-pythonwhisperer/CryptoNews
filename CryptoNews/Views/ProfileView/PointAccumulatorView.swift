@@ -21,7 +21,7 @@ struct PointAccumulatorView: View {
     
     @ViewBuilder func pointsView(w:CGFloat) -> some View{
         HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: "\(self.userActivity.values.reduce(0, {$0 + $1}))", subHeading: "Points", headingSize: 35, subHeadingSize: 20, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 7.5, alignment: .center)
+            MainTextSubHeading(heading: "\(self.userActivity.values.reduce(0, {$0 + $1}))", subHeading: "Points", headingSize: 35, subHeadingSize: 20, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 7.5, alignment: .center)
             Spacer()
             //Include Timer
             MainText(content: "Include Timer", fontSize: 15, color: .white, fontWeight: .medium)
@@ -37,7 +37,7 @@ struct PointAccumulatorView: View {
                     if idx != 0{
                         Spacer()
                     }
-                    MainSubHeading(heading: key, subHeading: "\(value)", headingSize: 13, subHeadingSize: 20,headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,alignment: .center)
+                    MainTextSubHeading(heading: key, subHeading: "\(value)", headingSize: 13, subHeadingSize: 20,headColor: .gray, subHeadColor: .white, orientation: .vertical, headingWeight: .semibold, bodyWeight: .medium,alignment: .center)
                 }
             }
         }.frame(width: w, alignment: .center)
@@ -68,17 +68,17 @@ struct PointAccumulatorView: View {
     @ViewBuilder func pointsAccumulatedValueSummary(w width:CGFloat) ->  some View{
         Container(width:width) { w in
             HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: "\(self.userActivity.values.reduce(0, {$0 + $1}))", subHeading: "Points", headingSize: 17.5, subHeadingSize: 10, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 7.5, alignment: .center)
+                MainTextSubHeading(heading: "\(self.userActivity.values.reduce(0, {$0 + $1}))", subHeading: "Points", headingSize: 17.5, subHeadingSize: 10, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 7.5, alignment: .center)
                 Spacer()
                 MainText(content: "→", fontSize: 25, color: .gray, fontWeight: .bold)
                 Spacer()
-                MainSubHeading(heading: "#25", subHeading: "Daily User", headingSize: 17.5, subHeadingSize: 10,headColor: .white, subHeadColor: .gray, orientation: .vertical, headingWeight: .medium, bodyWeight: .medium)
+                MainTextSubHeading(heading: "#25", subHeading: "Daily User", headingSize: 17.5, subHeadingSize: 10,headColor: .white, subHeadColor: .gray, orientation: .vertical, headingWeight: .medium, bodyWeight: .medium)
                 Spacer()
                 VStack(alignment: .center, spacing: 10) {
                     self.Medals(medalClass: "second")
                     MainText(content: "You", fontSize: 12, color: .white, fontWeight: .medium)
                 }
-                MainSubHeading(heading: "X", subHeading: self.multiplier.toString(), headingSize: 12, subHeadingSize: 17.5, headColor: .gray, subHeadColor: .white, orientation: .horizontal, headingWeight: .semibold, bodyWeight: .semibold, spacing: 5, alignment: .center)
+                MainTextSubHeading(heading: "X", subHeading: self.multiplier.toString(), headingSize: 12, subHeadingSize: 17.5, headColor: .gray, subHeadColor: .white, orientation: .horizontal, headingWeight: .semibold, bodyWeight: .semibold, spacing: 5, alignment: .center)
             }
             MainText(content: "You're the 25th Most Active User", fontSize: 15, color: .white, fontWeight: .medium)
                 .padding(.vertical)

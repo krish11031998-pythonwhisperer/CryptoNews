@@ -201,6 +201,7 @@ struct YoutubePlayer:UIViewRepresentable{
     
     func makeUIView(context: Context) -> YTPlayerView {
         self.player.load(withVideoId: self.videoID)
+        self.player.sizeThatFits(self.size)
         player.delegate = context.coordinator
         return self.player
     }
@@ -221,16 +222,13 @@ struct YoutubePlayer:UIViewRepresentable{
     
     
     func updateUIView(_ uiView: YTPlayerView, context: Context) {
-    
-    
-        
         uiView.playerState { state, err in
             if self.playerState == .playing && state != .playing{
                 uiView.playVideo()
+            }else if self.playerState == .paused &&  state == .playing{
+                uiView.pauseVideo()
             }
         }
-        
-        
     }
     
     

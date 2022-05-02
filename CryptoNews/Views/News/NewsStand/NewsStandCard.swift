@@ -21,7 +21,7 @@ struct NewsStandCard: View {
     
     @ViewBuilder var mainText:some View{
         if let data = self.news as? CrybseNews{
-            MainSubHeading(heading: data.source_name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
+            MainTextSubHeading(heading: data.source_name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
         }
     }
     
@@ -44,7 +44,7 @@ struct NewsStandCard: View {
     func footer(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .center, spacing: 5) {
             if let data = self.news as? CrybseNews{
-                MainText(content: data.Date, fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
+                MainText(content: data.DateText, fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             }else if let data = self.news as? CryptoNews,let epochTime = data.published_on, let time = Date(timeIntervalSince1970: Double(epochTime)){
                 MainText(content: "\(time.stringDate())",fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             }

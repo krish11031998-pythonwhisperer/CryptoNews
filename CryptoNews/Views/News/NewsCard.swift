@@ -42,7 +42,7 @@ struct NewsCard: View {
             
             return VStack(alignment: .leading, spacing: 5) {
                 Spacer()
-                MainSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal)
+                MainTextSubHeading(heading: publisher, subHeading: title, headingSize: 13, subHeadingSize: 15, headingFont: .normal, subHeadingFont: .normal)
                     .lineLimit(3)
                 self.footer(w: w, h: 50)
             }.padding(10)

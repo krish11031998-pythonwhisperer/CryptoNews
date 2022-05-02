@@ -49,19 +49,15 @@ struct SocialFeedSummaryView: View {
     }
     
     var tweets:Array<CrybseTweet>?{
-        guard let safeTweet = self.socialHightlights.socialHightlight?.Tweets else {return nil}
-        let sortedSafeTweets = safeTweet.sorted(by: {$0.SocialScore > $1.SocialScore})
-        return sortedSafeTweets.count > 5 ? Array(sortedSafeTweets[0...4]) : sortedSafeTweets
+        return self.socialHightlights.socialHightlight?.Tweets
     }
     
     var reddit:Array<CrybseRedditData>?{
-        guard let safeReddit = self.socialHightlights.socialHightlight?.reddit else {return nil}
-        return safeReddit.count > 5 ? Array(safeReddit[0...4]) : safeReddit
+        return self.socialHightlights.socialHightlight?.Reddit
     }
     
     var news:Array<CrybseNews>?{
-        guard let safeNews = self.socialHightlights.socialHightlight?.news else {return nil}
-        return safeNews.count > 5 ? Array(safeNews[0...4]) : safeNews
+        return self.socialHightlights.socialHightlight?.News
     }
     
     var videos:Array<CrybseNews>?{
@@ -136,8 +132,28 @@ struct SocialFeedSummaryView: View {
     }
     
     var body: some View {
-        self.SocialSummayView
-            .onAppear(perform: self.onAppear)
+        //        self.SocialSummayView
+        
+        Container(ignoreSides:true,verticalPadding: 0){ _ in
+            SocialHighlightFeedView(video: self.videos, news: self.news, tweet: self.tweets, reddit: self.reddit)
+                .onAppear(perform: self.onAppear)
+            if let safeSocialData = self.socialData,safeSocialData.count > 0{
+                MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
+                    .textBubble(color: .black, clipping: .roundClipping, verticalPadding: 10, horizontalPadding: 15)
+                    .padding(.top,25)
+                    .padding(.leading,15)
+                    .buttonify {
+                        if self.context.socialHighlightsData == nil{
+                            var socialData:[Any] = []
+                            socialData.append(contentsOf: self.tweets ?? [])
+                            socialData.append(contentsOf: self.news ?? [])
+                            socialData.append(contentsOf: self.videos ?? [])
+                            self.context.socialHighlightsData = socialData
+                        }
+                    }
+            }
+            
+        }
     }
 }
 

@@ -14,23 +14,32 @@ import SDWebImageSwiftUI
 public struct StandardImage:ViewModifier{
     var size:CGSize
     var contentMode:ContentMode
+    var animate:Bool
     
-    public init(size:CGSize,contentMode:ContentMode){
+    public init(size:CGSize,contentMode:ContentMode,animate:Bool){
         self.size = size
         self.contentMode = contentMode
+        self.animate = animate
     }
     
     public func body(content: Content) -> some View {
-        content
-            .aspectRatio(contentMode: self.contentMode)
-            .frame(width: self.size.width,height: self.size.height)
-            .imageSpring()
+        if self.animate{
+            content
+                .aspectRatio(contentMode: self.contentMode)
+                .frame(width: self.size.width,height: self.size.height)
+                .imageSpring()
+        }else{
+            content
+                .aspectRatio(contentMode: self.contentMode)
+                .frame(width: self.size.width,height: self.size.height)
+        }
+
     }
 }
 
 public extension Image{
-    func standardImageView(size:CGSize,contentMode:ContentMode) -> some View{
-        return self.resizable().modifier(StandardImage(size: size, contentMode: contentMode))
+    func standardImageView(size:CGSize,contentMode:ContentMode,animate:Bool = false) -> some View{
+        return self.resizable().modifier(StandardImage(size: size, contentMode: contentMode,animate:animate))
     }
 }
 
@@ -115,7 +124,6 @@ public struct ImageView:View{
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: self.width, height: self.height, alignment: .center)
-                .imageSpring()
         }else if let img = mainImg{
             Image(uiImage: img)
                 .standardImageView(size: self.imgSize, contentMode: .fill)

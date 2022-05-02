@@ -36,7 +36,7 @@ struct RedditSnapshot: View {
                 MainText(content: self.redditPost.Title, fontSize: 15, color: .white, fontWeight: .medium)
             }else{
                 MainText(content: self.redditPost.Title, fontSize: 15, color: .white, fontWeight: .medium)
-                    .lineLimit(1)
+                    .lineLimit(2)
             }
         }
         if let _ = self.redditPost.selftext{
@@ -44,22 +44,16 @@ struct RedditSnapshot: View {
                 MainText(content: self.redditPost.SelfText, fontSize: 13, color: .white, fontWeight: .regular)
             }else{
                 MainText(content: self.redditPost.SelfText, fontSize: 13, color: .white, fontWeight: .regular)
-                    .lineLimit(1)
+                    .lineLimit(3)
             }
         }
     }
     
     var body: some View {
-        Container(width:self.width,horizontalPadding: 10,verticalPadding: 3.5,alignment: .topLeading){ inner_w in
+        Container(width:self.width,horizontalPadding: 0,verticalPadding: 3.5,alignment: .topLeading){ inner_w in
             self.Header(w: inner_w)
             self.mainView(w: inner_w)
         }
-//        .basicCard(size: self.height == .zero ? .zero : .init(width: self.width, height: self.height), background: Color.clear.anyViewWrapper())
     }
 }
 
-//struct RedditSnapshot_Previews: PreviewProvider {
-//    static var previews: some View {
-//        RedditSnapshot()
-//    }
-//}

@@ -69,7 +69,7 @@ extension CrybPostCard{
     var header:some View{
         HStack(alignment: .center, spacing: 10) {
             ImageView(url: self.postData.User.Img, width: self.img_width, height: self.img_width, contentMode: .fill, alignment: .center,clipping: .circleClipping)
-            MainSubHeading(heading: self.postData.User.UserName, subHeading: self.postData.PricePrediction.Time.stringDate(), headingSize: 15, subHeadingSize: 13, headColor: .black, subHeadColor: .gray,alignment: .leading)
+            MainTextSubHeading(heading: self.postData.User.UserName, subHeading: self.postData.PricePrediction.Time.stringDate(), headingSize: 15, subHeadingSize: 13, headColor: .black, subHeadColor: .gray,alignment: .leading)
             Spacer()
         }.frame(width: self.width, alignment: .leading)
     }
@@ -102,9 +102,9 @@ extension CrybPostCard{
                     .fill(Color.mainBGColor)
                     .frame(width: w, height: 5, alignment: .center)
                 HStack(alignment: .center, spacing: 10) {
-                    MainSubHeading(heading: "Low", subHeading: self.postData.PricePrediction.Low.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .leading)
+                    MainTextSubHeading(heading: "Low", subHeading: self.postData.PricePrediction.Low.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .leading)
                     Spacer()
-                    MainSubHeading(heading: "High", subHeading: self.postData.PricePrediction.High.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .trailing)
+                    MainTextSubHeading(heading: "High", subHeading: self.postData.PricePrediction.High.ToMoney(), headingSize: 9, subHeadingSize: 10, headColor: .gray, subHeadColor: .black, alignment: .trailing)
                 }
             }.frame(width: w, alignment: .center)
             MainText(content: "C", fontSize: 7, color: .black,fontWeight: .semibold,addBG: true,padding: 4.5)
@@ -119,9 +119,9 @@ extension CrybPostCard{
             MainText(content: "Prediction", fontSize: 14, color: .black, fontWeight: .semibold)
             view
             HStack(alignment: .center, spacing: 10) {
-                MainSubHeading(heading: "O : Open Market Price", subHeading: self.postData.PricePrediction.Price.ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
+                MainTextSubHeading(heading: "O : Open Market Price", subHeading: self.postData.PricePrediction.Price.ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
-                MainSubHeading(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
+                MainTextSubHeading(heading: "C : Close Market Price", subHeading: (self.postData.PricePrediction.Price * 0.98).ToMoney(), headingSize: 9, subHeadingSize: 12, headColor: .white, subHeadColor: .white, alignment: .leading)
                     .blobify(color: AnyView(BlurView.thinDarkBlur),clipping: .roundCornerMedium)
             }
         }
@@ -133,7 +133,7 @@ extension CrybPostCard{
         let color:Color = percent > 60 ? .green : percent > 40 ? .orange : .red
         return HStack(alignment: .center, spacing: 10) {
             CircleChart(percent: percent, size: .init(width: w * 0.35, height: w * 0.35))
-            MainSubHeading(heading: header, subHeading: subHeading, headingSize: 12, subHeadingSize: 14, headColor: .black, subHeadColor: color, alignment: .leading)
+            MainTextSubHeading(heading: header, subHeading: subHeading, headingSize: 12, subHeadingSize: 14, headColor: .black, subHeadColor: color, alignment: .leading)
         }.padding(.top,20)
     }
 
@@ -146,7 +146,7 @@ extension CrybPostCard{
             LazyVGrid(columns: [.init(.adaptive(minimum: w_el, maximum: w_el), alignment: .leading)], alignment: .center, spacing: 10) {
                 ForEach(Array(self.postData.PostReactionKeys), id:\.rawValue) { reaction in
                     let value = self.postData.PostReactions[reaction] ?? 0
-                    MainSubHeading(heading: CrybsePostReaction.buttonImg(reaction: reaction), subHeading: "\(value)", headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
+                    MainTextSubHeading(heading: CrybsePostReaction.buttonImg(reaction: reaction), subHeading: "\(value)", headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white,orientation: .horizontal,bodyWeight: .medium, spacing: 15,alignment: .center)
                         .padding(10)
                         .frame(width:w_el,alignment: .center)
                         .basicCard()

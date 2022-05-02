@@ -32,7 +32,7 @@ extension CrybseRatingView{
         let subHeading:String = percent > 60 ? "Very Likely" : percent > 40 ? "Likely" : "Unlikely"
         return HStack(alignment: .center, spacing: 10) {
             CircleChart(percent: percent, size: .init(width: w * 0.35, height: w * 0.35))
-            MainSubHeading(heading: header, subHeading: subHeading, headingSize: 12, subHeadingSize: 14, headColor: .gray, subHeadColor: .white, alignment: .leading)
+            MainTextSubHeading(heading: header, subHeading: subHeading, headingSize: 12, subHeadingSize: 14, headColor: .gray, subHeadColor: .white, alignment: .leading)
         }.padding(.top,20)
     }
 

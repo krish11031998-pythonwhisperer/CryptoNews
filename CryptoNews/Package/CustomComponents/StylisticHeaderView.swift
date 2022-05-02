@@ -87,7 +87,7 @@ extension StylisticHeaderView{
         HStack(alignment: .center, spacing: 10) {
             self.backButton
             Spacer()
-            MainSubHeading(heading: self.heading, subHeading: self.subHeading, headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white, orientation: .vertical, headingWeight: .medium, bodyWeight: .semibold, spacing: 5, alignment: .center)
+            MainTextSubHeading(heading: self.heading, subHeading: self.subHeading, headingSize: 20, subHeadingSize: 13, headColor: .white, subHeadColor: .white, orientation: .vertical, headingWeight: .medium, bodyWeight: .semibold, spacing: 5, alignment: .center)
                 .scaleEffect(1 - scale)
                 .opacity(1 - scale)
             Spacer()

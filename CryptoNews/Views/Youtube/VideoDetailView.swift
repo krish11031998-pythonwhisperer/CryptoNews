@@ -19,26 +19,36 @@ struct VideoDetailView: View {
     }
     
     @ViewBuilder func videoImageView(w:CGFloat) -> some View{
-        if let imgUrl = self.video.image_url{
-            if self.playerState != .unstarted,let videoID = self.video.VideoID{
-                YoutubePlayer(size: .init(width: w, height: totalHeight * 0.35), videoID: videoID   , playerState: self.$playerState)
-            }else if self.playerState == .unstarted{
-                ImageView(url: imgUrl, width: w,height: totalHeight * 0.35, contentMode: .fill, alignment: .center, isPost: false, clipping: .roundClipping)
+        if let imgUrl = self.video.image_url,let videoID = self.video.VideoID{
+
+            ZStack(alignment: .center) {
+                YoutubePlayer(size: .init(width: w, height: totalHeight * 0.35), videoID: videoID,playerState: self.$playerState)
+                    .opacity(self.playerState == .unstarted ? 0 : 1)
+                    .frame(width: w, height: totalHeight * 0.35, alignment: .topLeading)
+                    .clipContent(clipping: .roundClipping)
+                if self.playerState == .unstarted{
+                    ImageView(url: imgUrl, width: w,height: totalHeight * 0.35,contentMode: .fill, alignment: .center,clipping: .roundClipping)
+                }
             }
+            
         }else{
             Color.clear
                 .frame(width: .zero, height: .zero, alignment: .center)
         }
     }
     
-    func videoStateView(w:CGFloat) -> some View{
-        SystemButton(b_name: self.playerState != .playing ? "play.fill" : "pause.fill", color: .white, size: .init(width: 25, height: 25), bgcolor: .clear, borderedBG: true, clipping: .circleClipping) {
-            if self.playerState != .playing{
-                self.playerState = .playing
-            }else{
+    func togglePlay(){
+        setWithAnimation {
+            if self.playerState == .playing{
                 self.playerState = .paused
+            }else if self.playerState == .paused || self.playerState == .unstarted{
+                self.playerState = .playing
             }
         }
+    }
+    
+    func videoStateView(w:CGFloat) -> some View{
+        SystemButton(b_name: self.playerState != .playing ? "play.fill" : "pause.fill", color: .white, size: .init(width: 25, height: 25), bgcolor: .clear, borderedBG: true, clipping: .circleClipping,action: self.togglePlay)
     }
     
     @ViewBuilder func videoInfoView(w:CGFloat) -> some View{
@@ -46,7 +56,7 @@ struct VideoDetailView: View {
             MainText(content: title, fontSize: 22.5, color: .white, fontWeight: .medium)
         }
         HStack(alignment: .center, spacing: 10) {
-            MainSubHeading(heading: self.video.SourceName, subHeading: self.video.Date, headingSize: 17, subHeadingSize: 13, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 10, alignment: .topLeading)
+            MainTextSubHeading(heading: self.video.SourceName, subHeading: self.video.DateText, headingSize: 17, subHeadingSize: 13, headColor: .white, subHeadColor: .white.opacity(0.5), orientation: .vertical, headingWeight: .medium, bodyWeight: .medium, spacing: 10, alignment: .topLeading)
             Spacer()
             if let sentiment = self.video.sentiment{
                 let color = sentiment == "Positive" ? Color.green : sentiment == "Negative" ? Color.red : Color.gray
@@ -78,8 +88,15 @@ struct VideoDetailView: View {
     }
 }
 
-//struct VideoDetailView_Previews: PreviewProvider {
-//    static var previews: some View {
-//        VideoDetailView()
-//    }
-//}
+struct VideoDetailView_Previews: PreviewProvider {
+
+    static var previews: some View {
+        if let firstVideo = CrybseSocialHighlightsAPI.loadStaticSocialHighlights()?.videos?.first{
+            VideoDetailView(video: firstVideo, width: totalWidth - 30)
+                .background(Color.AppBGColor)
+        }else{
+            ProgressView()
+        }
+        
+    }
+}

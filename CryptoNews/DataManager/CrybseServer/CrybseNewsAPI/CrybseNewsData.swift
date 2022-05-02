@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Foundation
 
 class CrybseNewsResponse:Codable{
     var data:CrybseNewsList?
@@ -33,7 +34,7 @@ class CrybseNews:Codable{
         self.image_url ?? ""
     }
     
-    var Date:String{
+    var DateText:String{
         self.date ?? ""
     }
     
@@ -43,6 +44,11 @@ class CrybseNews:Codable{
     
     var _Type:String{
         self.type ?? ""
+    }
+    
+    var CreatedAtDate:Date{
+        guard let safeDate = self.date else {return Date()}
+        return DateFormatter().date(from: safeDate) ?? Date()
     }
     
     var VideoID:String?{

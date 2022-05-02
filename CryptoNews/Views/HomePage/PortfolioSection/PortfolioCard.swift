@@ -25,8 +25,20 @@ struct PortfolioCard: View {
             self._price = .init(wrappedValue: safePrice)
         }
         self.selected = selected
-        self.h = h
-        self.w = w
+        self.h = h - 2
+        self.w = w - 2
+    }
+    
+    var headerHeight:CGFloat{
+        return self.h * 0.25
+    }
+    
+    var footerHeight:CGFloat{
+        return self.h * 0.25
+    }
+    
+    var marketHeight:CGFloat{
+        return self.h * 0.5
     }
     
     func assetHeaderInfo(w:CGFloat) -> some View{
@@ -42,8 +54,8 @@ struct PortfolioCard: View {
                         .shadow(color: .black.opacity(0.35), radius: 10, x: 0, y: 0)
                 }
             }
-            MainSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .white, orientation: .vertical, alignment: .topLeading)
-        }
+            MainTextSubHeading(heading: self.asset.Change.ToDecimals()+"%", subHeading: (self.asset.Price ?? 0).ToMoney(), headingSize: 13, subHeadingSize: 18, headColor: self.asset.Change > 0 ? .green : .red, subHeadColor: .white, orientation: .vertical, alignment: .topLeading)
+        }.frame(width: w, height: self.headerHeight, alignment: .center)
     }
     
     var coinStats:[String:String]{
@@ -67,14 +79,13 @@ struct PortfolioCard: View {
     }
     
     @ViewBuilder func marketSummary(_ inner_w:CGFloat) -> some View{
-        let h = self.h
-        VStack(alignment: .leading, spacing: 0) {
-            if let sparkline = self.asset.CoinData.Sparkline{
-                CurveChart(data: Array(sparkline[(sparkline.count - 10)...]),interactions: false, size: .init(width: inner_w, height: h), bg: .clear)
-            }else{
-                MainText(content: "No Chart", fontSize: 15, color: .black).frame(width: inner_w, alignment: .center)
-            }
-        }.frame(width: inner_w, height: h, alignment: .topLeading)
+        if !self.asset.CoinData.Sparkline.isEmpty{
+            CurveChart(data: Array(self.asset.CoinData.Sparkline[(self.asset.CoinData.Sparkline.count - 10)...]),interactions: false, size: .init(width: inner_w, height: self.marketHeight), bg: .clear)
+        }else{
+            MainText(content: "No Chart", fontSize: 15, color: .black,fontWeight: .bold).frame(width: inner_w, alignment: .center)
+                .frame(width: inner_w, height: self.marketHeight, alignment: .center)
+                .background(Color.blue)
+        }
     }
 
     func handleOnTap(){
@@ -104,7 +115,7 @@ struct PortfolioCard: View {
                 .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .right) {
                     MainText(content: " of your holdings", fontSize: 13, color: .gray, fontWeight: .regular)
                 }
-        }
+        }.frame(width: inner_w, height: self.footerHeight, alignment: .center)
     }
     
     func updatePrice(_ newPrice:Float?){
@@ -167,7 +178,6 @@ struct PortfolioCard: View {
         .buttonify(handler: self.handleOnTap)
         .onReceive(self.asset.CoinData.$current_price, perform: self.updatePrice(_:))
         .onChange(of: self.priceColor, perform: self.resetPriceColor(_:))
-        .padding(.top,5)
     }
 }
 

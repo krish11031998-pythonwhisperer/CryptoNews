@@ -97,7 +97,7 @@ extension TwitterPostCard{
             HStack(alignment: .center, spacing: 15) {
                 ImageView(url: user.profile_image_url, width: 30, height: 30, contentMode: .fill, alignment: .center)
                     .clipContent(clipping: .circleClipping)
-                MainSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:data.CreatedAt, headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: self.font_color, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
+                MainTextSubHeading(heading: "@\(user.username ?? "Tweet")", subHeading:data.CreateAtDateString, headingSize: 12.5, subHeadingSize: 10, headColor: self.font_color, subHeadColor: self.font_color, headingWeight: .semibold, bodyWeight: .regular, alignment: .leading)
                 Spacer()
                 ImageView(img: .init(named: "TwitterIcon"), width: 25, height: 25, contentMode: .fill, alignment: .center,clipping: .circleClipping)
             }

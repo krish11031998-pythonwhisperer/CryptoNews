@@ -25,7 +25,7 @@ struct CrybseCrybotPredictionView: View {
             Container(heading: "Crybot's Prediction", headingDivider: false,headingSize: 18, width: self.width, ignoreSides: true,horizontalPadding: 0) { _ in
                 let size = CGSize(width: self.width, height: 150)
                 let cryb_prediction = self.indicator >= self.crybPredictedData.count ? 0 : self.crybPredictedData[self.indicator]
-                MainSubHeading(heading: "Value", subHeading: cryb_prediction.ToMoney(), headingSize: 13, subHeadingSize: 15, headColor: .gray, subHeadColor: .white, alignment: .leading)
+                MainTextSubHeading(heading: "Value", subHeading: cryb_prediction.ToMoney(), headingSize: 13, subHeadingSize: 15, headColor: .gray, subHeadColor: .white, alignment: .leading)
                     .frame(width: self.width, alignment: .leading)
                 
                 CurveChart(data: self.postData.PricePrediction.GraphData, choosen: self.$chartIndicator, interactions: true, size: size, bg: .clear)
