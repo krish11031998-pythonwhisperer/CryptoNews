@@ -18,18 +18,21 @@ enum SocialHighlightSection{
 
 struct SocialHighlightFeedView: View {
     @EnvironmentObject var context:ContextData
+    var width:CGFloat
     var video:[CrybseNews]?
     var news:[CrybseNews]?
     var tweet:[CrybseTweet]?
     var reddit:[CrybseRedditData]?
-    @State var section:SocialHighlightSection = .video
+    @State var section:SocialHighlightSection = .tweet
     
     init(
+        width:CGFloat = totalWidth,
         video:[CrybseNews]?,
          news:[CrybseNews]?,
          tweet:[CrybseTweet]?,
          reddit:[CrybseRedditData]?
     ){
+        self.width = width
         self.video = video
         self.news = news
         self.tweet = tweet
@@ -80,8 +83,6 @@ struct SocialHighlightFeedView: View {
                     .buttonify {
                         if self.section != .tweet{
                             self.section = .tweet
-                        }else{
-                            self.section = .none
                         }
                     }
                 
@@ -95,8 +96,6 @@ struct SocialHighlightFeedView: View {
                     .buttonify {
                         if self.section != .reddit{
                             self.section = .reddit
-                        }else{
-                            self.section = .none
                         }
                     }
                 
@@ -110,8 +109,6 @@ struct SocialHighlightFeedView: View {
                     .buttonify {
                         if self.section != .news{
                             self.section = .news
-                        }else{
-                            self.section = .none
                         }
                     }
                 
@@ -125,12 +122,10 @@ struct SocialHighlightFeedView: View {
                     .buttonify {
                         if self.section != .video{
                             self.section = .video
-                        }else{
-                            self.section = .none
                         }
                     }
             }.padding(2)
-        }
+        }.frame(width: w, alignment: .leading)
     }
     
     var Video:[CrybseNews]{
@@ -152,7 +147,7 @@ struct SocialHighlightFeedView: View {
     var socialData:[Any]?{
         switch(self.section){
             case .none:
-            return (self.Video + self.Reddit + self.News + self.Tweet).sorted { ElOne, ElTwo in
+            return (self.Video.limitData(limit: 5) + self.Reddit.limitData(limit: 5) + self.News.limitData(limit: 5) + self.Tweet.limitData(limit: 5)).sorted { ElOne, ElTwo in
                 func DateRetriever(data:Any) -> Date{
                     if let safeTweet = data as? CrybseTweet{
                         return safeTweet.CreatedAtDate
@@ -168,13 +163,13 @@ struct SocialHighlightFeedView: View {
                 return DateRetriever(data: ElOne) < DateRetriever(data: ElTwo)
             }
             case .news:
-                return self.news?.sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
+                return self.News.limitData(limit: 5).sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
             case .tweet:
-                return self.tweet?.sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
+                return self.Tweet.limitData(limit: 5).sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
             case .reddit:
-                return self.reddit?.sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
+                return self.Reddit.limitData(limit: 5).sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
             case .video:
-                return self.video?.sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
+                return self.Video.limitData(limit: 5).sorted(by: {$0.CreatedAtDate < $1.CreatedAtDate})
         }
         
     }
@@ -185,7 +180,7 @@ struct SocialHighlightFeedView: View {
     
     var body: some View {
         if let safeData = self.socialData{
-            Container(heading: "Social Highlights", headingColor: .white, headingDivider: false, headingSize: 30, width: totalWidth,lazyLoad: true) { inner_w in
+            Container(heading: "Social Highlights", headingColor: .white, headingDivider: false, headingSize: 30, width: self.width,horizontalPadding: 15,lazyLoad: true) { inner_w in
                 self.sectionSelector(w: inner_w)
                 ForEach(Array(safeData.enumerated()), id:\.offset) { _data in
                     if _data.offset != 0{
@@ -196,6 +191,8 @@ struct SocialHighlightFeedView: View {
                     self.cardBuilder(_data.element, .init(width: inner_w, height: totalHeight * 0.25))
                 }
             }
+            .basicCard(background: Color.clear.anyViewWrapper())
+            .borderCard(color: .white, clipping: .roundClipping)
         }else{
             Color.clear.frame(width: 0, height: 0, alignment: .center)
         }

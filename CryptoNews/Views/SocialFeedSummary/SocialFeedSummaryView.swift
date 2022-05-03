@@ -70,28 +70,28 @@ struct SocialFeedSummaryView: View {
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeTweet.count > 3 ? Array(safeTweet[0...2]) : safeTweet)
+            data?.append(contentsOf:safeTweet)
         }
         
         if let safeReddit = self.socialHightlights.socialHightlight?.Reddit,!safeReddit.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeReddit.count > 3 ? Array(safeReddit[0...2]) : safeReddit)
+            data?.append(contentsOf:safeReddit)
         }
         
         if let safeNews = self.socialHightlights.socialHightlight?.News, !safeNews.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeNews.count > 3 ? Array(safeNews[0...2]) : safeNews)
+            data?.append(contentsOf:safeNews)
         }
         
         if let safeVideo = self.socialHightlights.socialHightlight?.Video, !safeVideo.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeVideo.count > 3 ? Array(safeVideo[0...2]) : safeVideo)
+            data?.append(contentsOf:safeVideo)
         }
         
         return data
@@ -103,51 +103,16 @@ struct SocialFeedSummaryView: View {
         }
     }
 
-    @ViewBuilder var SocialSummayView:some View{
-        if let socialFeed = self.socialData{
-            Container(width: self.width,ignoreSides: false) { inner_w in
-                
-                SocialSection(data: socialFeed, section: .SocialHighlights, viewSection: .constant(.SocialHighlights), width: inner_w) { size, data in
-                    self.cardBuilder(data, size)
-                        .buttonify {
-                            setWithAnimation {
-                                if self.context.socialHighlightsData == nil{
-                                    self.context.socialHighlightsData = socialFeed
-                                }
-                            }
-                        }
-                }
-
-                
-            }
-            
-        }else if self.socialHightlights.loading{
-            ProgressView()
-                .frame(width:self.cardSize().width,height:self.cardSize().height,alignment:.center)
-                .clipContent(clipping: .roundClipping)
-        }else{
-            Color.clear
-        }
-
-    }
     
-    var body: some View {
-        //        self.SocialSummayView
-        
-        Container(ignoreSides:true,verticalPadding: 0){ _ in
-            SocialHighlightFeedView(video: self.videos, news: self.news, tweet: self.tweets, reddit: self.reddit)
+    var body: some View {        Container(width:self.width,ignoreSides:false,verticalPadding: 0){ w in
+            SocialHighlightFeedView(width: w,video: self.videos, news: self.news, tweet: self.tweets, reddit: self.reddit)
                 .onAppear(perform: self.onAppear)
             if let safeSocialData = self.socialData,safeSocialData.count > 0{
                 MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
                     .textBubble(color: .black, clipping: .roundClipping, verticalPadding: 10, horizontalPadding: 15)
                     .padding(.top,25)
-                    .padding(.leading,15)
                     .buttonify {
-                        if self.context.socialHighlightsData == nil{
-                            var socialData:[Any] = []
-                            socialData.append(contentsOf: self.tweets ?? [])
-                            socialData.append(contentsOf: self.news ?? [])
-                            socialData.append(contentsOf: self.videos ?? [])
+                        if self.context.socialHighlightsData == nil,let socialData = self.socialData{
                             self.context.socialHighlightsData = socialData
                         }
                     }

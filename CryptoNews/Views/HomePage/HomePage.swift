@@ -57,7 +57,7 @@ extension HomePage{
     
     @ViewBuilder var SocialFeedSummary:some View{
         if !self.watchedAsset.isEmpty{
-            SocialFeedSummaryView(assets: self.assets,keywords: self.keywords, width: totalWidth,height: totalHeight * 0.35)
+            SocialFeedSummaryView(assets: self.assets,keywords: self.keywords, width: totalWidth ,height: totalHeight * 0.35)
         }else{
             SocialFeedSummaryView(width: totalWidth)
         }

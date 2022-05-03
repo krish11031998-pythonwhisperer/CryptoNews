@@ -1146,7 +1146,7 @@
 				EF7A7F7827DB57DF00B6081D /* Constant.swift */,
 				EF7A7F7927DB57DF00B6081D /* Extension */,
 				EF7A7F8427DB57DF00B6081D /* Network */,
-				EF7A7F8E27DB57DF00B6081D /* ViewHelpers */,
+				EF7A7F8E27DB57DF00B6081D /* DataHelpers */,
 				EF7A7F9627DB57DF00B6081D /* Charts */,
 				EF7A7FA227DB57DF00B6081D /* CustomComponents */,
 				EF7A7FC027DB57DF00B6081D /* ViewModifiers */,
@@ -1172,7 +1172,7 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
-		EF7A7F8E27DB57DF00B6081D /* ViewHelpers */ = {
+		EF7A7F8E27DB57DF00B6081D /* DataHelpers */ = {
 			isa = PBXGroup;
 			children = (
 				EF7A7F8F27DB57DF00B6081D /* FloatHelper.swift */,
@@ -1183,7 +1183,7 @@
 				EF7A7F9427DB57DF00B6081D /* DateHelper.swift */,
 				EF7A7F9527DB57DF00B6081D /* StringHelper.swift */,
 			);
-			path = ViewHelpers;
+			path = DataHelpers;
 			sourceTree = "<group>";
 		};
 		EF7A7F9627DB57DF00B6081D /* Charts */ = {

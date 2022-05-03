@@ -22,7 +22,7 @@ struct TweetDetailView:View{
     
     
     var body:some View{
-        Container(width:self.width,ignoreSides: true,verticalPadding: 0){ _ in
+        Container(width:self.width,ignoreSides: true,verticalPadding: 0, lazyLoad: true){ _ in
             Container(width: self.width) { inner_w in
                 self.innerView(inner_w: inner_w)
             }

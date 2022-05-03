@@ -17,4 +17,8 @@ public extension Array{
             return nil
         }
     }
+    
+    func limitData(limit:Int) -> Array<ArrayLiteralElement>{
+        return self.count > limit ? Array(self[0..<limit]) : self
+    }
 }
