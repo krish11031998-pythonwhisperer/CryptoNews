@@ -180,7 +180,7 @@ struct SocialHighlightFeedView: View {
     
     var body: some View {
         if let safeData = self.socialData{
-            Container(heading: "Social Highlights", headingColor: .white, headingDivider: false, headingSize: 30, width: self.width,horizontalPadding: 15,lazyLoad: true) { inner_w in
+            Container(heading: "Social Highlights", headingColor: .white, headingDivider: false, headingSize: 30, width: self.width,horizontalPadding: 15,lazyLoad: false) { inner_w in
                 self.sectionSelector(w: inner_w)
                 ForEach(Array(safeData.enumerated()), id:\.offset) { _data in
                     if _data.offset != 0{

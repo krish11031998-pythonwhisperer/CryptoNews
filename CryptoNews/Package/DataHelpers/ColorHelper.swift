@@ -70,7 +70,7 @@ public extension Color {
     static var darkGradColor = LinearGradient(gradient: .init(colors: [.clear,.black]), startPoint: .top, endPoint: .bottom)
     static var cardColor = BlurView(style: .dark)
     static var primaryColor:Color = .init(UIColor(hex: "#191A1DFF") ?? .white)
-    static var AppBGColor = linearGradient(colors: [Color(hex: "#28313b"),Color(hex: "#485461")], start: .top, end: .bottom)
+    static var AppBGColor = linearGradient(colors: [Color(hex: "#253341"),Color(hex: "#15202B")], start: .top, end: .bottom)
     
     static func colorConvert(red:Double,green:Double,blue:Double) -> Color{
         let r:Double = red/255.0

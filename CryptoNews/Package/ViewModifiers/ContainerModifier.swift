@@ -48,7 +48,7 @@ public struct BasicCard:ViewModifier{
     var size:CGSize
     var background:AnyView
     
-    public init(size:CGSize,background:AnyView = AnyView(BlurView.thinDarkBlur)){
+    public init(size:CGSize,background:AnyView = AnyView(Color.AppBGColor)){
         self.size = size
         self.background = background
     }
@@ -197,11 +197,11 @@ struct CustomTextBubble:ViewModifier{
 
 
 public extension View{
-    func basicCard(size:CGSize = .zero,background:AnyView = AnyView(BlurView.thinDarkBlur)) -> some View{
+    func basicCard(size:CGSize = .zero,background:AnyView = AnyView(Color.clear)) -> some View{
         self.modifier(BasicCard(size: size,background: background))
     }
     
-    func borderCard(color:Color = .white,gradient:LinearGradient? = nil,clipping:Clipping = .roundClipping) -> some View{
+    func borderCard(color:Color = .gray.opacity(0.5),gradient:LinearGradient? = nil,clipping:Clipping = .roundClipping) -> some View{
         self.modifier(BorderCard(color: color,linearGradient: gradient, clipping: clipping))
     }
     

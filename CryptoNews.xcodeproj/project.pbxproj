@@ -24,13 +24,8 @@
 		BC64591F2708937300BAECBC /* FirebaseAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC64591E2708937300BAECBC /* FirebaseAPI.swift */; };
 		BC645923270EFB6A00BAECBC /* CurrencyView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC645922270EFB6A00BAECBC /* CurrencyView.swift */; };
 		BC64592527119E2C00BAECBC /* CurrencySummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC64592427119E2C00BAECBC /* CurrencySummaryView.swift */; };
-		BC6459282711C7A500BAECBC /* MajorMonoDisplay-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC6459272711C7A400BAECBC /* MajorMonoDisplay-Regular.ttf */; };
-		BC64592A2711CDC400BAECBC /* RalewayDots-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */; };
-		BC64592C2711CDCF00BAECBC /* NixieOne-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */; };
-		BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */; };
 		BC6459322712446900BAECBC /* CurrencyAssetDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */; };
 		BC6459352712455A00BAECBC /* SingleTransactionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459342712455A00BAECBC /* SingleTransactionView.swift */; };
-		BC6459372713894100BAECBC /* Codystar-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = BC6459362713894100BAECBC /* Codystar-Regular.ttf */; };
 		BC64593A2717871600BAECBC /* NewsStandCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC6459392717871600BAECBC /* NewsStandCard.swift */; };
 		BC67BA9126DECE7800D8BD35 /* CurrencyDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */; };
 		BCAD1609271F5BCF0020F6A8 /* CurrencySymbolView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */; };
@@ -209,7 +204,6 @@
 		EF81977A27E679A70085EE6E /* DonutChart.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF81977927E679A70085EE6E /* DonutChart.swift */; };
 		EF8704C027F34A6C00DB2F5B /* ZoomInScrollView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8704BF27F34A6C00DB2F5B /* ZoomInScrollView.swift */; };
 		EF8704C227F4BA9200DB2F5B /* PortfolioBreakdown.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8704C127F4BA9200DB2F5B /* PortfolioBreakdown.swift */; };
-		EF8BE63227C1024200877234 /* Forum-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EF8BE63127C1024200877234 /* Forum-Regular.ttf */; };
 		EF8BE63A27C865DB00877234 /* CurrencyPriceSummaryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63927C865DB00877234 /* CurrencyPriceSummaryView.swift */; };
 		EF8BE63D27CAD08900877234 /* VideoSectionCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */; };
 		EF8BE63F27CAD09A00877234 /* VideoSectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */; };
@@ -224,6 +218,11 @@
 		EFB1349827B960A500F381A3 /* RedditPostCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB1349727B960A500F381A3 /* RedditPostCard.swift */; };
 		EFB3528927A6ADA400D6430B /* CrybseCoinAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFB3528827A6ADA400D6430B /* CrybseCoinAPI.swift */; };
 		EFC9A28E2771B122005CDEFC /* AllAssetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFC9A28D2771B122005CDEFC /* AllAssetView.swift */; };
+		EFE91BEE2821E36B00B3073C /* Gilroy-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = EFE91BED2821E36B00B3073C /* Gilroy-Light.otf */; };
+		EFE91BF02821E3FF00B3073C /* Gilroy-ExtraBold.otf in Resources */ = {isa = PBXBuildFile; fileRef = EFE91BEF2821E3FE00B3073C /* Gilroy-ExtraBold.otf */; };
+		EFE91BF32821E5B200B3073C /* Lora-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EFE91BF12821E5B200B3073C /* Lora-VariableFont_wght.ttf */; };
+		EFE91BF42821E5B200B3073C /* Lora-Italic-VariableFont_wght.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EFE91BF22821E5B200B3073C /* Lora-Italic-VariableFont_wght.ttf */; };
+		EFE91BF72822E52900B3073C /* EventsHighlights.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFE91BF62822E52900B3073C /* EventsHighlights.swift */; };
 		EFF195B4277CED7A0081368F /* CrybseCoinSocialData.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF195B2277CED7A0081368F /* CrybseCoinSocialData.swift */; };
 		EFF6BFD2276C631100FFC973 /* CrybseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFD1276C631100FFC973 /* CrybseView.swift */; };
 		EFF6BFDE276C646200FFC973 /* CrybPostGen.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFF6BFDD276C646200FFC973 /* CrybPostGen.swift */; };
@@ -267,13 +266,8 @@
 		BC64591E2708937300BAECBC /* FirebaseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAPI.swift; sourceTree = "<group>"; };
 		BC645922270EFB6A00BAECBC /* CurrencyView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyView.swift; sourceTree = "<group>"; };
 		BC64592427119E2C00BAECBC /* CurrencySummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySummaryView.swift; sourceTree = "<group>"; };
-		BC6459272711C7A400BAECBC /* MajorMonoDisplay-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "MajorMonoDisplay-Regular.ttf"; sourceTree = "<group>"; };
-		BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "RalewayDots-Regular.ttf"; sourceTree = "<group>"; };
-		BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "NixieOne-Regular.ttf"; sourceTree = "<group>"; };
-		BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Megrim-Regular.ttf"; sourceTree = "<group>"; };
 		BC6459312712446900BAECBC /* CurrencyAssetDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyAssetDetailView.swift; sourceTree = "<group>"; };
 		BC6459342712455A00BAECBC /* SingleTransactionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SingleTransactionView.swift; sourceTree = "<group>"; };
-		BC6459362713894100BAECBC /* Codystar-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Codystar-Regular.ttf"; sourceTree = "<group>"; };
 		BC6459392717871600BAECBC /* NewsStandCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsStandCard.swift; sourceTree = "<group>"; };
 		BC67BA9026DECE7800D8BD35 /* CurrencyDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDetailView.swift; sourceTree = "<group>"; };
 		BCAD1608271F5BCF0020F6A8 /* CurrencySymbolView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySymbolView.swift; sourceTree = "<group>"; };
@@ -461,7 +455,6 @@
 		EF81977927E679A70085EE6E /* DonutChart.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DonutChart.swift; sourceTree = "<group>"; };
 		EF8704BF27F34A6C00DB2F5B /* ZoomInScrollView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZoomInScrollView.swift; sourceTree = "<group>"; };
 		EF8704C127F4BA9200DB2F5B /* PortfolioBreakdown.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PortfolioBreakdown.swift; sourceTree = "<group>"; };
-		EF8BE63127C1024200877234 /* Forum-Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Forum-Regular.ttf"; sourceTree = "<group>"; };
 		EF8BE63927C865DB00877234 /* CurrencyPriceSummaryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyPriceSummaryView.swift; sourceTree = "<group>"; };
 		EF8BE63C27CAD08900877234 /* VideoSectionCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionCard.swift; sourceTree = "<group>"; };
 		EF8BE63E27CAD09A00877234 /* VideoSectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSectionView.swift; sourceTree = "<group>"; };
@@ -476,6 +469,11 @@
 		EFB1349727B960A500F381A3 /* RedditPostCard.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditPostCard.swift; sourceTree = "<group>"; };
 		EFB3528827A6ADA400D6430B /* CrybseCoinAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CrybseCoinAPI.swift; sourceTree = "<group>"; };
 		EFC9A28D2771B122005CDEFC /* AllAssetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllAssetView.swift; sourceTree = "<group>"; };
+		EFE91BED2821E36B00B3073C /* Gilroy-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gilroy-Light.otf"; sourceTree = "<group>"; };
+		EFE91BEF2821E3FE00B3073C /* Gilroy-ExtraBold.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Gilroy-ExtraBold.otf"; sourceTree = "<group>"; };
+		EFE91BF12821E5B200B3073C /* Lora-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lora-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		EFE91BF22821E5B200B3073C /* Lora-Italic-VariableFont_wght.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = "Lora-Italic-VariableFont_wght.ttf"; sourceTree = "<group>"; };
+		EFE91BF62822E52900B3073C /* EventsHighlights.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EventsHighlights.swift; sourceTree = "<group>"; };
 		EFF195B2277CED7A0081368F /* CrybseCoinSocialData.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybseCoinSocialData.swift; sourceTree = "<group>"; };
 		EFF6BFD1276C631100FFC973 /* CrybseView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybseView.swift; sourceTree = "<group>"; };
 		EFF6BFDD276C646200FFC973 /* CrybPostGen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CrybPostGen.swift; sourceTree = "<group>"; };
@@ -552,12 +550,10 @@
 		BC6459262711C79100BAECBC /* Fonts */ = {
 			isa = PBXGroup;
 			children = (
-				BC6459272711C7A400BAECBC /* MajorMonoDisplay-Regular.ttf */,
-				BC6459292711CDC400BAECBC /* RalewayDots-Regular.ttf */,
-				BC64592B2711CDCF00BAECBC /* NixieOne-Regular.ttf */,
-				BC64592F2712064C00BAECBC /* Megrim-Regular.ttf */,
-				BC6459362713894100BAECBC /* Codystar-Regular.ttf */,
-				EF8BE63127C1024200877234 /* Forum-Regular.ttf */,
+				EFE91BF22821E5B200B3073C /* Lora-Italic-VariableFont_wght.ttf */,
+				EFE91BF12821E5B200B3073C /* Lora-VariableFont_wght.ttf */,
+				EFE91BEF2821E3FE00B3073C /* Gilroy-ExtraBold.otf */,
+				EFE91BED2821E36B00B3073C /* Gilroy-Light.otf */,
 			);
 			path = Fonts;
 			sourceTree = "<group>";
@@ -793,6 +789,7 @@
 		BCBC1DBC26BE825200B87E5C /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
+				EFE91BF52822E51900B3073C /* Events */,
 				EF8BE63B27CAD05300877234 /* VideoSection */,
 				EF6BA08B2790D896000DA7D2 /* PortfolioSection */,
 				EFF6BFD5276C633200FFC973 /* AssetViews */,
@@ -1355,6 +1352,14 @@
 			path = CrybseReddit;
 			sourceTree = "<group>";
 		};
+		EFE91BF52822E51900B3073C /* Events */ = {
+			isa = PBXGroup;
+			children = (
+				EFE91BF62822E52900B3073C /* EventsHighlights.swift */,
+			);
+			path = Events;
+			sourceTree = "<group>";
+		};
 		EFF195B1277CED7A0081368F /* CrybseServer */ = {
 			isa = PBXGroup;
 			children = (
@@ -1503,17 +1508,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BC6459372713894100BAECBC /* Codystar-Regular.ttf in Resources */,
 				BCBC1D7D26BE7D7500B87E5C /* Preview Assets.xcassets in Resources */,
-				BC64592A2711CDC400BAECBC /* RalewayDots-Regular.ttf in Resources */,
-				BC6459302712064C00BAECBC /* Megrim-Regular.ttf in Resources */,
+				EFE91BF02821E3FF00B3073C /* Gilroy-ExtraBold.otf in Resources */,
+				EFE91BEE2821E36B00B3073C /* Gilroy-Light.otf in Resources */,
 				EF156AF6281BD7D7009F9B92 /* btcCoinData.json in Resources */,
-				BC64592C2711CDCF00BAECBC /* NixieOne-Regular.ttf in Resources */,
 				BCBC1D7A26BE7D7500B87E5C /* Assets.xcassets in Resources */,
 				EF156AFD281EF151009F9B92 /* socialHighlights.json in Resources */,
-				EF8BE63227C1024200877234 /* Forum-Regular.ttf in Resources */,
 				BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */,
-				BC6459282711C7A500BAECBC /* MajorMonoDisplay-Regular.ttf in Resources */,
+				EFE91BF42821E5B200B3073C /* Lora-Italic-VariableFont_wght.ttf in Resources */,
+				EFE91BF32821E5B200B3073C /* Lora-VariableFont_wght.ttf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1782,6 +1785,7 @@
 				EF6C4E502781C65A00AF54C8 /* CrybseTransactionAPI.swift in Sources */,
 				BCC22D5B2728B485005E9BDB /* CurrencyCardView.swift in Sources */,
 				BCF98BA526D9811300C45562 /* CryptoYoutube.swift in Sources */,
+				EFE91BF72822E52900B3073C /* EventsHighlights.swift in Sources */,
 				EF7A802327DCCD3300B6081D /* QuickWatch.swift in Sources */,
 				EF7A801627DB57DF00B6081D /* OffsetReader.swift in Sources */,
 				BCB5BE0427514A1F00EA0394 /* NotificationModel.swift in Sources */,

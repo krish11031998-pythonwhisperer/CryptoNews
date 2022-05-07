@@ -26,10 +26,12 @@ struct HomePage: View {
     var mainView:some View{
         ScrollView(.vertical,showsIndicators:false){
             Spacer().frame(height: 50)
-            LazyVStack(alignment: .leading, spacing: 10) {
-                AllAssetView()
-                self.SocialFeedSummary
-            }
+                AllAssetView().asyncContainer()
+                Container(width:totalWidth){w in
+                    EventViewsTester(width: w)
+                }.asyncContainer()
+                
+                self.SocialFeedSummary.asyncContainer()
             Spacer(minLength: 200)
         }.zIndex(1)
     }

@@ -4,11 +4,10 @@
 <dict>
 	<key>UIAppFonts</key>
 	<array>
-		<string>RalewayDots-Regular.ttf</string>
-		<string>NixieOne-Regular.ttf</string>
-		<string>Megrim-Regular.ttf</string>
-		<string>Codystar-Regular.ttf</string>
-		<string>Forum-Regular.ttf</string>
+		<string>Gilroy-Light.otf</string>
+		<string>Gilroy-ExtraBold.otf</string>
+		<string>Lora-VariableFont_wght.tff</string>
+		<string>Lora-Italic-VariableFont_wght.ttf</string>
 	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>

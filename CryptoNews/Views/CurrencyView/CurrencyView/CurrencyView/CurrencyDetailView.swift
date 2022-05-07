@@ -67,9 +67,6 @@ extension CurrencyDetailView{
                 self.EventSection
                 self.NewsSection
                 self.TweetSection
-//                self.eventsView
-//                self.newsView
-//                self.socialCenter
             }.padding(.vertical,50)
         }, bg: Color.AppBGColor.anyViewWrapper()) {
             self.onClose?()
@@ -335,11 +332,10 @@ extension CurrencyDetailView{
     
     @ViewBuilder var infoSection:some View{
         if let description = self.socialData?.MetaData.Description,description != ""{
-            Container(width:self.size.width - 30){_ in
+            Container(width:self.size.width){ w in
                 MainText(content: description, fontSize: 15, color: .white, fontWeight: .medium)
+                    .frame(width: w, alignment: .center)
             }.borderCard()
-                .padding(.horizontal)
-                .frame(width: self.size.width, alignment: .center)
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
         }
