@@ -18,7 +18,7 @@ struct ShowSectionPreferenceKey:PreferenceKey{
 struct CurrencyDetailView: View {
     @EnvironmentObject var context:ContextData
     @Namespace var animation
-    @State var showMoreSection:CurrencyViewSection = .none
+    @Binding var showMoreSection:CurrencyViewSection
     @StateObject var timeSeriesAPI:CrybseTimeseriesPriceAPI
     @ObservedObject var assetData: CrybseAsset
     var size:CGSize = .init()
@@ -30,6 +30,7 @@ struct CurrencyDetailView: View {
     init(
         assetData:CrybseAsset,
         size:CGSize = .init(width: totalWidth, height: totalHeight * 0.15),
+        showSection:Binding<CurrencyViewSection>,
         onClose: (() -> Void)? = nil
     )
     {
@@ -37,6 +38,7 @@ struct CurrencyDetailView: View {
         self.assetData = assetData
         self._timeSeriesAPI = .init(wrappedValue: .init(currency: assetData.currency, limit: 1, fiat: "USD"))
         self.size = .init(width: size.width, height: size.height)
+        self._showMoreSection = showSection
         self.onClose = onClose
     }
     
@@ -54,24 +56,24 @@ struct CurrencyDetailView: View {
 }
 
 extension CurrencyDetailView{
-        
+    
     @ViewBuilder var mainView:some View{
         StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0",baseNavBarHeight: totalHeight * 0.6,minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
             CurrencyPriceSummaryView(asset: self.assetData, width: size.width, height: size.height, choosenPrice: self.$choosen, choosenInterval: self.$choosenTimeInterval, refresh: $refresh)
         }, innerView: {
-            Container(width:self.size.width,ignoreSides:true,lazyLoad: false){_ in
-                self.transactionHistoryView
-                self.CurrencySummary
-                self.infoSection
-                self.SentimentSection
-                self.EventSection
-                self.NewsSection
-                self.TweetSection
-            }.padding(.vertical,50)
+            Container(width:self.size.width,ignoreSides:false,horizontalPadding: 5,verticalPadding:40,lazyLoad: false){w in
+                self.transactionHistoryView(w: w)
+                self.CurrencySummary(w:w)
+                self.infoSection(w: w)
+                self.SentimentSection(w: w)
+                self.EventSection(w: w)
+                self.NewsSection(w:w)
+                self.TweetSection(w: w)
+            }
         }, bg: Color.AppBGColor.anyViewWrapper()) {
             self.onClose?()
-            
         }
+//        self.tweetNavLink
     }
     
     @ViewBuilder var eventsView:some View{
@@ -146,13 +148,17 @@ extension CurrencyDetailView{
         }
     }
 
-    @ViewBuilder var NewsSection:some View{
+    @ViewBuilder func NewsSection(w:CGFloat) -> some View{
         if let safeNews = self.socialData?.news{
             let news = safeNews.count > 3 ? Array(safeNews[0...2]) : safeNews
-            Container(heading: "Trending News", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width, lazyLoad: true,rightView: {
+            Container(heading: "Trending News", headingColor: .white, headingDivider: false, headingSize: 30, width: w,ignoreSides: true,horizontalPadding: 0, lazyLoad: true,rightView: {
                 MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
                     .textBubble(color: .white, clipping: .roundClipping, verticalPadding: 6.5, horizontalPadding: 10)
+                    .buttonify {
+                        self.showMoreSection = .news
+                    }
                     .anyViewWrapper()
+                    
             }) { w in
                 ForEach(Array(news.enumerated()), id: \.offset) { _news in
                     if _news.offset != 0{
@@ -162,10 +168,8 @@ extension CurrencyDetailView{
                     }
                     NewsSnapshot(news: _news.element, width: w)
                         .buttonify {
-                            if self.context.selectedLink?.absoluteString != _news.element.NewsURL{
-                                setWithAnimation {
-                                    self.context.selectedLink = URL(string: _news.element.NewsURL)
-                                }
+                            if self.context.selectedNews?.news_url != _news.element.news_url{
+                                self.context.selectedNews = _news.element
                             }
                         }
                 }
@@ -173,13 +177,17 @@ extension CurrencyDetailView{
         }
     }
     
-    @ViewBuilder var TweetSection:some View{
+    @ViewBuilder func TweetSection(w:CGFloat) -> some View{
         if let safeTweet = self.socialData?.tweets{
             let tweets = safeTweet.count > 5 ? Array(safeTweet[0...5]) : safeTweet
-            Container(heading: "Top Tweets", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width,ignoreSides: true, lazyLoad: false,rightView: {
+            Container(heading: "Top Tweets", headingColor: .white, headingDivider: false, headingSize: 30, width: w,ignoreSides: true,horizontalPadding: 0, lazyLoad: false,rightView: {
                 MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
                     .textBubble(color: .white, clipping: .roundClipping, verticalPadding: 6.5, horizontalPadding: 10)
+                    .buttonify {
+                        self.showMoreSection = .feed
+                    }
                     .anyViewWrapper()
+                    
             }){ w in
                 ZoomInScrollView(data: tweets, centralizeStart: true, lazyLoad: false, size: .init(width: w * 0.8, height: totalHeight * 0.3), selectedCardSize: .init(width: w * 0.8, height: totalHeight * 0.3)) { data, size, _ in
                     if let safeTweet = data as? CrybseTweet{
@@ -204,9 +212,9 @@ extension CurrencyDetailView{
         }
     }
     
-    @ViewBuilder var SentimentSection:some View{
+    @ViewBuilder func SentimentSection(w:CGFloat) -> some View{
         if let safeSentiment = self.socialData?.sentiment{
-            Container(heading: "Sentiments", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width,onClose: nil){w in
+            Container(heading: "Sentiments", headingColor: .white, headingDivider: false, headingSize: 30, width: w,ignoreSides: true,horizontalPadding: 0,onClose: nil){w in
                 SentimentsSnapshot(sentiment: safeSentiment, width: w)
                     .basicCard()
                     .borderCard(color: .white, clipping: .roundClipping)
@@ -216,9 +224,9 @@ extension CurrencyDetailView{
         }
     }
     
-    @ViewBuilder var EventSection:some View{
+    @ViewBuilder func EventSection(w:CGFloat) -> some View{
         if let safeEvent = self.socialData?.events{
-            Container(heading: "Events", headingColor: .white, headingDivider: false, headingSize: 30, width: self.size.width,onClose: nil) {
+            Container(heading: "Events", headingColor: .white, headingDivider: false, headingSize: 30, width: w,ignoreSides: true,horizontalPadding: 0,onClose: nil) {
                 MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
                     .textBubble(color: .white, clipping: .roundClipping, verticalPadding: 6.5, horizontalPadding: 10)
                     .anyViewWrapper()
@@ -291,8 +299,8 @@ extension CurrencyDetailView{
         return self.txns.compactMap({$0.parseToPortfolioData()})
     }
     
-    var CurrencySummary:some View{
-        Container(heading: "Statistics",headingSize: headingFontSize, width: self.size.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+    func CurrencySummary(w:CGFloat) -> some View{
+        Container(heading: "Statistics",headingSize: headingFontSize, width: w, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
             if let coinMetaData = self.socialData?.MetaData{
                 CurrencySummaryView(currency: coinMetaData, size: .init(width: w, height: self.size.height))
             }else{
@@ -318,23 +326,32 @@ extension CurrencyDetailView{
         }
     }
     
-    @ViewBuilder var transactionHistoryView:some View{
+    @ViewBuilder func transactionHistoryView(w:CGFloat) -> some View{
         if !self.txns.isEmpty{
-            MarkerMainView(data: .init(crypto_coins: Double(self.coinTotal), value_usd: self.valueTotal,profit: self.profit, fee: 1.36, totalfee: 0.0, totalBuys: 1,currentPrice: self.price,txns: self.txnForAssetPortfolioData), size: .init(width: size.width, height: size.height * 1.5))
+            MarkerMainView(
+                data: .init(crypto_coins: Double(self.coinTotal),
+                            value_usd: self.valueTotal,
+                            profit: self.profit, fee: 1.36,
+                            totalfee: 0.0,
+                            totalBuys: 1,
+                            currentPrice: self.price,
+                            txns: self.txnForAssetPortfolioData),
+                            size: .init(width: w, height: size.height * 1.5)
+            )
             HStack(alignment: .center, spacing: 10) {
                 TabButton(width: self.size.width * 0.5 - 10, height: 50, title: "View Portfolio", textColor: .white,action: self.viewPortfolio)
                 TabButton(width: self.size.width * 0.5 - 10, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
-            }.frame(width: self.size.width, alignment: .center)
+            }.frame(width: w, alignment: .center)
         }else{
             TabButton(width: self.size.width, height: 50, title: "Add a New Txn", textColor: .white,action: self.handleAddTxn)
         }
     }
     
-    @ViewBuilder var infoSection:some View{
+    @ViewBuilder func infoSection(w:CGFloat) -> some View{
         if let description = self.socialData?.MetaData.Description,description != ""{
-            Container(width:self.size.width){ w in
+            Container(width:w){ w in
                 MainText(content: description, fontSize: 15, color: .white, fontWeight: .medium)
-                    .frame(width: w, alignment: .center)
+                    .frame(width: w, alignment: .topLeading)
             }.borderCard()
         }else{
             Color.clear.frame(width: .zero, height: .zero, alignment: .center)
@@ -417,7 +434,7 @@ struct CurrencyViewPreview:PreviewProvider{
     
     static var previews: some View{
         if let safeAsset = CurrencyViewPreview.loadCoinData(){
-                CurrencyDetailView(assetData: safeAsset)
+            CurrencyDetailView(assetData: safeAsset,showSection: .constant(.none))
             
             
         }else{

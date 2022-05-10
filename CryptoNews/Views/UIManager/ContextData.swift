@@ -43,13 +43,19 @@ class ContextData:ObservableObject{
     @Published var showTab:Bool = true
     @Published private var _tab:Tabs = .home
     @Published var _addButtonPressed:Bool = false
-    @Published private var _selectedCurrency:CrybseAsset? = nil
+    @Published private var _selectedAsset:CrybseAsset? = nil
     @Published private var _selectedLink:URL? = nil
     @Published private var _selectedPost:CrybPostData? = nil
     @Published private var _selectedTweet:CrybseTweet? = nil
+    @Published private var _selectedNews:CrybseNews? = nil
+    @Published private var _selectedVideo:CrybseNews? = nil
+    @Published private var _showAsset:Bool = false
+    @Published private var _showVideo:Bool = false
+    @Published private var _showTweet:Bool = false
+    @Published private var _showNews:Bool = false
+    @Published private var _showReddit:Bool = false
     @Published private var _selectedRedditPost:CrybseRedditData? = nil 
     @Published private var _showSocialHighlights:Bool = false
-    @Published private var _selectedVideo:CrybseVideoData? = nil
     @Published private var _selectedSymbol:String? = nil
     @Published private var _showPortfolio:Bool = false
     @Published private var _assetOverTime:CrybseAssetOverTime? = nil
@@ -154,26 +160,23 @@ extension ContextData{
     
     var selectedAsset:CrybseAsset?{
         get{
-            return self._selectedCurrency
+            return self._selectedAsset
         }
         
         set{
-            setWithAnimation {
-                self._selectedCurrency = newValue
-                if !self.showPortfolio{
-                    self.showTab = newValue != nil ? false : true
-                    if newValue == nil && self.tab == .none{
-                        self.tab = self.prev_tab
-                        print("(DEBUG) Changing the tab to prev_tab")
-                    }
-                }
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(500)){
-                if newValue != nil && self.tab != .none{
-                    self.tab = .none
-                    print("(DEBUG) Changing the tab to .none")
-                }
-            }
+            self.showAsset = newValue != nil
+            self.showTab = newValue == nil
+            self._selectedAsset = newValue
+        }
+    }
+    
+    var showAsset:Bool{
+        get{
+            self._showAsset
+        }
+        
+        set{
+            self._showAsset = newValue
         }
     }
     
@@ -219,22 +222,21 @@ extension ContextData{
         set{
             setWithAnimation {
                 self._selectedPost = newValue
-                self.showTab = newValue != nil ? false : true
+                self.showTab = newValue != nil
             }
         }
         
     }
     
-    var selectedVideoData:CrybseVideoData?{
+    var selectedVideoData:CrybseNews?{
         get{
             return self._selectedVideo
         }
         
         set{
-            setWithAnimation {
-                self._selectedVideo = newValue
-                self.showTab = newValue != nil ? false : true
-            }
+            self.showTab = newValue == nil
+            self.showVideo = newValue != nil
+            self._selectedVideo = newValue
         }
     }
     
@@ -297,33 +299,72 @@ extension ContextData{
         }
         
         set{
-            setWithAnimation {
-                self._selectedTweet = newValue
-                if let safeTweet = newValue {
-                    print("(DEBUG) safeTweet : ",safeTweet.id)
-                    self.showTab = false
-                }else{
-                    self.showTab = true
-                }
-            }
+            self.showTab = newValue == nil
+            self.showTweet = newValue != nil
+            self._selectedTweet = newValue
         }
     }
     
+    var selectedNews:CrybseNews?{
+        get{
+            return self._selectedNews
+        }
+        
+        set{
+            self.showTab = newValue == nil
+            self.showNews = newValue != nil
+            self._selectedNews = newValue
+        }
+    }
+    
+    var showTweet:Bool{
+        get{
+            return self._showTweet
+        }
+        
+        set{
+            self._showTweet = newValue
+        }
+    }
+    
+    var showNews:Bool{
+        get{
+            return self._showNews
+        }
+        
+        set{
+            self._showNews = newValue
+        }
+    }
+    
+    var showVideo:Bool{
+        get{
+            return self._showVideo
+        }
+        
+        set{
+            self._showVideo = newValue
+        }
+    }
     var selectedReddit:CrybseRedditData?{
         get{
             return self._selectedRedditPost
         }
         
         set{
-            setWithAnimation {
-                self._selectedRedditPost = newValue
-                if let safeReddit = newValue {
-                    print("(DEBUG) safeReddit : ",safeReddit.Permalink)
-                    self.showTab = false
-                }else{
-                    self.showTab = true
-                }
-            }
+            self.showTab = newValue == nil
+            self.showReddit = newValue != nil
+            self._selectedRedditPost = newValue
+        }
+    }
+    
+    var showReddit:Bool{
+        get{
+            return self._showReddit
+        }
+        
+        set{
+            self._showReddit = newValue
         }
     }
     

@@ -26,7 +26,6 @@ struct RedditSnapshot: View {
             MainText(content: "r/\(self.redditPost.SubReddit)", fontSize: 12, color: .white, fontWeight: .regular,padding: 5)
                 .background(Color.orange.overlay(BlurView.thinDarkBlur).opacity(0.45).clipContent(clipping: .roundClipping))
                 .borderCard(color: Color.orange, clipping: .roundClipping)
-//                .blobify(color: AnyView(BlurView.thinLightBlur), clipping: .roundCornerMedium)
         }.frame(width: w, alignment: .center)
     }
     

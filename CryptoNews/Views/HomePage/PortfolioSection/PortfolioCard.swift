@@ -90,9 +90,9 @@ struct PortfolioCard: View {
 
     func handleOnTap(){
         if self.context.selectedAsset?.Currency != self.asset.Currency{
-            setWithAnimation {
+//            setWithAnimation {
                 self.context.selectedAsset = self.asset
-            }
+//            }
         }
     }
     

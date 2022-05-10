@@ -44,11 +44,16 @@ struct SocialHighlightFeedView: View {
         if let news = data as? CrybseNews{
             if news.type?.lowercased() == "video"{
                 VideoSnapshot(videoData: news, width: size.width, height: size.height * 1.5)
+                    .buttonify {
+                        if self.context.selectedVideoData?.date != news.date{
+                            self.context.selectedVideoData = news
+                        }
+                    }
             }else{
                 NewsSnapshot(news: news, width: size.width, height: size.height)
                     .buttonify {
-                        if self.context.selectedLink?.absoluteString != news.news_url,let safeURL = news.news_url{
-                            self.context.selectedLink = .init(string: safeURL)
+                        if self.context.selectedNews?.date != news.date{
+                            self.context.selectedNews = news
                         }
                     }
             }

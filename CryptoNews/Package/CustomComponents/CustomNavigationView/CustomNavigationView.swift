@@ -20,6 +20,7 @@ struct CustomNavigationView<Content:View>: View {
             self.content
                 .navigationBarHidden(true)
         }.navigationViewStyle(StackNavigationViewStyle())
+        .background(Color.AppBGColor.ignoresSafeArea())
     }
 }
 
@@ -28,11 +29,7 @@ struct CustomNavigationView_Previews: PreviewProvider {
         CustomNavigationView {
             ZStack {
                 Color.yellow.frame(width: totalWidth, alignment: .center).ignoresSafeArea()
-                CustomNavLink (active:.constant(false)){
-                    MainText(content: "Click Me", fontSize: 20, color: .black, fontWeight: .medium)
-                        .padding(5)
-                        .blobify(clipping:.roundClipping)
-                } destination: {
+                CustomNavLinkWithoutLabel(isActive:.constant(false)) {
                     Color.red.frame(width: totalWidth, alignment: .center)
                         .ignoresSafeArea()
                         .navigationBarHidden(true)

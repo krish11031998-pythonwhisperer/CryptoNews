@@ -110,11 +110,9 @@ struct MarkerMainView:View{
     var body:some View{
         Container(heading: "Assets", headingColor: .white,headingSize: 20, width: self.size.width, horizontalPadding: 15, verticalPadding: 15) { w in
             let h = self.size.height - 20
-//            VStack(alignment: .leading, spacing: 20){
             self.Header(size: .init(width: w, height: h * 0.2))
-//            self.transactionDetails(size: .init(width: w, height: h * 0.2))
             self.transactionHistory(size: .init(width: w, height: h * 0.4))
-//             }.padding(.vertical,10)
-        }.basicCard(size: .zero)
+        }.basicCard()
+            .borderCard()
     }
 }

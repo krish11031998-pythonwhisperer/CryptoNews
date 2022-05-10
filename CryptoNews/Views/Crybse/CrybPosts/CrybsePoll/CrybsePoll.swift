@@ -75,7 +75,7 @@ struct CrybsePoll: View {
     }
     
     @ViewBuilder var mainBody:some View{
-        Container(heading: self.poll.Question, headingColor: .white, headingDivider: false, headingSize: 20, width: self.width,ignoreSides: false, verticalPadding: 20) { w in
+        Container(heading: self.poll.Question, headingColor: .white, headingDivider: false, headingSize: 20, width: self.width,ignoreSides: true, verticalPadding: 20) { w in
             ForEach(self.poll.Options , id: \.self) { option in
                 self.optionBuilder(option: option, width: w)
             }

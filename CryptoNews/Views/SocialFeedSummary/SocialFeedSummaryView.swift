@@ -38,16 +38,6 @@ struct SocialFeedSummaryView: View {
         return .init(width: w ?? self.width, height: self.height)
     }
     
-    @ViewBuilder func cardBuilder(_ data:Any,_ size:CGSize) -> some View{
-        if let news = data as? CrybseNews{
-            NewsSnapshot(news: news, width: size.width, height: size.height)
-        }else if let tweet = data as? CrybseTweet{
-            TweetSnapshot(tweet: tweet, width: size.width, height: size.height)
-        }else if let reddit = data as? CrybseRedditData{
-            RedditSnapshot(redditPost: reddit, width: size.width, height: size.height)
-        }
-    }
-    
     var tweets:Array<CrybseTweet>?{
         return self.socialHightlights.socialHightlight?.Tweets
     }
@@ -104,7 +94,8 @@ struct SocialFeedSummaryView: View {
     }
 
     
-    var body: some View {        Container(width:self.width,ignoreSides:false,verticalPadding: 0){ w in
+    var body: some View {
+        Container(width:self.width,ignoreSides:false,verticalPadding: 0){ w in
             SocialHighlightFeedView(width: w,video: self.videos, news: self.news, tweet: self.tweets, reddit: self.reddit)
                 .onAppear(perform: self.onAppear)
             if let safeSocialData = self.socialData,safeSocialData.count > 0{

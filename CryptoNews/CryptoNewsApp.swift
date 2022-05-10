@@ -60,6 +60,7 @@ struct CryptoNewsApp: App {
         Group{
             if self.context.loggedIn == .signedIn && !self.loading{
                 CrybseView()
+                    .background(Color.AppBGColor.frame(width: totalWidth, height: totalHeight, alignment: .topLeading).ignoresSafeArea())
             }else{
                 if self.loading{
                     LoginView()

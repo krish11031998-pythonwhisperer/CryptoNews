@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct NewsDetailView: View {
+    @Environment (\.presentationMode) var presentationMode
+    @EnvironmentObject var context:ContextData
     var news:CrybseNews
     var width:CGFloat
     
@@ -54,11 +56,14 @@ struct NewsDetailView: View {
     }
     
     func onClose(){
-        print("(DEBUG) onClose")
+        self.presentationMode.wrappedValue.dismiss()
+        if self.context.selectedNews != nil{
+            self.context.selectedNews = nil
+        }
     }
     
     var body: some View {
-        Container(width: self.width,orientation: .vertical, aligment: .topLeading, spacing: 10) { w in
+        Container(width: self.width,orientation: .vertical, aligment: .topLeading, spacing: 10,onClose: self.onClose) { w in
             self.newsInfoView(w: w)
             self.newsImageView(w: w)
             self.newsDescriptionView(w: w)

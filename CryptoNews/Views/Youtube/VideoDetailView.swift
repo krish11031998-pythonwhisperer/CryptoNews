@@ -9,6 +9,8 @@ import SwiftUI
 import youtube_ios_player_helper
 
 struct VideoDetailView: View {
+    @Environment (\.presentationMode) var presentationMode
+    @EnvironmentObject var context:ContextData
     var video:CrybseNews
     var width:CGFloat
     @State var playerState:YTPlayerState = .unstarted
@@ -78,8 +80,15 @@ struct VideoDetailView: View {
         }
     }
     
+    func onClose(){
+        self.presentationMode.wrappedValue.dismiss()
+        if self.context.selectedVideoData != nil{
+            self.context.selectedVideoData = nil
+        }
+    }
+    
     var body: some View {
-        Container(width:self.width) { w in
+        Container(width:self.width,onClose: self.onClose) { w in
             self.videoInfoView(w: w)
             self.videoImageView(w: w)
             self.videoStateView(w: w)

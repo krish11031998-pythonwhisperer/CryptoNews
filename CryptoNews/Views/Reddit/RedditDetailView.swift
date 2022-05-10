@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RedditDetailView: View {
-    
+    @Environment (\.presentationMode) var presentationMode
     @EnvironmentObject var context:ContextData
     var reddit:CrybseRedditData
     var width:CGFloat
@@ -47,7 +47,10 @@ struct RedditDetailView: View {
     }
     
     func onClose(){
-        print("(DEBUG) Pressed was closed!")
+        self.presentationMode.wrappedValue.dismiss()
+        if self.context.selectedReddit != nil{
+            self.context.selectedReddit = nil
+        }
     }
     
     
@@ -58,7 +61,7 @@ struct RedditDetailView: View {
     }
     
     var body: some View {
-        Container(width: self.width,innerView: self.mainInnerBodyView(w:))
+        Container(width: self.width,onClose: self.onClose,innerView: self.mainInnerBodyView(w:))
             .basicCard()
     }
 }

@@ -77,15 +77,12 @@ struct NewsStandCard: View {
     }
 
     var body: some View {
-        Button {
-            if let news = self.news as? CrybseNews,let urlStr = news.news_url, let url = URL(string: urlStr){
-                self.context.selectedLink = url
-            }else if let cryptoNews = self.news as? CryptoNews,let urlStr = cryptoNews.url, let url = URL(string: urlStr){
-                self.context.selectedLink = url
+        self.mainBody
+            .buttonify {
+                if let safenews = self.news as? CrybseNews, self.context.selectedNews?.news_url != safenews.news_url{
+                    self.context.selectedNews = safenews
+                }
             }
-        } label: {
-            self.mainBody
-        }.springButton()
 
         
     }

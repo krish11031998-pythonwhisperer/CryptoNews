@@ -83,8 +83,7 @@ struct NewsCard: View {
     
     var body: some View {
         self.mainBody
-            .background(BlurView(style: .systemThinMaterialDark))
-            .clipContent(clipping: .roundClipping)
-            .defaultShadow()
+            .basicCard(background: BlurView(style: .systemThinMaterialDark).anyViewWrapper())
+            .borderCard()
     }
 }

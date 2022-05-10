@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct TransactionDetailsView: View {
+    @Environment (\.presentationMode) var presentationMode
     @Namespace var animation
     var txns:[Transaction]
     var currency:String
@@ -59,9 +60,7 @@ struct TransactionDetailsView: View {
 
 extension TransactionDetailsView{
     func onClose(){
-        withAnimation(.easeInOut) {
-            self.close.toggle()
-        }
+        self.presentationMode.wrappedValue.dismiss()
     }
     
     func SummaryHeadingView(w:CGFloat) -> some View{
@@ -82,7 +81,7 @@ extension TransactionDetailsView{
     }
     
     var SummaryView:some View{
-        Container(width: self.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical) { w in
+        Container(width: self.width, horizontalPadding: 15, verticalPadding: 15, orientation: .vertical,onClose: self.onClose) { w in
             CurrencySymbolView(currency: self.currency, size: .medium, width: 50)
                 .frame(width: w, alignment: .topLeading)
             Spacer()

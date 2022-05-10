@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct TweetDetailView:View{
-    
     @EnvironmentObject var context:ContextData
     @StateObject var tweet:CrybseTweet
     var width:CGFloat = .zero
@@ -22,16 +21,15 @@ struct TweetDetailView:View{
     
     
     var body:some View{
-        Container(width:self.width,ignoreSides: true,verticalPadding: 0, lazyLoad: true){ _ in
-            Container(width: self.width) { inner_w in
-                self.innerView(inner_w: inner_w)
+        Container(width:self.width,ignoreSides: true,verticalPadding: 0, lazyLoad: true){ inner_w in
+            self.innerView(inner_w: inner_w)
+                .basicCard()
+                .borderCard(color: self.isRetweet ? .white : .gray.opacity(0.5), clipping: .roundClipping)
+            if !self.isRetweet{
+                self.TweetPoll(w: inner_w)
             }
-            .basicCard()
-            .borderCard(color: self.isRetweet ? .white.opacity(0.5) : .clear, clipping: .roundClipping)
-            self.TweetPoll(w: self.width)
-        }
-        
-        .onAppear(perform: self.fetchRetweets)
+            
+        }.onAppear(perform: self.fetchRetweets)
         
     }
     
@@ -50,7 +48,7 @@ extension TweetDetailView{
     }
     
     @ViewBuilder func TweetPoll(w:CGFloat) -> some View{
-        Container(heading: "Polls",headingColor: .white, headingDivider: false,headingSize: 30, width: w, ignoreSides: true,horizontalPadding: 0,verticalPadding: 0) { inner_w in
+        Container(width: w, ignoreSides: true,horizontalPadding: 0,verticalPadding: 0) { inner_w in
             CrybsePoll(poll: .init(question: "What is the sentiment of the tweet", options: ["Bearish","Bullish"]), width: inner_w)
             Container(heading: "Reactions", headingColor: .white, headingDivider: false, headingSize: 20, width: inner_w) { w in
                 CustomWrappedTextHStack(data: ["Fake News","Trusted News","Overraction","Quality Analysis","Bad analysis"], width: inner_w, fontSize: 14, fontColor: .white, fontWeight: .medium, padding: 10, borderColor: .white, clipping: .roundCornerMedium, background: .clear, widthPadding: 15) { textVal in
@@ -104,13 +102,15 @@ extension TweetDetailView{
     }
     
     
-    @ViewBuilder func innerView(inner_w:CGFloat) -> some View{
-        self.Header(width: inner_w)
-        self.Body(w: inner_w)
-        self.attachmentsView(w: inner_w)
-        self.urlAttachment(w: inner_w)
-        self.EntitySection(w: inner_w)
-        self.Footer(width: inner_w)
+    @ViewBuilder func innerView(inner_w w:CGFloat) -> some View{
+        Container(width: w,ignoreSides:false){ inner_w in
+            self.Header(width: inner_w)
+            self.Body(w: inner_w)
+            self.attachmentsView(w: inner_w)
+            self.urlAttachment(w: inner_w)
+            self.EntitySection(w: inner_w)
+            self.Footer(width: inner_w)
+        }
     }
     
     @ViewBuilder func EntitySection(w:CGFloat) -> some View{
@@ -237,7 +237,7 @@ extension TweetDetailView{
 }
 
 struct TweetDetailMainView:View{
-    
+    @Environment (\.presentationMode) var presentationMode
     @EnvironmentObject var context:ContextData
     var tweet_id:String? = nil
     @State var tweet:CrybseTweet? = nil
@@ -267,6 +267,7 @@ struct TweetDetailMainView:View{
     }
     
     func onClose(){
+        self.presentationMode.wrappedValue.dismiss()
         if self.context.selectedTweet != nil{
             self.context.selectedTweet = nil
         }

@@ -14,7 +14,6 @@ struct CrybseView: View {
         ZStack(alignment: .bottom) {
             Color.AppBGColor.zIndex(0)
             self.mainBody
-            self.hoverView
             if self.context.bottomSwipeNotification.showNotification{
                 self.context.bottomSwipeNotification.generateView()
             }
@@ -55,11 +54,10 @@ extension CrybseView{
     @ViewBuilder var mainBody:some View{
         TabView(selection: $context.tab){
             ForEach(self.tabs, id: \.rawValue) { tab in
+//                CustomNavigationView {
                     self.tabPage(page: tab)
                     .tag(tab)
-                    .background(Color.AppBGColor)
-                    .overlay(self.blurView)
-                    .ignoresSafeArea()
+//                }
             }
         }
         .onAppear {
@@ -97,74 +95,74 @@ extension CrybseView{
         return self.context.selectedLink != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedAsset != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
     }
     
-    @ViewBuilder var hoverView:some View{
-        
-        if let url = self.context.selectedLink{
-            WebModelView(url: url, close: self.closeLink)
-                .transition(.slideInOut)
-                .zIndex(3)
-        }
-        
-        if self.context.addTxn{
-            AddTxnMainView(currency: self.context.selectedSymbol)
-                .transition(.slideInOut)
-                .zIndex(3)
-        }
-        
-        if let asset = self.context.selectedAsset{
-            CurrencyView(asset:asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-            .transition(.slideInOut)
-            .background(Color.AppBGColor)
-            .edgesIgnoringSafeArea(.all)
-            .zIndex(self.context.showPortfolio ? 3 : 2)
-        }
-        
-        if let post = self.context.selectedPost{
-            CrybPostDetailView(postData: post)
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(Color.AppBGColor)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-
-        if self.context.addPost{
-            CrybsePostMainView()
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(Color.AppBGColor)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-        
-
-        if let safeTweet = self.context.selectedTweet{
-            TweetDetailMainView(tweet: safeTweet)
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(Color.AppBGColor)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-        
-        if let socialHighlights = self.context.socialHighlightsData as? [Any]{
-            SocialFeedSummaryExpandedView(data: socialHighlights)
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(Color.AppBGColor)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-        
-        if let safeRedditPost = self.context.selectedReddit{
-            RedditDetailMainView(redditData: safeRedditPost)
-                .environmentObject(self.context)
-                .transition(.slideInOut)
-                .background(Color.AppBGColor)
-                .edgesIgnoringSafeArea(.all)
-                .zIndex(2)
-        }
-    }
+//    @ViewBuilder var hoverView:some View{
+//        
+//        if let url = self.context.selectedLink{
+//            WebModelView(url: url, close: self.closeLink)
+//                .transition(.slideInOut)
+//                .zIndex(3)
+//        }
+//        
+//        if self.context.addTxn{
+//            AddTxnMainView(currency: self.context.selectedSymbol)
+//                .transition(.slideInOut)
+//                .zIndex(3)
+//        }
+//        
+//        if let asset = self.context.selectedAsset{
+//            CurrencyView(asset:asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
+//            .transition(.slideInOut)
+//            .background(Color.AppBGColor)
+//            .edgesIgnoringSafeArea(.all)
+//            .zIndex(self.context.showPortfolio ? 3 : 2)
+//        }
+//        
+//        if let post = self.context.selectedPost{
+//            CrybPostDetailView(postData: post)
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(Color.AppBGColor)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
+//
+//        if self.context.addPost{
+//            CrybsePostMainView()
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(Color.AppBGColor)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
+//        
+//
+//        if let safeTweet = self.context.selectedTweet{
+//            TweetDetailMainView(tweet: safeTweet)
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(Color.AppBGColor)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
+//        
+//        if let socialHighlights = self.context.socialHighlightsData as? [Any]{
+//            SocialFeedSummaryExpandedView(data: socialHighlights)
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(Color.AppBGColor)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
+//        
+//        if let safeRedditPost = self.context.selectedReddit{
+//            RedditDetailMainView(redditData: safeRedditPost)
+//                .environmentObject(self.context)
+//                .transition(.slideInOut)
+//                .background(Color.AppBGColor)
+//                .edgesIgnoringSafeArea(.all)
+//                .zIndex(2)
+//        }
+//    }
     
     func closeAsset(){
         setWithAnimation {

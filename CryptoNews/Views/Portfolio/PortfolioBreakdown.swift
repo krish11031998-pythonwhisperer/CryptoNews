@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct PortfolioBreakdown: View {
+    @EnvironmentObject var context:ContextData
     var assets:[CrybseAsset]
     var width:CGFloat
     var size:CGSize
@@ -44,39 +45,24 @@ struct PortfolioBreakdown: View {
             "Rank" : ("\(asset.Rank)",.white)
         ]
     }
-
-
-    @ViewBuilder func assetCard(data:Any,size:CGSize) -> some View{
-        if let safeAsset = data as? CrybseAsset{
-            let percent = (safeAsset.Value * 100/self.totalInvestment).ToDecimals() + "%"
-            let assetKeyValue = self.assetQuickInfo(asset: safeAsset)
-            Container(width: size.width){ w in
-                MainText(content: safeAsset.Currency, fontSize: 20, color: .white, fontWeight: .medium)
-                    .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .left){
-                        CurrencySymbolView(currency: safeAsset.Currency,width: 20)
-                    }
-                MainText(content: percent, fontSize: 30, color: .gray, fontWeight: .medium)
-                    .frame(width: w, alignment: .trailing)
-                if self.assets[self.idx].Currency == safeAsset.Currency{
-                    LazyVGrid(columns: [.init(.adaptive(minimum: w * 0.5 - 5, maximum: w * 0.5 - 5), spacing: 10)], alignment: .center, spacing: 10) {
-                        ForEach(assetKeyValue.keys.sorted(), id:\.self){key in
-                            if let value = assetKeyValue[key]{
-                                MainTextSubHeading(heading: key, subHeading: value.0, headingSize: 12.5, subHeadingSize: 15, headColor: .white, subHeadColor: value.1, headingWeight: .medium, bodyWeight: .medium, spacing: 3.5,alignment: .center)
-                            }
-                        }
-                    }
-                }
-            }
-            .basicCard(size: size)
-            .borderCard(color: .init(hex: safeAsset.Color))
-            
-        }else{
-            Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-        }
-    }
     
     var arrangedAssets:[CrybseAsset]{
         return self.assets.sorted(by: {$0.Rank < $1.Rank})
+    }
+    
+    func onClose(){
+        if self.context.selectedAsset != nil{
+            self.context.selectedAsset = nil
+        }
+    }
+    
+    var selectedCoinNavLink:some View{
+        CustomNavLinkWithoutLabel(isActive:self.$context.showAsset) {
+            if let safeAsset = self.context.selectedAsset{
+                CurrencyView(asset:safeAsset)
+            }
+        }
+
     }
      
     var chartView:some View{
@@ -95,15 +81,14 @@ struct PortfolioBreakdown: View {
         Container(heading:"Holdings Breakdown",headingDivider:false, headingSize: 20,width: self.width,ignoreSides: true, orientation: .vertical, alignment: .center){ w in
             self.chartView
                 .padding(.vertical)
-                ZoomInScrollView(data: self.arrangedAssets, axis: .horizontal,alignment: .center, centralizeStart: true,lazyLoad: false, size: self.size, selectedCardSize: .init(width: self.size.width * 1.25, height: self.size.height * 1.25)) { data, size, selected  in
-                    if let safeAsset = data as? CrybseAsset{
-                        PortfolioCard(asset: safeAsset,w: size.width, chartHeight: size.height * 0.9, selected: selected)
-                            .slideZoomInOut(cardSize: size)
-                    }
+            ZoomInScrollView(data: self.arrangedAssets, axis: .horizontal,alignment: .center, centralizeStart: true,lazyLoad: false, size: self.size, selectedCardSize: .init(width: self.size.width * 1.25, height: self.size.height * 1.25)) { data, size, selected  in
+                if let safeAsset = data as? CrybseAsset{
+                    PortfolioCard(asset: safeAsset,w: size.width, chartHeight: size.height * 0.9, selected: selected)
+                        .slideZoomInOut(cardSize: size)
                 }
+            }
+            self.selectedCoinNavLink
             
-//            .animatedAppearance()
-                
         }.onPreferenceChange(SelectedCentralCardPreferenceKey.self) { idx in
             if self.idx != idx{
                 self.idx = idx

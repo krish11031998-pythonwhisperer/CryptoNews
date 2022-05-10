@@ -24,16 +24,27 @@ struct HomePage: View {
     
     
     var mainView:some View{
-        ScrollView(.vertical,showsIndicators:false){
-            Spacer().frame(height: 50)
+        CustomNavigationView{
+            ScrollView(.vertical,showsIndicators:false){
+    //            Spacer().frame(height: 50)
                 AllAssetView().asyncContainer()
                 Container(width:totalWidth){w in
                     EventViewsTester(width: w)
                 }.asyncContainer()
-                
                 self.SocialFeedSummary.asyncContainer()
-            Spacer(minLength: 200)
-        }.zIndex(1)
+    //            Spacer(minLength: 200)
+                
+                //NavigationLinks
+                
+                self.tweetNavLink
+                self.newsNavLink
+                self.redditNavLink
+                self.videoNavLink
+                
+            }.background(Color.AppBGColor.ignoresSafeArea())
+        }
+        
+        
     }
     
     var body: some View {
@@ -75,6 +86,45 @@ extension HomePage{
         }.asyncContainer()
     }
     
+    var tweetNavLink:some View{
+        CustomNavLinkWithoutLabel(isActive: self.$context.showTweet) {
+            ScrollView(.vertical, showsIndicators: false) {
+                if let safeTweet = self.context.selectedTweet{
+                    TweetDetailMainView(tweet: safeTweet, width: totalWidth)
+                }
+            }
+        }
+    }
+    
+    var newsNavLink:some View{
+        CustomNavLinkWithoutLabel(isActive: self.$context.showNews) {
+            ScrollView(.vertical, showsIndicators: false) {
+                if let safeNews = self.context.selectedNews{
+                    NewsDetailView(news: safeNews, width: totalWidth)
+                }
+            }
+        }
+    }
+    
+    var redditNavLink:some View{
+        CustomNavLinkWithoutLabel(isActive: self.$context.showReddit) {
+            ScrollView(.vertical, showsIndicators: false) {
+                if let safeReddit = self.context.selectedReddit{
+                    RedditDetailView(reddit: safeReddit, width: totalWidth)
+                }
+            }
+        }
+    }
+    
+    var videoNavLink:some View{
+        CustomNavLinkWithoutLabel(isActive: self.$context.showVideo) {
+            ScrollView(.vertical, showsIndicators: false) {
+                if let safeVideo = self.context.selectedVideoData{
+                    VideoDetailView(video: safeVideo, width: totalWidth)
+                }
+            }
+        }
+    }
 }
 
 struct HomePage_Previews: PreviewProvider {

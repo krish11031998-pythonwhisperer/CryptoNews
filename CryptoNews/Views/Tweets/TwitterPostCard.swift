@@ -71,6 +71,8 @@ struct TwitterPostCard: View {
         if self.data.text != nil{
             if self.isButton{
                 self.card
+                    .basicCard()
+                    .borderCard(color: .gray.opacity(0.5), clipping: .roundClipping)
                     .buttonify {
                         if self.context.selectedTweet != self.data{
                             self.context.selectedTweet = self.data

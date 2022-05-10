@@ -19,35 +19,31 @@ struct PortfolioMain: View {
     }
         
     var body: some View {
-        StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
-            PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
-        }, innerView: {
-            Container(ignoreSides: true) { w in
-                self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
-                self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
-                PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.35))
-                    .animatedAppearance()
+        CustomNavigationView{
+            StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+                PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
+            }, innerView: {
+                Container(ignoreSides: true) { w in
+                    self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
+                    self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
+                    PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.35))
+                        .animatedAppearance()
+                    
+                }
+                .frame(width: self.width, alignment: .topLeading)
+                .padding(.vertical,50)
                 
-            }
-            .frame(width: self.width, alignment: .topLeading)
-            .padding(.vertical,50)
-            
-        }, bg: Color.AppBGColor.anyViewWrapper())
+            }, bg: Color.AppBGColor.anyViewWrapper())
+        }
+        
     }
 }
 
-extension PortfolioMain{
-    
 
-    
+extension PortfolioMain{
+
     var trackedAssets:[CrybseAsset]{
         return self.context.userAssets.trackedAssets.sorted(by: {$0.Rank < $1.Rank})
-    }
-    
-    func onClose(){
-        if self.context.showPortfolio{
-            self.context.showPortfolio.toggle()
-        }
     }
     
     var profitableAsset:CrybseAsset?{
