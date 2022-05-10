@@ -87,41 +87,33 @@ extension HomePage{
     }
     
     var tweetNavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$context.showTweet) {
-            ScrollView(.vertical, showsIndicators: false) {
-                if let safeTweet = self.context.selectedTweet{
-                    TweetDetailMainView(tweet: safeTweet, width: totalWidth)
-                }
+        CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showTweet) {w in
+            if let safeTweet = self.context.selectedTweet{
+                TweetDetailMainView(tweet: safeTweet,width: w, enableOnClose: false)
             }
         }
     }
     
     var newsNavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$context.showNews) {
-            ScrollView(.vertical, showsIndicators: false) {
-                if let safeNews = self.context.selectedNews{
-                    NewsDetailView(news: safeNews, width: totalWidth)
-                }
+        CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showNews) { w in
+            if let safeNews = self.context.selectedNews{
+                NewsDetailView(news: safeNews, width: w)
             }
         }
     }
     
     var redditNavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$context.showReddit) {
-            ScrollView(.vertical, showsIndicators: false) {
-                if let safeReddit = self.context.selectedReddit{
-                    RedditDetailView(reddit: safeReddit, width: totalWidth)
-                }
+        CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showReddit) { w in
+            if let safeReddit = self.context.selectedReddit{
+                RedditDetailView(reddit: safeReddit, width: w)
             }
         }
     }
     
     var videoNavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$context.showVideo) {
-            ScrollView(.vertical, showsIndicators: false) {
-                if let safeVideo = self.context.selectedVideoData{
-                    VideoDetailView(video: safeVideo, width: totalWidth)
-                }
+        CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showVideo) { w in
+            if let safeVideo = self.context.selectedVideoData{
+                VideoDetailView(video: safeVideo, width: w)
             }
         }
     }

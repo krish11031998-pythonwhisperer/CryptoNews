@@ -274,14 +274,7 @@ struct TweetDetailMainView:View{
     }
     
     @ViewBuilder var innerView:some View{
-        if self.isRetweet{
-            Container(width: self.width,horizontalPadding: 0,verticalPadding: 10,onClose: self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
-        }else{
-            ScrollView(.vertical, showsIndicators: false) {
-                Container(width: self.width,horizontalPadding: 10,verticalPadding: 50,onClose: self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
-            }
-        }
-        
+        Container(width: self.width,horizontalPadding: self.isRetweet ? 0 : 10,verticalPadding: 10,onClose: !self.isRetweet && self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
     }
     
     @ViewBuilder func twitterViewBuilder(w:CGFloat) -> some View{

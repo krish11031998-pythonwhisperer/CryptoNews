@@ -29,8 +29,8 @@ struct CustomNavigationView_Previews: PreviewProvider {
         CustomNavigationView {
             ZStack {
                 Color.yellow.frame(width: totalWidth, alignment: .center).ignoresSafeArea()
-                CustomNavLinkWithoutLabel(isActive:.constant(false)) {
-                    Color.red.frame(width: totalWidth, alignment: .center)
+                CustomNavLinkWithoutLabelWithInnerView(isActive:.constant(false)) { w in
+                    Color.red.frame(width: w, alignment: .center)
                         .ignoresSafeArea()
                         .navigationBarHidden(true)
                         .customNavigationTitleAndSubTitle("Title")

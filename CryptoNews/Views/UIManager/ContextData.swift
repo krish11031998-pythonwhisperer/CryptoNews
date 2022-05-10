@@ -323,6 +323,14 @@ extension ContextData{
         }
         
         set{
+            if !newValue{
+                if self._selectedTweet != nil{
+                    self._selectedTweet = nil
+                }
+                if !self.showTab{
+                    self.showTab.toggle()
+                }
+            }
             self._showTweet = newValue
         }
     }
@@ -333,6 +341,14 @@ extension ContextData{
         }
         
         set{
+            if !newValue{
+                if  self._selectedNews != nil{
+                    self._selectedNews = nil
+                }
+                if !self.showTab{
+                    self.showTab.toggle()
+                }
+            }
             self._showNews = newValue
         }
     }
@@ -343,6 +359,14 @@ extension ContextData{
         }
         
         set{
+            if !newValue{
+                if self._selectedVideo != nil{
+                    self._selectedVideo = nil
+                }
+                if !self.showTab{
+                    self.showTab.toggle()
+                }
+            }
             self._showVideo = newValue
         }
     }
@@ -364,6 +388,16 @@ extension ContextData{
         }
         
         set{
+            if !newValue{
+                if self._selectedRedditPost != nil{
+                    self._selectedRedditPost = nil
+                }
+                
+                if !self.showTab{
+                    self.showTab.toggle()
+                }
+            }
+            
             self._showReddit = newValue
         }
     }

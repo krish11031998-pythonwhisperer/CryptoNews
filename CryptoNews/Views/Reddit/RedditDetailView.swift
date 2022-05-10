@@ -46,14 +46,6 @@ struct RedditDetailView: View {
         }
     }
     
-    func onClose(){
-        self.presentationMode.wrappedValue.dismiss()
-        if self.context.selectedReddit != nil{
-            self.context.selectedReddit = nil
-        }
-    }
-    
-    
     @ViewBuilder func mainInnerBodyView(w inner_w:CGFloat) -> some View{
         self.headerView(w: inner_w)
         self.redditPostMessage(w: inner_w)
@@ -61,7 +53,7 @@ struct RedditDetailView: View {
     }
     
     var body: some View {
-        Container(width: self.width,onClose: self.onClose,innerView: self.mainInnerBodyView(w:))
+        Container(width: self.width,innerView: self.mainInnerBodyView(w:))
             .basicCard()
     }
 }

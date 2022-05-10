@@ -98,14 +98,9 @@ struct CurrencyView:View{
     
     @ViewBuilder func feedView(w:CGFloat) -> some View{
         if let feed = self.tweets{
-            Container(heading: "Tweets", headingColor: .white, headingDivider: false, headingSize: 30, width: w, lazyLoad: true) {
-                self.displaySection = false
-                if self.showSection != .none{
-                    self.showSection = .none
-                }
-            } innerView: { w in
-                ForEach(Array(feed.enumerated()),id:\.offset) { _tweet in
-                    TwitterPostCard(cardType: .Tweet, data: _tweet.element, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
+            LazyScrollView(data: feed, embedScrollView: false, stopLoading: true){ data in
+                if let tweetData = data as? CrybseTweet{
+                    TwitterPostCard(cardType: .Tweet, data: tweetData, size: .init(width: w, height: totalHeight * 0.3), font_color: .white, const_size: false)
                 }
             }
             .onPreferenceChange(RefreshPreference.self) { reload in
@@ -153,14 +148,9 @@ struct CurrencyView:View{
     
     @ViewBuilder func newsView(w:CGFloat) -> some View{
         if let news = self.news{
-            Container(heading: "News", headingColor: .white, headingDivider: false, headingSize: 30, width: w, lazyLoad: true) {
-                self.displaySection = false
-                if self.showSection != .none{
-                    self.showSection = .none
-                }
-            } innerView: { w in
-                ForEach(Array(news.enumerated()),id:\.offset) { _news in
-                    NewsStandCard(news: _news.element,size: .init(width: w, height: CardSize.slender.height * 0.5))
+            LazyScrollView(data: news, embedScrollView: false, stopLoading: true) { data in
+                if let newsData = data as? CrybseNews{
+                    NewsStandCard(news: newsData,size: .init(width: w, height: CardSize.slender.height * 0.5))
                 }
             }
             .onPreferenceChange(RefreshPreference.self) { reload in
@@ -232,11 +222,9 @@ struct CurrencyView:View{
     }
     
     @ViewBuilder var tweetNavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$context.showTweet) {
+        CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showTweet) { w in
             if let selectedTweet = self.context.selectedTweet{
-                ScrollView(.vertical, showsIndicators: false) {
-                    TweetDetailMainView(tweet: selectedTweet, width: totalWidth)
-                }
+                TweetDetailMainView(tweet: selectedTweet, width: w)
             }else{
                 Color.clear
             }
@@ -244,11 +232,9 @@ struct CurrencyView:View{
     }
     
     @ViewBuilder var newsNavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$context.showNews) {
+        CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showNews) { w in
             if let selectedNews = self.context.selectedNews{
-                ScrollView(.vertical, showsIndicators: false) {
-                    NewsDetailView(news: selectedNews, width: totalWidth)
-                }
+                NewsDetailView(news: selectedNews, width: w)
             }else{
                 Color.clear
             }
@@ -256,21 +242,20 @@ struct CurrencyView:View{
     }
     
     @ViewBuilder var MoreNewsnavLink:some View{
-        CustomNavLinkWithoutLabel(isActive: self.$displaySection){
-            ScrollView(.vertical, showsIndicators: false) {
+        let header = self.showSection == .news ? "News" : self.showSection == .feed ? "Tweet" : self.showSection == .reddit ? "Reddit" : self.showSection == .videos ? "Video" : "None"
+        CustomNavLinkWithoutLabelWithInnerView(header:header,isActive: self.$displaySection){ w in
+//            ScrollView(.vertical, showsIndicators: false) {
                 switch(self.showSection){
                     case .news:
-                        self.newsView(w: totalWidth)
+                        self.newsView(w: w)
                     case .feed:
-                        self.feedView(w: totalWidth)
+                        self.feedView(w: w)
                     case .txns:
-                        Container(width:totalWidth){w in
-                            TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.Currency, currencyCurrentPrice: self.assetData.CoinData.Price,width: w)
-                        }
+                        TransactionDetailsView(txns: self.txnsForAsset,currency:self.assetData.Currency, currencyCurrentPrice: self.assetData.CoinData.Price,width: w)
                     default:
                         Color.clear
                 }
-            }
+//            }
         }
         
     }
@@ -296,6 +281,11 @@ struct CurrencyView:View{
         .onChange(of: self.showSection) { newValue in
             if newValue != .none && !self.displaySection{
                 self.displaySection = true
+            }
+        }
+        .onChange(of: self.displaySection) { newValue in
+            if !newValue && self.showSection != .none{
+                self.showSection = .none
             }
         }
     }

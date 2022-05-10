@@ -80,20 +80,14 @@ struct VideoDetailView: View {
         }
     }
     
-    func onClose(){
-        self.presentationMode.wrappedValue.dismiss()
-        if self.context.selectedVideoData != nil{
-            self.context.selectedVideoData = nil
-        }
-    }
     
     var body: some View {
-        Container(width:self.width,onClose: self.onClose) { w in
-            self.videoInfoView(w: w)
-            self.videoImageView(w: w)
-            self.videoStateView(w: w)
-            self.videoDescriptionView(w: w)
-        }
+        //        Container(width:self.width,onClose: self.onClose) { w in
+        self.videoInfoView(w: self.width)
+        self.videoImageView(w: self.width)
+        self.videoStateView(w: self.width)
+        self.videoDescriptionView(w: self.width)
+        //        }
     }
 }
 

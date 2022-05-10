@@ -63,7 +63,12 @@ struct NewsDetailView: View {
     }
     
     var body: some View {
-        Container(width: self.width,orientation: .vertical, aligment: .topLeading, spacing: 10,onClose: self.onClose) { w in
+//        Container(width: self.width,orientation: .vertical, aligment: .topLeading, spacing: 10,onClose: self.onClose) { w in
+//            self.newsInfoView(w: w)
+//            self.newsImageView(w: w)
+//            self.newsDescriptionView(w: w)
+//        }
+        Container(width: self.width,orientation: .vertical, aligment: .topLeading, spacing: 10) { w in
             self.newsInfoView(w: w)
             self.newsImageView(w: w)
             self.newsDescriptionView(w: w)
