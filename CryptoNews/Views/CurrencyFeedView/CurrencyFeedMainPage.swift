@@ -87,7 +87,7 @@ extension CurrencyFeedMainPage{
     
     
     func getTweets(){
-        CrybseTwitterAPI.shared.getTweetData(endpoint: .tweetsSearch, queryItems: ["entity":self.currency,"language":"en","limit":"20","after":self.next_Page_Token as Any]) { data in
+        CrybseTwitterAPI.shared.getTweetData(endpoint: .tweets, queryItems: ["entity":self.currency,"language":"en","limit":"20","after":self.next_Page_Token as Any]) { data in
             guard let safeData = data, let safeTweets = CrybseTweets.parseTweetsFromData(data: safeData), let tweets = safeTweets.tweets else {return}
             
             if self.reset{

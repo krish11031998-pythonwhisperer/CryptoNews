@@ -10,6 +10,7 @@ import Foundation
 enum CrybseTwitterEndpoints:String{
     case tweetDetails = "tweet"
     case tweetsFromUser = "tweets/user"
+    case tweets = "tweets"
     case tweetsSearch = "search"
 }
 

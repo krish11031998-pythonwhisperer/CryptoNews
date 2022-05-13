@@ -202,14 +202,9 @@ extension ContextData{
         
         
         set{
-            setWithAnimation {
-                if newValue == nil && self.tab != .none{
-                    self.tab = .none
-                }else{
-                    self.tab = self.prev_tab
-                }
-                self._socialHighlightsData = newValue
-            }
+            self._socialHighlightsData = newValue
+            self.showTab = newValue == nil
+            self.showSocialHighlights = newValue != nil
         }
     }
     
@@ -327,7 +322,7 @@ extension ContextData{
                 if self._selectedTweet != nil{
                     self._selectedTweet = nil
                 }
-                if !self.showTab{
+                if !self.showTab && self.selectedAsset == nil{
                     self.showTab.toggle()
                 }
             }
@@ -345,7 +340,7 @@ extension ContextData{
                 if  self._selectedNews != nil{
                     self._selectedNews = nil
                 }
-                if !self.showTab{
+                if !self.showTab && self.selectedAsset == nil{
                     self.showTab.toggle()
                 }
             }
@@ -363,7 +358,7 @@ extension ContextData{
                 if self._selectedVideo != nil{
                     self._selectedVideo = nil
                 }
-                if !self.showTab{
+                if !self.showTab && self.selectedAsset == nil{
                     self.showTab.toggle()
                 }
             }
@@ -393,7 +388,7 @@ extension ContextData{
                     self._selectedRedditPost = nil
                 }
                 
-                if !self.showTab{
+                if !self.showTab && self.selectedAsset == nil{
                     self.showTab.toggle()
                 }
             }
@@ -426,14 +421,15 @@ extension ContextData{
         }
         
         set{
-            setWithAnimation {
-                self._showSocialHighlights = newValue
-                if newValue && self.tab != .none{
-                    self.tab = .none
-                }else if !newValue && self.tab == .none{
-                    self.tab = self.prev_tab
-                }
+            self._showSocialHighlights = newValue
+            if !newValue && !self.showTab{
+                self.showTab.toggle()
             }
+            
+            if !newValue && self.socialHighlightsData != nil{
+                self.socialHighlightsData = nil
+            }
+            
         }
     }
     

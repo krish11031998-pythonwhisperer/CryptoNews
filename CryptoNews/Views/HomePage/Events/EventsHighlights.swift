@@ -70,8 +70,6 @@ struct EventViewsTester:View{
     var body: some View {
         if let safeEvents = self.eventsDataLoader(){
             EventsHighlights(events: safeEvents,width: self.width)
-                .background(Color.AppBGColor)
-                .ignoresSafeArea()
         }else{
             ProgressView()
         }

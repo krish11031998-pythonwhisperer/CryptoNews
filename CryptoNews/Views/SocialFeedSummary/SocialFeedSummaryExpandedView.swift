@@ -24,31 +24,28 @@ struct SocialFeedSummaryExpandedView: View {
     }
     
     @ViewBuilder func pageBuilder(data:Any,size:CGSize) -> some View{
-        ScrollView(.vertical, showsIndicators: false) {
-            Container(width:size.width,ignoreSides:false) { w in
-                if let tweet = data as? CrybseTweet{
-                    TweetDetailView(tweet: tweet, width: w)
-                }else if let reddit = data as? CrybseRedditData{
-                    RedditDetailView(reddit: reddit, width: w)
-                }else if let other = data as? CrybseNews{
-                    if other._Type == "Article"{
-                        NewsDetailView(news: other,width: w)
-                            .buttonify {
-                                if self.context.selectedLink?.absoluteString != other.NewsURL{
-                                    self.context.selectedLink = .init(string: other.NewsURL)
-                                }
+        Container(width:size.width,ignoreSides:false,horizontalPadding: 5) { w in
+            if let tweet = data as? CrybseTweet{
+                TweetDetailView(tweet: tweet, width: w)
+            }else if let reddit = data as? CrybseRedditData{
+                RedditDetailView(reddit: reddit, width: w)
+            }else if let other = data as? CrybseNews{
+                if other._Type == "Article"{
+                    NewsDetailView(news: other,width: w)
+                        .buttonify {
+                            if self.context.selectedLink?.absoluteString != other.NewsURL{
+                                self.context.selectedLink = .init(string: other.NewsURL)
                             }
-                    }else if other._Type == "Video"{
-                        VideoDetailView(video: other, width: w)
-                    }
+                        }
+                }else if other._Type == "Video"{
+                    VideoDetailView(video: other, width: w)
                 }
-                Spacer().frame(height: totalHeight * 0.2)
-            }.padding(.top,safeAreaInsets.top + totalHeight * 0.125)
+            }
         }
     }
     
     @ViewBuilder func scrollIndicator(size:CGSize) -> some View{
-        let barWidth = size.width/CGFloat(self.data.count) - 2.5
+        let barWidth = (size.width - 30)/CGFloat(self.data.count) - 2.5
         HStack(alignment: .center, spacing: 2.5) {
             ForEach(0..<self.data.count,id:\.self) { idx in
                 ZStack(alignment: .center) {
@@ -66,6 +63,7 @@ struct SocialFeedSummaryExpandedView: View {
                 }
             }
         }
+        .padding(.horizontal,15)
         .frame(width: size.width, height: size.height, alignment: .leading)
     }
     
@@ -75,7 +73,8 @@ struct SocialFeedSummaryExpandedView: View {
         }
     }
     var body: some View {
-        ZStack(alignment: .top) {
+        Container(heading: "SocialHighlight", headingColor: .white, headingDivider: false, headingSize: 30, width: totalWidth, ignoreSides: true,lazyLoad: true) { w in
+            self.scrollIndicator(size: .init(width: w, height: 2.5))
             ZoomInScrollView(data: self.data, axis: .horizontal, centralizeStart: true,lazyLoad: true, size: .init(width: totalWidth, height: .zero), selectedCardSize: .init(width: totalWidth, height: .zero)) { data, size, _ in
                 self.pageBuilder(data: data, size: size)
             }
@@ -83,15 +82,6 @@ struct SocialFeedSummaryExpandedView: View {
                 print("(DEBUG) newSelectorIndex : ",newValue)
                 self.idx = newValue
             }
-            Container(heading:"Social Highlights",headingDivider: false,width: totalWidth, onClose: self.onClose) { w in
-                self.scrollIndicator(size: .init(width: w, height: 2.5))
-            }
-            .frame(width: totalWidth, height: totalHeight * 0.125, alignment: .center)
-            .padding(.top,safeAreaInsets.top)
-            .background(BlurView.thinLightBlur)
-        }
-        .onAppear {
-            print("(DEBUG) safeAreaInsets : ",self.safeAreaInsets)
         }
     }
 }

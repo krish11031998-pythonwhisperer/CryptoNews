@@ -274,7 +274,7 @@ struct TweetDetailMainView:View{
     }
     
     @ViewBuilder var innerView:some View{
-        Container(width: self.width,horizontalPadding: self.isRetweet ? 0 : 10,verticalPadding: 10,onClose: !self.isRetweet && self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
+        Container(width: self.width,horizontalPadding: 0,verticalPadding: 5,onClose: !self.isRetweet && self.enableOnClose ? self.onClose : nil,innerView: self.twitterViewBuilder(w:))
     }
     
     @ViewBuilder func twitterViewBuilder(w:CGFloat) -> some View{
@@ -288,7 +288,8 @@ struct TweetDetailMainView:View{
     }
 
     var body: some View{
-        self.innerView
+//        self.innerView
+        self.twitterViewBuilder(w: self.width)
             .onAppear(perform: self.onAppear)
     }
 }

@@ -53,7 +53,7 @@ struct RedditDetailView: View {
     }
     
     var body: some View {
-        Container(width: self.width,innerView: self.mainInnerBodyView(w:))
+        Container(width: self.width,ignoreSides: true,innerView: self.mainInnerBodyView(w:))
             .basicCard()
     }
 }

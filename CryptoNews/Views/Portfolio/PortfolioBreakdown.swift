@@ -85,6 +85,7 @@ struct PortfolioBreakdown: View {
                 if let safeAsset = data as? CrybseAsset{
                     PortfolioCard(asset: safeAsset,w: size.width, chartHeight: size.height * 0.9, selected: selected)
                         .slideZoomInOut(cardSize: size)
+                        .padding(.vertical,10)
                 }
             }
             self.selectedCoinNavLink

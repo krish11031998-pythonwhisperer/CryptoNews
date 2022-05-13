@@ -197,7 +197,7 @@ struct SocialHighlightFeedView: View {
                 }
             }
             .basicCard(background: Color.clear.anyViewWrapper())
-            .borderCard(color: .white, clipping: .roundClipping)
+            .borderCard()
         }else{
             Color.clear.frame(width: 0, height: 0, alignment: .center)
         }

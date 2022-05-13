@@ -156,7 +156,7 @@ struct CustomNavLinkWithLabel<Label:View,Destination:View>: View {
     }
     
     var body: some View {
-        NavigationLink(destination: self.destination) {
+        NavigationLink(destination: self.destinationView) {
             self.label
         }
     }

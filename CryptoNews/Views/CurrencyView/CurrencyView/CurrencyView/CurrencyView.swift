@@ -224,7 +224,7 @@ struct CurrencyView:View{
     @ViewBuilder var tweetNavLink:some View{
         CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showTweet) { w in
             if let selectedTweet = self.context.selectedTweet{
-                TweetDetailMainView(tweet: selectedTweet, width: w)
+                TweetDetailView(tweet: selectedTweet, width: w)
             }else{
                 Color.clear
             }

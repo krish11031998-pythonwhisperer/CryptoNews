@@ -32,10 +32,12 @@ struct HomePage: View {
                     EventViewsTester(width: w)
                 }.asyncContainer()
                 self.SocialFeedSummary.asyncContainer()
+                    .padding(.bottom,50)
     //            Spacer(minLength: 200)
                 
                 //NavigationLinks
                 
+                self.socialHighlightNavLink
                 self.tweetNavLink
                 self.newsNavLink
                 self.redditNavLink
@@ -89,7 +91,7 @@ extension HomePage{
     var tweetNavLink:some View{
         CustomNavLinkWithoutLabelWithInnerView(isActive: self.$context.showTweet) {w in
             if let safeTweet = self.context.selectedTweet{
-                TweetDetailMainView(tweet: safeTweet,width: w, enableOnClose: false)
+                TweetDetailView(tweet: safeTweet, width: w)
             }
         }
     }
@@ -115,6 +117,15 @@ extension HomePage{
             if let safeVideo = self.context.selectedVideoData{
                 VideoDetailView(video: safeVideo, width: w)
             }
+        }
+    }
+    
+    var socialHighlightNavLink:some View{
+        CustomNavLinkWithoutLabelWithInnerView(ignoreSide: true, isActive: self.$context.showSocialHighlights) { w in
+            if let socialHighlights = self.context.socialHighlightsData as? [Any]{
+                SocialFeedSummaryExpandedView(data: socialHighlights)
+            }
+
         }
     }
 }
