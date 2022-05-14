@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LatestRedditPost: View {
     @EnvironmentObject var context:ContextData
-    @StateObject var redditAPI:CrybseRedditAPI = .init(search: "cryptocurrency")
+    @StateObject var redditAPI:CrybseRedditAPI = .init()
     var width:CGFloat
     var height:CGFloat
     init(width:CGFloat = totalWidth,height:CGFloat = totalHeight * 0.275,currencies:[String]){

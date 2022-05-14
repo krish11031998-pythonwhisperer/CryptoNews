@@ -26,14 +26,12 @@ struct HomePage: View {
     var mainView:some View{
         CustomNavigationView{
             ScrollView(.vertical,showsIndicators:false){
-    //            Spacer().frame(height: 50)
                 AllAssetView().asyncContainer()
                 Container(width:totalWidth){w in
                     EventViewsTester(width: w)
                 }.asyncContainer()
                 self.SocialFeedSummary.asyncContainer()
                     .padding(.bottom,50)
-    //            Spacer(minLength: 200)
                 
                 //NavigationLinks
                 
@@ -43,7 +41,7 @@ struct HomePage: View {
                 self.redditNavLink
                 self.videoNavLink
                 
-            }.background(Color.AppBGColor.ignoresSafeArea())
+            }.background(Color.AppBGColor)
         }
         
         

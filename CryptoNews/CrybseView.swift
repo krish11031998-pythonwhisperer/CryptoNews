@@ -13,14 +13,16 @@ struct CrybseView: View {
     var contentView:some View{
         ZStack(alignment: .bottom) {
             Color.AppBGColor.zIndex(0)
-            self.mainBody
-            if self.context.bottomSwipeNotification.showNotification{
-                self.context.bottomSwipeNotification.generateView()
-            }
-            if self.context.showTab{
-                TabBarMain()
-                    .zIndex(2)
-            }
+//            self.mainBody
+//            if self.context.bottomSwipeNotification.showNotification{
+//                self.context.bottomSwipeNotification.generateView()
+//            }
+//            if self.context.showTab{
+//                TabBarMain()
+//                    .zIndex(2)
+//            }
+//            CurrencyFeedMainPage(type: .reddit)
+            self.infoFeedView
         }
         .frame(width: totalWidth, height: totalHeight, alignment: .center)
         .ignoresSafeArea(.keyboard, edges: .bottom)
@@ -89,90 +91,6 @@ extension CrybseView{
         SlideTabView {
             [FeedPageType.twitter,FeedPageType.reddit,FeedPageType.news].compactMap({CurrencyFeedMainPage(type: $0).anyViewWrapper()})
         }.environmentObject(self.context)
-    }
-        
-    var hoverViewEnabled:Bool{
-        return self.context.selectedLink != nil || self.context.addTxn || self.context.tab == .txn || self.context.selectedAsset != nil || self.context.selectedPost != nil || self.context.addTxn || self.context.addPost
-    }
-    
-//    @ViewBuilder var hoverView:some View{
-//        
-//        if let url = self.context.selectedLink{
-//            WebModelView(url: url, close: self.closeLink)
-//                .transition(.slideInOut)
-//                .zIndex(3)
-//        }
-//        
-//        if self.context.addTxn{
-//            AddTxnMainView(currency: self.context.selectedSymbol)
-//                .transition(.slideInOut)
-//                .zIndex(3)
-//        }
-//        
-//        if let asset = self.context.selectedAsset{
-//            CurrencyView(asset:asset, size: .init(width: totalWidth, height: totalHeight), onClose: self.closeAsset)
-//            .transition(.slideInOut)
-//            .background(Color.AppBGColor)
-//            .edgesIgnoringSafeArea(.all)
-//            .zIndex(self.context.showPortfolio ? 3 : 2)
-//        }
-//        
-//        if let post = self.context.selectedPost{
-//            CrybPostDetailView(postData: post)
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(Color.AppBGColor)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
-//
-//        if self.context.addPost{
-//            CrybsePostMainView()
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(Color.AppBGColor)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
-//        
-//
-//        if let safeTweet = self.context.selectedTweet{
-//            TweetDetailMainView(tweet: safeTweet)
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(Color.AppBGColor)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
-//        
-//        if let socialHighlights = self.context.socialHighlightsData as? [Any]{
-//            SocialFeedSummaryExpandedView(data: socialHighlights)
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(Color.AppBGColor)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
-//        
-//        if let safeRedditPost = self.context.selectedReddit{
-//            RedditDetailMainView(redditData: safeRedditPost)
-//                .environmentObject(self.context)
-//                .transition(.slideInOut)
-//                .background(Color.AppBGColor)
-//                .edgesIgnoringSafeArea(.all)
-//                .zIndex(2)
-//        }
-//    }
-    
-    func closeAsset(){
-        setWithAnimation {
-            if self.context.selectedAsset != nil{
-                self.context.selectedAsset = nil
-                
-            }else if self.context.selectedSymbol != nil{
-                self.context.selectedSymbol = nil
-            }
-        }
     }
 
 }

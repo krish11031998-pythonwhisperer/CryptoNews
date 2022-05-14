@@ -23,11 +23,13 @@ struct TweetDetailView:View{
     var body:some View{
         Container(width:self.width,ignoreSides: true,verticalPadding: 0, lazyLoad: true){ inner_w in
             self.innerView(inner_w: inner_w)
-                .basicCard()
+                .basicCard(background: BlurView.thinLightBlur.opacity(0.125).anyViewWrapper())
                 .borderCard(color: self.isRetweet ? .white : .gray.opacity(0.5), clipping: .roundClipping)
             if !self.isRetweet{
                 self.TweetPoll(w: inner_w)
             }
+            
+            //NavigationLink
             
         }.onAppear(perform: self.fetchRetweets)
         

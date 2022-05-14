@@ -63,7 +63,7 @@ struct TwitterPostCard: View {
             }
             self.Footer(width: w)
         }
-        .basicCard(size:self.const_size ? self.size : .zero)
+        .basicCard(size:self.const_size ? self.size : .zero,background: BlurView.thinLightBlur.opacity(0.125).anyViewWrapper())
     }
 
     

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct CurrencyFeedMainPage: View {
+    @EnvironmentObject var contextData:ContextData
     @State var feedData:[Any]? = nil
     @State var currency:String = "BTC"
     @State var next_Page_Token:String? = nil
@@ -20,8 +21,6 @@ struct CurrencyFeedMainPage: View {
 
     var heading:String{
         switch self.type{
-            case .feed:
-                return "Feed"
             case .reddit:
                 return "Reddit"
             case .news:
@@ -31,15 +30,22 @@ struct CurrencyFeedMainPage: View {
         }
     }
     
-    var body: some View {
-        ZStack(alignment: .center) {
-            if self.feedData != nil || (self.feedData != nil && !self.feedData!.isEmpty){
-                CurrencyFeedView(heading: self.heading, type: self.type, currency: $currency, data: self.feedData ?? [], viewGen: self.viewBuilder(_:_:), reload: self.reload)
-            }else if self.feedData == nil || self.reset{
-                ProgressView()
-            }
+    @ViewBuilder var feedView:some View{
+        if self.feedData != nil || (self.feedData != nil && !self.feedData!.isEmpty){
+            CurrencyFeedView(heading: self.heading, type: self.type, currency: $currency, data: self.feedData ?? [], viewGen: self.viewBuilder(_:_:), reload: self.reload)
+        }else if self.feedData == nil || self.reset{
+            ProgressView()
         }
-        .onAppear(perform: self.onAppear)
+    }
+    
+    var body: some View {
+        CustomNavigationView {
+            self.feedView
+                .frame(width: totalWidth, height: totalHeight, alignment: .center)
+                .background(Color.AppBGColor.ignoresSafeArea())
+                
+        }
+                .onAppear(perform: self.onAppear)
         .onChange(of: self.currency) { newCurr in
             self.reset = true
             self.next_Page_Token = nil
@@ -61,11 +67,29 @@ extension CurrencyFeedMainPage{
             self.getReddit()
         }else if self.type == .twitter{
             self.getTweets()
+        }else if self.type == .news{
+            self.getNews()
+        }
+    }
+    
+    func getNews(){
+        CrybseNewsAPI.shared.getNews { data in
+            guard let safeData = data, let safeNews = CrybseNewsList.parseNewsDataList(data: safeData) else {return}
+            if self.reset{
+                self.feedData = safeNews
+                self.reset.toggle()
+            }else{
+                if self.feedData == nil{
+                    self.feedData = safeNews
+                }else{
+                    self.feedData?.append(contentsOf: safeNews)
+                }
+            }
         }
     }
     
     func getReddit(){
-        CrybseRedditAPI.shared.getRedditPosts(search: self.currency,after: self.next_Page_Token, limit: 20) { data in
+        CrybseRedditAPI.shared.getRedditPosts(limit: 20) { data in
             guard let safeData = data,let safeNewRedditPosts = CrybseRedditPosts.parseFromData(data: safeData) else {return}
             
             if self.reset{
@@ -87,22 +111,19 @@ extension CurrencyFeedMainPage{
     
     
     func getTweets(){
-        CrybseTwitterAPI.shared.getTweetData(endpoint: .tweets, queryItems: ["entity":self.currency,"language":"en","limit":"20","after":self.next_Page_Token as Any]) { data in
-            guard let safeData = data, let safeTweets = CrybseTweets.parseTweetsFromData(data: safeData), let tweets = safeTweets.tweets else {return}
+        CrybseTwitterAPI.shared.getTweetData(endpoint: .tweets) { data in
+            guard let safeData = data, let safeTweets = CrybseTweet.parseTweetsFromData(data: safeData) else {return}
             
             if self.reset{
-                self.feedData = tweets
+                self.feedData = safeTweets
                 self.reset.toggle()
             }else{
                 if self.feedData == nil{
-                    self.feedData = tweets
+                    self.feedData = safeTweets
                 }else{
-                    self.feedData?.append(contentsOf: tweets)
+                    self.feedData?.append(contentsOf: safeTweets)
                 }
-                
-                if let nextToken = safeTweets.next_token{
-                    self.next_Page_Token = nextToken
-                }
+    
             }
             
         }
@@ -115,18 +136,16 @@ extension CurrencyFeedMainPage{
     
     @ViewBuilder func viewBuilder(_ data:Any,_ width:CGFloat) -> some View{
         switch(self.type){
-            case .twitter:
-                if let tweet = data as? CrybseTweet{
-                    TwitterPostCard(cardType: .Reddit, data: tweet, size: .init(width: width, height: totalHeight * 0.3), isButton: true)
-                }
-            case .reddit:
-                if let reddit = data as? CrybseRedditData{
-                    RedditPostCard(width: width, redditPost: reddit)
-                }
-            case .feed:
-                Color.clear.frame(width: .zero, height: .zero, alignment: .center)
-            case .news:
-                NewsStandCard(news: data, size: .init(width: width, height: totalHeight * 0.3))
+        case .twitter:
+            if let tweet = data as? CrybseTweet{
+                TwitterPostCard(cardType: .Reddit, data: tweet, size: .init(width: width, height: totalHeight * 0.3), isButton: true)
+            }
+        case .reddit:
+            if let reddit = data as? CrybseRedditData{
+                RedditPostCard(width: width, redditPost: reddit)
+            }
+        case .news:
+            NewsStandCard(news: data, size: .init(width: width, height: totalHeight * 0.3))
         }
     }
 
@@ -135,10 +154,8 @@ extension CurrencyFeedMainPage{
 
 struct FeedMainPage_Previews: PreviewProvider {
     static var previews: some View {
-        CurrencyFeedMainPage(type: .feed)
-            .background(Color.mainBGColor)
+        CurrencyFeedMainPage(type: .reddit)
+            .background(Color.AppBGColor)
             .edgesIgnoringSafeArea(.all)
-            
-            
     }
 }

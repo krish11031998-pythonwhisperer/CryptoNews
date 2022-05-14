@@ -66,11 +66,8 @@ class CrybseAssetSocialsAPI:CrybseAPI{
                         self.data = safeYoutubeFeed
                     }
                 case .twitter:
-                    if let safeTweetsResponse = CrybseTweets.parseTweetsFromData(data: data),let safeTweets = safeTweetsResponse.tweets{
+                    if let safeTweets = CrybseTweet.parseTweetsFromData(data: data){
                         self.data = safeTweets
-                        if let safeNextToken = safeTweetsResponse.next_token{
-                            self.nextPageToken = safeNextToken
-                        }
                     }
                 default:
                     print("(DEBUG) Invalid type")

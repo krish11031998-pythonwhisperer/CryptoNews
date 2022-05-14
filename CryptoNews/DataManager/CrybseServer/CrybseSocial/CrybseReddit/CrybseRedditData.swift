@@ -33,6 +33,8 @@ class CrybseRedditData:Codable,Equatable{
     var subreddit_id:String?
     var subreddit_name_prefixed:String?
     var author:String?
+    var opinions:CrybseOpinions?
+    var reactions:CrybseReactions?
     
     var Title:String{
         return self.title ?? ""

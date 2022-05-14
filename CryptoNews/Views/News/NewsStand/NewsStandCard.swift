@@ -32,8 +32,6 @@ struct NewsStandCard: View {
             Spacer()
             if let data = self.news as? CrybseNews{
                 ImageView(url: data.ImageURL, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
-            }else if let data = self.news as? CryptoNews{
-                ImageView(url: data.imageurl,width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
             }else{
                 ImageView(width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
             }
@@ -45,8 +43,6 @@ struct NewsStandCard: View {
         return HStack(alignment: .center, spacing: 5) {
             if let data = self.news as? CrybseNews{
                 MainText(content: data.DateText, fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
-            }else if let data = self.news as? CryptoNews,let epochTime = data.published_on, let time = Date(timeIntervalSince1970: Double(epochTime)){
-                MainText(content: "\(time.stringDate())",fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             }
             
             Spacer()

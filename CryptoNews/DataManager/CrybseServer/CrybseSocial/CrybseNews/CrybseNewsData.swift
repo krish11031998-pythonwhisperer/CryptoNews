@@ -25,6 +25,8 @@ class CrybseNews:Codable{
     var sentiment:String?
     var type:String?
     var tickers:[String]?
+    var opinions:CrybseOpinions?
+    var reactions:CrybseReactions?
     
     var NewsURL:String{
         self.news_url ?? ""
@@ -73,6 +75,8 @@ class CrybseNews:Codable{
         case sentiment
         case type
         case tickers
+        case opinions
+        case reactions
     }
     
     required init(from decoder: Decoder) throws {
@@ -87,6 +91,8 @@ class CrybseNews:Codable{
         sentiment = try container.decodeIfPresent(String.self, forKey: .sentiment)
         type = try container.decodeIfPresent(String.self, forKey: .type)
         tickers = try container.decodeIfPresent([String].self, forKey: .tickers)
+        opinions = try container.decodeIfPresent(CrybseOpinions.self, forKey: .opinions)
+        reactions = try container.decodeIfPresent(CrybseReactions.self, forKey: .reactions)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -101,6 +107,8 @@ class CrybseNews:Codable{
         try container.encode(sentiment,forKey: .sentiment)
         try container.encode(type,forKey: .type)
         try container.encode(tickers,forKey: .tickers)
+        try container.encode(opinions,forKey: .opinions)
+        try container.encode(reactions, forKey: .reactions)
     }
     
 }

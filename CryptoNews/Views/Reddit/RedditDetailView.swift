@@ -53,8 +53,9 @@ struct RedditDetailView: View {
     }
     
     var body: some View {
-        Container(width: self.width,ignoreSides: true,innerView: self.mainInnerBodyView(w:))
-            .basicCard()
+        Container(width: self.width,ignoreSides: false,innerView: self.mainInnerBodyView(w:))
+            .basicCard(background: BlurView.thinLightBlur.opacity(0.125).anyViewWrapper())
+            .borderCard()
     }
 }
 
@@ -64,7 +65,7 @@ struct RedditDetailMainView:View {
     var redditData:CrybseRedditData
     var enableOnClose:Bool
     
-    init(redditData:CrybseRedditData,enableClose:Bool = true){
+    init(redditData:CrybseRedditData,enableClose:Bool = false){
         self.redditData = redditData
         self.enableOnClose = enableClose
     }
@@ -100,7 +101,7 @@ struct RedditDetailViewTester:View{
     
     func onAppear(){
         if self.redditData == nil{
-            CrybseRedditAPI.shared.getRedditPosts(search: "AVAX", limit: 10) { data in
+            CrybseRedditAPI.shared.getRedditPosts(limit: 10) { data in
                 if let safeData = data,let safeRedditData = CrybseRedditPosts.parseFromData(data: safeData)?.last{
                     setWithAnimation {
                         self.redditData = safeRedditData

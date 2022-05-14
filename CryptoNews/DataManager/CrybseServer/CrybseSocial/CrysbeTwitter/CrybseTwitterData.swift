@@ -8,7 +8,7 @@
 import Foundation
 
 class CrybseTweetsResponse:Codable{
-    var data:CrybseTweets?
+    var data:[CrybseTweet]?
     var success:Bool
     var error:String?
 }
@@ -48,6 +48,9 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
     @Published var places:[CrybseTweetPlace]?
     @Published var sentiment:Float?
     @Published var referenceTweet:CrybseTweetReference?
+    @Published var opinions:CrybseOpinions?
+    @Published var reactions:CrybseReactions?
+
     
     enum CodingKeys:CodingKey{
         case id
@@ -66,6 +69,8 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
         case places
         case sentiment
         case referenceTweet
+        case opinions
+        case reactions
     }
     
     required init(from decoder: Decoder) throws {
@@ -87,6 +92,8 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
         places = try container.decodeIfPresent(Array<CrybseTweetPlace>.self, forKey: .places)
         sentiment = try container.decodeIfPresent(Float.self, forKey: .sentiment)
         referenceTweet = try container.decodeIfPresent(CrybseTweetReference.self, forKey: .referenceTweet)
+        opinions = try container.decodeIfPresent(CrybseOpinions.self, forKey: .opinions)
+        reactions = try container.decodeIfPresent(CrybseReactions.self, forKey: .reactions)
     }
     
     func encode(to encoder: Encoder) throws {
@@ -108,6 +115,8 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
         try container.encode(annotations,forKey: .annotations)
         try container.encode(retweetedTweet,forKey: .retweetedTweet)
         try container.encode(referenceTweet,forKey: .referenceTweet)
+        try container.encode(opinions,forKey: .opinions)
+        try container.encode(reactions,forKey: .reactions)
         
         
     }
@@ -184,32 +193,27 @@ class CrybseTweet:ObservableObject,Codable,Equatable{
         
         return tweet
     }
-}
-
-//typealias CrybseTweets = [CrybseTweet]
-
-class CrybseTweets:Codable{
-    var tweets:[CrybseTweet]?
-    var next_token:String?
-}
-
-extension CrybseTweets{
     
-    static func parseTweetsFromData(data:Data) -> CrybseTweets?{
-        var tweets:CrybseTweets? = nil
+    static func parseTweetsFromData(data:Data) -> [CrybseTweet]?{
+        var tweets:[CrybseTweet]? = nil
         let decoder = JSONDecoder()
         
         do{
             let response = try decoder.decode(CrybseTweetsResponse.self, from: data)
-            if let safeTweets = response.data, response.success{
-                tweets = safeTweets
-            }
+            tweets = response.data
         }catch{
-            print("(DEBUG) Error while trying to parse the tweets Data : ",error.localizedDescription)
+            print("(DEBUG) There was an error while trying to parse the tweet from the Data : ",error.localizedDescription)
         }
+        
         return tweets
     }
+    
+    
 }
+
+//typealias CrybseTweets = [CrybseTweet]
+
+typealias CrybeTweets = Array<CrybseTweet>
 
 class CrybseTweetUser:Codable{
     var verified:Bool?

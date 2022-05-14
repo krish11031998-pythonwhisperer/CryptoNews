@@ -9,7 +9,7 @@ import SwiftUI
 
 enum FeedPageType{
     case news
-    case feed
+//    case feed
     case reddit
     case twitter
 }

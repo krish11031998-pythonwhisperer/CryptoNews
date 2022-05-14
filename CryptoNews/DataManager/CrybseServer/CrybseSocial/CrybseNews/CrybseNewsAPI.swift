@@ -7,12 +7,17 @@
 
 import Foundation
 
+enum NewsEndpoint:String{
+    case tickerNews = "tickerNews"
+}
+
 class CrybseNewsAPI:CrybseAssetSocialsAPI{
     
     @Published var newsList:CrybseNewsList? = nil
     
-    init(tickers:String? = nil,type:String? = nil){
-        super.init(type: .news, endpoint: "tickerNews", queryItems: ["tickers":tickers,"type":type])
+    init(endpoint:NewsEndpoint = .tickerNews,tickers:String? = nil,type:String = "Article"){
+        
+        super.init(type: .news, endpoint: endpoint.rawValue, queryItems: ["tickers":tickers,"type":type])
     }
     
     static var shared:CrybseNewsAPI = .init()
@@ -29,7 +34,7 @@ class CrybseNewsAPI:CrybseAssetSocialsAPI{
         }
     }
     
-    func getNews(tickers:String? = nil,type:String? = nil,completion: ((Data) -> Void)? = nil){
+    func getNews(tickers:String? = nil,type:String? = nil,completion: ((Data?) -> Void)? = nil){
         var queries:[String:Any]? = nil
         if let tickers = tickers{
             if queries == nil{

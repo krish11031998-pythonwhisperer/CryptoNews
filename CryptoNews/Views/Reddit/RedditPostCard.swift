@@ -85,7 +85,7 @@ struct RedditPostCard: View {
             Divider().background(Color.white).frame(width: w,height:5, alignment: .center)
             self.Footer(w: w)
         }
-        .basicCard(size:self.const_size ?  self.size : .zero)
+        .basicCard(size:self.const_size ?  self.size : .zero,background: BlurView.thinLightBlur.opacity(0.125).anyViewWrapper())
     }
     
     var body: some View {
@@ -107,7 +107,7 @@ struct RedditCardTester:View{
     var size:CGSize
     
     init(search:String,size:CGSize = .zero){
-        self._RAPI = .init(wrappedValue: .init(search: search))
+        self._RAPI = .init(wrappedValue: .init())
         self.size = size
     }
     
