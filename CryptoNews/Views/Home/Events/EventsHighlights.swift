@@ -48,7 +48,7 @@ struct EventsHighlights: View {
             self.headerView(w: inner_w)
             self.eventsView(w: inner_w)
         }
-        .basicCard()
+        .basicCard(background:BlurView.thinLightBlur.opacity(0.15).anyViewWrapper())
         .borderCard(color: .gray.opacity(0.45))
     
     }

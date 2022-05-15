@@ -30,6 +30,7 @@ struct AllAssetView: View {
     @ViewBuilder var mainBody:some View{
         Container(width: totalWidth) { w in
             PortfolioSummary(width: w,height: totalHeight * 0.25)
+                .basicCard(background:BlurView.thinLightBlur.opacity(0.15).anyViewWrapper())
                 .borderCard()
         }
     }

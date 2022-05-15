@@ -196,7 +196,7 @@ struct SocialHighlightFeedView: View {
                     self.cardBuilder(_data.element, .init(width: inner_w, height: totalHeight * 0.25))
                 }
             }
-            .basicCard(background: Color.clear.anyViewWrapper())
+            .basicCard(background: BlurView.thinLightBlur.opacity(0.15).anyViewWrapper())
             .borderCard()
         }else{
             Color.clear.frame(width: 0, height: 0, alignment: .center)

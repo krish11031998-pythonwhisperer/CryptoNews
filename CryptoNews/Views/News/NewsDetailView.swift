@@ -20,7 +20,7 @@ struct NewsDetailView: View {
     
     @ViewBuilder func newsImageView(w:CGFloat) -> some View{
         if let imgUrl = self.news.image_url{
-            ImageView(url: imgUrl, width: w, contentMode: .fill, alignment: .center, autoHeight: true, isPost: false, clipping: .roundClipping)
+            ImageView(url: imgUrl, width: w,height: totalHeight * 0.4, contentMode: .fill, alignment: .top, autoHeight: true, isPost: false, clipping: .roundClipping)
         }else{
             Color.clear
                 .frame(width: .zero, height: .zero, alignment: .center)

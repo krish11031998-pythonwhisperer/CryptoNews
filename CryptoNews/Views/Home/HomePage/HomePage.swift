@@ -121,7 +121,7 @@ extension HomePage{
     var socialHighlightNavLink:some View{
         CustomNavLinkWithoutLabelWithInnerView(ignoreSide: true, isActive: self.$context.showSocialHighlights) { w in
             if let socialHighlights = self.context.socialHighlightsData as? [Any]{
-                SocialFeedSummaryExpandedView(data: socialHighlights)
+                SocialFeedSummaryExpandedView(w:w,data: socialHighlights)
             }
 
         }

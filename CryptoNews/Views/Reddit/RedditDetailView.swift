@@ -21,7 +21,7 @@ struct RedditDetailView: View {
     
     @ViewBuilder func imageView(w:CGFloat) -> some View{
         if self.reddit.URLStr.isImgURLStr(){
-            ImageView(url: self.reddit.URLStr, width: w, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundClipping)
+            ImageView(url: self.reddit.URLStr, width: w,height: totalHeight * 0.4, contentMode: .fill, alignment: .top, autoHeight: true,clipping: .roundClipping)
         }
     }
     

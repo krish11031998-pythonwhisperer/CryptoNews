@@ -60,28 +60,28 @@ struct SocialFeedSummaryView: View {
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeTweet)
+            data?.append(contentsOf:safeTweet.limitData(limit: 10))
         }
         
         if let safeReddit = self.socialHightlights.socialHightlight?.Reddit,!safeReddit.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeReddit)
+            data?.append(contentsOf:safeReddit.limitData(limit: 10))
         }
         
         if let safeNews = self.socialHightlights.socialHightlight?.News, !safeNews.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeNews)
+            data?.append(contentsOf:safeNews.limitData(limit: 10))
         }
         
         if let safeVideo = self.socialHightlights.socialHightlight?.Video, !safeVideo.isEmpty{
             if data == nil{
                 data = []
             }
-            data?.append(contentsOf:safeVideo)
+            data?.append(contentsOf:safeVideo.limitData(limit: 10))
         }
         
         return data
@@ -101,7 +101,6 @@ struct SocialFeedSummaryView: View {
             if let safeSocialData = self.socialData,safeSocialData.count > 0{
                 MainText(content: "View More", fontSize: 15, color: .white, fontWeight: .medium)
                     .textBubble(color: .black, clipping: .roundClipping, verticalPadding: 10, horizontalPadding: 15)
-                    .padding(.top,25)
                     .buttonify {
                         if self.context.socialHighlightsData == nil,let socialData = self.socialData{
                             self.context.socialHighlightsData = socialData

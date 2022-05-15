@@ -14,14 +14,17 @@ struct SocialFeedSummaryExpandedView: View {
     @State var idx:Int = .zero
     @Namespace var animation
     var data:[Any]
+    var width:CGFloat
     
-    init(data:[Any]){
+    init(w:CGFloat = totalWidth,data:[Any]){
+        self.width = w
         self.data = data
     }
     
     var pageSize:CGSize{
         .init(width: totalWidth, height: totalHeight - 100)
     }
+
     
     @ViewBuilder func pageBuilder(data:Any,size:CGSize) -> some View{
         Container(width:size.width,ignoreSides:false,horizontalPadding: 5) { w in
@@ -45,7 +48,7 @@ struct SocialFeedSummaryExpandedView: View {
     }
     
     @ViewBuilder func scrollIndicator(size:CGSize) -> some View{
-        let barWidth = (size.width - 30)/CGFloat(self.data.count) - 2.5
+        let barWidth = ((size.width - 30)/CGFloat(self.data.count)) - 2.5
         HStack(alignment: .center, spacing: 2.5) {
             ForEach(0..<self.data.count,id:\.self) { idx in
                 ZStack(alignment: .center) {
@@ -72,10 +75,14 @@ struct SocialFeedSummaryExpandedView: View {
             self.context.socialHighlightsData = nil
         }
     }
+    
+    var pageBuilderSize:CGSize{
+        .init(width: totalWidth, height: .zero)
+    }
     var body: some View {
-        Container(heading: "SocialHighlight", headingColor: .white, headingDivider: false, headingSize: 30, width: totalWidth, ignoreSides: true,lazyLoad: true) { w in
+        Container(heading: "SocialHighlight", headingColor: .white, headingDivider: false, headingSize: 30, width: width, ignoreSides: true,lazyLoad: false) { w in
             self.scrollIndicator(size: .init(width: w, height: 2.5))
-            ZoomInScrollView(data: self.data, axis: .horizontal, centralizeStart: true,lazyLoad: true, size: .init(width: totalWidth, height: .zero), selectedCardSize: .init(width: totalWidth, height: .zero)) { data, size, _ in
+            ZoomInScrollView(data: self.data, axis: .horizontal, centralizeStart: true,lazyLoad: false, size: self.pageBuilderSize, selectedCardSize: self.pageBuilderSize) { data, size, _ in
                 self.pageBuilder(data: data, size: size)
             }
             .onPreferenceChange(SelectedCentralCardPreferenceKey.self) { newValue in

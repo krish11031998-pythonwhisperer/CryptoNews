@@ -144,7 +144,7 @@ extension TweetDetailView{
     @ViewBuilder func attachmentsView(w:CGFloat) ->  some View{
         if let safeMedia = self.tweet.media{
             if safeMedia.count == 1,let firstMedia = safeMedia.first{
-                ImageView(url: firstMedia.url, width: w, contentMode: .fill, alignment: .center, autoHeight: true,clipping: .roundCornerMedium)
+                ImageView(url: firstMedia.url, width: w,height: totalHeight * 0.4, contentMode: .fill, alignment: .top,clipping: .roundCornerMedium)
             }else if safeMedia.count > 1{
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(alignment: .center, spacing: 10) {
