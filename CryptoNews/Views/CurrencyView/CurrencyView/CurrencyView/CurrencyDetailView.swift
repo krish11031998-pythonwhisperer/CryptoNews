@@ -58,9 +58,9 @@ struct CurrencyDetailView: View {
 extension CurrencyDetailView{
     
     @ViewBuilder var mainView:some View{
-        StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0",baseNavBarHeight: totalHeight * 0.6,minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+        StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0", baseNavBarHeight: totalHeight * 0.6, minimumNavBarHeight: totalHeight * 0.125, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onCloseHandler) { size in
             CurrencyPriceSummaryView(asset: self.assetData, width: size.width, height: size.height, choosenPrice: self.$choosen, choosenInterval: self.$choosenTimeInterval, refresh: $refresh)
-        }, innerView: {
+        } innerView: {
             Container(width:self.size.width,ignoreSides:false,horizontalPadding: 5,verticalPadding:40,lazyLoad: false){w in
                 self.transactionHistoryView(w: w)
                 self.CurrencySummary(w:w)
@@ -70,10 +70,16 @@ extension CurrencyDetailView{
                 self.NewsSection(w:w)
                 self.TweetSection(w: w)
             }
-        }, bg: Color.AppBGColor.anyViewWrapper()) {
-            self.onClose?()
         }
 //        self.tweetNavLink
+    }
+    
+    func onCloseHandler(){
+        if let safeOnClose = self.onClose{
+            safeOnClose()
+        }else{
+            print("(DEBUG) onClose was called !")
+        }
     }
     
     @ViewBuilder var eventsView:some View{

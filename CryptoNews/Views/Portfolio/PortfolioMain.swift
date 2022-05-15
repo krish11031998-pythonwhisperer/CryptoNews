@@ -20,9 +20,9 @@ struct PortfolioMain: View {
         
     var body: some View {
         CustomNavigationView{
-            StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, headerView: { size in
+            StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, bg: Color.AppBGColor.anyViewWrapper()) { size in
                 PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
-            }, innerView: {
+            } innerView: {
                 Container(ignoreSides: true) { w in
                     self.infoBlock(heading: "Investment ", width: w, innerView: self.InvestmentsSummary(_:))
                     self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
@@ -32,8 +32,7 @@ struct PortfolioMain: View {
                 }
                 .frame(width: self.width, alignment: .topLeading)
                 .padding(.vertical,50)
-                
-            }, bg: Color.AppBGColor.anyViewWrapper())
+            }
         }
         
     }

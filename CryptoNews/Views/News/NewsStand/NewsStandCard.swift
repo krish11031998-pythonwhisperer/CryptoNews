@@ -10,19 +10,17 @@ import SwiftUI
 struct NewsStandCard: View {
     @EnvironmentObject var context:ContextData
 //    var news:AssetNewsData
-    var news:Any
+    var news:CrybseNews
     var size:CGSize
     
-    init(news:Any,size:CGSize = .init(width: totalWidth - 20, height: 250)){
+    init(news:CrybseNews,size:CGSize = .init(width: totalWidth - 20, height: 250)){
         self.news = news
         self.size = size
     }
 
     
     @ViewBuilder var mainText:some View{
-        if let data = self.news as? CrybseNews{
-            MainTextSubHeading(heading: data.source_name ?? "Publisher", subHeading: data.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
-        }
+        MainTextSubHeading(heading: self.news.source_name ?? "Publisher", subHeading: self.news.title ?? "Title", headingSize: 10, subHeadingSize: 15,headingFont: .monospaced)
     }
     
     func mainBody(w:CGFloat,h:CGFloat) -> some View{
@@ -30,21 +28,15 @@ struct NewsStandCard: View {
             self.mainText
                 .frame(height: h, alignment: .topLeading)
             Spacer()
-            if let data = self.news as? CrybseNews{
-                ImageView(url: data.ImageURL, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
-            }else{
-                ImageView(width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
-            }
+            ImageView(url: self.news.ImageURL, width: w * 0.35, height: h, contentMode: .fill, alignment: .center,clipping: .squareClipping)
+            
             
         }
     }
     
     func footer(w:CGFloat,h:CGFloat) -> some View{
         return HStack(alignment: .center, spacing: 5) {
-            if let data = self.news as? CrybseNews{
-                MainText(content: data.DateText, fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
-            }
-            
+            MainText(content: self.news.DateText, fontSize: 10, color: .white, fontWeight: .regular, style: .monospaced)
             Spacer()
             SystemButton(b_name: "circle.grid.2x2", color: .white) {
                 print("Hi")
@@ -75,8 +67,8 @@ struct NewsStandCard: View {
     var body: some View {
         self.mainBody
             .buttonify {
-                if let safenews = self.news as? CrybseNews, self.context.selectedNews?.news_url != safenews.news_url{
-                    self.context.selectedNews = safenews
+                if self.context.selectedNews?.news_url != self.news.news_url{
+                    self.context.selectedNews = self.news
                 }
             }
 

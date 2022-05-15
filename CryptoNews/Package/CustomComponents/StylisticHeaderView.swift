@@ -18,16 +18,17 @@ struct StylisticHeaderView<HeaderView:View,InnerView:View>: View {
     var heading:String
     var subHeading:String
     @State var offset:CGFloat = .zero
+    var customNavbarView:((CGSize) -> AnyView)?
     
     init(
         heading:String = "Title",
          subHeading:String = "SubTitle",
         baseNavBarHeight:CGFloat = totalHeight * 0.4,
         minimumNavBarHeight:CGFloat = totalHeight * 0.15,
-        @ViewBuilder headerView:@escaping (CGSize) -> HeaderView,
-        @ViewBuilder innerView:@escaping () -> InnerView,
         bg:AnyView = Color.AppBGColor.anyViewWrapper(),
-        onClose:(() -> Void)? = nil
+        onClose:(() -> Void)? = nil,
+        @ViewBuilder headerView:@escaping (CGSize) -> HeaderView,
+        @ViewBuilder innerView:@escaping () -> InnerView
     ){
         self.heading = heading
         self.subHeading = subHeading
@@ -37,6 +38,7 @@ struct StylisticHeaderView<HeaderView:View,InnerView:View>: View {
         self.onClose = onClose
         self.bg = bg
         self.innerView = innerView()
+        self.customNavbarView = nil
     }
     
     var mainHeaderViewHeight:CGFloat{
@@ -114,15 +116,13 @@ extension StylisticHeaderView{
 
 struct SwiftUIView_Previews: PreviewProvider {
     static var previews: some View {
-        StylisticHeaderView { size in
-            SceneKitView(model_name: "Range_Rover_Evoque", size: size, allowControl: true)
+        StylisticHeaderView (onClose: {print("On Close Called")}){ size in
+            Color.red
                 .anyViewWrapper()
         } innerView: {
             Container(heading: "Range Rover Evoque", headingColor: .white, headingDivider: true, width: totalWidth,verticalPadding: 50,orientation: .vertical, aligment: .topLeading, lazyLoad: true) { w in
                 MainText(content: "This is a car", fontSize: 15, color: .white, fontWeight: .medium)
-            }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)        } onClose: {
-            print("On Close Called")
+            }.frame(width: totalWidth, height: totalHeight, alignment: .topLeading)
         }
-
     }
 }

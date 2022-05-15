@@ -142,7 +142,9 @@ extension CurrencyFeedMainPage{
                 RedditPostCard(width: width, redditPost: reddit)
             }
         case .news:
-            NewsStandCard(news: data, size: .init(width: width, height: totalHeight * 0.3))
+            if let news = data as? CrybseNews{
+                NewsStandCard(news: news, size: .init(width: width, height: totalHeight * 0.25))
+            }
         }
     }
 
