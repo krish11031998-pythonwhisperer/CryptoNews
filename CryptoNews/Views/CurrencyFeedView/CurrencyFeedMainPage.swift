@@ -13,11 +13,7 @@ struct CurrencyFeedMainPage: View {
     @State var currency:String = "BTC"
     @State var next_Page_Token:String? = nil
     @State var reset:Bool = false
-    var type:FeedPageType = .twitter
-    
-    init(type:FeedPageType){
-        self.type = type
-    }
+    @State var type:FeedPageType = .twitter
 
     var heading:String{
         switch self.type{
@@ -31,7 +27,7 @@ struct CurrencyFeedMainPage: View {
     }
     
     @ViewBuilder var feedView:some View{
-        if self.feedData != nil || (self.feedData != nil && !self.feedData!.isEmpty){
+        if let safeFeedData = self.feedData, !safeFeedData.isEmpty{
             CurrencyFeedView(heading: self.heading, type: self.type, currency: $currency, data: self.feedData ?? [], viewGen: self.viewBuilder(_:_:), reload: self.reload)
         }else if self.feedData == nil || self.reset{
             ProgressView()
@@ -45,7 +41,13 @@ struct CurrencyFeedMainPage: View {
                 .background(Color.AppBGColor.ignoresSafeArea())
                 
         }
-                .onAppear(perform: self.onAppear)
+        .onAppear(perform: self.fetchData)
+        .onChange(of: self.type, perform: { newValue in
+            if self.feedData != nil{
+                self.feedData = nil
+            }
+            self.fetchData()
+        })
         .onChange(of: self.currency) { newCurr in
             self.reset = true
             self.next_Page_Token = nil
@@ -56,11 +58,6 @@ struct CurrencyFeedMainPage: View {
 
 
 extension CurrencyFeedMainPage{
-    func onAppear(){
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(100)) {
-            self.fetchData()
-        }
-    }
     
     func fetchData(){
         if self.type == .reddit{

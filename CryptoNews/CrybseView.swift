@@ -12,20 +12,16 @@ struct CrybseView: View {
     
     var contentView:some View{
         ZStack(alignment: .bottom) {
-            Color.AppBGColor.zIndex(0)
-//            self.mainBody
-//            if self.context.bottomSwipeNotification.showNotification{
-//                self.context.bottomSwipeNotification.generateView()
-//            }
-//            if self.context.showTab{
-//                TabBarMain()
-//                    .zIndex(2)
-//            }
-//            CurrencyFeedMainPage(type: .reddit)
-            self.infoFeedView
+            self.mainBody
+            if self.context.bottomSwipeNotification.showNotification{
+                self.context.bottomSwipeNotification.generateView()
+            }
+            if self.context.showTab{
+                TabBarMain()
+                    .zIndex(2)
+            }
         }
-        .frame(width: totalWidth, height: totalHeight, alignment: .center)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .ignoresSafeArea()
     }
     
     var body: some View {
@@ -56,10 +52,8 @@ extension CrybseView{
     @ViewBuilder var mainBody:some View{
         TabView(selection: $context.tab){
             ForEach(self.tabs, id: \.rawValue) { tab in
-//                CustomNavigationView {
-                    self.tabPage(page: tab)
-                    .tag(tab)
-//                }
+                self.tabPage(page: tab)
+                .tag(tab)
             }
         }
         .onAppear {
@@ -88,9 +82,8 @@ extension CrybseView{
     }
     
     var infoFeedView:some View{
-        SlideTabView {
-            [FeedPageType.twitter,FeedPageType.reddit,FeedPageType.news].compactMap({CurrencyFeedMainPage(type: $0).anyViewWrapper()})
-        }.environmentObject(self.context)
+        CurrencyFeedMainPage()
+            .environmentObject(self.context)
     }
 
 }

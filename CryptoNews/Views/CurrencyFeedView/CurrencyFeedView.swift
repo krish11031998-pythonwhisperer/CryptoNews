@@ -74,8 +74,6 @@ struct CurrencyFeedView<T:View>: View {
     var body: some View {
         ScrollView(.vertical, showsIndicators: false) {
             Container(heading: self.heading, width: totalWidth) { w in
-//                CurrencyCardView(width: w)
-//                    .onPreferenceChange(CurrencySelectorPreference.self, perform: self.handleCurrencyChange(_:))
                 CurrencyFeedPage(w: w, symbol: currency, data: self.data, type: self.type, viewBuilder: self.viewGen, reload: self.reload)
                 
             }

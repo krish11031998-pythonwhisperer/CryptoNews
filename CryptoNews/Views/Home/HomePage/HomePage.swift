@@ -41,7 +41,8 @@ struct HomePage: View {
                 self.redditNavLink
                 self.videoNavLink
                 
-            }.background(Color.AppBGColor)
+            }
+            .background(Color.AppBGColor.ignoresSafeArea())
         }
         
         
@@ -49,7 +50,6 @@ struct HomePage: View {
     
     var body: some View {
         self.mainView
-            .background(Color.AppBGColor)
     }
 }
 
