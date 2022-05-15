@@ -58,7 +58,7 @@ struct CurrencyDetailView: View {
 extension CurrencyDetailView{
     
     @ViewBuilder var mainView:some View{
-        StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0", baseNavBarHeight: totalHeight * 0.6, minimumNavBarHeight: totalHeight * 0.125, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onCloseHandler) { size in
+        StylisticHeaderView(heading: self.assetData.Currency, subHeading: self.assetData.Price?.ToMoney() ?? "$0", baseNavBarHeight: totalHeight * 0.45, minimumNavBarHeight: totalHeight * 0.1, bg: Color.AppBGColor.anyViewWrapper(), onClose: self.onCloseHandler) { size in
             CurrencyPriceSummaryView(asset: self.assetData, width: size.width, height: size.height, choosenPrice: self.$choosen, choosenInterval: self.$choosenTimeInterval, refresh: $refresh)
         } innerView: {
             Container(width:self.size.width,ignoreSides:false,horizontalPadding: 5,verticalPadding:40,lazyLoad: false){w in

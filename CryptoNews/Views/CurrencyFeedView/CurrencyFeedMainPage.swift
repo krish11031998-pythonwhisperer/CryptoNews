@@ -34,8 +34,87 @@ struct CurrencyFeedMainPage: View {
         }
     }
     
+    func sectionSelectorElements(type:FeedPageType) -> (String,String,FeedPageType){
+        var sectionSelector:(String,String,FeedPageType)
+        switch(type){
+        case .twitter:
+            sectionSelector = ("Twitter","TwitterIcon",.twitter)
+        case .reddit:
+            sectionSelector = ("Reddit","RedditIcon",.reddit)
+        case .news:
+            sectionSelector = ("News","📰",.news)
+        }
+        return sectionSelector
+        
+    }
+    
+    @ViewBuilder func sectionHeader(isHeading:Bool = false,type:FeedPageType) -> some View{
+        let sectionSelectorElements = self.sectionSelectorElements(type: type)
+        if isHeading{
+            MainText(content: sectionSelectorElements.0, fontSize: 30, color: .white, fontWeight: .medium)
+                .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .left) {
+                    if sectionSelectorElements.2 == .news{
+                        MainText(content: "📰", fontSize: 30)
+                    }else{
+                        ImageView(img: .init(named: sectionSelectorElements.2 == .twitter ? "TwitterIcon" : "RedditIcon"), width: 40 , height: 40, contentMode: .fill, alignment:.center)
+                    }
+                }
+            
+        }else{
+            MainText(content: sectionSelectorElements.0, fontSize: 15, color: self.type == sectionSelectorElements.2 ? .black : .white, fontWeight: .medium)
+                .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .left) {
+                    if sectionSelectorElements.2 == .news{
+                        MainText(content: "📰", fontSize: 15)
+                    }else{
+                        ImageView(img: .init(named: sectionSelectorElements.1), width: 20 , height: 20, contentMode: .fill, alignment:.center )
+                    }
+                }
+                .padding(10)
+                .basicCard(background: (self.type == sectionSelectorElements.2 ? Color.white : Color.clear).anyViewWrapper())
+                .borderCard(color: self.type == sectionSelectorElements.2 ? Color.black : Color.white, clipping: .roundClipping)
+        }
+    }
+    
+    @ViewBuilder func sectionSelector(w:CGFloat) -> some View{
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(alignment: .center, spacing: 10) {
+                self.sectionHeader(type: .twitter)
+                    .buttonify {
+                        if self.type != .twitter{
+                            self.type = .twitter
+                        }
+                    }
+                
+                self.sectionHeader(type: .reddit)
+                    .buttonify {
+                        if self.type != .reddit{
+                            self.type = .reddit
+                        }
+                    }
+                
+                self.sectionHeader(type: .news)
+                    .buttonify {
+                        if self.type != .news{
+                            self.type = .news
+                        }
+                    }
+            }.padding(2)
+        }.frame(width: w, alignment: .leading)
+    }
+    
     var body: some View {
         CustomNavigationView {
+            StylisticHeaderView(baseNavBarHeight:totalHeight * 0.15,minimumNavBarHeight: totalHeight * 0.1){ size in
+                Container(heading: "Social Feed", headingColor: .white, headingDivider: false, headingSize: 20, width: size.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0,spacing: 0) { w in
+                    self.sectionSelector(w: w)
+                }.frame(width: size.width, height: size.height, alignment: .center)
+            } innerView: {
+                self.feedView
+            } customNavBarView: { size in
+                self.sectionHeader(isHeading: true, type: self.type)
+                    .anyViewWrapper()
+            }
+
             self.feedView
                 .frame(width: totalWidth, height: totalHeight, alignment: .center)
                 .background(Color.AppBGColor.ignoresSafeArea())
@@ -48,11 +127,6 @@ struct CurrencyFeedMainPage: View {
             }
             self.fetchData()
         })
-        .onChange(of: self.currency) { newCurr in
-            self.reset = true
-            self.next_Page_Token = nil
-            self.fetchData()
-        }
     }
 }
 

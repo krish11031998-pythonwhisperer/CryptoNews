@@ -20,7 +20,7 @@ struct PortfolioMain: View {
         
     var body: some View {
         CustomNavigationView{
-            StylisticHeaderView(heading: "Portfolio", baseNavBarHeight: totalHeight * 0.4, minimumNavBarHeight: totalHeight * 0.125, bg: Color.AppBGColor.anyViewWrapper()) { size in
+            StylisticHeaderView(baseNavBarHeight: totalHeight * 0.3, minimumNavBarHeight: totalHeight * 0.1125, bg: Color.AppBGColor.anyViewWrapper()) { size in
                 PortfolioSummary(assetOverTime:self.assetOverTime,width: size.width, height: size.height, showAsContainer: false)
             } innerView: {
                 Container(ignoreSides: true) { w in
@@ -28,10 +28,19 @@ struct PortfolioMain: View {
                     self.infoBlock(heading: "Top Movers", width: w, innerView: self.TopThreeMovers(_:))
                     PortfolioBreakdown(asset: self.assets,width: w, cardsize: .init(width: w * 0.5, height: totalHeight * 0.35))
                         .animatedAppearance()
-                    
                 }
                 .frame(width: self.width, alignment: .topLeading)
                 .padding(.vertical,50)
+            } customNavBarView: { size in
+                Container(width:size.width,horizontalPadding: 10,verticalPadding: 0,orientation: .horizontal,aligment: .center){ w in
+                    MainText(content: "Portfolio Value", fontSize: 20, color: .white, fontWeight: .medium)
+                    Spacer()
+                    if let portfolioValue = self.assetOverTime?.PortfolioTimeline{
+                        CurveChart(data: portfolioValue, interactions: false, size: .init(width: w * 0.35, height: size.height),bg: .clear)
+                    }
+                }
+                .frame(width: size.width, height: size.height, alignment: .center)
+                .anyViewWrapper()
             }
         }
         
@@ -143,14 +152,14 @@ extension PortfolioMain{
 }
 
 struct PortfolioAssetPreview:View{
-    @StateObject var crybseAssetsAPI:CrybseAssetsAPI
+    var assetOverTime:CrybseAssetOverTime? = nil
+    var assetData:CrybseAssets? = nil
     init(currencies: [String] = ["LTC","XRP","DOT","AVAX"],uid:String){
-        self._crybseAssetsAPI = .init(wrappedValue: .init(symbols:currencies,uid: uid))
-    }
-    
-    func onAppear(){
-        if self.crybseAssetsAPI.coinsData == nil{
-            self.crybseAssetsAPI.getAssets()
+        if let safeData = readJsonFile(forName: "assetOverTime"),let safeAssetOverTime = CrybseAssetOverTime.parseCrybseAssetOverTime(data: safeData){
+            self.assetOverTime = safeAssetOverTime
+        }
+        if let safeData = readJsonFile(forName: "getAsset"),let safeAssetData = CrybseAssets.parseAssetsFromData(data: safeData){
+            self.assetData = safeAssetData
         }
     }
     
@@ -158,16 +167,15 @@ struct PortfolioAssetPreview:View{
         
         ZStack(alignment:.center){
             mainBGView.ignoresSafeArea()
-            if let assets = self.crybseAssetsAPI.coinsData?.trackedAssets{
+            if let assets = self.assetData?.trackedAssets,let assetOverTime = self.assetOverTime{
                 Container(horizontalPadding: 7.5){ w in
-                    PortfolioMain(assets: assets, width: w)
+                    PortfolioMain(assetOverTime:assetOverTime,assets: assets, width: w)
                 }
             }else{
                 ProgressView()
             }
         }.frame(width: totalWidth, height: totalHeight, alignment: .center)
             .ignoresSafeArea()
-        .onAppear(perform: self.onAppear)
     }
     
     
@@ -178,10 +186,8 @@ struct PortfolioMain_Previews: PreviewProvider {
     @StateObject static var contextData:ContextData = ContextData()
     
     static var previews: some View {
-        ScrollView {
-            PortfolioAssetPreview(uid:"jV217MeUYnSMyznDQMBgoNHfMvH2")
-                .environmentObject(PortfolioMain_Previews.contextData)
-        }
+        PortfolioAssetPreview(uid:"jV217MeUYnSMyznDQMBgoNHfMvH2")
+            .environmentObject(PortfolioMain_Previews.contextData)
         
     }
 }

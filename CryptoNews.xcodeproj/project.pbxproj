@@ -70,6 +70,8 @@
 		EF0B587028173ED9008DD43E /* NewsDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0B586F28173ED9008DD43E /* NewsDetailView.swift */; };
 		EF0B587228174709008DD43E /* VideoDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0B587128174709008DD43E /* VideoDetailView.swift */; };
 		EF0DF537282FE210008F7ACD /* CommonResources.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF0DF536282FE210008F7ACD /* CommonResources.swift */; };
+		EF0DF53928312FAC008F7ACD /* assetOverTime.json in Resources */ = {isa = PBXBuildFile; fileRef = EF0DF53828312FAC008F7ACD /* assetOverTime.json */; };
+		EF0DF53B2831314C008F7ACD /* getAsset.json in Resources */ = {isa = PBXBuildFile; fileRef = EF0DF53A2831314C008F7ACD /* getAsset.json */; };
 		EF156AE428187891009F9B92 /* TweetSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF156AE328187891009F9B92 /* TweetSnapshot.swift */; };
 		EF156AE628188272009F9B92 /* NewsSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF156AE528188272009F9B92 /* NewsSnapshot.swift */; };
 		EF156AE828188FD5009F9B92 /* RedditSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF156AE728188FD5009F9B92 /* RedditSnapshot.swift */; };
@@ -323,6 +325,8 @@
 		EF0B586F28173ED9008DD43E /* NewsDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsDetailView.swift; sourceTree = "<group>"; };
 		EF0B587128174709008DD43E /* VideoDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDetailView.swift; sourceTree = "<group>"; };
 		EF0DF536282FE210008F7ACD /* CommonResources.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonResources.swift; sourceTree = "<group>"; };
+		EF0DF53828312FAC008F7ACD /* assetOverTime.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = assetOverTime.json; sourceTree = "<group>"; };
+		EF0DF53A2831314C008F7ACD /* getAsset.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = getAsset.json; sourceTree = "<group>"; };
 		EF156AE328187891009F9B92 /* TweetSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TweetSnapshot.swift; sourceTree = "<group>"; };
 		EF156AE528188272009F9B92 /* NewsSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsSnapshot.swift; sourceTree = "<group>"; };
 		EF156AE728188FD5009F9B92 /* RedditSnapshot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedditSnapshot.swift; sourceTree = "<group>"; };
@@ -955,6 +959,8 @@
 			isa = PBXGroup;
 			children = (
 				EF156AFC281EF151009F9B92 /* socialHighlights.json */,
+				EF0DF53828312FAC008F7ACD /* assetOverTime.json */,
+				EF0DF53A2831314C008F7ACD /* getAsset.json */,
 				EF156AF5281BD7D7009F9B92 /* btcCoinData.json */,
 			);
 			path = StaticFiles;
@@ -1520,7 +1526,9 @@
 				EFE91BF02821E3FF00B3073C /* Gilroy-ExtraBold.otf in Resources */,
 				EFE91BEE2821E36B00B3073C /* Gilroy-Light.otf in Resources */,
 				EF156AF6281BD7D7009F9B92 /* btcCoinData.json in Resources */,
+				EF0DF53B2831314C008F7ACD /* getAsset.json in Resources */,
 				BCBC1D7A26BE7D7500B87E5C /* Assets.xcassets in Resources */,
+				EF0DF53928312FAC008F7ACD /* assetOverTime.json in Resources */,
 				EF156AFD281EF151009F9B92 /* socialHighlights.json in Resources */,
 				BCC2209F270892CC00993FF5 /* GoogleService-Info.plist in Resources */,
 				EFE91BF42821E5B200B3073C /* Lora-Italic-VariableFont_wght.ttf in Resources */,

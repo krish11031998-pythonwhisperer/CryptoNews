@@ -72,16 +72,14 @@ struct CurrencyFeedView<T:View>: View {
     }
     
     var body: some View {
-        ScrollView(.vertical, showsIndicators: false) {
-            Container(heading: self.heading, width: totalWidth) { w in
-                CurrencyFeedPage(w: w, symbol: currency, data: self.data, type: self.type, viewBuilder: self.viewGen, reload: self.reload)
-                
-            }
+        Container(width: totalWidth) { w in
+            CurrencyFeedPage(w: w, symbol: currency, data: self.data, type: self.type, viewBuilder: self.viewGen, reload: self.reload)
             
             //NavigationLinks
             self.selectedNavLink
+            
         }
-        .ignoresSafeArea(edges: .bottom)
+        
     }
 }
 
