@@ -33,45 +33,37 @@ struct CurrencyFeedMainPage: View {
             ProgressView()
         }
     }
-    
-    func sectionSelectorElements(type:FeedPageType) -> (String,String,FeedPageType){
-        var sectionSelector:(String,String,FeedPageType)
-        switch(type){
-        case .twitter:
-            sectionSelector = ("Twitter","TwitterIcon",.twitter)
-        case .reddit:
-            sectionSelector = ("Reddit","RedditIcon",.reddit)
-        case .news:
-            sectionSelector = ("News","📰",.news)
-        }
-        return sectionSelector
-        
-    }
-    
+
     @ViewBuilder func sectionHeader(isHeading:Bool = false,type:FeedPageType) -> some View{
-        let sectionSelectorElements = self.sectionSelectorElements(type: type)
+        let title = type == .reddit ? "Reddit" : type == .twitter ? "Twitter" : "News"
         if isHeading{
-            MainText(content: sectionSelectorElements.0, fontSize: 30, color: .white, fontWeight: .medium)
+            MainText(content: title, fontSize: 30, color: .white, fontWeight: .medium)
                 .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .left) {
-                    if sectionSelectorElements.2 == .news{
-                        MainText(content: "📰", fontSize: 30)
-                    }else{
-                        ImageView(img: .init(named: sectionSelectorElements.2 == .twitter ? "TwitterIcon" : "RedditIcon"), width: 40 , height: 40, contentMode: .fill, alignment:.center)
+                    switch(type){
+                        case .twitter:
+                            ImageView(img: .init(named: "TwitterIcon"), width: 40 , height: 40, contentMode: .fill, alignment:.center)
+                        case .reddit:
+                            ImageView(img: .init(named: "RedditIcon"), width: 40 , height: 40, contentMode: .fill, alignment:.center)
+                        case .news:
+                            MainText(content: "📰", fontSize: 30)
                     }
                 }
             
         }else{
-            MainText(content: sectionSelectorElements.0, fontSize: 15, color: self.type == sectionSelectorElements.2 ? .black : .white, fontWeight: .medium)
+            MainText(content: title, fontSize: 15, color: self.type == type ? .black : .white, fontWeight: .medium)
                 .makeAdjacentView(orientation: .horizontal, alignment: .center, position: .left) {
-                    if sectionSelectorElements.2 == .news{
-                        MainText(content: "📰", fontSize: 15)
-                    }else{
-                        ImageView(img: .init(named: sectionSelectorElements.1), width: 20 , height: 20, contentMode: .fill, alignment:.center )
+                    switch(type){
+                        case .twitter:
+                            ImageView(img: .init(named: "TwitterIcon"), width: 20 , height: 20, contentMode: .fill, alignment:.center)
+                        case .reddit:
+                            ImageView(img: .init(named: "RedditIcon"), width: 20 , height: 20, contentMode: .fill, alignment:.center)
+                        case .news:
+                            MainText(content: "📰", fontSize: 15)
                     }
                 }
                 .padding(10)
-                .basicCard(background: (self.type == sectionSelectorElements.2 ? Color.white : Color.clear).anyViewWrapper())
-                .borderCard(color: self.type == sectionSelectorElements.2 ? Color.black : Color.white, clipping: .roundClipping)
+                .basicCard(background: (self.type == type ? Color.white : Color.clear).anyViewWrapper())
+                .borderCard(color: self.type == type ? Color.black : Color.white, clipping: .roundClipping)
         }
     }
     
@@ -105,7 +97,9 @@ struct CurrencyFeedMainPage: View {
     var body: some View {
         CustomNavigationView {
             StylisticHeaderView(baseNavBarHeight:totalHeight * 0.15,minimumNavBarHeight: totalHeight * 0.1){ size in
-                Container(heading: "Social Feed", headingColor: .white, headingDivider: false, headingSize: 20, width: size.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0,spacing: 0) { w in
+                Container(width: size.width, ignoreSides: true, horizontalPadding: 0, verticalPadding: 0,spacing: 0) { w in
+                    MainText(content: "Social Feeds", fontSize: 30, color: .white, fontWeight: .medium).frame(width: w, alignment: .leading)
+                    Spacer()
                     self.sectionSelector(w: w)
                 }.frame(width: size.width, height: size.height, alignment: .center)
             } innerView: {
@@ -114,11 +108,6 @@ struct CurrencyFeedMainPage: View {
                 self.sectionHeader(isHeading: true, type: self.type)
                     .anyViewWrapper()
             }
-
-            self.feedView
-                .frame(width: totalWidth, height: totalHeight, alignment: .center)
-                .background(Color.AppBGColor.ignoresSafeArea())
-                
         }
         .onAppear(perform: self.fetchData)
         .onChange(of: self.type, perform: { newValue in
@@ -228,6 +217,7 @@ extension CurrencyFeedMainPage{
 struct FeedMainPage_Previews: PreviewProvider {
     static var previews: some View {
         CurrencyFeedMainPage(type: .reddit)
+            .environmentObject(ContextData())
             .background(Color.AppBGColor)
             .edgesIgnoringSafeArea(.all)
     }
